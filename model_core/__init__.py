@@ -72,6 +72,8 @@ statistics_template = ChatPromptTemplate.from_messages([
         \"题目\":\"...\",
         \"答案\":\"...\"
     }}
+
+    你应当保证输出结果能够被解析为json文件。
     """),
     
     ("ai",
@@ -105,6 +107,8 @@ statistics_template = ChatPromptTemplate.from_messages([
         \"题目\":\"...\",
         \"答案\":\"...\"
     }}
+
+    你应当保证输出结果能够被解析为json文件。
    """),
 ])
 
