@@ -1,12 +1,12 @@
 import os
 from . import ModelResponse
 from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP
-from . import chain
+from . import cohere 
 
 def generate_question_and_answers_cohere(context, show_response=True) -> ModelResponse:
     """Generate QA according to some context using LLM"""
     response = ""
-    for chunk in chain.stream({"context": context}):
+    for chunk in cohere.stream({"context": context}):
         if show_response:
             print(chunk.content, end="", flush=True)
         response += chunk.content

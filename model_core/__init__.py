@@ -130,5 +130,10 @@ statistics_template = ChatPromptTemplate.from_messages([
    """),
 ])
 
-chain = statistics_template | model
+cohere = statistics_template | model
+
+from transformers import AutoTokenizer, AutoModel
+tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm3-6b", trust_remote_code=True)
+chatglm = AutoModel.from_pretrained("THUDM/chatglm3-6b", trust_remote_code=True).half().cuda()
+chatglm = chatglm.eval()
 
