@@ -1,7 +1,7 @@
 import os
 from . import ModelResponse
 from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP
-from . import cohere 
+from . import cohere, chatglm, chatglm_history, tokenizer, INPUT_TEMPLATE 
 
 def generate_question_and_answers_cohere(context, show_response=True) -> ModelResponse:
     """Generate QA according to some context using LLM"""
@@ -10,6 +10,10 @@ def generate_question_and_answers_cohere(context, show_response=True) -> ModelRe
         if show_response:
             print(chunk.content, end="", flush=True)
         response += chunk.content
+    return ModelResponse(context=context, response=response)
+
+def generate_question_and_answers_chatglm(context, show_response=True) -> ModelResponse:
+    response, _ = chatglm.chat(tokenizer, INPUT_TEMPLATE.format(context=context), history=chatglm_history)
     return ModelResponse(context=context, response=response)
 
 def generate_contexts(text_filename):

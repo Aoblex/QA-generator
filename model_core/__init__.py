@@ -40,15 +40,7 @@ class ModelResponse:
         with open(os.path.join(output_dir, file_name), "w", encoding="utf-8") as json_file:
             json.dump(output_dict, json_file, indent=4, ensure_ascii=False)
 
-
-
-model = ChatCohere(cohere_api_key="A1c1O5tYigERdYOVc2ZRjvTYFoBbSZT8YfUgRFVM")
-
-statistics_template = ChatPromptTemplate.from_messages([
-
-    ("system",
-    """
-    你是一名初学统计学的学生，你的任务是根据一段统计学教材中的文本，向老师提出3个统计学相关的题目，并自己给出答案。
+SYSTEM_PROMPT = """你是一名初学统计学的学生，你的任务是根据一段统计学教材中的文本，向老师提出3个统计学相关的题目，并自己给出答案。
 
     要求:
     1.这些问题必须完全不同，鼓励你从多角度提出多样性的问题；
@@ -56,12 +48,8 @@ statistics_template = ChatPromptTemplate.from_messages([
     3.问题的答案必须包含在文本中，或者可以根据文本推理出来；
     4.你给出的答案不能过短，必须给出充分的回答；
     5.鼓励你根据文章中的案例举一反三，提出自己的实际案例并用课本中的知识分析出来；
-    6.你不能使用课本中的图片或表格描述。
-    """),
-
-    ("human",
-    """
-    根据文本，提出统计学相关问题，并给予解答，以下是参考文本:
+    6.你不能使用课本中的图片或表格描述。"""
+HUMAN_PROMPT = """根据文本，提出统计学相关问题，并给予解答，以下是参考文本:
     
     <context>
     1.2.1 分类数据、顺序数据、数值型数据按照所采用的计量尺度的不同①,可以将统计数据分为分类数据、顺序数据和数值型数据。
@@ -86,12 +74,8 @@ statistics_template = ChatPromptTemplate.from_messages([
             \"题目\":\"...\",
             \"答案\":\"...\"
         }}
-    ]
-    """),
-    
-    ("ai",
-    """
-    [
+    ]"""
+AI_PROMPT = """[
         {{
             \"题目\": \"在统计学中，为什么要将数据按照计量尺度的不同进行分类，而不是简单地将所有数据都看作是数字型数据？\",
             \"答案\":\"在统计学中，将数据按照计量尺度的不同进行分类是为了更好地理解和分析数据的特性和可操作性。不同的计量尺度反映了数据所具有的不同属性和特征，例如分类数据、顺序数据和数值型数据，它们分别呈现出不同的统计特征和分析方法。通过这样的分类，我们可以针对不同类型的数据采用合适的统计技术和方法，从而更准确地描述数据的含义和进行推断分析。\"
@@ -104,12 +88,8 @@ statistics_template = ChatPromptTemplate.from_messages([
             \"题目\":\"在实际统计分析中，如何确定采用何种计量尺度对数据进行分类，以及如何选择适当的统计方法进行分析？\",
             \"答案\":\"确定采用何种计量尺度对数据进行分类需要考虑数据的性质和研究目的。若数据仅涉及分类或标签，应选用分类尺度；若数据除了分类外还有明显的顺序关系，则选用顺序尺度；若数据是具有等距或等比关系的数值型数据，则可选用间隔尺度或比率尺度。在选择统计方法时，应结合数据类型和研究问题，选择适合的描述统计方法、推断统计方法或模型方法，以确保分析结果的准确性和可靠性。\"
         }}
-    ]
-    """),
-
-    ("human",
-    """
-    根据文本，提出统计学相关问题，并给予解答，以下是参考文本:
+    ]"""
+INPUT_TEMPLATE = """根据文本，提出统计学相关问题，并给予解答，以下是参考文本:
 
     <context>
     {context}
@@ -126,8 +106,14 @@ statistics_template = ChatPromptTemplate.from_messages([
             \"题目\":\"...\",
             \"答案\":\"...\"
         }}
-    ]
-   """),
+    ]"""
+
+model = ChatCohere(cohere_api_key="A1c1O5tYigERdYOVc2ZRjvTYFoBbSZT8YfUgRFVM")
+statistics_template = ChatPromptTemplate.from_messages([
+    ("system", SYSTEM_PROMPT),
+    ("human", HUMAN_PROMPT),
+    ("ai", AI_PROMPT),
+    ("human", INPUT_TEMPLATE),
 ])
 
 cohere = statistics_template | model
@@ -136,4 +122,19 @@ from transformers import AutoTokenizer, AutoModel
 tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm3-6b", trust_remote_code=True)
 chatglm = AutoModel.from_pretrained("THUDM/chatglm3-6b", trust_remote_code=True).half().cuda()
 chatglm = chatglm.eval()
+
+chatglm_history = [
+    {
+        'role': 'system',
+        'content': SYSTEM_PROMPT,
+    },
+    {
+        'role': 'user',
+        'content': HUMAN_PROMPT,
+    },
+    {
+        'role': 'assistant',
+        'content': AI_PROMPT,
+    }
+]
 
