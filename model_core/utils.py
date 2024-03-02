@@ -13,7 +13,11 @@ def generate_question_and_answers_cohere(context, show_response=True) -> ModelRe
     return ModelResponse(context=context, response=response)
 
 def generate_question_and_answers_chatglm(context, show_response=True) -> ModelResponse:
-    response, _ = chatglm.chat(tokenizer, INPUT_TEMPLATE.format(context=context), history=chatglm_history)
+    try:
+        response, _ = chatglm.chat(tokenizer, INPUT_TEMPLATE.format(context=context), history=chatglm_history)
+    except Exception as e:
+        print(e.args)
+        response = ""
     return ModelResponse(context=context, response=response)
 
 def generate_contexts(text_filename):
