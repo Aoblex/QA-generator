@@ -32,6 +32,7 @@ class ModelResponse:
             file_name = current_time.strftime("%Y-%m-%d_%H-%M-%S.json")
         output_dict = {
             "context": self.context,
+            "raw_response": self.response,
             "response": self.response_dict,
         }
         if not os.path.exists(output_dir):
