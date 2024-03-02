@@ -2,6 +2,7 @@ from langchain_community.chat_models import ChatCohere
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage, HumanMessage, ChatMessage
 import os
+import re
 import json
 import datetime
 
@@ -17,7 +18,13 @@ class ModelResponse:
         try:
             return json.loads(self.response)
         except:
-            return {}
+            pattern = r'\[(.*)\]'
+            match = re.search(pattern, self.response)
+            try:
+                return json.loads(match.group(0))
+            except:
+                pass
+        return {}
     
     def save_response(self, output_dir="./results", file_name="time"):
         current_time = datetime.datetime.now()
