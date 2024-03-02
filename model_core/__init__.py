@@ -22,7 +22,7 @@ class ModelResponse:
     def save_response(self, output_dir="./results", file_name="time"):
         current_time = datetime.datetime.now()
         if file_name == "time":
-            file_name = current_time.strftime("%Y-%m-%d_%H-%M-%S.txt")
+            file_name = current_time.strftime("%Y-%m-%d_%H-%M-%S.json")
         output_dict = {
             "context": self.context,
             "response": self.response_dict,
