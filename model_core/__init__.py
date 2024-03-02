@@ -29,8 +29,8 @@ class ModelResponse:
         }
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        with open(os.path.join(output_dir, file_name), "w") as json_file:
-            json.dump(output_dict, json_file, indent=4)
+        with open(os.path.join(output_dir, file_name), "w", encoding="utf-8") as json_file:
+            json.dump(output_dict, json_file, indent=4, ensure_ascii=False)
 
 
 
