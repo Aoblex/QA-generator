@@ -4,6 +4,6 @@ from model_core import ModelResponse
 
 if __name__ == "__main__":
     contexts = generate_contexts(text_filename=TEXT_FILENAMES[1])
-    for context in contexts:
+    for context in contexts[:10]:
         model_response = generate_question_and_answers(context=context)
         model_response.save_response()
