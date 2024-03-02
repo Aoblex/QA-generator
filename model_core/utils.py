@@ -1,6 +1,6 @@
 import os
 from . import ModelResponse
-from configs import TEXT_DIR, CHUNK_SIZE, OVERLAP
+from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP
 from . import chain
 
 def generate_question_and_answers(context, show_response=True) -> ModelResponse:
