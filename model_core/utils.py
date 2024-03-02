@@ -1,7 +1,16 @@
 import os
+from tqdm import tqdm
 from . import ModelResponse
-from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP
+from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP, TEXT_FILENAMES
 from . import cohere, chatglm, chatglm_history, tokenizer, INPUT_TEMPLATE 
+
+def generate(text_filename):
+    """Generate QA for one text file"""
+    contexts = generate_contexts(text_filename=text_filename)
+    for context in tqdm(contexts):
+        model_response = generate_question_and_answers_chatglm(context=context)
+        model_response.save_response()
+
 
 def generate_question_and_answers_cohere(context, show_response=True) -> ModelResponse:
     """Generate QA according to some context using LLM"""
