@@ -131,3 +131,4 @@ statistics_template = ChatPromptTemplate.from_messages([
 ])
 
 chain = statistics_template | model
+

@@ -3,7 +3,7 @@ from . import ModelResponse
 from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP
 from . import chain
 
-def generate_question_and_answers(context, show_response=True) -> ModelResponse:
+def generate_question_and_answers_cohere(context, show_response=True) -> ModelResponse:
     """Generate QA according to some context using LLM"""
     response = ""
     for chunk in chain.stream({"context": context}):
