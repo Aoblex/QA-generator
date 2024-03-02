@@ -1,14 +1,24 @@
 import os
+from . import ModelResponse
+from configs import TEXT_DIR, CHUNK_SIZE, OVERLAP
 from . import chain
 
-def save_answer(filename, answer):
-    filepath = os.path.join("answers", filename)
-    with open(filepath, "w") as f:
-        f.write(answer)
-
-def generate_question_and_answers(context):
-    answer = ""
+def generate_question_and_answers(context, show_response=True) -> ModelResponse:
+    """Generate QA according to some context using LLM"""
+    response = ""
     for chunk in chain.stream({"context": context}):
-        print(chunk.content, end="", flush=True)
-        answer += chunk.content
-    return answer
+        if show_response:
+            print(chunk.content, end="", flush=True)
+        response += chunk.content
+    return ModelResponse(context=context, response=response)
+
+def generate_contexts(text_filename):
+    """Generate context pieces for a text file"""
+    contexts = []
+    with open(os.path.join(TEXT_DIR, text_filename), "r") as f:
+        text = f.read()
+        head_index = 0
+        while head_index < len(text):
+            contexts.append(text[head_index:head_index + CHUNK_SIZE])
+            head_index += CHUNK_SIZE - OVERLAP 
+    return contexts

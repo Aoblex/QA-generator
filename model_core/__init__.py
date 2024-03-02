@@ -19,9 +19,10 @@ class ModelResponse:
         except:
             return {}
     
-    def save_response(self, output_dir="./results"):
+    def save_response(self, output_dir="./results", file_name="time"):
         current_time = datetime.datetime.now()
-        file_name = current_time.strftime("%Y-%m-%d_%H-%M-%S.txt")
+        if file_name == "time":
+            file_name = current_time.strftime("%Y-%m-%d_%H-%M-%S.txt")
         output_dict = {
             "context": self.context,
             "response": self.response_dict,
