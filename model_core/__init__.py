@@ -26,6 +26,8 @@ class ModelResponse:
         except:
             pattern = r'\[(.*)\]'
             match = re.search(pattern, self.response, flags=re.DOTALL)
+            if match is None:
+                return {}
             try:
                 return json.loads(match.group(0))
             except:
