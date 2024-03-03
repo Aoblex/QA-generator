@@ -19,12 +19,15 @@ class ModelResponse:
             return json.loads(self.response)
         except:
             pattern = r'\[(.*)\]'
-            match = re.search(pattern, self.response)
+            match = re.search(pattern, self.response, flags=re.DOTALL)
             try:
                 return json.loads(match.group(0))
             except:
-                pass
-        return {}
+                json_str = match.group(0).replace("{{", "{").replace("}}", "}")
+                try:
+                    return json.loads(json_str)
+                except:
+                    return {}
     
     def save_response(self, output_dir="./results", file_name="time"):
         current_time = datetime.datetime.now()
@@ -108,6 +111,21 @@ INPUT_TEMPLATE = """根据文本，提出统计学相关问题，并给予解答
         }}
     ]"""
 
+CHATGLM_HISTORY = [
+    {
+        'role': 'system',
+        'content': SYSTEM_PROMPT,
+    },
+    {
+        'role': 'user',
+        'content': HUMAN_PROMPT,
+    },
+    {
+        'role': 'assistant',
+        'content': AI_PROMPT,
+    }
+]
+
 model = ChatCohere(cohere_api_key="A1c1O5tYigERdYOVc2ZRjvTYFoBbSZT8YfUgRFVM")
 statistics_template = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_PROMPT),
@@ -123,18 +141,5 @@ tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm3-6b-32k", trust_remote_
 chatglm = AutoModel.from_pretrained("THUDM/chatglm3-6b-32k", trust_remote_code=True).half().cuda()
 chatglm = chatglm.eval()
 
-chatglm_history = [
-    {
-        'role': 'system',
-        'content': SYSTEM_PROMPT,
-    },
-    {
-        'role': 'user',
-        'content': HUMAN_PROMPT,
-    },
-    {
-        'role': 'assistant',
-        'content': AI_PROMPT,
-    }
-]
+
 
