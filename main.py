@@ -9,5 +9,6 @@ from model_core import ModelResponse
 from tqdm import tqdm
 
 if __name__ == "__main__":
-    for text_filename in TEXT_FILENAMES:
+    for text_filename in TEXT_FILENAMES[2:]:
+        print(f"Generating QA for '{text_filename}'")
         generate(text_filename)
