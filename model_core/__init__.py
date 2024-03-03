@@ -4,6 +4,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, ChatMessage
 import os
 import re
 import json
+import hashlib
 import datetime
 
 
@@ -12,6 +13,11 @@ class ModelResponse:
     def __init__(self, context, response):
         self.context = context
         self.response = response
+
+    @property
+    def context_hash(self) -> str:
+        return hashlib.sha1(self.context.encode()).hexdigest()
+
 
     @property
     def response_dict(self) -> dict:
@@ -29,10 +35,16 @@ class ModelResponse:
                 except:
                     return {}
     
-    def save_response(self, output_dir="./results", file_name="time"):
+    def save_response(self, output_dir="./results", file_name="hash"):
         current_time = datetime.datetime.now()
+
         if file_name == "time":
             file_name = current_time.strftime("%Y-%m-%d_%H-%M-%S.json")
+        elif file_name == "hash":
+            file_name = f"{self.context_hash}.json"
+        else:
+            raise IndexError(f"Invalid file name type: {file_name}")
+
         output_dict = {
             "context": self.context,
             "raw_response": self.response,

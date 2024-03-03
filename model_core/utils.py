@@ -2,7 +2,8 @@ import os
 from tqdm import tqdm
 from . import ModelResponse
 from .configs  import TEXT_DIR, CHUNK_SIZE, OVERLAP, TEXT_FILENAMES
-from . import cohere, chatglm, chatglm_history, tokenizer, INPUT_TEMPLATE 
+from . import cohere, chatglm, CHATGLM_HISTORY, tokenizer, INPUT_TEMPLATE 
+import hashlib
 
 def generate(text_filename):
     """Generate QA for one text file"""
@@ -23,7 +24,9 @@ def generate_question_and_answers_cohere(context, show_response=True) -> ModelRe
 
 def generate_question_and_answers_chatglm(context, show_response=True) -> ModelResponse:
     try:
-        response, _ = chatglm.chat(tokenizer, INPUT_TEMPLATE.format(context=context), history=chatglm_history)
+        query = INPUT_TEMPLATE.format(context=context)
+        history = CHATGLM_HISTORY.copy()
+        response, _ = chatglm.chat(tokenizer, query=query, history=history, max_new_tokens=2048)
     except Exception as e:
         print(e.args)
         response = ""
