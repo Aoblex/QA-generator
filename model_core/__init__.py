@@ -1,6 +1,9 @@
 from langchain_community.chat_models import ChatCohere
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage, HumanMessage, ChatMessage
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+from openai import OpenAI
 import os
 import re
 import json
@@ -150,10 +153,29 @@ statistics_template = ChatPromptTemplate.from_messages([
 
 cohere = statistics_template | model
 
-from transformers import AutoTokenizer, AutoModel
-tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm3-6b-32k", trust_remote_code=True)
-chatglm = AutoModel.from_pretrained("THUDM/chatglm3-6b-32k", trust_remote_code=True).half().cuda()
-chatglm = chatglm.eval()
+# from transformers import AutoTokenizer, AutoModel
+# tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm3-6b-32k", trust_remote_code=True)
+# chatglm = AutoModel.from_pretrained("THUDM/chatglm3-6b-32k", trust_remote_code=True).half().cuda()
+# chatglm = chatglm.eval()
 
 
+class OpenAILLM():
+    
+    base_url = "https://api.132999.xyz/v1"
+    def __init__(self, api_key):
+        self.client = OpenAI(api_key=api_key, base_url=self.base_url)
 
+    def generate(self, context):
+        messages = CHATGLM_HISTORY.copy()
+        messages.append(
+            {
+                'role': 'user',
+                'content': INPUT_TEMPLATE.format(context=context)
+            }
+        )
+        response = self.client.chat.completions.create(model="gpt-3.5-turbo-1106",
+                                                       messages=messages)
+        result = response.choices[0].message.content
+        return result
+
+openai = OpenAILLM(api_key="sk-C4GIY6tWzvgCLDie7326B17079554e70A9262b156fDc3b3b")
