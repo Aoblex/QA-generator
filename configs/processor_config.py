@@ -1,0 +1,2 @@
+PROCESSOR_OUTPUT_BASE_DIR = "./pieces"
+PROCESSOR_INPUT_BASE_DIR = "./markdown"
