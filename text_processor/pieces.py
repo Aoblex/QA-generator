@@ -12,7 +12,7 @@ class Piece:
         self.source = source
         self.content = content
     
-    def save_piece(self, overwrite=False, **kwargs):
+    def save_piece(self, response: dict, overwrite=False):
         raise NotImplementedError(f"Save function not implemented.")
     
     @property
@@ -41,7 +41,7 @@ class ChunkPiece(Piece):
             'content': self.content,
         }
 
-    def save_piece(self, overwrite=False, **kwargs):
+    def save_piece(self, response:dict, overwrite=False):
         output_dir = os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
         touch_path(output_dir) # create path if not exist
 
@@ -53,7 +53,7 @@ class ChunkPiece(Piece):
             return 0
 
         with open(output_path, "w") as piece:
-            json.dump([self.piece_info, kwargs], piece,
+            json.dump([self.piece_info, response], piece,
                       indent=4, ensure_ascii=False)
         
         logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
@@ -80,7 +80,7 @@ class SectionPiece(Piece):
             'content': self.content,
         }
 
-    def save_piece(self,overwrite=False, **kwargs):
+    def save_piece(self, response: dict, overwrite=False):
         output_dir = os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
         touch_path(output_dir) # create path if not exist
 
@@ -94,7 +94,7 @@ class SectionPiece(Piece):
             return 0
         
         with open(output_path, "w") as piece:
-            json.dump([self.piece_info, kwargs], piece,
+            json.dump([self.piece_info, response], piece,
                       indent=4, ensure_ascii = False)    
         
         logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")

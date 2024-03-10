@@ -6,27 +6,30 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-IGNORED_TITLES = ['preface', 'reference', 'index', 'content', 'problems']
+# problems: 忽略练习题
+IGNORED_TITLES = ['preface', 'reference', 'index', 'content', 'problems', 'exercises', 'notes']
 markdown_filenames = os.listdir(PROCESSOR_INPUT_BASE_DIR)
 
-for markdown_filename in markdown_filenames[1:3]:
+for markdown_filename in markdown_filenames[8:9]:
     markdown_text = Text(filename=markdown_filename)
+    # 根据 section 对文本进行分割
     markdown_sections = markdown_text.segment(strategy="section")
 
-    for markdown_section in markdown_sections[10:12]:
+    for markdown_section in markdown_sections[40:45]:
 
         context = markdown_section.piece_info.get("content", None)
+        section_title = markdown_section.piece_info.get("title", None)
+        response = {}
+
         if context is None:
             logging.error(f"Context in '{markdown_filename}' not found.")
-
-        section_title = markdown_section.piece_info.get("title", None)
-        if section_title is None:
+        elif section_title is None:
             logging.error(f"Title in '{markdown_filename}' not found.")
-
-        if context and section_title \
-           and section_title.lower() not in IGNORED_TITLES:
-            raw_response = QAModel.generate(context=context)
+        elif len(context) <= 1000:
+            logging.error(f"Context length {len(context)} too short.")
+        elif section_title.lower() in IGNORED_TITLES:
+            logging.error(f"Section title: {section_title}, irrelevant content.")
         else:
-            raw_response = ""
+            response = QAModel.generate(context=context)
 
-        markdown_section.save_piece(overwrite=True, raw_response=raw_response)
+        markdown_section.save_piece(overwrite=False, response=response)

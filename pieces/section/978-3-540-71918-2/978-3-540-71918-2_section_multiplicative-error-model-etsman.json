@@ -1,0 +1,13 @@
+[
+    {
+        "strategy": "section",
+        "source": "978-3-540-71918-2",
+        "level": 4,
+        "title": "Multiplicative Error Model: ETS(M,A,N)",
+        "content_length": 1154,
+        "content": "Title: Multiplicative Error Model: ETS(M,A,N)\nContent: A model with multiplicative error can be derived similarly, by first setting \\(\\varepsilon_{t}=(y_{t}-\\mu_{t})/\\mu_{t}\\), so that \\(\\varepsilon_{t}\\) is a relative error. Then, following a similar approach to that for additive errors, we find\n\n\\[y_{t} =(\\ell_{t-1}+b_{t-1})(1+\\varepsilon_{t}),\\] \\[\\ell_{t} =(\\ell_{t-1}+b_{t-1})(1+\\alpha\\varepsilon_{t}),\\] \\[b_{t} =b_{t-1}+\\beta(\\ell_{t-1}+b_{t-1})\\varepsilon_{t},\\]or\n\n\\[y_{t} =[1\\;\\;1]\\,\\mathbf{x}_{t-1}(1+\\varepsilon_{t}),\\] \\[\\mathbf{x}_{t} =\\begin{bmatrix}1\\;1\\\\ 0\\;1\\end{bmatrix}\\,\\mathbf{x}_{t-1}+[1\\;\\;1]\\,\\mathbf{x}_{t-1}\\begin{bmatrix}\\alpha\\\\ \\beta\\end{bmatrix}\\varepsilon_{t}.\\]\n\nAgain we assume that \\(\\varepsilon_{t}\\sim\\mathrm{NID}(0,\\sigma^{2})\\).\n\nOf course, this is a nonlinear state space model, which is usually considered difficult to handle in estimating and forecasting. However, that is one of the many advantages of the innovations form of state space models--we can still compute forecasts, the likelihood and prediction intervals for this nonlinear model with no more effort than is required for the additive error model."
+    },
+    {
+        "raw_response": "{\n  \"问题1\": \"什么是Multiplicative Error Model中的相对误差（relative error）？\",\n  \"回答1\": \"在Multiplicative Error Model中，相对误差（relative error）被定义为\\nt\\frac{(y_{t}-\\bar{\\text{\\text{y}}}_{t})}{\\bar{\\text{\\text{y}}}_{t}}，其中y_{t}是观测值，\\bar{\\text{\\text{y}}}_{t}是预测值。相对误差用来衡量预测值与观测值之间的相对偏差，它是对误差的一种规范化表示。在统计学中，使用相对误差可以更好地评估预测模型的准确性，尤其是在涉及不同量级的数据时。\"\n}\n\n"
+    }
+]
