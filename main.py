@@ -10,7 +10,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 IGNORED_TITLES = ['preface', 'reference', 'index', 'content', 'problems', 'exercises', 'notes']
 markdown_filenames = os.listdir(PROCESSOR_INPUT_BASE_DIR)
 
-for markdown_filename in markdown_filenames[8:9]:
+for markdown_filename in markdown_filenames:
+    if markdown_filename != "978-1-0716-1418-1.mmd":
+        continue
     markdown_text = Text(filename=markdown_filename)
     # 根据 section 对文本进行分割
     markdown_sections = markdown_text.segment(strategy="section")
