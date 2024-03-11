@@ -34,4 +34,4 @@ for markdown_filename in markdown_filenames:
         else:
             response = QAModel.generate(context=context)
 
-        markdown_section.save_piece(overwrite=False, response=response)
+        markdown_section.save_piece(response=response)

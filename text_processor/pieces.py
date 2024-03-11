@@ -12,7 +12,7 @@ class Piece:
         self.source = source
         self.content = content
     
-    def save_piece(self, response: dict, overwrite=False):
+    def save_piece(self, response: dict):
         raise NotImplementedError(f"Save function not implemented.")
     
     @property
@@ -40,24 +40,24 @@ class ChunkPiece(Piece):
             'content_length': len(self.content),
             'content': self.content,
         }
+    
+    @property
+    def output_dir(self):
+        return os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
+    
+    @property
+    def filename(self):
+        return f"{self.source}_{self.STRATEGY}_from_{self.start_index}_to_{self.end_index}.json"
 
-    def save_piece(self, response:dict, overwrite=False):
-        output_dir = os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
-        touch_path(output_dir) # create path if not exist
-
-        filename = f"{self.source}_{self.STRATEGY}_from_{self.start_index}_to_{self.end_index}.json"
-        output_path = os.path.join(output_dir, filename)
-
-        if os.path.exists(output_path) and (not overwrite):
-            logging.info(f"File '{filename}' already exists.")
-            return 0
+    def save_piece(self, response:dict):
+        touch_path(self.output_dir) # create path if not exist
+        output_path = os.path.join(self.output_dir, self.filename)
 
         with open(output_path, "w") as piece:
             json.dump([self.piece_info, response], piece,
                       indent=4, ensure_ascii=False)
         
         logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
-        return 1
 
 
 
@@ -80,22 +80,23 @@ class SectionPiece(Piece):
             'content': self.content,
         }
 
-    def save_piece(self, response: dict, overwrite=False):
-        output_dir = os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
-        touch_path(output_dir) # create path if not exist
-
+    @property
+    def output_dir(self):
+        return os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
+    
+    @property
+    def filename(self):
         alpha_digit_title = re.sub(r'[^a-zA-Z0-9 ]', '', self.title)
         processed_title = re.sub(r'\s+', '-', alpha_digit_title)
-        filename = f"{self.source}_{self.STRATEGY}_{processed_title.lower()}.json"
-        output_path = os.path.join(output_dir, filename)
+        return f"{self.source}_{self.STRATEGY}_{processed_title.lower()}.json"
 
-        if os.path.exists(output_path) and (not overwrite):
-            logging.info(f"File '{filename}' already exists.")
-            return 0
+
+    def save_piece(self, response: dict):
+        touch_path(self.output_dir) # create path if not exist
+        output_path = os.path.join(self.output_dir, self.filename)
         
         with open(output_path, "w") as piece:
             json.dump([self.piece_info, response], piece,
                       indent=4, ensure_ascii = False)    
         
         logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
-        return 1
