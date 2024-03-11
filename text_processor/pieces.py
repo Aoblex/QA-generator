@@ -48,6 +48,9 @@ class ChunkPiece(Piece):
     @property
     def filename(self):
         return f"{self.source}_{self.STRATEGY}_from_{self.start_index}_to_{self.end_index}.json"
+    
+    def file_exists(self):
+        return os.path.exists(os.path.join(self.output_dir, self.filename))
 
     def save_piece(self, response:dict):
         touch_path(self.output_dir) # create path if not exist
@@ -90,6 +93,8 @@ class SectionPiece(Piece):
         processed_title = re.sub(r'\s+', '-', alpha_digit_title)
         return f"{self.source}_{self.STRATEGY}_{processed_title.lower()}.json"
 
+    def file_exists(self):
+        return os.path.exists(os.path.join(self.output_dir, self.filename))
 
     def save_piece(self, response: dict):
         touch_path(self.output_dir) # create path if not exist
