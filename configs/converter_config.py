@@ -1,2 +1,2 @@
 CONVERTER_INPUT_DIR = "./pdf"
-CONVERTER_OUTPUT_DIR = "./markdown"
+CONVERTER_OUTPUT_DIR = "./texts"
