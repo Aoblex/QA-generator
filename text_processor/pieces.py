@@ -63,7 +63,6 @@ class ChunkPiece(Piece):
         logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
 
 
-
 class SectionPiece(Piece):
     STRATEGY = "section"
     def __init__(self, source: str, content: str,
