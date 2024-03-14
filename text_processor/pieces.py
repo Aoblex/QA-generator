@@ -14,11 +14,40 @@ class Piece:
     
     def save_piece(self, response: dict):
         raise NotImplementedError(f"Save function not implemented.")
-    
+
+    @property
+    def output_dir(self):
+        raise NotImplementedError(f"Piece output directory not specified.")
+
+    @property
+    def filename(self):
+        raise NotImplementedError(f"Piece filename not specified.")
+
     @property
     def piece_info(self):
         raise NotImplementedError(f"Piece information not implemented.")
-    
+
+    def append_to_file(self, element: dict):
+        touch_path(self.output_dir) # create path if not exist
+        output_path = os.path.join(self.output_dir, self.filename)
+        
+        if not os.path.exists(output_path):
+            with open(output_path, "w", encoding="utf-8") as file:
+                pass
+
+        with open(output_path, "r+", encoding="utf-8") as file:
+            file_data = file.read()
+            if file_data:
+                piece = json.loads(file_data)
+            else:
+                piece = [self.piece_info]
+            piece.append(element)
+            new_piece = json.dumps(piece, indent=4, ensure_ascii=False)
+            file.seek(0)
+            file.write(new_piece)
+        
+        logging.info(f"'{output_path}' updated.")
+
     def __str__(self):
         return str(self.piece_info)
 
@@ -52,16 +81,6 @@ class ChunkPiece(Piece):
     def file_exists(self):
         return os.path.exists(os.path.join(self.output_dir, self.filename))
 
-    def save_piece(self, response:dict):
-        touch_path(self.output_dir) # create path if not exist
-        output_path = os.path.join(self.output_dir, self.filename)
-
-        with open(output_path, "w") as piece:
-            json.dump([self.piece_info, response], piece,
-                      indent=4, ensure_ascii=False)
-        
-        logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
-
 class SubsectionPiece(Piece):
     STRATEGY = "subsection"
     def __init__(self, source: str, content: str,
@@ -90,15 +109,7 @@ class SubsectionPiece(Piece):
     def file_exists(self):
         return os.path.exists(os.path.join(self.output_dir, self.filename))
 
-    def save_piece(self, response: dict):
-        touch_path(self.output_dir) # create path if not exist
-        output_path = os.path.join(self.output_dir, self.filename)
-        
-        with open(output_path, "w") as piece:
-            json.dump([self.piece_info, response], piece,
-                      indent=4, ensure_ascii = False)    
-        
-        logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
+    
 
 class SectionPiece(Piece):
     STRATEGY = "section"
@@ -131,13 +142,3 @@ class SectionPiece(Piece):
 
     def file_exists(self):
         return os.path.exists(os.path.join(self.output_dir, self.filename))
-
-    def save_piece(self, response: dict):
-        touch_path(self.output_dir) # create path if not exist
-        output_path = os.path.join(self.output_dir, self.filename)
-        
-        with open(output_path, "w") as piece:
-            json.dump([self.piece_info, response], piece,
-                      indent=4, ensure_ascii = False)    
-        
-        logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
