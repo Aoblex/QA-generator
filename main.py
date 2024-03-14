@@ -8,8 +8,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 text_filenames = os.listdir(PROCESSOR_INPUT_DIR)
 
-print(text_filenames)
-
 for text_filename in text_filenames:
     if text_filename != "chapter1.tex": continue
     text_text = Text(filename=text_filename)
@@ -23,6 +21,8 @@ for text_filename in text_filenames:
             logging.error(f"Context in '{text_filename}' not found.")
         elif len(context) <= 300:
             logging.error(f"Context length {len(context)} too short.")
+        elif len(context) >= 5000:
+            logging.error(f"Context length {len(context)} too long.")
         else:
             response = QAModel.generate(context=context)
 
