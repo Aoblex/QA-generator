@@ -1,15 +1,15 @@
 import os
 import re
 from typing import List
-from .pieces import Piece, SectionPiece, ChunkPiece
+from .pieces import Piece, SectionPiece, ChunkPiece, SubsectionPiece
 from .utils import is_file_path, is_text_file
-from . import PROCESSOR_INPUT_BASE_DIR
+from . import PROCESSOR_INPUT_DIR
 
 class Text:
 
-    SEGMENT_STRATEGIES = ["section", "chunk"]
+    SEGMENT_STRATEGIES = ["section", "chunk", "subsection"]
 
-    def __init__(self, filename: str, dir: str = PROCESSOR_INPUT_BASE_DIR):
+    def __init__(self, filename: str, dir: str = PROCESSOR_INPUT_DIR):
         """Load on initialization"""
         self.dir = dir
         self.filename = filename
@@ -44,6 +44,29 @@ class Text:
         
         return sections
 
+    def segment_into_subsections(self) -> List[Piece]:
+        """Segment the original content into subsections."""
+
+        # Remove xiti
+        xiti_pattern = r'\\begin\{xiti\}([\s\S]*?)\\end\{xiti\}'
+        self.content = re.sub(xiti_pattern, '', self.content)
+
+        pattern = re.compile(r'\\subsection\{([^}]+)\}([\s\S]*?)(?=\\subsection|\Z)',
+                             re.MULTILINE | re.DOTALL)
+        matches = pattern.findall(self.content)
+
+        # Segmenting
+        subsections = []
+        for title, content in matches:
+            final_content = f"Title: {title}\nContent: {content.strip()}"
+            subsections.append(SubsectionPiece(
+                source = self.source,
+                content = final_content,
+                title = title.strip(),
+            ))
+        
+        return subsections
+
     def segment_into_chunks(self, **kwargs) -> List[Piece]:
         """Segment the original content into chunks."""
         chunk_length = kwargs.pop("chunk_length", 300)
@@ -66,7 +89,7 @@ class Text:
 
     def segment(self, strategy: str) :
         """Segment the original content according to a specific strategy.\n
-        strategy must be in ['section', 'chunk']"""
+        strategy must be in ['section', 'chunk', 'subsection']"""
         assertion_error_message = f"Unsupported strategy type: {strategy}"
         assert strategy in self.SEGMENT_STRATEGIES, assertion_error_message
 
@@ -74,5 +97,7 @@ class Text:
             return self.segment_into_sections()
         elif strategy == "chunk":
             return self.segment_into_chunks()
+        elif strategy == "subsection":
+            return self.segment_into_subsections()
         else:
             raise AssertionError(assertion_error_message)

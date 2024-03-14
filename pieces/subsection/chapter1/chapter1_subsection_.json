@@ -1,0 +1,34 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter1",
+        "title": "样本空间",
+        "content_length": 1523,
+        "content": "Title: 样本空间\nContent: 随机现象的一切可能基本结果组成的集合称为\\textbf{样本空间}\\index{S!随机事件!样本空间}，\n记为 $\\Omega = \\{\\omega\\}$，\n其中 $\\omega$ 表示基本结果，\n又称为\\textbf{样本点}.\\index{S!随机事件!样本点}\n样本点是今后抽样的最基本单元.\n认识随机现象首先要列出它的样本空间.\n\n\\begin{example}\t\n\t下面给出例~\\ref{exam:1.1.1} 中随机现象的样本空间.\n\t\\begin{enumerate}\n    \\item 抛一枚硬币的样本空间为:\n    $\\Omega_1 = \\{ \\omega_1 , \\omega_2 \\}$,\n    其中 $\\omega_1$ 表示正面朝上,\n    $\\omega_2$ 表示反面朝上.\n    \\item 掷一颗骰子的样本空间为:\n    $ \\Omega_2 = \\{ \\omega_1, \\omega_2, \\dotsc, \\omega_6 \\} $,\n    其中 $ \\omega_i $ 表示出现 $ i $ 点,\n    $ i = 1,2,\\dotsc,6 $.\n    也更直接明了地记此样本空间为:\n    $ \\Omega_2 = \\{1,2,\\dotsc,6\\} $.\n\t\t\\item 一天内进入某商场地顾客数地样本空间为:\n\t\t\\[ \\Omega_3 = \\{0,1,2,\\dotsc,500,\\dotsc,10^4,\\dotsc\\},\\]\n    其中“0”表示“一天内无人光顾此商场”,\n    而“$10^4$”表示“一天内有一万人光顾此商场”.\n    虽然此两种情况很少发生,\n    但我们无法说此两种情况不可能发生,\n    甚至于我们不能确切地说出一天内进入该商场地最多人数,\n    所以此样本空间用非负整数集表示,\n    既不脱离实际情况,\n    又是合理抽象,\n    便于数学上地处理.\n    \\item 电视机寿命的样本空间为:\n    $ \\Omega_4=\\{t,t \\geq 0\\} $.\n    \\item 测量误差的样本空间为:\n    $ \\Omega_5=\\{x,-\\infty < x < +\\infty\\} $.\n\t\\end{enumerate}\n\\end{example}\n\n需要注意的是:\n\\begin{enumerate}\n\t\\item 样本空间中的元素可以是数也可以不是数.\n  \\item 样本空间至少有两个样本点，\n  含两个样本点的样本空间是最简单的样本空间.\n  \\item 从样本空间含有样本点的个数来区分,\n  样本空间可分为有限与无限两类,\n  譬如以上样本空间 $\\Omega_1$ 和 $\\Omega_2$ 中样本点的个数为有限个,\n  而 $\\Omega_3$、$\\Omega_4$ 及 $\\Omega_5$ 中样本点的个数为无限个.\n  但 $\\Omega_3$ 中样本点的个数为可列个,\n  而 $\\Omega_4$ 和 $\\Omega_5$ 中的元素个数为不可列无限个.\n  在以后的数学处理上我们往往将样本点的个数为有限个或可列个的情况归为一类,\n  称为\\textbf{离散样本空间}.\\index{S!随机事件!离散样本空间}\n  而将样本点的个数为不可列无限个的情况归为另一类,\n  称为\\textbf{连续样本空间}.\\index{S!随机事件!连续样本空间}\n  由于这两类样本空间有着本质上的差异,\n  故分别称呼之.\n\\end{enumerate}"
+    },
+    {
+        "id": "chatcmpl-92LVXtM7ybb6iDeR0IL1iAfHO4lLN",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n  \"问题\": \"什么是样本空间？它在统计学中有什么作用？\",\n  \"回答\": \"样本空间是指随机现象的一切可能基本结果组成的集合。在统计学中，样本空间的作用是为了列出随机现象的所有可能结果，为后续的概率计算和统计推断提供基础。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710346359,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_f93e21ed76",
+        "usage": {
+            "completion_tokens": 113,
+            "prompt_tokens": 1513,
+            "total_tokens": 1626
+        }
+    }
+]

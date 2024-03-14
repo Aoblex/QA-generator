@@ -2,7 +2,7 @@ from openai import OpenAI
 from .prompts import CHAT_HISTORY, INPUT_TEMPLATE
 import logging
 from openai.types.chat import ChatCompletion
-from ..configs.model_config import (
+from configs.model_config import (
     MODEL, TEMPERATURE,
     FREQUENCY_PENALTY, PRESENCE_PENALTY,
 )

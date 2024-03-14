@@ -62,6 +62,43 @@ class ChunkPiece(Piece):
         
         logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
 
+class SubsectionPiece(Piece):
+    STRATEGY = "subsection"
+    def __init__(self, source: str, content: str,
+                 title: str):
+        super().__init__(source, content)
+        self.title = title
+    
+    @property
+    def piece_info(self):
+        return {
+            'strategy': self.STRATEGY,
+            'source': self.source,
+            'title': self.title,
+            'content_length': len(self.content),
+            'content': self.content,
+        }
+
+    @property
+    def output_dir(self):
+        return os.path.join(PROCESSOR_OUTPUT_BASE_DIR, self.STRATEGY, self.source, '')
+    
+    @property
+    def filename(self):
+        return f"{self.source}_{self.STRATEGY}_{self.title}.json"
+
+    def file_exists(self):
+        return os.path.exists(os.path.join(self.output_dir, self.filename))
+
+    def save_piece(self, response: dict):
+        touch_path(self.output_dir) # create path if not exist
+        output_path = os.path.join(self.output_dir, self.filename)
+        
+        with open(output_path, "w") as piece:
+            json.dump([self.piece_info, response], piece,
+                      indent=4, ensure_ascii = False)    
+        
+        logging.info(f"{self.STRATEGY} piece written to '{output_path}'.")
 
 class SectionPiece(Piece):
     STRATEGY = "section"
