@@ -12,7 +12,7 @@ for text_filename in text_filenames:
     if text_filename != "chapter1.tex": continue
     text_text = Text(filename=text_filename)
     text_pieces = text_text.segment(strategy="subsection")
-    for text_piece in text_pieces[3:4]:
+    for text_piece in text_pieces[12:13]:
 
         context = text_piece.piece_info.get("content", None)
         response = {}
