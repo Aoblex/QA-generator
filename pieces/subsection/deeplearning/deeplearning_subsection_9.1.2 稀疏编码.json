@@ -1,0 +1,71 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "9.1.2 稀疏编码",
+        "content_length": 2615,
+        "content": "Title: 9.1.2 稀疏编码\nContent:\n稀疏编码 ( Sparse Coding ) 也是一种受哺乳动物视觉系统中简单细胞感受野而启发的模型. 在哺乳动物的初级视觉皮层 (Primary Visual Cortex) 中, 每个神经元仅对处于其感受野中特定的刺激信号 (比如特定方向的边缘、条纹等特征）做出响应. 局部感受野可以被描述为具有空间局部性、方向性和带通性 [Olshausen et al., 1996]. 也就是说, 外界信息经过编码后仅有一小部分神经元激活, 即外界刺激在视觉神经系统的表示具有很高的稀疏性. 编码的稀疏性在一定程度上符合生物学的低功耗特性.\n\n在数学上, (线性) 编码是指给定一组基向量 $\\boldsymbol{A}=\\left[\\boldsymbol{a}_{1}, \\cdots, \\boldsymbol{a}_{M}\\right]$, 将输入样本 $x \\in \\mathbb{R}^{D}$ 表示为这些基向量的线性组合\n\n\n\\begin{align*}\n\\boldsymbol{x} & =\\sum_{m=1}^{M} z_{m} \\boldsymbol{a}_{m}  \\tag{9.9}\\\\\n& =\\boldsymbol{A z} \\tag{9.10}\n\\end{align*}\n\n\n其中基向量的系数 $\\boldsymbol{z}=\\left[z_{1}, \\cdots, z_{M}\\right]$ 称为输入样本 $\\boldsymbol{x}$ 的编码（Encoding）, 基向量 $\\boldsymbol{A}$ 也称为字典 (Dictionary).\n\n编码是对 $D$ 维空间中的样本 $\\boldsymbol{x}$ 找到其在 $P$ 维空间中的表示 (或投影), 其目标通常是编码的各个维度都是统计独立的, 并且可以重构出输入样本. 编码的关键是找到一组 “完备”的基向量 $\\boldsymbol{A}$, 比如主成分分析等. 但是主成分分析得到的编码通常是稠密向量,没有稀疏性.\n\n\\section*{数学小知识 1 完备性}\n如果 $M$ 个基向量刚好可以支撑 $M$ 维的欧氏空间, 则这 $M$ 个基向量是完备的. 如果 $M$ 个基向量可以支撑 $D$ 维的欧氏空间, 并且 $M>D$, 则这 $M$ 个基向量是过完备的 ( overcomplete )、㔯余的.\n\n“过完备”基向量是指基向量个数远远大于其支撑空间维度. 因此这些基向量一般不具备独立、正交等性质.\n\n为了得到稀疏的编码, 我们需要找到一组 “过完备” 的基向量（即 $M>D$ )来进行编码. 在过完备基向量之间往往会存在一些冗余性, 因此对于一个输入样本, 会存在很多有效的编码. 如果加上稀疏性限制, 就可以减少解空间的大小, 得到“唯一”的稀疏编码.\n\n给定一组 $N$ 个输入向量 $\\boldsymbol{x}^{(1)}, \\cdots, \\boldsymbol{x}^{(N)}$, 其稀疏编码的目标函数定义为\n\n\n\\begin{equation*}\n\\mathcal{L}(\\boldsymbol{A}, \\boldsymbol{Z})=\\sum_{n=1}^{N}\\left(\\left\\|\\boldsymbol{x}^{(n)}-A \\boldsymbol{z}^{(n)}\\right\\|^{2}+\\eta \\rho\\left(\\boldsymbol{z}^{(n)}\\right)\\right) \\tag{9.11}\n\\end{equation*}\n\n\\footnotetext{\\href{https://nndl.github.io/}{https://nndl.github.io/}\n}\n\n带通性是指不同尺度下空间结构的敏感性。比如, 带通滤波器 (Bandpass Filter)是指容许某个频率范围的信号通过，同时屏蔽其他频段的设备.\\\\\n其中 $\\boldsymbol{Z}=\\left[\\boldsymbol{z}^{(1)}, \\cdots, \\boldsymbol{z}^{(N)}\\right], \\rho(\\cdot)$ 是一个稀疏性衡量函数, $\\eta$ 是一个超参数, 用来控制稀疏性的强度.\n\n对于一个向量 $\\boldsymbol{z} \\in \\mathbb{R}^{M}$, 其稀疏性定义为非零元素的比例. 如果一个向量只有很少的几个非零元素, 就说这个向量是稀疏的. 稀疏性衡量函数 $\\rho(\\boldsymbol{z})$ 是给向量 $\\boldsymbol{z}$ 一个标量分数. $\\boldsymbol{z}$ 越稀疏, $\\rho(\\boldsymbol{z})$ 越小.\n\n稀疏性衡量函数有多种选择, 最直接的衡量向量 $\\boldsymbol{z}$ 稀疏性的函数是 $\\ell_{0}$ 范数\n\n\n\\begin{equation*}\n\\rho(\\boldsymbol{z})=\\sum_{m=1}^{M} \\mathbf{I}\\left(\\left|z_{m}\\right|>0\\right) \\tag{9.12}\n\\end{equation*}\n\n\n但 $\\ell_{0}$ 范数不满足连续可导, 因此很难进行优化. 在实际中, 稀疏性衡量函数通常使用 $e_{1}$ 范数\n\n\n\\begin{equation*}\n\\rho(\\boldsymbol{z})=\\sum_{m=1}^{M}\\left|z_{m}\\right| \\tag{9.13}\n\\end{equation*}\n\n\n或对数函数\n\n\n\\begin{equation*}\n\\rho(\\boldsymbol{z})=\\sum_{m=1}^{M} \\log \\left(1+z_{m}^{2}\\right) \\tag{9.14}\n\\end{equation*}\n\n\n或指数函数\n\n参见习题9-6.\n\n\n\\begin{equation*}\n\\rho(\\boldsymbol{z})=\\sum_{m=1}^{M}-\\exp \\left(-z_{m}^{2}\\right) \\tag{9.15}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-92yYy24s8czgd3AXikLJ9qhXafnKR",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"稀疏编码的模型受到哪个生物系统的启发？\",\n    \"回答1\": \"稀疏编码的模型受到哺乳动物视觉系统中简单细胞感受野的启发。在哺乳动物的初级视觉皮层中，每个神经元仅对处于其感受野中特定的刺激信号做出响应，这种局部感受野具有空间局部性、方向性和带通性。\",\n    \"问题2\": \"稀疏编码中的编码是如何定义的？\",\n    \"回答2\": \"在稀疏编码中，编码是指将输入样本表示为一组基向量的线性组合。给定一组基向量 $\\boldsymbol{A}=\\big[\\boldsymbol{a}_{1}, \\text{...}, \\boldsymbol{a}_{M}\\big]$，输入样本 $\\boldsymbol{x} \\text{ 为 } \\boldsymbol{R}^{D}$ 可以表示为 $\\boldsymbol{x}=\\boldsymbol{A z}$，其中基向量的系数 $\\boldsymbol{z}=\\big[z_{1}, \\text{...}, z_{M}\\big]$ 称为输入样本的编码。\",\n    \"问题3\": \"什么是完备的基向量？\",\n    \"回答3\": \"完备的基向量指的是一组基向量刚好可以支撑相应维度的欧氏空间。如果 $M$ 个基向量可以支撑 $D$ 维的欧氏空间且 $M=D$，则这组基向量是完备的。\",\n    \"问题4\": \"过完备基向量是指什么？\",\n    \"回答4\": \"过完备基向量是指基向量个数远远大于其支撑空间维度。如果 $M$ 个基向量可以支撑 $D$ 维的欧氏空间且 $M>D$，则这组基向量是过完备的（overcomplete），具有冗余性。\",\n    \"问题5\": \"为什么在稀疏编码中需要找到过完备的基向量？\",\n    \"回答5\": \"在稀疏编码中，通过找到过完备的基向量（$M>D$），可以引入冗余性，使得对于一个输入样本存在多种有效的编码方式。加上稀疏性限制后，可以减少解空间的大小，得到唯一的稀疏编码，从而更好地表示输入样本。\",\n    \"问题6\": \"稀疏性衡量函数在稀疏编码中起什么作用？\",\n    \"回答6\": \"稀疏性衡量函数用于衡量向量的稀疏性，即非零元素的比例。在稀疏编码中，稀疏性衡量函数 $\\rho(\\boldsymbol{z})$ 通常与目标函数一起使用，帮助控制编码的稀疏性强度，从而得到更加稀疏的表示。\",\n    \"问题7\": \"稀疏性衡量函数常用的选择有哪些？\",\n    \"回答7\": \"稀疏性衡量函数常用的选择包括 $\\text{ℓ}_1$ 范数、对数函数和指数函数。其中 $\\rho(\\boldsymbol{z})=\\text{∑}_{m=1}^{M}\\big|z_{m}\\big|$ 是 $\\text{ℓ}_1$ 范数，$\\rho(\\boldsymbol{z})=\\text{∑}_{m=1}^{M}\\text{log}\\big(1+z_{m}^{2}\\big)$ 是对数函数，$\\rho(\\boldsymbol{z})=\\text{∑}_{m=1}^{M}-\\text{exp}\\big(-z_{m}^{2}\\big)$ 是指数函数。\",\n    \"问题8\": \"稀疏编码的目标函数是如何定义的？\",\n    \"回答8\": \"稀疏编码的目标函数定义为 $\\text{ℒ}(\\boldsymbol{A}, \\boldsymbol{Z})=\\text{∑}_{n=1}^{N}\\big(\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710496488,
+        "model": "gpt-3.5-turbo-0125",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4f2ebda25a",
+        "usage": {
+            "completion_tokens": 1316,
+            "prompt_tokens": 4258,
+            "total_tokens": 5574
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo",
+            "temperature": 0.1,
+            "frequency_penalty": 0.05,
+            "presence_penalty": 0.05
+        }
+    },
+    {
+        "id": "chatcmpl-92ybg9uaFX8VXTu1kR9Chhli5cdLC",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"稀疏编码与哺乳动物视觉系统中的简单细胞感受野有何联系？\",\n    \"回答1\": \"稀疏编码是受哺乳动物视觉系统中简单细胞感受野启发的模型。在哺乳动物的初级视觉皮层中，每个神经元仅对处于其感受野中特定的刺激信号（如特定方向的边缘、条纹等特征）做出响应。这种局部感受野具有空间局部性、方向性和带通性，即外界信息经过编码后仅有一小部分神经元激活，表现出很高的稀疏性。\",\n    \"问题2\": \"稀疏编码中的线性编码是如何定义的？\",\n    \"回答2\": \"在数学上，线性编码是指给定一组基向量 $\\boldsymbol{A}=\\big[\\boldsymbol{a}_{1}, \\text{...}, \\boldsymbol{a}_{M}\\big]$，将输入样本 $\\boldsymbol{x} \\text{ 且 } \\boldsymbol{x} \\text{ 为 } \\text{R}^{D}$ 表示为这些基向量的线性组合，即 $\\boldsymbol{x} =\\text{∑}_{m=1}^{M} z_{m} \\boldsymbol{a}_{m} =\\boldsymbol{A z}$。\",\n    \"问题3\": \"稀疏编码中的完备性是指什么？\",\n    \"回答3\": \"如果 $M$ 个基向量刚好可以支撑 $M$ 维的欧氏空间，则这 $M$ 个基向量是完备的。如果 $M$ 个基向量可以支撑 $D$ 维的欧氏空间，并且 $M>D$，则这 $M$ 个基向量是过完备的（overcomplete）。过完备基向量个数远远大于其支撑空间维度，因此这些基向量一般不具备独立、正交等性质。\",\n    \"问题4\": \"稀疏编码中的稀疏性衡量函数有哪些常见的选择？\",\n    \"回答4\": \"稀疏性衡量函数有多种选择。最直接的衡量向量 $\\boldsymbol{z}$ 稀疏性的函数是 $\\text{ℓ}_0$ 范数，但由于 $\\text{ℓ}_0$ 范数不满足连续可导，因此在实际中通常使用 $\\text{ℓ}_1$ 范数、对数函数或指数函数等作为稀疏性衡量函数。\",\n    \"问题5\": \"稀疏编码的目标函数是如何定义的？\",\n    \"回答5\": \"给定一组 $N$ 个输入向量 $\\boldsymbol{x}^{(1)}, \\text{...}, \\boldsymbol{x}^{(N)}$，其稀疏编码的目标函数定义为 $\\text{ℒ}(\\boldsymbol{A}, \\boldsymbol{Z})=\\text{∑}_{n=1}^{N}\\big(\\big\\\\|\\boldsymbol{x}^{(n)}-A \\boldsymbol{z}^{(n)}\\big\\\\|^{2}+\\text{η} \\rho\\big(\\boldsymbol{z}^{(n)}\\big)\\big)$，其中 $\\boldsymbol{Z}=\\big[\\boldsymbol{z}^{(1)}, \\text{...}, \\boldsymbol{z}^{(N)}\\big], \\rho(\\bullet)$ 是一个稀疏性衡量函数，$\\text{η}$ 是一个超参数，用来控制稀疏性的强度。\",\n    \"问题6\": \"为了得到稀疏的编码，为什么需要找到一组“过完备”的基向量？\",\n    \"回答6\": \"为了得到稀疏的编码，需要找到一组“过完备”的基向量（即 $M>D$），因为在过完备基向量之间往往会存在一些冗余性。通过加上稀疏性限制，可以减少解空间的大小，得到“唯一”的稀疏编码。\",\n    \"问题7\": \"稀疏性衡量函数中的稀疏性是如何定义的？\",\n    \"回答7\": \"对于一个向量 $\\boldsymbol{z} \\text{ 且 } \\boldsymbol{z} \\text{ 为 } \\text{R}^{M}$，其稀疏性定义为非零元素的比例。如果一个向量只有很少的几个非零元素，就说这个向量是稀疏的。稀疏性衡量函数 $\\rho(\\boldsymbol{z})$ 是给向量 $\\boldsymbol{z}$ 一个标量分数。$\\boldsymbol{z}$ 越稀疏，$\\rho(\\boldsymbol{z})$ 越小。\",\n    \"问题8\": \"带通性在稀疏编码中是指什么？\",\n    \"回答8\": \"带通性是指不同尺度下空间结构的敏感性。在稀疏编码中，带通性可以理解为对不同频率范围的信号敏感，并且能够容许某个频率范围的信号通过，同时屏蔽其他频段的特性。\",\n    \"问题9\": \"稀疏编码中常用的稀疏性衡量函数有哪些实际应用？\",\n    \"回答9\": \"在实际中，稀疏性衡量函数通常使用 $\\text{ℓ}_1$ 范数、对数函数或指数函数等。这些函数能够有效地衡量向量的稀疏性，并且在实际应用中得到了广泛使用。\",\n    \"问题10\": \"如何定义“过完备”基向量？\",\n    \"回答10\": \"“过完备”基向量是指基向量个数远远大于其支撑空间维度。因此这些基向量一般不具备独立、正交等性质。在稀疏编码中，需要找到一组“过完备”的基向量来进行编码，以实现更好的稀疏性和信息表示能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710496656,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1715,
+            "prompt_tokens": 4258,
+            "total_tokens": 5973
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.1,
+            "presence_penalty": 0.1
+        }
+    }
+]

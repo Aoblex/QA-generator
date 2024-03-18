@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "8.3. 1 检验统计量的确定",
+        "content_length": 983,
+        "content": "Title: 8.3. 1 检验统计量的确定\nContent:\n两个总体参数检验的主要内容有: 两个总体均值之差的检验, 两个总体比例之差的检验, 两个总体方差比的检验。与一个总体参数的检验类似, 两个总体参数的检验也涉及检验统计量的选择问题。选择什么检验统计量取决于被检验参数的抽样分布, 而抽样分布与样本量大小和总体方差 $\\sigma^{2}$ 是否已知都有关系。\n\n两个总体均值之差的检验中可能出现的情况有:\n\n(1) 总体方差 $\\sigma_{1}^{2}, \\sigma_{2}^{2}$ 已知或未知。\n\n在 $\\sigma_{1}^{2}, \\sigma_{2}^{2}$ 已知的条件下, 由抽样分布理论可知, 样本统计量服从 $z$ 分布; 而在 $\\sigma_{1}^{2}, \\sigma_{2}^{2}$未知的条件下, 样本统计量服从 $t$ 分布。故当 $\\sigma_{1}^{2}, \\sigma_{2}^{2}$ 已知时, 可以使用 $z$ 检验; 当 $\\sigma_{1}^{2}, \\sigma_{2}^{2}$未知时, 可以使用 $t$ 检验。\n\n(2) $n\\left(n_{1}, n_{2}\\right)$ 较大或较小。\n\n当样本量 $n_{1}, n_{2}$ 都较大时, 如果总体方差 $\\sigma_{1}$ 和 $\\sigma_{2}$ 未知, 可以用样本方差 $s_{1}^{2}, s_{2}^{2}$ 替代, 这时, 样本统计量近似服从 $z$ 分布, 采用 $z$ 作为检验统计量是可行的。但是, 当 $n_{1}$或 $n_{2}$ 不大时, 如果 $\\sigma_{1}^{2}, \\sigma_{2}^{2}$ 未知, 就应该采用 $t$ 作为检验统计量。\n\n两个总体比例之差的检验中, 一般采用 $z$ 统计量, 其理由与前一节总体比例的检验中采用 $z$ 统计量的理由相同。\n\n两个总体方差比的检验中, 正如第 6 章所讨论的, 此时样本统计量服从自由度为 $n_{1}-1$ 和 $n_{2}-1$ 的 $F$ 分布, 在这种情况下使用 $F$ 作为检验统计量。\n\n上述讨论可以归纳为图 8-11。\n\n\\begin{center}\n\\end{center}\n\n图 8-11 检验统计量的确定"
+    },
+    {
+        "id": "chatcmpl-930jIcdWN3VATTlloV2IcOSRkQo49",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"两个总体参数检验的主要内容有哪些？\",\n    \"回答1\": \"两个总体参数检验的主要内容包括：两个总体均值之差的检验、两个总体比例之差的检验、两个总体方差比的检验。这些检验涉及选择适当的检验统计量，以进行参数假设检验。\",\n    \"问题2\": \"两个总体均值之差的检验中，$\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}}}}}}}$\",\n    \"回答2\": \"在两个总体均值之差的检验中，可能出现的情况包括：（1）总体方差 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}$ 已知或未知；（2）样本量 $n_{1}, n_{2}$ 较大或较小。根据这些情况，选择适当的检验统计量进行假设检验。\",\n    \"问题3\": \"在两个总体均值之差的检验中，当总体方差 $\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}$ 已知时，可以使用什么分布进行假设检验？\",\n    \"回答3\": \"在两个总体均值之差的检验中，当总体方差 $\\boldsymbol{\\boldsymbol{1}^{2}, \\boldsymbol{2}^{2}}$ 已知时，根据抽样分布理论可知，样本统计量服从 $\\boldsymbol{z}$ 分布。因此，可以使用 $\\boldsymbol{z}$ 检验作为检验统计量。\",\n    \"问题4\": \"在两个总体均值之差的检验中，当总体方差 $\\boldsymbol{\\boldsymbol{1}^{2}, \\boldsymbol{2}^{2}}$ 未知时，可以使用什么分布进行假设检验？\",\n    \"回答4\": \"在两个总体均值之差的检验中，当总体方差 $\\boldsymbol{1}^{2}, \\boldsymbol{2}^{2}$ 未知时，根据抽样分布理论可知，样本统计量服从 $\\boldsymbol{t}$ 分布。因此，可以使用 $\\boldsymbol{t}$ 检验作为检验统计量。\",\n    \"问题5\": \"在两个总体均值之差的检验中，当样本量较大时，采用什么分布进行假设检验？\",\n    \"回答5\": \"在两个总体均值之差的检验中，当样本量 $n_{1}, n_{2}$ 都较大时，并且总体方差 $\\boldsymbol{1}$ 和 $\\boldsymbol{2}$ 未知时，可以用样本方差 $\\boldsymbol{s_{1}^{2}, s_{2}^{2}}$ 替代。这时，样本统计量近似服从 $\\boldsymbol{z}$ 分布，采用 $\\boldsymbol{z}$ 作为检验统计量是可行的。\",\n    \"问题6\": \"在两个总体均值之差的检验中，当样本量较小时应该采用什么分布进行假设检验？\",\n    \"回答6\": \"在两个总体均值之差的检验中，当 $n_{1}$ 或 $n_{2}$ 不大时，并且 $\\boldsymbol{1}^{2}, \\boldsymbol{2}^{2}$ 未知时，应该采用 $\\boldsymbol{t}$ 分布作为检验统计量。\",\n    \"问题7\": \"在两个总体比例之差的检验中一般采用什么统计量？\",\n    \"回答7\": \"在两个总体比例之差的检验中一般采用 $\\boldsymbol{z}$ 统计量。这是因为与前一节总体比例的检验相似，在这种情况下也适合采用 $\\boldsymbol{z}$ 统计量。\",\n    \"问题8\": \"在两个总体方差比的检验中，样本统计量服从什么分布？\",\n    \"回答8\": \"在两个总体方差比的检验中，样本统计量服从自由度为 $\\boldsymbol{n_{1}-1}$ 和 $\\boldsymbol{n_{2}-1}$ 的 $\\boldsymbol{F}$ 分布。因此，在这种情况下应该使用 $\\boldsymbol{F}$ 作为检验统计量。\",\n    \"问题9\": \"选择何种检验统计量取决于哪些因素？\",\n    \"回答9\": \"选择何种检验统计量取决于被检验参数的抽样分布、样本量大小和总体方差 $\\boldsymbol{\\text{已知或未知}}$。具体而言，取决于被检验参数是否已知、样本量大小以及总体方差是否已知等因素。\",\n    \"问题10\": \"图 8-11 中的“检验统计量的确定”是指什么？\",\n    \"回答10\": \"图 8-11 中的“检验统计量的确定”指的是根据不同情况和条件选择适当的检验统计量进行假设检验。根据被检验参数是否已知、样本量大小以及总体方差是否已知等因素来确定合适的统计量。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710504816,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1506,
+            "prompt_tokens": 3289,
+            "total_tokens": 4795
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

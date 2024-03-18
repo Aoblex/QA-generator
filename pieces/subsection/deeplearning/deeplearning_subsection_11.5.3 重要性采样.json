@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "11.5.3 重要性采样",
+        "content_length": 1300,
+        "content": "Title: 11.5.3 重要性采样\nContent:\n如果采样的目的是计算分布 $p(x)$ 下函数 $f(x)$ 的期望, 那么实际上抽取的样本不需要严格服从分布 $p(x)$. 也可以通过另一个分布, 即提议分布 $q(x)$, 直接采样并估计 $\\mathbb{E}_{p}[f(x)]$.\n\n函数 $f(x)$ 在分布 $p(x)$ 下的期望可以写为\n\n\n\\begin{align*}\n\\mathbb{E}_{p}[f(x)] & =\\int_{x} f(x) p(x) \\mathrm{d} x  \\tag{11.99}\\\\\n& =\\int_{x} f(x) \\frac{p(x)}{q(x)} q(x) \\mathrm{d} x  \\tag{11.100}\\\\\n& =\\int_{x} f(x) w(x) q(x) \\mathrm{d} x  \\tag{11.101}\\\\\n& =\\mathbb{E}_{q}[f(x) w(x)] . \\tag{11.102}\n\\end{align*}\n\n\n其中 $w(x)$ 称为重要性权重.\n\n重要性采样 (Importance Sampling) 是通过引入重要性权重, 将分布 $p(x)$下 $f(x)$ 的期望变为在分布 $q(x)$ 下 $f(x) w(x)$ 的期望, 从而可以近似为\n\n\n\\begin{equation*}\n\\hat{f}_{N}=\\frac{1}{N}\\left(f\\left(x^{(1)}\\right) w\\left(x^{(1)}\\right)+\\cdots+f\\left(x^{(N)}\\right) w\\left(x^{(N)}\\right)\\right), \\tag{11.103}\n\\end{equation*}\n\n\n其中 $x^{(1)}, \\cdots, x^{(N)}$ 为独立从 $q(x)$ 中随机抽取的点.\n\n重要性采样也可以在只知道未归一化的分布 $\\hat{p}(x)$ 的情况下计算函数 $f(x)$的期望.\n\n\n\\begin{align*}\n\\mathbb{E}_{p}[f(x)] & =\\int_{x} f(x) \\frac{\\hat{p}(x)}{Z} \\mathrm{~d} x  \\tag{11.104}\\\\\n& =\\frac{\\int_{x} \\hat{p}(x) f(x) d x}{\\int_{x} \\hat{p}(x) \\mathrm{d} x}  \\tag{11.105}\\\\\n& \\approx \\frac{\\sum_{n=1}^{N} f\\left(x^{(n)}\\right) \\hat{w}\\left(x^{(n)}\\right)}{\\sum_{n=1}^{N} \\hat{w}\\left(x^{(n)}\\right)}, \\tag{11.106}\n\\end{align*}\n\n\n其中 $\\hat{w}(x)=\\frac{\\hat{p}(x)}{q(x)}, x^{(1)}, \\cdots, x^{(N)}$ 为独立从 $q(x)$ 中随机抽取的点."
+    },
+    {
+        "id": "chatcmpl-92zWIoTN6tRZojtPIpKIeFPqyaBr0",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"重要性采样中的提议分布 $q(x)$ 有什么作用？\",\n    \"回答1\": \"在重要性采样中，提议分布 $q(x)$ 的作用是直接采样并估计函数 $f(x)$ 在分布 $p(x)$ 下的期望 $\\text{E}_{p}[f(x)]$。通过引入提议分布 $q(x)$，可以将原本在分布 $p(x)$ 下的期望转化为在分布 $q(x)$ 下的期望，从而实现对期望的近似计算。\",\n    \"问题2\": \"重要性采样中的重要性权重 $w(x)$ 是如何定义的？\",\n    \"回答2\": \"在重要性采样中，重要性权重 $w(x)$ 定义为 $w(x) = \\frac{p(x)}{q(x)}$。它表示了在提议分布 $q(x)$ 下采样得到的样本点 $x$ 对于计算函数 $f(x)$ 在分布 $p(x)$ 下的期望的贡献。\",\n    \"问题3\": \"重要性采样是如何通过引入重要性权重来近似计算函数的期望的？\",\n    \"回答3\": \"重要性采样通过引入重要性权重，将原本在分布 $p(x)$ 下函数 $f(x)$ 的期望转化为在分布 $q(x)$ 下 $f(x) w(x)$ 的期望。然后利用从提议分布 $q(x)$ 中随机抽取的样本点，通过加权平均的方式近似计算函数的期望。\",\n    \"问题4\": \"重要性采样中的近似计算公式 $\\text{hat}f_N$ 是如何定义的？\",\n    \"回答4\": \"在重要性采样中，近似计算公式 $\\text{hat}f_N$ 定义为 $\\text{hat}f_N = \\frac{1}{N}\\big(f\\big(x^{(1)}\\big) w\\big(x^{(1)}\\big) + \\text{...} + f\\big(x^{(N)}\\big) w\\big(x^{(N)}\\big)\\big)$，其中 $x^{(1)}, \\text{...}, x^{(N)}$ 为独立从提议分布 $q(x)$ 中随机抽取的点。\",\n    \"问题5\": \"重要性采样可以在什么情况下计算函数的期望？\",\n    \"回答5\": \"重要性采样可以在只知道未归一化的分布 $\\text{hat}p(x)$ 的情况下计算函数 $f(x)$ 的期望。通过引入未归一化的分布 $\\text{hat}p(x)$ 和提议分布 $q(x)$，可以利用近似计算公式来对函数的期望进行估计。\",\n    \"问题6\": \"在重要性采样中，未归一化的分布 $\\text{hat}p(x)$ 是如何与函数 $f(x)$ 的期望相关联的？\",\n    \"回答6\": \"在重要性采样中，函数 $f(x)$ 在分布 $p(x)$ 下的期望可以通过未归一化的分布 $\\text{hat}p(x)$ 来近似计算。具体而言，通过未归一化的分布 $\\text{hat}p(x)$ 和提议分布 $q(x)$ 的关系，利用近似计算公式可以对函数的期望进行估计。\",\n    \"问题7\": \"重要性采样中的 $\\text{hat}w(x)$ 是如何定义的？\",\n    \"回答7\": \"在重要性采样中，$\\text{hat}w(x)=\\frac{\\text{hat}p(x)}{q(x)}$，表示了未归一化的分布 $\\text{hat}p(x)$ 相对于提议分布 $q(x)$ 的权重。通过引入 $\\text{hat}w(x)$，可以利用近似计算公式来对函数的期望进行估计。\",\n    \"问题8\": \"为什么实际上抽取的样本不需要严格服从分布 $p(x)$？\",\n    \"回答8\": \"实际上抽取的样本不需要严格服从分布 $p(x)$，是因为可以通过另一个分布，即提议分布 $q(x)$，直接采样并估计函数在分布 $p(x)$ 下的期望。这种灵活性使得重要性采样能够更加高效地进行近似计算。\",\n    \"问题9\": \"重要性采样相比直接从目标分布中抽取样本有什么优势？\",\n    \"回答9\": \"相比直接从目标分布中抽取样本，重要性采样能够通过引入提议分布来实现对函数在目标分布下期望的近似计算。这种方法不需要严格依赖于目标分布，能够更加灵活地进行采样和估计，尤其适用于复杂或高维度的概率分布。\",\n    \"问题10\": \"重要性采样如何利用随机抽取的点来进行近似计算？\",\n    \"回答10\": \"重要性采样利用独立从提议分布中随机抽取的点来进行近似计算。通过对每个抽取点应用相应的权重，并进行加权平均，从而实现对函数在目标分布下期望值的近似估计。这种方法能够更灵活地适应不同类型和复杂度的概率分布。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710500166,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1505,
+            "prompt_tokens": 3262,
+            "total_tokens": 4767
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

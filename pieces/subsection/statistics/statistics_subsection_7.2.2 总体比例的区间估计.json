@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "7.2.2 总体比例的区间估计",
+        "content_length": 1436,
+        "content": "Title: 7.2.2 总体比例的区间估计\nContent:\n这里只讨论大样本情况下总体比例的估计问题。(1) 由样本比例 $p$ 的抽样分布可知, 当样本量足够大时, 比例 $p$ 的抽样分布可用正态分布近似。 $p$ 的数学期望为 $E(p)=\\pi ; p$ 的方差为 $\\sigma_{p}^{2}=\\frac{\\pi(1-\\pi)}{n}$ 。样本比例经标准化后的随机变量服从标准正态分布, 即\n\n\n\\begin{equation*}\nz=\\frac{p-\\pi}{\\sqrt{\\pi(1-\\pi) / n}} \\sim N(0,1) \\tag{7.6}\n\\end{equation*}\n\n\n与总体均值的区间估计类似, 在样本比例 $p$ 的基础上加减估计误差 $z_{\\alpha / 2} \\sigma_{p}$, 即得总体比例 $\\pi$ 在 $1-\\alpha$ 置信水平下的置信区间为:\n\n\n\\begin{equation*}\np \\pm z_{\\alpha / 2} \\sqrt{\\frac{\\pi(1-\\pi)}{n}} \\tag{7.7}\n\\end{equation*}\n\n\n用式 (7.7) 计算总体比例 $\\pi$ 的置信区间时, $\\pi$ 值应该是已知的。但实际情况不然, $\\pi$ 值恰好是要估计的, 所以, 需要用样本比例 $p$ 来代替 $\\pi$ 。这时, 总体比例的置信区间可表示为:\n\n\n\\begin{equation*}\np \\pm z_{\\alpha / 2} \\sqrt{\\frac{p(1-p)}{n}} \\tag{7.8}\n\\end{equation*}\n\n\n式中, $\\alpha$ 是显著性水平; $z_{\\alpha / 2}$ 是标准正态分布右侧面积为 $\\alpha / 2$ 时的 $z$ 值; $z_{\\alpha / 2} \\sqrt{\\frac{p(1-p)}{n}}$ 是估计总体比例时的估计误差。这就是说, 总体比例的置信区间由两部分组成：点估计值和描述估计量精度的土值, 这个土值称为估计误差。\n\n\\section*{例 7.4}\n某城市想要估计下岗职工中女性所占的比例, 随机抽取了 100 个下岗职工, 其中 65\n\n(1) 对于总体比例的估计, 确定样本量是否足够大的一般经验规则是: 区间 $p \\pm 2 \\sqrt{p(1-p) / 2}$ 中不包含 0 或 1 ,或者要求 $n p \\geqslant 5$ 和 $n(1-p) \\geqslant 5$ 。\\\\\n人为女职工。试以 $95 \\%$ 的置信水平估计该城市下岗职工中女性比例的置信区间。\n\n——解 已知 $n=100, z_{\\alpha / 2}=1.96$ 。根据抽样结果计算的样本比例为：\n\n$$\np=\\frac{65}{100}=65 \\%\n$$\n\n根据式(7.8) 得:\n\n$$\np \\pm z_{\\alpha / 2} \\sqrt{\\frac{p(1-p)}{n}}=65 \\% \\pm 1.96 \\times \\sqrt{\\frac{65 \\% \\times(1-65 \\%)}{100}}\n$$\n\n即 $65 \\% \\pm 9.35 \\%=(55.65 \\%, 74.35 \\%)$, 该城市下岗职工中女性比例的 $95 \\%$ 的置信区间为 $55.65 \\% \\sim 74.35 \\%$ 。"
+    },
+    {
+        "id": "chatcmpl-92zexjhx1OTTk4GYkIKOnjIw8jiwc",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"在大样本情况下，总体比例的抽样分布可以用什么分布来近似？\",\n    \"回答1\": \"在大样本情况下，总体比例 $p$ 的抽样分布可以用正态分布来近似。\",\n    \"问题2\": \"总体比例 $p$ 的数学期望和方差分别是多少？\",\n    \"回答2\": \"总体比例 $p$ 的数学期望为 $E(p)=\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\\frac{\\frac{pi(1-pi)}{n}$。\",\n    \"问题4\": \"在计算总体比例 $\\boldsymbol{pi}$ 的置信区间时，为什么需要用样本比例 $\\boldsymbol{p}$ 代替 $\\boldsymbol{pi}$？\",\n    \"回答4\": \"在计算总体比例 $\\boldsymbol{pi}$ 的置信区间时，需要用样本比例 $\\boldsymbol{p}$ 代替 $\\boldsymbol{pi}$，因为实际情况中 $\\boldsymbol{pi}$ 值通常是未知的，需要通过样本统计量 $\\boldsymbol{p}$ 来对 $\\boldsymbol{pi}$ 进行估计。\",\n    \"问题5\": \"如何计算某城市下岗职工中女性比例的 $95\\text{%}$ 置信区间？\",\n    \"回答5\": \"根据已知的样本量 $n=100$ 和抽样结果计算的样本比例 $p=65\\text{%}$，利用式(7.8)计算得到置信区间为 $65\\text{%} \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{%} \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{%} \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{ } \\text{%}=(55.65\\text{%}, 74.35\\text{%})$。因此，该城市下岗职工中女性比例的 $95\\text{%}$ 置信区间为 $55.65\\text{%} \\text{-} 74.35\\text{%}$。\",\n    \"问题6\": \"一般经验规则中提到的区间 $p \\text{-} 2\\big(p(1-p) / 2\\big)$ 不包含 0 或 1 的含义是什么？\",\n    \"回答6\": \"一般经验规则中提到的区间 $p \\text{-} 2\\big(p(1-p) / 2\\big)$ 不包含 0 或 1 表明置信区间的宽度不应该超过总体比例范围的一半。这是为了确保置信区间合理且可靠。\",\n    \"问题7\": \"在例 7.4 中，如何确定是否满足总体比例估计的大样本要求？\",\n    \"回答7\": \"在例 7.4 中，确定是否满足总体比例估计的大样本要求可以通过一般经验规则：区间 $p \\text{-} 2\\big(p(1-p) / 2\\big)$ 中不包含 0 或 1，或者要求 $n p \\bigg(\\frac{}{}\\bigg)geqslant 5$ 和 $n(1-p) geqslant 5$。这些条件可以帮助判断样本量是否足够大。\",\n    \"问题8\": \"在总体比例的置信区间中，$\\frac{}{}$ 是指什么？\",\n    \"回答8\": \"$z_{\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\frac{}{}\\fra\"} \n    \n",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710500703,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1201,
+            "prompt_tokens": 3533,
+            "total_tokens": 4734
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

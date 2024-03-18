@@ -34,7 +34,7 @@ class Text:
         # Segmenting
         sections = []
         for level, title, content in matches:
-            final_content = f"Title: {title}\nContent: {content.strip()}"
+            final_content = f"标题: {title}\n内容:\n{content.strip()}"
             sections.append(SectionPiece(
                 source = self.source,
                 content = final_content,
@@ -51,14 +51,14 @@ class Text:
         xiti_pattern = r'\\begin\{xiti\}([\s\S]*?)\\end\{xiti\}'
         self.content = re.sub(xiti_pattern, '', self.content)
 
-        pattern = re.compile(r'\\subsection\{([^}]+)\}([\s\S]*?)(?=\\subsection|\Z)',
+        pattern = re.compile(r'\\(subsection|section)\*?\{([^}]+)\}([\s\S]*?)(?=\\subsection|\Z)',
                              re.MULTILINE | re.DOTALL)
         matches = pattern.findall(self.content)
 
         # Segmenting
         subsections = []
-        for title, content in matches:
-            final_content = f"Title: {title}\nContent: {content.strip()}"
+        for level, title, content in matches:
+            final_content = f"Title: {title}\nContent:\n{content.strip()}"
             subsections.append(SubsectionPiece(
                 source = self.source,
                 content = final_content,

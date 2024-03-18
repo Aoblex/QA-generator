@@ -1,0 +1,11 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "9.1.5 堆叠自编码器",
+        "content_length": 281,
+        "content": "Title: 9.1.5 堆叠自编码器\nContent:\n对于很多数据来说, 仅使用两层神经网络的自编码器还不足以获取一种好的数据表示. 为了获取更好的数据表示, 我们可以使用更深层的神经网络. 深层神经网络作为自编码器提取的数据表示一般会更加抽象, 能够更好地捕捉到数据的语义信息. 在实践中经常使用逐层堆叠的方式来训练一个深层的自编码器,称为堆叠自编码器 (Stacked Auto-Encoder, SAE) . 堆叠自编码器一般可以采用逐层训练 ( Layer-Wise Training ) 来学习网络参数 [Bengio et al., 2007]."
+    },
+    {},
+    {}
+]

@@ -1,0 +1,71 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "9.1.3 自编码器",
+        "content_length": 2157,
+        "content": "Title: 9.1.3 自编码器\nContent:\n自编码器 (Auto-Encoder, AE ) 是通过无监督的方式来学习一组数据的有效编码 (或表示).\n\n假设有一组 $D$ 维的样本 $\\boldsymbol{x}^{(n)} \\in \\mathbb{R}^{D}, 1 \\leq n \\leq N$, 自编码器将这组数据映射到特征空间得到每个样本的编码 $\\boldsymbol{z}^{(n)} \\in \\mathbb{R}^{M}, 1 \\leq n \\leq N$, 并且希望这组编码可以重构出原来的样本.\n\n自编码器的结构可分为两部分:\n\n(1) 编码器 ( Encoder) $f: \\mathbb{R}^{D} \\rightarrow \\mathbb{R}^{M}$.\n\n(2) 解码器 ( Decoder) $g: \\mathbb{R}^{M} \\rightarrow \\mathbb{R}^{D}$.\n\n自编码器的学习目标是最小化重构错误 ( Reconstruction Error) :\n\n\n\\begin{align*}\n\\mathcal{L} & =\\sum_{n=1}^{N}\\left\\|\\boldsymbol{x}^{(n)}-g\\left(f\\left(\\boldsymbol{x}^{(n)}\\right)\\right)\\right\\|^{2}  \\tag{9.18}\\\\\n& =\\sum_{n=1}^{N}\\left\\|\\boldsymbol{x}^{(n)}-f \\circ g\\left(\\boldsymbol{x}^{(n)}\\right)\\right\\|^{2} \\tag{9.19}\n\\end{align*}\n\n\n如果特征空间的维度 $M$ 小于原始空间的维度 $D$, 自编码器相当于是一种降维或特征抽取方法. 如果 $M \\geq D$, 一定可以找到一组或多组解使得 $f \\circ g$ 为单位函数 (Identity Function), 并使得重构错误为 0 . 然而, 这样的解并没有太多的单位函数 $I(x)=x$.意义. 但是, 如果再加上一些附加的约束, 就可以得到一些有意义的解, 比如编码的稀疏性、取值范围, $f$ 和 $g$ 的具体形式等. 如果我们让编码只能取 $K$ 个不同的值 $(K<N)$, 那么自编码器就可以转换为一个 $K$ 类的聚类 ( Clustering) 问题.\n\n最简单的自编码器是如图9.2所示的两层神经网络. 输入层到隐藏层用来编码, 隐藏层到输出层用来解码, 层与层之间互相全连接.\n\n\n\n图 9.2 两层网络结构的自编码器\n\n对于样本 $\\boldsymbol{x}$, 自编码器的中间隐藏层的活性值为 $\\boldsymbol{x}$ 的编码, 即\n\n\n\\begin{equation*}\n\\boldsymbol{z}=f\\left(\\boldsymbol{W}^{(1)} \\boldsymbol{x}+\\boldsymbol{b}^{(1)}\\right) \\tag{9.20}\n\\end{equation*}\n\n\n自编码器的输出为重构的数据\n\n\n\\begin{equation*}\n\\boldsymbol{x}^{\\prime}=f\\left(\\boldsymbol{W}^{(2)} \\boldsymbol{z}+\\boldsymbol{b}^{(2)}\\right) \\tag{9.21}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{W}^{(1)}, \\boldsymbol{W}^{(2)}, \\boldsymbol{b}^{(1)}, \\boldsymbol{b}^{(2)}$ 为网络参数, $f(\\cdot)$ 为激活函数. 如果令 $\\boldsymbol{W}^{(2)}$ 等于 $\\boldsymbol{W}^{(1)}$的转置, 即 $\\boldsymbol{W}^{(2)}=\\boldsymbol{W}^{(1)^{\\top}}$, 称为捆绑权重 (Tied Weight). 捆绑权重自编码器的参数更少, 因此更容易学习. 此外, 捆绑权重还在一定程度上起到正则化的作用.\n\n给定一组样本 $\\boldsymbol{x}^{(n)} \\in[0,1]^{D}, 1 \\leq n \\leq N$, 其重构错误为\n\n\n\\begin{equation*}\n\\left.\\mathcal{L}=\\sum_{n=1}^{N} \\| \\boldsymbol{x}^{(n)}-\\boldsymbol{x}^{(n)}\\right)\\left\\|^{2}+\\lambda\\right\\| \\boldsymbol{W} \\|_{F}^{2} \\tag{9.22}\n\\end{equation*}\n\n\n其中 $\\lambda$ 为正则化项系数. 通过最小化重构错误, 可以有效地学习网络的参数.\n\n我们使用自编码器是为了得到有效的数据表示, 因此在训练结束后, 我们一般会去掉解码器, 只保留编码器. 编码器的输出可以直接作为后续机器学习模型的输入."
+    },
+    {
+        "id": "chatcmpl-92yZuqxGtvErlrliliSLkA45FYKGC",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"自编码器是通过什么方式来学习一组数据的有效编码？\",\n    \"回答1\": \"自编码器是通过无监督的方式来学习一组数据的有效编码（或表示）。它将数据映射到特征空间得到每个样本的编码，并希望这组编码可以重构出原始样本。\",\n    \"问题2\": \"自编码器的结构包括哪两部分？\",\n    \"回答2\": \"自编码器的结构包括编码器（Encoder）$f: \\text{R}^{D} \\rightarrow \\text{R}^{M}$和解码器（Decoder）$g: \\text{R}^{M} \\rightarrow \\text{R}^{D}$。\",\n    \"问题3\": \"自编码器的学习目标是什么？\",\n    \"回答3\": \"自编码器的学习目标是最小化重构错误（Reconstruction Error），即通过最小化重构误差来学习有效的数据表示。重构错误的计算方式为 $\\text{L} = \\text{∑}_{n=1}^{N} \\big\\\\| \\boldsymbol{x}^{(n)} - g\\big(f\\big(\\boldsymbol{x}^{(n)}\\big)\\big) \\big\\\\|^{2}$。\",\n    \"问题4\": \"自编码器在特征空间维度小于原始空间维度时起到什么作用？\",\n    \"回答4\": \"当特征空间的维度 $M$ 小于原始空间的维度 $D$ 时，自编码器相当于是一种降维或特征抽取方法，可以帮助实现数据的降维处理。\",\n    \"问题5\": \"自编码器的输出如何与原始数据相关联？\",\n    \"回答5\": \"自编码器的输出为重构的数据，即经过解码器处理后得到的数据 $\\boldsymbol{x}^{\\text{'}} = f\\big(\\boldsymbol{W}^{(2)} \\boldsymbol{z} + \\boldsymbol{b}^{(2)}\\big)$。这个输出与原始数据相关联，通过最小化重构错误来学习网络参数。\",\n    \"问题6\": \"什么是捆绑权重自编码器？它有什么优势？\",\n    \"回答6\": \"捆绑权重自编码器是指当解码器的权重矩阵 $\\boldsymbol{W}^{(2)}$ 等于编码器的权重矩阵 $\\boldsymbol{W}^{(1)}$ 的转置时。这种设置使得参数更少，更容易学习，并在一定程度上起到正则化的作用。\",\n    \"问题7\": \"自编码器的重构错误如何计算？\",\n    \"回答7\": \"给定一组样本 $\\boldsymbol{x}^{(n)} \\text{ 且 } 1 \\text{ 为 } n \\text{ 为 } N$，其重构错误通过以下公式计算：$\\text{L} = \\text{∑}_{n=1}^{N} \\big\\\\\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710496546,
+        "model": "gpt-3.5-turbo-0125",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4f2ebda25a",
+        "usage": {
+            "completion_tokens": 1022,
+            "prompt_tokens": 3817,
+            "total_tokens": 4839
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo",
+            "temperature": 0.1,
+            "frequency_penalty": 0.05,
+            "presence_penalty": 0.05
+        }
+    },
+    {
+        "id": "chatcmpl-92yfgL7NowZEOGIMpjznzGfF3Kx7w",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"自编码器是如何学习一组数据的有效编码或表示的？\",\n    \"回答1\": \"自编码器通过无监督的方式，将一组 $D$ 维的样本 $\\boldsymbol{x}^{(n)} \\text{ 且 } 1 \\text{ 为 } n \\text{ 为 } N$ 映射到特征空间，得到每个样本的编码 $\\boldsymbol{z}^{(n)} \\text{ 且 } 1 \\text{ 为 } n \\text{ 为 } N$。同时，希望这组编码可以重构出原来的样本。自编码器的学习目标是最小化重构错误。\",\n    \"问题2\": \"自编码器的结构包括哪两部分？\",\n    \"回答2\": \"自编码器的结构包括编码器（Encoder）$f: \\boldsymbol{R}^{D} \\rightarrow \\boldsymbol{R}^{M}$ 和解码器（Decoder）$g: \\boldsymbol{R}^{M} \\rightarrow \\boldsymbol{R}^{D}$。\",\n    \"问题3\": \"自编码器的学习目标是什么？\",\n    \"回答3\": \"自编码器的学习目标是最小化重构错误（Reconstruction Error），即通过最小化 $\\text{L}=\\text{sum}_{n=1}^{N}\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big|\\boldsymbol{x}^{(n)}-g\\big(f(\\boldsymbol{x}^{(n)})\\big)\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big|^2$ 来实现。\",\n    \"问题4\": \"当特征空间的维度 $M$ 小于原始空间的维度 $D$ 时，自编码器具有什么作用？\",\n    \"回答4\": \"当特征空间的维度 $M$ 小于原始空间的维度 $D$ 时，自编码器相当于是一种降维或特征抽取方法。它可以帮助实现对高维数据的降维处理，从而减少数据的复杂度和提高计算效率。\",\n    \"问题5\": \"自编码器的捆绑权重指的是什么？它对自编码器有什么影响？\",\n    \"回答5\": \"捆绑权重是指如果让解码器的权重矩阵 $\\boldsymbol{W}^{(2)}$ 等于编码器权重矩阵 $\\boldsymbol{W}^{(1)}$ 的转置，即 $\\boldsymbol{W}^{(2)}=\\boldsymbol{W}^{(1)^{\\top}}$。这种设置使得自编码器的参数更少，更容易学习，并在一定程度上起到正则化的作用。\",\n    \"问题6\": \"自编码器在训练结束后通常会去掉解码器，只保留编码器，这样做的目的是什么？\",\n    \"回答6\": \"在训练结束后，通常会去掉解码器，只保留编码器。这样做的目的是为了得到有效的数据表示。编码器的输出可以直接作为后续机器学习模型的输入，从而实现对数据的更有效表示和处理。\",\n    \"问题7\": \"自编码器如何将样本 $\\boldsymbol{x}$ 映射到特征空间得到其编码？\",\n    \"回答7\": \"对于样本 $\\boldsymbol{x}$，自编码器将其映射到特征空间得到其编码 $\\boldsymbol{z}=f(\\boldsymbol{W}^{(1)} \\boldsymbol{x}+\\boldsymbol{b}^{(1)})$，其中 $\\boldsymbol{W}^{(1)}$ 和 $\\boldsymbol{b}^{(1)}$ 为网络参数，$f(\\boldsymbol{\\bullet})$ 为激活函数。\",\n    \"问题8\": \"自编码器的输出是什么？\",\n    \"回答8\": \"自编码器的输出是重构的数据，即 $\\boldsymbol{x}^{\\text{'}}=f(\\boldsymbol{W}^{(2)} \\boldsymbol{z}+\\boldsymbol{b}^{(2)})$，其中 $\\boldsymbol{W}^{(2)}$ 和 $\\boldsymbol{b}^{(2)}$ 为网络参数。\",\n    \"问题9\": \"给定一组样本 $\\boldsymbol{x}^{(n)} \\text{ 且 } 1 \\text{ 为 } n \\text{ 且 } \\boldsymbol{x}^{(n)} \\text{ 在 } [0,1]^{D}$，如何计算其重构错误？\",\n    \"回答9\": \"给定一组样本 $\\boldsymbol{x}^{(n)} \\text{ 且 } 1 \\text{ 为 } n \\text{ 且 } \\boldsymbol{x}^{(n)} \\text{ 在 } [0,1]^{D}$，其重构错误可以通过计算 $\\text{L}=\\text{sum}_{n=1}^{N}\\big|\\boldsymbol{x}^{(n)}-\\boldsymbol{x}^{(n)}\\big|^2+\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}lambda \\times \\big|\\boldsymbol{W}\\big|_F^2$ 来计算。\",\n    \"问题10\": \"自编码器在训练过程中如何有效地学习网络的参数？\",\n    \"回答10\": \"通过最小化重构错误，即最小化损失函数 $\\text{L}$，可以有效地学习网络的参数。在训练过程中，通过调整网络参数来不断减小重构错误，从而得到更有效的数据表示和更好的模型性能。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710496904,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1616,
+            "prompt_tokens": 3817,
+            "total_tokens": 5433
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.1,
+            "presence_penalty": 0.1
+        }
+    }
+]

@@ -10,10 +10,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 text_filenames = os.listdir(PROCESSOR_INPUT_DIR)
 
 for text_filename in text_filenames:
-    if text_filename != "chapter1.tex": continue
+    # if text_filename != "chapter1.tex": continue
+    if text_filename != "statistics.tex": continue
     text_text = Text(filename=text_filename)
     text_pieces = text_text.segment(strategy="subsection")
-    for text_piece in text_pieces[20:21]:
+    print(len(text_pieces))
+    for text_piece in text_pieces[50:55]:
 
         context = text_piece.piece_info.get("content", None)
         response = {}
@@ -22,7 +24,7 @@ for text_filename in text_filenames:
             logging.error(f"Context in '{text_filename}' not found.")
         elif len(context) <= 300:
             logging.error(f"Context length {len(context)} too short.")
-        elif len(context) >= 5000:
+        elif len(context) >= 6000:
             logging.error(f"Context length {len(context)} too long.")
         else:
             response = QAModel.generate(context=context, model_configs=MODEL_CONFIGS)

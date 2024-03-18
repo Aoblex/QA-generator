@@ -1,0 +1,71 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "9.1.4 稀疏自编码器",
+        "content_length": 1704,
+        "content": "Title: 9.1.4 稀疏自编码器\nContent:\n自编码器除了可以学习低维编码之外, 也能够学习高维的稀疏编码. 假设中间隐藏层 $\\boldsymbol{z}$ 的维度 $M$ 大于输入样本 $\\boldsymbol{x}$ 的维度 $D$, 并让 $\\boldsymbol{z}$ 尽量稀疏, 这就是稀疏自编码器 (Sparse Auto-Encoder) . 和稀疏编码一样, 稀疏自编码器的优点是有很高的可解释性,并同时进行了隐式的特征选择.\n\n通过给自编码器中隐藏层单元 $\\boldsymbol{z}$ 加上稀疏性限制, 自编码器可以学习到数据中一些有用的结构. 给定 $N$ 个训练样本 $\\left\\{\\boldsymbol{x}^{(n)}\\right\\}_{n=1}^{N}$, 稀疏自编码器的目标函数为\n\n\n\\begin{equation*}\n\\left.\\mathcal{L}=\\sum_{n=1}^{N} \\| \\boldsymbol{x}^{(n)}-\\boldsymbol{x}^{(n)}\\right)\\left\\|^{2}+\\eta \\rho(\\boldsymbol{Z})+\\lambda\\right\\| \\boldsymbol{W} \\|^{2} \\tag{9.23}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n其中 $\\boldsymbol{Z}=\\left[\\boldsymbol{z}^{(1)}, \\cdots, \\boldsymbol{z}^{(N)}\\right]$ 表示所有训练样本的编码, $\\rho(\\boldsymbol{Z})$ 为稀疏性度量函数, $\\boldsymbol{W}$表示自编码器中的参数.\n\n稀疏性度量函数 $\\rho(\\boldsymbol{Z})$ 可以使用公式 (9.13) 公式(9.15) 中的稀疏性定义, 分别计算每个编码 $\\boldsymbol{z}^{(n)}$ 的稀疏度, 再进行求和. 此外, $\\rho(\\boldsymbol{Z})$ 还可以定义为一组训练样本中每一个神经元激活的概率.\n\n给定 $N$ 个训练样本, 隐藏层第 $j$ 个神经元平均活性值为\n\n\n\\begin{equation*}\n\\hat{\\rho}_{j}=\\frac{1}{N} \\sum_{n=1}^{N} z_{j}^{(n)} \\tag{9.24}\n\\end{equation*}\n\n\n其中 $\\hat{\\rho}_{j}$ 可以近似地看作第 $j$ 个神经元激活的概率. 我们希望 $\\hat{\\rho}_{j}$ 接近于一个事先给定的值 $\\rho^{*}$, 比如 0.05 , 可以通过 $\\mathrm{KL}$ 距离来衡量 $\\hat{\\rho}_{j}$ 和 $\\rho^{*}$ 的差异, 即\n\n\n\\begin{equation*}\n\\mathrm{KL}\\left(\\rho^{*} \\| \\hat{\\rho}_{j}\\right)=\\rho^{*} \\log \\frac{\\rho^{*}}{\\hat{\\rho}_{j}}+\\left(1-\\rho^{*}\\right) \\log \\frac{1-\\rho^{*}}{1-\\hat{\\rho}_{j}} \\tag{9.25}\n\\end{equation*}\n\n\n如果 $\\hat{\\rho}_{j}=\\rho^{*}$, 则 $\\operatorname{KL}\\left(\\rho^{*} \\| \\hat{\\rho}_{j}\\right)=0$.\n\n稀疏性度量函数定义为\n\n\n\\begin{equation*}\n\\rho(\\boldsymbol{Z})=\\sum_{j=1}^{p} \\mathrm{KL}\\left(\\rho^{*} \\| \\hat{\\rho}_{j}\\right) \\tag{9.26}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-92yaJNxGkNeZjDl5xInDlnvh3gQEG",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"稀疏自编码器相比普通自编码器有什么特点？\",\n    \"回答1\": \"稀疏自编码器除了可以学习低维编码外，还能够学习高维的稀疏编码。通过让中间隐藏层 $\\boldsymbol{z}$ 尽量稀疏，稀疏自编码器能够更好地进行隐式特征选择，具有更高的可解释性。\",\n    \"问题2\": \"稀疏自编码器的目标函数是如何定义的？\",\n    \"回答2\": \"稀疏自编码器的目标函数为 $\\begin{equation*} \\begin{aligned} \\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}= \\tag{9.23} \\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right$\",\n    \"问题3\": \"稀疏性度量函数 $\\rho(\\boldsymbol{Z})$ 的计算方式是怎样的？\",\n    \"回答3\": \"稀疏性度量函数 $\\rho(\\boldsymbol{Z})$ 可以通过计算每个编码 $\\boldsymbol{z}^{(n)}$ 的稀疏度，并进行求和来得到。其中，稀疏性度量函数定义为 $\\rho(\\boldsymbol{Z}) = \\begin{equation*}\\begin{aligned}\\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol{Z}) = \\rho(\\boldsymbol\" ,\n    \"问题4\": \"如何衡量隐藏层第 $j$ 个神经元的稀疏性？\",\n    \"回答4\": \"隐藏层第 $j$ 个神经元的稀疏性可以通过计算其平均活性值 $\\begin{\\frac{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin{\\begin",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710496571,
+        "model": "gpt-3.5-turbo-0125",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4f2ebda25a",
+        "usage": {
+            "completion_tokens": 1982,
+            "prompt_tokens": 3513,
+            "total_tokens": 5495
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo",
+            "temperature": 0.1,
+            "frequency_penalty": 0.05,
+            "presence_penalty": 0.05
+        }
+    },
+    {
+        "id": "chatcmpl-92ygFgWlhHicg7GBRr3wrz1xrNqt2",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"稀疏自编码器相比普通自编码器有什么特点？\",\n    \"回答1\": \"稀疏自编码器除了可以学习低维编码之外，还能够学习高维的稀疏编码。假设中间隐藏层 $\\boldsymbol{z}$ 的维度 $M$ 大于输入样本 $\\boldsymbol{x}$ 的维度 $D$，并让 $\\boldsymbol{z}$ 尽量稀疏，这就是稀疏自编码器。与普通自编码器相比，稀疏自编码器能够更好地学习到数据中一些有用的结构，并具有更高的可解释性和隐式的特征选择能力。\",\n    \"问题2\": \"稀疏自编码器的目标函数是怎样定义的？\",\n    \"回答2\": \"稀疏自编码器的目标函数为 $\\begin{equation*}\\begin{aligned} \\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}= \\tag{9.23} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{} \\\\\\text{}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}\\rho(\\boldsymbol{Z})+\\boldsymbol{W}^{2}\\right)^{2}\\tag{9.23}$，其中 $\\boldsymbol{Z}$ 表示所有训练样本的编码，$\\rho(\\boldsymbol{Z})$ 为稀疏性度量函数，$\\boldsymbol{W}$表示自编码器中的参数。\",\n    \"问题3\": \"如何定义稀疏性度量函数 $\\rho(\\boldsymbol{Z})$？\",\n    \"回答3\": \"稀疏性度量函数 $\\rho(\\boldsymbol{Z})$ 可以使用公式 (9.13) 公式(9.15) 中的稀疏性定义，分别计算每个编码 $\\boldsymbol{z}^{(n)}$ 的稀疏度，再进行求和。此外，$\\rho(\\boldsymbol{Z})$ 还可以定义为一组训练样本中每一个神经元激活的概率。\",\n    \"问题4\": \"隐藏层第 $j$ 个神经元平均活性值 $\\rho_j$ 的计算公式是什么？\",\n    \"回答4\": \"隐藏层第 $j$ 个神经元平均活性值为 $\\begin{equation*}\\begin{aligned} \\begin{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\frac{\\",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710496939,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1356,
+            "prompt_tokens": 3513,
+            "total_tokens": 4869
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.1,
+            "presence_penalty": 0.1
+        }
+    }
+]

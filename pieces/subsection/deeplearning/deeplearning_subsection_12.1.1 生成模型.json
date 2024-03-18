@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "12.1.1 生成模型",
+        "content_length": 3528,
+        "content": "Title: 12.1.1 生成模型\nContent:\n在玻尔兹曼机中, 配分函数 $Z$ 通常难以计算, 因此, 联合概率分布 $p(\\boldsymbol{x})$ 一般通过 $M C M C$ 方法来近似, 生成一组服从 $p(x)$ 分布的样本. 本节介绍基于吉布斯采样的样本生成方法.\n\n吉布斯采样参见第11.5.4.3节。\n\n全条件概率 吉布斯采样需要计算每个变量 $X_{i}$ 的全条件概率 $p\\left(x_{i} \\mid \\boldsymbol{x}_{\\backslash i}\\right)$, 其中 $\\boldsymbol{x}_{\\backslash i}$表示除变量 $X_{i}$ 外其他变量的取值.\n\n定理 12.1 - 坡尔兹曼机中变量的全条件概率：对于玻尔兹曼机中的一个变量 $X_{i}$, 当给定其他变量 $\\boldsymbol{x}_{\\backslash i}$ 时, 全条件概率 $p\\left(x_{i} \\mid \\boldsymbol{x}_{\\backslash i}\\right)$ 为\n\n\n\\begin{align*}\n& p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right)=\\sigma\\left(\\frac{\\sum_{j} w_{i j} x_{j}+b_{i}}{T}\\right),  \\tag{12.5}\\\\\n& p\\left(x_{i}=0 \\mid \\boldsymbol{x}_{\\backslash i}\\right)=1-p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right), \\tag{12.6}\n\\end{align*}\n\n\n其中 $\\sigma(\\cdot)$ 为 Logistic 函数.\n\n证明. 首先, 保持其他变量 $\\boldsymbol{x}_{\\backslash i}$ 不变, 改变变量 $X_{i}$ 的状态, 从 0 (关闭) 和 1 (打开) 之间的能量差异 (Energy Gap ) 为\n\n\n\\begin{equation*}\n\\Delta E_{i}\\left(\\boldsymbol{x}_{\\backslash i}\\right)=E\\left(x_{i}=0, \\boldsymbol{x}_{\\backslash i}\\right)-E\\left(x_{i}=1, \\boldsymbol{x}_{\\backslash i}\\right) \\tag{12.7}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n\n\\begin{equation*}\n=\\sum_{j} w_{i j} x_{j}+b_{i} \\tag{12.8}\n\\end{equation*}\n\n\n其中 $w_{i i}=0, \\forall i$.\n\n又根据玻尔兹曼机的定义可得\n\n\n\\begin{equation*}\nE(\\boldsymbol{x})=-T \\log p(\\boldsymbol{x})-T \\log Z \\tag{12.9}\n\\end{equation*}\n\n\n因此有\n\n\n\\begin{align*}\n\\Delta E_{i}\\left(\\boldsymbol{x}_{\\backslash i}\\right) & =-T \\log p\\left(x_{i}=0, \\boldsymbol{x}_{\\backslash i}\\right)-\\left(-T \\log p\\left(x_{i}=1, \\boldsymbol{x}_{\\backslash i}\\right)\\right)  \\tag{12.10}\\\\\n& =T \\log \\frac{p\\left(x_{i}=1, \\boldsymbol{x}_{\\backslash i}\\right)}{p\\left(x_{i}=0, \\boldsymbol{x}_{\\backslash i}\\right)}  \\tag{12.11}\\\\\n& =T \\log \\frac{p\\left(x_{i}=1, \\mid \\boldsymbol{x}_{\\backslash i}\\right)}{1-p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right)} . \\tag{12.12}\n\\end{align*}\n\n\n结合公式(12.8)和公式(12.12), 得到\n\n\n\\begin{align*}\np\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right) & =\\frac{1}{1+\\exp \\left(-\\frac{\\Delta E_{i}\\left(\\boldsymbol{x}_{\\backslash i}\\right)}{T}\\right)}  \\tag{12.13}\\\\\n& =\\sigma\\left(\\frac{\\sum_{j} w_{i j} x_{j}+b_{i}}{T}\\right) . \\tag{12.14}\n\\end{align*}\n\n\n吉布斯采样 玻尔兹曼机的吉布斯采样过程为: 随机选择一个变量 $X_{i}$, 然后根据其全条件概率 $p\\left(x_{i} \\mid \\boldsymbol{x}_{\\backslash i}\\right)$ 来设置其状态, 即以 $p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right)$ 的概率将变量 $X_{i}$ 设为 1 , 否则为 0 . 在固定温度 $T$ 的情况下, 在运行足够时间之后, 玻尔兹曼机会达到热平衡. 此时, 任何全局状态的概率服从玻尔兹曼分布 $p(\\boldsymbol{x})$, 只与系统的能量有关，与初始状态无关.\n\n要使得玻尔兹曼机达到热平衡, 其收玫速度和温度 $T$ 相关. 当系统温度非常高 $T \\rightarrow \\infty$ 时, $p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right) \\rightarrow 0.5$, 即每个变量状态的改变十分容易, 每一种系统状态都是一样的, 从而很快可以达到热平衡. 当系统温度非常低 $T \\rightarrow 0$ 时, 如果 $\\Delta E_{i}\\left(\\boldsymbol{x}_{\\backslash i}\\right)>0$, 则 $p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right) \\rightarrow 1$; 如果 $\\Delta E_{i}\\left(\\boldsymbol{x}_{\\backslash i}\\right)<0$, 则 $p\\left(x_{i}=1 \\mid \\boldsymbol{x}_{\\backslash i}\\right) \\rightarrow 0$,即有\n\n\\[\nx_{i}= \\begin{cases}1 & \\text { if } \\sum_{j} w_{i j} x_{j}+b_{i} \\geq 0  \\tag{12.15}\\\\ 0 & \\text { otherwise }\\end{cases}\n\\]\n\n因此, 当 $T \\rightarrow 0$ 时, 随机性方法变成了确定性方法. 这时, 玻尔兹曼机退化为一个 Hopfield 网络.\n\n当玻尔兹曼机达到热平衡时, 并不意味其能量最低. 热平衡依然是在所有状态上的一个分布.\\\\\nHopfield 网络参见第8.6.1节。\n\nHopfield 网络是一种确定性的动力系统, 而玻尔兹曼机是一种随机性的动力系统. Hopfield 网络的每次状态更新都会使得系统的能量降低, 而玻尔兹曼机则以一定的概率使得系统的能量上升. 图12.2给出了 Hopfield 网络和玻尔兹曼机在运行时系统能量变化的对比.\n\n\n\n(a) Hopfield 网络\n\n\n\n(b) 玻尔兹曼机\n\n图 12.2 Hopfield 网络和玻尔兹曼机在运行时系统能量变化的对比"
+    },
+    {
+        "id": "chatcmpl-92zXj7jhAfVPXlirnyXIKxKSBOJDa",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"在玻尔兹曼机中，为什么通常难以计算配分函数 $Z$？\",\n    \"回答1\": \"在玻尔兹曼机中，配分函数 $Z$ 通常难以计算，主要是因为它涉及对所有可能状态的能量进行求和，这在实际情况下往往是不可行的。由于状态空间的组合数量庞大，计算配分函数 $Z$ 的复杂度通常是难以处理的。\",\n    \"问题2\": \"玻尔兹曼机中的吉布斯采样是用来做什么的？\",\n    \"回答2\": \"在玻尔兹曼机中，吉布斯采样用于生成一组服从 $p(x)$ 分布的样本。由于配分函数 $Z$ 难以计算，联合概率分布 $p(\\boldsymbol{x})$ 一般通过 MCMC 方法来近似，而吉布斯采样是基于 MCMC 方法的一种样本生成方法。\",\n    \"问题3\": \"什么是全条件概率吉布斯采样？\",\n    \"回答3\": \"全条件概率吉布斯采样是指在玻尔兹曼机中，需要计算每个变量 $X_{i}$ 的全条件概率 $p\\big(x_{i} \\big| \\boldsymbol{x}_{\\backslash i}\\big)$。这种采样方法通过计算每个变量在给定其他变量取值的条件下的概率分布，来实现对样本的生成。\",\n    \"问题4\": \"定理 12.1中描述了玻尔兹曼机中变量的全条件概率是如何计算的？\",\n    \"回答4\": \"定理 12.1中描述了玻尔兹曼机中的一个变量 $X_{i}$ 的全条件概率 $p\\big(x_{i} \\big| \\boldsymbol{x}_{\\backslash i}\\big)$。具体地，当给定其他变量 $\\boldsymbol{x}_{\\backslash i}$ 时，$X_{i}$ 的全条件概率可以通过公式 $p\\big(x_{i}=1 \\big| \\boldsymbol{x}_{\\backslash i}\\big)=\\frac{1}{1+\\text{exp}\\big(-\\frac{\\text{Energy Gap}}{T}\\big)}$ 和 $p\\big(x_{i}=0 \\big| \\boldsymbol{x}_{\\backslash i}\\big)=1-p\\big(x_{i}=1 \\big| \\boldsymbol{x}_{\\backslash i}\\big)$ 来计算。\",\n    \"问题5\": \"玻尔兹曼机的吉布斯采样过程是怎样的？\",\n    \"回答5\": \"玻尔兹曼机的吉布斯采样过程为：随机选择一个变量 $X_{i}$，然后根据其全条件概率 $p\\big(x_{i} \\big| \\boldsymbol{x}_{\\backslash i}\\big)$ 来设置其状态，即以 $p\\big(x_{i}=1 \\big| \\boldsymbol{x}_{\\backslash i}\\big)$ 的概率将变量 $X_{i}$ 设为 1，否则为 0。在固定温度 $T$ 的情况下，在运行足够时间之后，玻尔兹曼机会达到热平衡。\",\n    \"问题6\": \"当系统温度非常低时，玻尔兹曼机会退化成什么网络？\",\n    \"回答6\": \"当系统温度非常低时（$T \\rightarrow 0$），玻尔兹曼机会退化为一个 Hopfield 网络。在这种情况下，随机性方法变成了确定性方法，系统的状态更新将变得确定性。\",\n    \"问题7\": \"玻尔兹曼机达到热平衡意味着什么？\",\n    \"回答7\": \"玻尔兹曼机达到热平衡意味着任何全局状态的概率服从玻尔兹曼分布 $p(\\boldsymbol{x})$，只与系统的能量有关，与初始状态无关。在热平衡状态下，系统的能量分布符合特定的分布规律。\",\n    \"问题8\": \"Hopfield 网络和玻尔兹曼机在运行时系统能量变化有何区别？\",\n    \"回答8\": \"Hopfield 网络是一种确定性的动力系统，每次状态更新都会使得系统的能量降低；而玻尔兹曼机是一种随机性的动力系统，以一定的概率使得系统的能量上升。这两种网络在运行时系统能量变化上存在明显区别。\",\n    \"问题9\": \"Hopfield 网络和玻尔兹曼机在图12.2中运行时系统能量变化的对比展示了什么？\",\n    \"回答9\": \"图12.2展示了 Hopfield 网络和玻尔兹曼机在运行时系统能量变化的对比。通过对比这两种网络在能量变化上的差异，可以更直观地理解它们在动力学行为上的不同特点。\",\n    \"问题10\": \"为什么要使用吉布斯采样来近似生成玻尔兹曼机中服从 $p(x)$ 分布的样本？\",\n    \"回答10\": \"由于配分函数 $Z$ 难以计算，联合概率分布 $p(\\boldsymbol{x})$ 一般通过 MCMC 方法来近似。而吉布斯采样作为 MCMC 方法之一，能够有效地实现对服从 $p(x)$ 分布的样本进行近似生成，因此被应用于玻尔兹曼机中。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710500255,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1562,
+            "prompt_tokens": 4456,
+            "total_tokens": 6018
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

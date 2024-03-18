@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "2.2.1.2 非线性模型",
+        "content_length": 816,
+        "content": "Title: 2.2.1.2 非线性模型\nContent:\n广义的非线性模型可以写为多个非线性基函数 $\\phi(\\boldsymbol{x})$ 的线性组合\n\n\n\\begin{equation*}\nf(\\boldsymbol{x} ; \\theta)=\\boldsymbol{w}^{\\top} \\boldsymbol{\\phi}(\\boldsymbol{x})+b \\tag{2.7}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n其中 $\\phi(\\boldsymbol{x})=\\left[\\phi_{1}(\\boldsymbol{x}), \\phi_{2}(\\boldsymbol{x}), \\cdots, \\phi_{K}(\\boldsymbol{x})\\right]^{\\top}$ 为 $K$ 个非线性基函数组成的向量, 参数 $\\theta$包含了权重向量 $\\boldsymbol{w}$ 和偏置 $b$.\n\n如果 $\\phi(x)$ 本身为可学习的基函数, 比如\n\n\n\\begin{equation*}\n\\phi_{k}(\\boldsymbol{x})=h\\left(\\boldsymbol{w}_{k}^{\\top} \\phi^{\\prime}(\\boldsymbol{x})+b_{k}\\right), \\forall 1 \\leq k \\leq K, \\tag{2.8}\n\\end{equation*}\n\n\n其中 $h(\\cdot)$ 为非线性函数, $\\phi^{\\prime}(\\boldsymbol{x})$ 为另一组基函数, $\\boldsymbol{w}_{k}$ 和 $b_{k}$ 为可学习的参数, 则 $f(\\boldsymbol{x} ; \\theta)$ 就等价于神经网络模型."
+    },
+    {
+        "id": "chatcmpl-92yFMjCMXgDsfdvzbZWzsRagd1InP",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是广义的非线性模型？\",\n    \"回答1\": \"广义的非线性模型可以写为多个非线性基函数 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{x})$ 的线性组合，即 $f(\\boldsymbol{x} ; \\theta)=\\boldsymbol{w}^{\\top} \\boldsymbol{\\boldsymbol{\\boldsymbol{x}}(\\boldsymbol{x})}+b$。\",\n    \"问题2\": \"非线性模型中的参数 $θ$ 包含哪些内容？\",\n    \"回答2\": \"非线性模型中的参数 $θ$ 包含了权重向量 $\\boldsymbol{w}$ 和偏置 $b$。其中，权重向量 $\\boldsymbol{w}$ 用于线性组合非线性基函数 $\\boldsymbol{\\boldsymbol{x}}(\\boldsymbol{x})$，而偏置 $b$ 则用于调整整体输出。\",\n    \"问题3\": \"如果 $\\boldsymbol{\\boldsymbol{x}}(\\boldsymbol{x})$ 本身为可学习的基函数，那么 $\\boldsymbol{\\boldsymbol{x}}(\\boldsymbol{x})$ 的形式是怎样的？\",\n    \"回答3\": \"如果 $\\boldsymbol{x}(\\boldsymbol{x})$ 本身为可学习的基函数，其形式可以表示为 $\\boldsymbol{x}_{k}(\\boldsymbol{x})=h\\big(\\boldsymbol{w}_{k}^{\\top} \\boldsymbol{x}^{\\text{'}}(\\boldsymbol{x})+b_{k}\\big)$，其中 $h(\\bullet)$ 为非线性函数，$\\boldsymbol{x}^{\\text{'}}(\\boldsymbol{x})$ 为另一组基函数，$\\boldsymbol{w}_{k}$ 和 $b_{k}$ 为可学习的参数。\",\n    \"问题4\": \"当 $\\boldsymbol{x}(\\boldsymbol{x})$ 本身为可学习的基函数时，$f(\\boldsymbol{x} ; \\theta)$ 等价于什么模型？\",\n    \"回答4\": \"$f(\\boldsymbol{x} ; \\theta)$ 当 $\\boldsymbol{x}(\\boldsymbol{x})$ 本身为可学习的基函数时，等价于神经网络模型。这意味着非线性模型可以通过学习基函数的参数来实现神经网络模型的效果。\",\n    \"问题5\": \"非线性模型中的 $\\boldsymbol{x}(\\boldsymbol{x})$ 和 $\\theta$ 分别对应神经网络模型中的哪些部分？\",\n    \"回答5\": \"在非线性模型中，$\\boldsymbol{x}(\\boldsymbol{x})$ 对应于非线性基函数组成的向量，而 $\\theta$ 包含了权重向量 $\\boldsymbol{w}$ 和偏置 $b$。在神经网络模型中，$\\boldsymbol{x}(\\boldsymbol{x})$ 对应于输入层的神经元，而 $\\theta$ 对应于神经网络中连接权重和偏置的参数。\",\n    \"问题6\": \"非线性模型中的 $\\theta$ 参数如何影响模型的输出？\",\n    \"回答6\": \"非线性模型中的 $\\theta$ 参数影响模型的输出通过调节权重向量 $\\boldsymbol{w}$ 和偏置 $b$，从而影响了线性组合非线性基函数的结果。通过调整这些参数，可以实现对模型输出的灵活控制和调节。\",\n    \"问题7\": \"非线性模型中的非线性基函数 $\\boldsymbol{x}(\\boldsymbol{x})$ 的作用是什么？\",\n    \"回答7\": \"非线性基函数 $\\boldsymbol{x}(\\boldsymbol{x})$ 在非线性模型中起到引入非线性的作用。通过对输入进行非线性变换和组合，非线性基函数能够帮助模型更好地捕捉数据中的复杂关系和特征，从而提高模型的表达能力和拟合能力。\",\n    \"问题8\": \"神经网络模型中的非线性函数 $h(\\bullet)$ 的作用是什么？\",\n    \"回答8\": \"神经网络模型中的非线性函数 $h(\\bullet)$ 用于引入非线性变换，将输入进行非线性映射。这种非线性映射能够帮助神经网络更好地处理复杂的数据关系，提高模型的表达能力和学习能力。\",\n    \"问题9\": \"在神经网络模型中，可学习的参数 $\\boldsymbol{w}_{k}$ 和 $b_{k}$ 的作用是什么？\",\n    \"回答9\": \"在神经网络模型中，可学习的参数 $\\boldsymbol{w}_{k}$ 和 $b_{k}$ 用于调节每个基函数的影响力和偏置，从而影响整体模型的输出。通过学习这些参数，神经网络能够更好地适应数据特征和学习复杂的非线性关系。\",\n    \"问题10\": \"非线性模型和神经网络模型之间有何联系和区别？\",\n    \"回答10\": \"非线性模型和神经网络模型都涉及到非线性变换和组合，但二者之间的联系在于当非线性基函数 $\\boldsymbol{x}(\\boldsymbol{x})$ 本身可学习时，非线性模型等价于神经网络模型。区别在于神经网络模型更加注重对参数的学习和调节，以实现更灵活的非线性映射和拟合能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710495272,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1684,
+            "prompt_tokens": 2892,
+            "total_tokens": 4576
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.05,
+            "presence_penalty": 0.05
+        }
+    }
+]
