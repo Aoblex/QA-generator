@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "3.1.2 多分类",
+        "content_length": 2013,
+        "content": "Title: 3.1.2 多分类\nContent:\n多分类 (Multi-class Classification) 问题是指分类的类别数 $C$ 大于 2. 多分类一般需要多个线性判别函数,但设计这些判别函数有很多种方式.\n\n假设一个多分类问题的类别为 $\\{1,2, \\cdots, C\\}$, 常用的方式有以下三种:\n\n(1) “一对其余” 方式: 把多分类问题转换为 $C$ 个 “一对其余” 的二分类问题. 这种方式共需要 $C$ 个判别函数, 其中第 $c$ 个判别函数 $f_{c}$ 是将类别 $c$ 的样本和不属于类别 $c$ 的样本分开.\n\n(2) “一对一” 方式: 把多分类问题转换为 $C(C-1) / 2$ 个 “一对一” 的二分类问题. 这种方式共需要 $C(C-1) / 2$ 个判别函数, 其中第 $(i, j)$ 个判别函数是把类别 $i$ 和类别 $j$ 的样本分开.\n\n（3）“argmax” 方式: 这是一种改进的 “一对其余” 方式, 共需要 $C$ 个判别函数\n\n\n\\begin{equation*}\nf_{c}\\left(\\boldsymbol{x} ; \\boldsymbol{w}_{c}\\right)=\\boldsymbol{w}_{c}^{\\top} \\boldsymbol{x}+b_{c}, \\quad c \\in\\{1, \\cdots, C\\} \\tag{3.10}\n\\end{equation*}\n\n\n对于样本 $\\boldsymbol{x}$, 如果存在一个类别 $c$, 相对于所有的其他类别 $\\tilde{c}(\\tilde{c} \\neq c)$ 有 $f_{c}\\left(\\boldsymbol{x} ; \\boldsymbol{w}_{c}\\right)>$ $f_{\\tilde{c}}\\left(\\boldsymbol{x}, \\boldsymbol{w}_{\\tilde{c}}\\right)$, 那么 $\\boldsymbol{x}$ 属于类别 $c$. “argmax”方式的预测函数定义为\n\n\n\\begin{equation*}\ny=\\underset{c=1}{\\arg \\max } f_{c}\\left(\\boldsymbol{x} ; \\boldsymbol{w}_{c}\\right) . \\tag{3.11}\n\\end{equation*}\n\n\n“一对其余” 方式和 “一对一” 方式都存在一个缺陷：特征空间中会存在一\n\n参见习题3-3.些难以确定类别的区域, 而 “argmax” 方式很好地解决了这个问题. 图3.3给出了用这三种方式进行多分类的示例, 其中红色直线表示判别函数 $f(\\cdot)=0$ 的直线, 不同颜色的区域表示预测的三个类别的区域 $\\left(\\omega_{1} 、 \\omega_{2}\\right.$ 和 $\\left.\\omega_{3}\\right)$ 和难以确定类别的区域 ('?'). 在 “argmax” 方式中, 相邻两类 $i$ 和 $j$ 的决策边界实际上是由 $f_{i}\\left(\\boldsymbol{x} ; \\boldsymbol{w}_{i}\\right)-f_{j}\\left(\\boldsymbol{x} ; \\boldsymbol{w}_{j}\\right)=0$ 决定, 其法向量为 $\\boldsymbol{w}_{i}-\\boldsymbol{w}_{j}$.\n\n\n\n(a) “一对其余”方式\n\n\n\n(b) “一对一”方式\n\n\n\n(c) “argmax”方式\n\n图 3.3 多分类问题的三种方式\\\\\n定义 3.2-多类线性可分：对于训练集 $\\mathcal{D}=\\left\\{\\left(\\boldsymbol{x}^{(n)}, y^{(n)}\\right)\\right\\}_{n=1}^{N}$, 如果存在 $C$ 个权重向量 $\\boldsymbol{w}_{1}^{*}, \\cdots, \\boldsymbol{w}_{C}^{*}$, 使得第 $c(1 \\leq c \\leq C)$ 类的所有样本都满足 $f_{c}\\left(\\boldsymbol{x} ; \\boldsymbol{w}_{c}^{*}\\right)>$ $f_{\\tilde{c}}\\left(\\boldsymbol{x}, \\boldsymbol{w}_{\\tilde{c}}^{*}\\right), \\forall \\tilde{c} \\neq c$, 那么训练集 $\\mathcal{D}$ 是线性可分的.\n\n从上面定义可知, 如果数据集是多类线性可分的, 那么一定存在一个 “argmax”方式的线性分类器可以将它们正确分开.\n\n参见习题3-4."
+    },
+    {
+        "id": "chatcmpl-9414vcvHSKuSUwLR8PtNdlyM1EdtE",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"多分类问题和二分类问题有何区别？\",\n    \"回答1\": \"多分类问题是指分类的类别数 $C$ 大于 2，需要将样本分到多个类别中。而二分类问题是指分类的类别数为 2，只需要将样本分为两个类别。\",\n    \"问题2\": \"“一对其余”方式和“一对一”方式在处理多分类问题时有何不同？\",\n    \"回答2\": \"“一对其余”方式将多分类问题转换为 $C$ 个 “一对其余” 的二分类问题，需要 $C$ 个判别函数；而“一对一”方式将多分类问题转换为 $C(C-1) / 2$ 个 “一对一” 的二分类问题，需要 $C(C-1) / 2$ 个判别函数。\",\n    \"问题3\": \"请说明“argmax”方式在多分类中的作用和定义。\",\n    \"回答3\": \"“argmax”方式是一种改进的 “一对其余” 方式，共需要 $C$ 个判别函数。对于样本 $\\boldsymbol{x}$，如果存在一个类别 $c$，相对于所有的其他类别 $\\tilde{c}(\\tilde{c} \\neq c)$ 有 $f_{c}\\big(\\boldsymbol{x} ; \\boldsymbol{w}_{c}\\big)> f_{\\tilde{c}}\\big(\\boldsymbol{x}, \\boldsymbol{w}_{\\tilde{c}}\\big)$，那么 $\\boldsymbol{x}$ 属于类别 $c$。预测函数定义为 $y=\\text{argmax}_{c=1} f_{c}\\big(\\boldsymbol{x} ; \\boldsymbol{w}_{c}\\big)$。\",\n    \"问题4\": \"多类线性可分的定义是什么？\",\n    \"回答4\": \"对于训练集 $\\big\\big(\\boldsymbol{x}^{(n)}, y^{(n)}\\big)\\big)_{n=1}^{N}$，如果存在 $C$ 个权重向量 $\\boldsymbol{w}_{1}^{*}, \\text{...}, \\boldsymbol{w}_{C}^{*}$，使得第 $c(1 \\text{ 为 } c \\text{ 为 } C)$ 类的所有样本都满足 $f_{c}\\big(\\boldsymbol{x} ; \\boldsymbol{w}_{c}^{*}\\big)> f_{\\tilde{c}}\\big(\\boldsymbol{x}, \\boldsymbol{w}_{\\tilde{c}}^{*}\\big), \\forall \\tilde{c} \\neq c$，那么训练集 $\\big\\big(\\boldsymbol{x}^{(n)}, y^{(n)}\\big)\\big)_{n=1}^{N}$ 是线性可分的。\",\n    \"问题5\": \"“argmax”方式相对于“一对其余”方式和“一对一”方式有何优势？\",\n    \"回答5\": \"“argmax”方式相对于“一对其余”方式和“一对一”方式能够更好地解决特征空间中难以确定类别的区域。它通过选择最大的判别函数值来确定样本所属的类别，避免了其他方式存在的难以确定区域。\",\n    \"问题6\": \"多分类问题中常用的三种转换方式分别是什么？\",\n    \"回答6\": \"常用的三种转换方式分别是：“一对其余” 方式、 “一对一” 方式和 “argmax” 方式。其中，“一对其余” 方式将多分类问题转换为 $C$ 个 “一对其余” 的二分类问题；“一对一” 方式将多分类问题转换为 $C(C-1) / 2$ 个 “一对一” 的二分类问题；“argmax” 方式是一种改进的 “一对其余” 方式，共需要 $C$ 个判别函数。\",\n    \"问题7\": \"图3.3中展示了多分类问题的三种方式，它们分别是如何表示的？\",\n    \"回答7\": \"图3.3展示了多分类问题的三种方式：(a) 中红色直线表示判别函数 $f(\\boldsymbol{x})=0$ 的直线；不同颜色的区域表示预测的三个类别的区域 $\\big(\\tilde{\\text{w}}_{1}, \\tilde{\\text{w}}_{2}\\text{ 和 }\\tilde{\\text{w}}_{3}\\big)$ 和难以确定类别的区域 ('?')。在 (b) 和 (c) 中也展示了不同方式下的预测区域和决策边界。\",\n    \"问题8\": \"多类线性可分与线性可分有何区别？\",\n    \"回答8\": \"多类线性可分是指训练集可以被多个线性判别函数正确分开，即每个类别都可以被一个线性判别函数正确划分。而线性可分是指训练集可以被一个线性判别函数正确分开，即所有样本可以被一个线性判别函数正确划分。\",\n    \"问题9\": \"为什么需要设计多种判别函数来处理多分类问题？\",\n    \"回答9\": \"设计多种判别函数来处理多分类问题是因为不同的转换方式会影响到特征空间中难以确定类别的区域。通过设计多种判别函数，可以更好地解决这些难以确定区域，并提高多分类问题的准确性和鲁棒性。\",\n    \"问题10\": \"在多分类中，如何确定样本所属的类别？\",\n    \"回答10\": \"在多分类中，可以通过选择具有最大判别函数值的类别来确定样本所属的类别。即选择 $y=\\text{argmax}_{c=1} f_{c}\\big(\\boldsymbol{x} ; \\boldsymbol{w}_{c}\\big)$ 来确定样本 $\\boldsymbol{x}$ 所属的类别。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710744485,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1554,
+            "prompt_tokens": 3766,
+            "total_tokens": 5320
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

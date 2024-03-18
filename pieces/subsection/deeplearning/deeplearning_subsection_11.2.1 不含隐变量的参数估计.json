@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "11.2.1 不含隐变量的参数估计",
+        "content_length": 4087,
+        "content": "Title: 11.2.1 不含隐变量的参数估计\nContent:\n如果图模型中不包含隐变量, 即所有变量都是可观测的, 那么网络参数一般可以直接通过最大似然来进行估计.\n\n有向图模型 在有向图模型中, 所有变量 $\\boldsymbol{x}$ 的联合概率分布可以分解为每个随机变量 $x_{k}$ 的局部条件概率 $p\\left(x_{k} \\mid x_{\\pi_{k}} ; \\theta_{k}\\right)$ 的连乘形式, 其中 $\\theta_{k}$ 为第 $k$ 个变量的局部条件概率的参数.\n\n给定 $N$ 个训练样本 $\\mathcal{D}=\\left\\{\\boldsymbol{x}^{(n)}\\right\\}_{n=1}^{N}$, 其对数似然函数为\n\n\n\\begin{align*}\n\\mathcal{L}(\\mathcal{D} ; \\theta) & =\\frac{1}{N} \\sum_{n=1}^{N} \\log p\\left(\\boldsymbol{x}^{(n)} ; \\theta\\right)  \\tag{11.27}\\\\\n& =\\frac{1}{N} \\sum_{n=1}^{N} \\sum_{k=1}^{K} \\log p\\left(x_{k}^{(n)} \\mid x_{\\pi_{k}}^{(n)} ; \\theta_{k}\\right) \\tag{11.28}\n\\end{align*}\n\n\n其中 $\\theta_{k}$ 为模型中的所有参数.\n\n因为所有变量都是可观测的, 最大化对数似然 $\\mathcal{L}(\\mathcal{D} ; \\theta)$, 只需要分别最大化每个变量的条件似然来估计其参数.\n\n\n\\begin{equation*}\n\\theta_{k}=\\arg \\max \\sum_{n=1}^{N} \\log p\\left(x_{k}^{(n)} \\mid x_{\\pi_{k}}^{(n)} ; \\theta_{k}\\right) \\tag{11.29}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n如果变量 $\\boldsymbol{x}$ 是离散的, 简单直接的方式是在训练集上统计每个变量的条件概率表. 但是条件概率表需要的参数比较多. 假设条件概率 $p\\left(x_{k} \\mid x_{\\pi_{k}}\\right)$ 的父节点数量为 $M$, 所有变量为二值变量, 其条件概率表需要 $2^{M}$ 个参数. 为了减少参数数量, 可以使用参数化的模型, 比如Sigmoid 信念网络. 如果变量 $\\boldsymbol{x}$ 是连续的, 可以使用高斯函数来表示条件概率分布, 称为高斯信念网络. 在此基础上, 还可以通过让所有的条件概率分布共享使用同一组参数来进一步减少参数的数量.\n\n无向图模型 在无向图模型中, 所有变量 $\\boldsymbol{x}$ 的联合概率分布可以分解为定义在最大团上的势能函数的连乘形式. 以对数线性模型为例,\n\n\n\\begin{equation*}\np(x ; \\theta)=\\frac{1}{Z(\\theta)} \\exp \\left(\\sum_{c \\in \\mathcal{C}} \\theta_{c}^{\\top} f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right) \\tag{11.30}\n\\end{equation*}\n\n\n其中 $Z(\\theta)=\\sum_{x} \\exp \\left(\\sum_{c \\in \\mathcal{C}} \\theta_{c}^{\\top} f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right)$.\n\n给定 $N$ 个训练样本 $\\mathcal{D}=\\left\\{\\boldsymbol{x}^{(n)}\\right\\}_{n=1}^{N}$, 其对数似然函数为\n\n\n\\begin{align*}\n\\mathcal{L}(\\mathcal{D} ; \\theta) & =\\frac{1}{N} \\sum_{n=1}^{N} \\log p\\left(\\boldsymbol{x}^{(n)} ; \\theta\\right)  \\tag{11.31}\\\\\n& =\\frac{1}{N} \\sum_{n=1}^{N}\\left(\\sum_{c \\in \\mathcal{C}} \\theta_{c}^{\\top} f_{c}\\left(\\boldsymbol{x}_{c}^{(n)}\\right)\\right)-\\log Z(\\theta) \\tag{11.32}\n\\end{align*}\n\n\n其中 $\\theta_{c}$ 为定义在团 $c$ 上的势能函数的参数.\n\n采用梯度上升方法进行最大似然估计, $\\mathcal{L}(\\mathcal{D} ; \\theta)$ 关于参数 $\\theta_{c}$ 的偏导数为\n\n\n\\begin{equation*}\n\\frac{\\partial \\mathcal{L}(\\mathcal{D} ; \\theta)}{\\partial \\theta_{c}}=\\frac{1}{N} \\sum_{n=1}^{N}\\left(f_{c}\\left(\\boldsymbol{x}_{c}^{(n)}\\right)\\right)-\\frac{\\partial \\log Z(\\theta)}{\\partial \\theta_{c}} \\tag{11.33}\n\\end{equation*}\n\n\n其中\n\n\n\\begin{align*}\n\\frac{\\partial \\log Z(\\theta)}{\\partial \\theta_{c}} & =\\sum_{\\boldsymbol{x}} \\frac{1}{Z(\\theta)} \\cdot \\exp \\left(\\sum_{c \\in \\mathcal{C}} \\theta_{c}^{\\top} f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right) \\cdot f_{c}\\left(\\boldsymbol{x}_{c}\\right)  \\tag{11.34}\\\\\n& =\\sum_{\\boldsymbol{x}} p(\\boldsymbol{x} ; \\theta) f_{c}\\left(\\boldsymbol{x}_{c}\\right) \\triangleq \\mathbb{E}_{\\boldsymbol{x} \\sim p(\\boldsymbol{x} ; \\theta)}\\left[f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right] . \\tag{11.35}\n\\end{align*}\n\n\n因此,\n\n\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}(\\mathcal{D} ; \\theta)}{\\partial \\theta_{c}} & =\\frac{1}{N} \\sum_{n=1}^{N} f_{c}\\left(\\boldsymbol{x}_{c}^{(n)}\\right)-\\mathbb{E}_{\\boldsymbol{x} \\sim p(\\boldsymbol{x} ; \\theta)}\\left[f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right]  \\tag{11.36}\\\\\n& =\\mathbb{E}_{\\boldsymbol{x} \\sim \\tilde{p}(\\boldsymbol{x})}\\left[f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right]-\\mathbb{E}_{\\boldsymbol{x} \\sim p(\\boldsymbol{x} ; \\theta)}\\left[f_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right], \\tag{11.37}\n\\end{align*}\n\n\n其中 $\\tilde{p}(\\boldsymbol{x})$ 定义为经验分布 (Empirical Distribution). 由于在最优点时梯度为 0 , 因此无向图的最大似然估计的优化目标等价于: 对于每个团 $c$ 上的特征 $f_{c}\\left(\\boldsymbol{x}_{c}\\right)$,使得其在经验分布 $\\tilde{p}(\\boldsymbol{x})$ 下的期望等于其在模型分布 $p(\\boldsymbol{x} ; \\theta)$ 下的期望.\\\\\n对比公式(11.29)和公式(11.37)可以看出, 无向图模型的参数估计要比有向图更为复杂. 在有向图中, 每个局部条件概率的参数是独立的; 而在无向图中, 所有的参数都是相关的, 无法分解.\n\n对于一般的无向图模型, 公式 (11.37) 中的 $\\mathbb{E}_{\\boldsymbol{x} \\sim p(\\boldsymbol{x} ; \\theta)}\\left[f_{\\mathcal{c}}\\left(\\boldsymbol{x}_{c}\\right)\\right]$ 往往很难计算,因为涉及在联合概率空间 $p(x ; \\theta)$ 计算期望. 当模型变量比较多时, 这个计算往往无法实现. 因此, 无向图的参数估计通常采用近似的方法: 1 ) 利用采样来近似计算这个期望;2) 采用坐标上升法, 即固定其他参数, 来优化一个势能函数的参数."
+    },
+    {
+        "id": "chatcmpl-9451ohnZhAQ8gDIxYEClUnbBObYlt",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"有向图模型中的参数估计与无向图模型有何区别？\",\n    \"回答1\": \"在有向图模型中，每个局部条件概率的参数是独立的，可以分别最大化每个变量的条件似然来估计其参数。而在无向图模型中，所有的参数都是相关的，无法分解。因此，无向图模型的参数估计要比有向图更为复杂。\",\n    \"问题2\": \"在有向图模型中，如何进行参数估计？\",\n    \"回答2\": \"在有向图模型中，因为所有变量都是可观测的，最大化对数似然 $\\text{L}(\\text{D} ; \\theta)$ 只需要分别最大化每个变量的条件似然来估计其参数。具体地，对于每个变量 $x_k$ 的条件似然，可以通过最大化 $\\text{L}(\\text{D} ; \\theta)$ 来得到参数 $\\theta_k$。\",\n    \"问题3\": \"如果变量 $\\boldsymbol{x}$ 是离散的，在训练集上如何进行参数估计？\",\n    \"回答3\": \"如果变量 $\\boldsymbol{x}$ 是离散的，简单直接的方式是在训练集上统计每个变量的条件概率表。但是条件概率表需要的参数比较多。为了减少参数数量，可以使用参数化的模型，比如Sigmoid信念网络。另外，如果变量 $\\boldsymbol{x}$ 是连续的，则可以使用高斯函数来表示条件概率分布，称为高斯信念网络。\",\n    \"问题4\": \"在无向图模型中，如何进行最大似然估计？\",\n    \"回答4\": \"在无向图模型中采用梯度上升方法进行最大似然估计。具体地，对于每个团 $c$ 上的特征 $f_{c}\\big(\\boldsymbol{x}_{c}\\big)$，使得其在经验分布 $\\tilde{p}(\\boldsymbol{x})$ 下的期望等于其在模型分布 $p(\\boldsymbol{x} ; \\theta)$ 下的期望。这样可以通过梯度上升方法来优化势能函数的参数。\",\n    \"问题5\": \"无向图模型的参数估计为什么通常采用近似方法？\",\n    \"回答5\": \"对于一般的无向图模型，计算公式 (11.37) 中的 $\\text{E}_{\\boldsymbol{x} \\text{ 从 } p(\\boldsymbol{x} ; \\theta)}\\big[f_{c}\\big(\\boldsymbol{x}_{c}\\big)\\big]$ 往往很难计算，因为涉及在联合概率空间 $p(x ; \\theta)$ 计算期望。当模型变量比较多时，这个计算往往无法实现。因此，无向图的参数估计通常采用近似的方法，如利用采样来近似计算这个期望或采用坐标上升法来优化势能函数的参数。\",\n    \"问题6\": \"有向图模型和无向图模型在参数估计时存在怎样的困难？\",\n    \"回答6\": \"在有向图模型中，每个局部条件概率的参数是独立的；而在无向图模型中，所有的参数都是相关的，无法分解。这导致了无向图模型在参数估计时需要处理相关性和复杂度更高的情况，相比之下存在更大的困难。\",\n    \"问题7\": \"有向图模型和无向图模型在参数估计时有何不同之处？\",\n    \"回答7\": \"有向图模型中每个局部条件概率的参数是独立的，可以分别最大化每个变量的条件似然来估计其参数；而无向图模型中所有的参数都是相关的，无法分解。因此，在参数估计时，有向图模型相对简单直接，而无向图模型需要处理相关性和复杂度更高的情况。\",\n    \"问题8\": \"为什么需要减少离散变量条件概率表所需的参数数量？\",\n    \"回答8\": \"离散变量条件概率表需要的参数数量随着父节点数量和变量取值数量呈指数级增长。为了减少参数数量并降低模型复杂度，在训练集上统计每个变量的条件概率表可能会面临维度灾难。因此需要采用参数化模型或其他方法来减少所需参数数量。\",\n    \"问题9\": \"在无向图模型中采用近似方法进行参数估计有哪些优势？\",\n    \"回答9\": \"在无向图模型中采用近似方法进行参数估计能够解决复杂度高、难以精确计算期望值等问题。通过近似方法如采样或坐标上升法，可以有效地处理高维空间下复杂概率分布带来的挑战，并获得较为合理和可行的结果。\",\n    \"问题10\": \"有向图模型和无向图模型在参数估计时存在怎样的挑战？\",\n    \"回答10\": \"有向图模型中每个局部条件概率的参数是独立的；而在无向图模型中所有的参数都是相关的。这导致了两者在处理相关性和复杂度更高情况下存在不同挑战。有向图模型需要处理独立性假设下各变量间关系；而无向图模型需要处理相关性和复杂度更高情况下如何进行合理有效地参数估计。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710759668,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1592,
+            "prompt_tokens": 4804,
+            "total_tokens": 6396
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter13",
+        "title": "27.2.1 去噪自动编码器",
+        "content_length": 4143,
+        "content": "Title: 27.2.1 去噪自动编码器\nContent:\n\\section*{1. 自动编码器}\n自动编码器 (auto encoder) 是用于数据表示的无监督学习的一种神经网络。自动编码器由编码器网络和解码器网络组成。学习时, 编码器将输入向量 $\\boldsymbol{x}$ 转换为中间表示向量 $\\boldsymbol{z}$, 解码器再将中间表示向量 $\\boldsymbol{z}$ 转换为输出向量 $\\boldsymbol{y}$ 。假设 $\\boldsymbol{x}$ 和 $\\boldsymbol{y}$ 的维度相同, 而 $\\boldsymbol{z}$ 的维度远低于 $\\boldsymbol{x}$和 $\\boldsymbol{y}$ 的维度。学习的目标是尽量使输出向量 $\\boldsymbol{y}$ 和输入向量 $\\boldsymbol{x}$ 保持一致, 或者说重建输入向量 $\\boldsymbol{x}$ 。认为学到的中间表示向量 $\\boldsymbol{z}$ 就是数据 $\\boldsymbol{x}$ 的表示。图 27.3 显示自动编码器的架构。\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_5ec6446031f017adfacbg-36}\n\\end{center}\n\n图 27.3 自动编码器的架构\n\n最基本的情况下, 编码器和解码器分别都是一层神经网络, 编码器是\n\n\n\\begin{equation*}\n\\boldsymbol{z}=F(\\boldsymbol{x})=a\\left(\\boldsymbol{W}_{\\mathrm{E}} \\boldsymbol{x}+\\boldsymbol{b}_{\\mathrm{E}}\\right) \\tag{27.13}\n\\end{equation*}\n\n\n其中, $\\boldsymbol{W}_{\\mathrm{E}}$ 是权重矩阵, $\\boldsymbol{b}_{\\mathrm{E}}$ 是偏置向量, $a(\\cdot)$ 是激活函数。解码器是\n\n\n\\begin{equation*}\n\\boldsymbol{y}=G(\\boldsymbol{z})=a\\left(\\boldsymbol{W}_{\\mathrm{D}} \\boldsymbol{z}+\\boldsymbol{b}_{\\mathrm{D}}\\right) \\tag{27.14}\n\\end{equation*}\n\n\n其中, $\\boldsymbol{W}_{\\mathrm{D}}$ 是权重矩阵, $\\boldsymbol{b}_{\\mathrm{D}}$ 是偏置向量, $a(\\cdot)$ 是激活函数。有时假设 $\\boldsymbol{W}_{\\mathrm{E}}{ }^{\\mathrm{T}}=\\boldsymbol{W}_{\\mathrm{D}}$ 成立。可见以上的自动编码器是一种特殊的前馈神经网络。\n\n学习时, 目标函数是\n\n\n\\begin{equation*}\nL=\\frac{1}{N} \\sum_{i=1}^{N} L\\left(\\boldsymbol{x}_{i}, \\boldsymbol{y}_{i}\\right)=\\frac{1}{N} \\sum_{i=1}^{N} L\\left(\\boldsymbol{x}_{i}, G\\left(F\\left(\\boldsymbol{x}_{i}\\right)\\right)\\right) \\tag{27.15}\n\\end{equation*}\n\n\n其中, $N$ 是样本容量; $L\\left(\\boldsymbol{x}_{i}, \\boldsymbol{y}_{i}\\right)$ 是损失函数, 比如平方损失:\n\n$$\nL(\\boldsymbol{x}, \\boldsymbol{y})=|| \\boldsymbol{x}-\\boldsymbol{y} \\|^{2}\n$$\n\n学习的算法一般是梯度下降。\n\n自动编码器学习实际进行的是对数据的压缩 (编码), 得到的中间表示能有效地刻画数据的特征。因为通过解压 (解码) 可以得到原始数据的近似, 说明中间表示保留了数据中的主要信息。\n\n预测时, 通常用编码器将新的输入向量 $\\boldsymbol{x}^{\\prime}$ 转换为中间表示向量 $\\boldsymbol{z}^{\\prime}$ 。\n\n\n\\begin{equation*}\n\\boldsymbol{z}^{\\prime}=F\\left(\\boldsymbol{x}^{\\prime}\\right)=a\\left(\\boldsymbol{W}_{\\mathrm{E}} \\boldsymbol{x}^{\\prime}+\\boldsymbol{b}_{\\mathrm{E}}\\right) \\tag{27.16}\n\\end{equation*}\n\n\n自动编码器可以用于数据的压缩、聚类等应用。\n\n当编码器和解码器都是线性函数时, 即 $F(\\boldsymbol{x})=\\boldsymbol{W}_{\\mathrm{E}} \\boldsymbol{x}, G(\\boldsymbol{z})=\\boldsymbol{W}_{\\mathrm{D}} \\boldsymbol{z}$ 时, 可以通过主成分分析 (见第 16 章) 学习自动编码器。也就是说主成分分析是自动编码器的一种特殊情况。证明留作习题。\n\n\\section*{2. 去噪自动编码器}\n去噪自动编码器 (denoising autoencoder) 是自动编码器的扩展, 学习时在输入中加入随机噪声, 以学到稳健的自动编码器。去噪自动编码器不仅可以用于数据表示学习, 而且可以用于数据去噪。\n\n学习时, 首先根据条件概率分布 $P(\\tilde{\\boldsymbol{x}} \\mid \\boldsymbol{x})$ 对输入向量 $\\boldsymbol{x}$ 进行随机变换, 得到有噪声的输入向量 $\\tilde{\\boldsymbol{x}}$ 。比如随机地选取 $\\boldsymbol{x}$ 的一些元素将其置为 0 , 然后以 $\\tilde{\\boldsymbol{x}}$ 为输入学习自动编码器。编码器将有噪声的输入向量 $\\tilde{\\boldsymbol{x}}$ 转换为中间表示向量 $\\boldsymbol{z}$, 解码器再将中间表示向量 $\\boldsymbol{z}$ 转换为输出向量 $\\boldsymbol{y}$ 。学习的目标是尽量使输出向量 $\\boldsymbol{y}$ 和原始输入向量 $\\boldsymbol{x}$ 保持一致, 或者说重建原始输入向量 $\\boldsymbol{x}$, 比如复原 $\\tilde{\\boldsymbol{x}}$ 的置为 0 的元素的值。最基本的情况下, 编码器、解码器、目标函数分别是\n\n\n\\begin{align*}\n\\boldsymbol{z}=F(\\boldsymbol{x}) & =a\\left(\\boldsymbol{W}_{\\mathrm{E}} \\tilde{\\boldsymbol{x}}+\\boldsymbol{b}_{\\mathrm{E}}\\right)  \\tag{27.17}\\\\\n\\boldsymbol{y}=G(\\boldsymbol{z}) & =a\\left(\\boldsymbol{W}_{\\mathrm{D}} \\boldsymbol{z}+\\boldsymbol{b}_{\\mathrm{D}}\\right)  \\tag{27.18}\\\\\nL=\\frac{1}{N} \\sum_{i=1}^{N} L\\left(\\boldsymbol{x}_{i}, \\boldsymbol{y}_{i}\\right) & =\\frac{1}{N} \\sum_{i=1}^{N} L\\left(\\boldsymbol{x}_{i}, G\\left(F\\left(\\tilde{\\boldsymbol{x}}_{i}\\right)\\right)\\right) \\tag{27.19}\n\\end{align*}\n\n\n因为学习的目标是排除噪声的干扰重建数据, 去噪自动编码器能更有效地学到数据的主要特征。\n\n预测时, 用编码器将新的输入向量 $\\boldsymbol{x}^{\\prime}$ 转换为中间表示向量 $\\boldsymbol{z}^{\\prime}$, 或者进一步用解码器将中间表示变量 $\\boldsymbol{z}^{\\prime}$ 转换为输出向量 $\\boldsymbol{y}^{\\prime}$ 。\n\n\\[\n\\begin{array}{r}\n\\boldsymbol{z}^{\\prime}=F\\left(\\boldsymbol{x}^{\\prime}\\right)=a\\left(\\boldsymbol{W}_{\\mathrm{E}} \\boldsymbol{x}^{\\prime}+\\boldsymbol{b}_{\\mathrm{E}}\\right) \\\\\n\\boldsymbol{y}^{\\prime}=G\\left(\\boldsymbol{z}^{\\prime}\\right)=a\\left(\\boldsymbol{W}_{\\mathrm{D}} \\boldsymbol{z}^{\\prime}+\\boldsymbol{b}_{\\mathrm{D}}\\right) \\tag{27.21}\n\\end{array}\n\\]\n\n如果输入向量 $\\boldsymbol{x}^{\\prime}$ 是含有噪声的数据, 那么 $\\boldsymbol{y}^{\\prime}$ 就是去噪后的数据。用去噪自动编码器可以对数据去噪。"
+    },
+    {
+        "id": "chatcmpl-93wM7u8ak2ei0wIlMzstCeJFr8dY2",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"自动编码器的学习目标是什么？\",\n    \"回答1\": \"自动编码器的学习目标是尽量使输出向量 $\\boldsymbol{y}$ 和输入向量 $\\boldsymbol{x}$ 保持一致，或者说重建输入向量 $\\boldsymbol{x}$。通过最小化重建误差，自动编码器试图学习到输入数据的有效表示。\",\n    \"问题2\": \"自动编码器的架构由哪些部分组成？\",\n    \"回答2\": \"自动编码器的架构由编码器网络和解码器网络组成。编码器将输入向量 $\\boldsymbol{x}$ 转换为中间表示向量 $\\boldsymbol{z}$，而解码器则将中间表示向量 $\\boldsymbol{z}$ 转换为输出向量 $\\boldsymbol{y}$。\",\n    \"问题3\": \"自动编码器的目标函数是如何定义的？\",\n    \"回答3\": \"自动编码器的目标函数是 $L=\\frac{1}{N} \\text{ 为 } i=1 \\text{ 至 } N \\text{ 的 } L\\big(\\boldsymbol{x}_{i}, \\boldsymbol{y}_{i}\\big)=\\frac{1}{N} \\text{ 为 } i=1 \\text{ 至 } N \\text{ 的 } L\\big(\\boldsymbol{x}_{i}, G\\big(F\\big(\\boldsymbol{x}_{i}\\big)\\big)\\big)$，其中 $N$ 是样本容量，$L\\big(\\boldsymbol{x}_{i}, \\boldsymbol{y}_{i}\\big)$ 是损失函数，比如平方损失 $L(\\boldsymbol{x}, \\boldsymbol{y})=|| \\boldsymbol{x}-\\boldsymbol{y} ||^{2}$。\",\n    \"问题4\": \"自动编码器的预测过程中，通常如何利用编码器和解码器？\",\n    \"回答4\": \"在预测时，通常使用编码器将新的输入向量 $\\boldsymbol{x}^{\\text{'}}$ 转换为中间表示向量 $\\boldsymbol{z}^{\\text{'}}$。然后可以进一步使用解码器将中间表示向量 $\\boldsymbol{z}^{\\text{'}}$ 转换为输出向量 $\\boldsymbol{y}^{\\text{'}}$。这样就可以实现对新数据的重建或预测。\",\n    \"问题5\": \"去噪自动编码器相比自动编码器有什么扩展？\",\n    \"回答5\": \"去噪自动编码器是自动编码器的扩展，学习时在输入中加入随机噪声，以学习到更稳健的表示。它不仅可以用于数据表示学习，还可以用于数据去噪。\",\n    \"问题6\": \"去噪自动编码器的学习目标是什么？\",\n    \"回答6\": \"去噪自动编码器的学习目标是尽量使输出向量 $\\boldsymbol{y}$ 和原始输入向量 $\\boldsymbol{x}$ 保持一致，或者说重建原始输入向量 $\\boldsymbol{x}$。通过最小化重建误差，去噪自动编码器试图学到对数据更稳健的表示。\",\n    \"问题7\": \"去噪自动编码器学习时如何处理输入数据？\",\n    \"回答7\": \"在学习时，去噪自动编码器首先根据条件概率分布 $P(\\tilde{\\boldsymbol{x}} \\text{ 在 } \\boldsymbol{x})$ 对输入向量 $\\boldsymbol{x}$ 进行随机变换，得到有噪声的输入向量 $\\tilde{\\boldsymbol{x}}$。然后使用编码器将有噪声的输入向量 $\\tilde{\\boldsymbol{x}}$ 转换为中间表示向量 $\\boldsymbol{z}$，解码器再将中间表示向量 $\\boldsymbol{z}$ 转换为输出向量 $\\boldsymbol{y}$。\",\n    \"问题8\": \"去噪自动编码器与自动编码器相比，在学习过程中有何优势？\",\n    \"回答8\": \"去噪自动编码器在学习过程中通过排除噪声的干扰来重建数据，能更有效地学到数据的主要特征。相比之下，它具有更强的稳健性和鲁棒性，能够更好地应对数据中的噪声和干扰。\",\n    \"问题9\": \"当编码器和解码器都是线性函数时，主成分分析与自动编码器有何关系？\",\n    \"回答9\": \"当编码器和解码器都是线性函数时，即 $F(\\boldsymbol{x})=\\boldsymbol{W}_{\\text{E}} \\boldsymbol{x}, G(\\boldsymbol{z})=\\boldsymbol{W}_{\\text{D}} \\boldsymbol{z}$ 时，可以通过主成分分析学习自动编码器。这意味着主成分分析是自动编码器的一种特殊情况。\",\n    \"问题10\": \"去噪自动编码器在预测时如何应用于数据去噪？\",\n    \"回答10\": \"在预测时，如果输入向量 $\\boldsymbol{x}^{\\text{'}}$ 是含有噪声的数据，那么通过去噪自动编码器得到的输出向量 $\\boldsymbol{y}^{\\text{'}}$ 就是去噪后的数据。因此，可以利用去噪自动编码器对含有噪声的数据进行去噪处理。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710726331,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1490,
+            "prompt_tokens": 4822,
+            "total_tokens": 6312
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

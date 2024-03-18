@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "3.2.1 参数学习",
+        "content_length": 2448,
+        "content": "Title: 3.2.1 参数学习\nContent:\nLogistic 回归采用交叉熵作为损失函数, 并使用梯度下降法来对参数进行优化.\n\n给定 $N$ 个训练样本 $\\left\\{\\left(\\boldsymbol{x}^{(n)}, y^{(n)}\\right)\\right\\}_{n=1}^{N}$, 用 Logistic 回归模型对每个样本 $\\boldsymbol{x}^{(n)}$ 进行预测, 输出其标签为 1 的后验概率, 记为 $\\hat{y}^{(n)}$,\n\n\n\\begin{equation*}\n\\hat{y}^{(n)}=\\sigma\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}\\right), \\quad 1 \\leq n \\leq N . \\tag{3.19}\n\\end{equation*}\n\n\n由于 $y^{(n)} \\in\\{0,1\\}$, 样本 $\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}\\right)$ 的真实条件概率可以表示为\n\n\n\\begin{align*}\n& p_{r}\\left(y^{(n)}=1 \\mid \\boldsymbol{x}^{(n)}\\right)=y^{(n)},  \\tag{3.20}\\\\\n& p_{r}\\left(y^{(n)}=0 \\mid \\boldsymbol{x}^{(n)}\\right)=1-y^{(n)} \\tag{3.21}\n\\end{align*}\n\n\n使用交叉嫡损失函数, 其风险函数为\n\n为简单起见, 这里忽略了正则化项.\n\n\n\\begin{equation*}\n\\mathcal{R}(\\boldsymbol{w})=-\\frac{1}{N} \\sum_{n=1}^{N}\\left(p_{r}\\left(y^{(n)}=1 \\mid \\boldsymbol{x}^{(n)}\\right) \\log \\hat{y}^{(n)}+p_{r}\\left(y^{(n)}=0 \\mid \\boldsymbol{x}^{(n)}\\right) \\log \\left(1-\\hat{y}^{(n)}\\right)\\right) \\tag{3.22}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n\n\\begin{equation*}\n=-\\frac{1}{N} \\sum_{n=1}^{N}\\left(y^{(n)} \\log \\hat{y}^{(n)}+\\left(1-y^{(n)}\\right) \\log \\left(1-\\hat{y}^{(n)}\\right)\\right) \\tag{3.23}\n\\end{equation*}\n\n\n风险函数 $\\mathcal{R}(\\boldsymbol{w})$ 关于参数 $\\boldsymbol{w}$ 的偏导数为\n\n\n\\begin{align*}\n\\frac{\\partial \\mathcal{R}(\\boldsymbol{w})}{\\partial \\boldsymbol{w}} & =-\\frac{1}{N} \\sum_{n=1}^{N}\\left(y^{(n)} \\frac{\\hat{y}^{(n)}\\left(1-\\hat{y}^{(n)}\\right)}{\\hat{y}^{(n)}} \\boldsymbol{x}^{(n)}-\\left(1-y^{(n)}\\right) \\frac{\\hat{y}^{(n)}\\left(1-\\hat{y}^{(n)}\\right)}{1-\\hat{y}^{(n)}} \\boldsymbol{x}^{(n)}\\right)  \\tag{3.24}\\\\\n& =-\\frac{1}{N} \\sum_{n=1}^{N}\\left(y^{(n)}\\left(1-\\hat{y}^{(n)}\\right) \\boldsymbol{x}^{(n)}-\\left(1-y^{(n)}\\right) \\hat{y}^{(n)} \\boldsymbol{x}^{(n)}\\right)  \\tag{3.25}\\\\\n& =-\\frac{1}{N} \\sum_{n=1}^{N} \\boldsymbol{x}^{(n)}\\left(y^{(n)}-\\hat{y}^{(n)}\\right) . \\tag{3.26}\n\\end{align*}\n\n\n采用梯度下降法, Logistic 回归的训练过程为 : 初始化 $\\boldsymbol{w}_{0} \\leftarrow 0$, 然后通过下式来迭代更新参数:\n\n\n\\begin{equation*}\n\\boldsymbol{w}_{t+1} \\leftarrow \\boldsymbol{w}_{t}+\\alpha \\frac{1}{N} \\sum_{n=1}^{N} \\boldsymbol{x}^{(n)}\\left(y^{(n)}-\\hat{y}_{\\boldsymbol{w}_{t}}^{(n)}\\right) \\tag{3.27}\n\\end{equation*}\n\n\n其中 $\\alpha$ 是学习率, $\\hat{y}_{\\boldsymbol{w}_{t}}^{(n)}$ 是当参数为 $\\boldsymbol{w}_{t}$ 时, Logistic 回归模型的输出.\n\n从公式 (3.23) 可知, 风险函数 $\\mathcal{R}(\\boldsymbol{w})$ 是关于参数 $\\boldsymbol{w}$ 的连续可导的凸函数. 因此除了梯度下降法之外, Logistic 回归还可以用高阶的优化方法 ( 比如牛顿法)来进行优化."
+    },
+    {
+        "id": "chatcmpl-9416Zch783tYZaH56Sx3D6Nz1pNK4",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"Logistic 回归采用什么作为损失函数？\",\n    \"回答1\": \"Logistic 回归采用交叉熵作为损失函数。\",\n    \"问题2\": \"Logistic 回归模型对每个样本进行预测时输出的是什么？\",\n    \"回答2\": \"Logistic 回归模型对每个样本 $\\boldsymbol{x}^{(n)}$ 进行预测, 输出其标签为 1 的后验概率, 记为 $\\text{hat{y}}^{(n)}$，计算公式为 $\\text{hat{y}}^{(n)}=\\text{sigma}(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)})$。\",\n    \"问题3\": \"Logistic 回归中的风险函数是如何定义的？\",\n    \"回答3\": \"Logistic 回归中的风险函数为 $-\\frac{1}{N} \\text{sum}_{n=1}^{N}\\big(y^{(n)} \\text{log} \\text{hat{y}}^{(n)}+\\big(1-y^{(n)}\\big) \\text{log} \\big(1-\\text{hat{y}}^{(n)}\\big)\\big)$。\",\n    \"问题4\": \"Logistic 回归中的参数优化方法是什么？\",\n    \"回答4\": \"Logistic 回归使用梯度下降法来对参数进行优化。通过计算风险函数关于参数的偏导数，然后迭代更新参数来实现优化。\",\n    \"问题5\": \"Logistic 回归的训练过程中如何更新参数？\",\n    \"回答5\": \"Logistic 回归的训练过程中通过梯度下降法来更新参数。具体而言，初始化参数后，通过迭代更新参数的方式，使用样本的特征和真实标签与模型预测之间的差异来调整参数。\",\n    \"问题6\": \"在 Logistic 回归中，风险函数关于参数的偏导数是怎么计算的？\",\n    \"回答6\": \"在 Logistic 回归中，风险函数关于参数的偏导数计算公式为 $-\\frac{1}{N} \\text{sum}_{n=1}^{N} \\boldsymbol{x}^{(n)}\\big(y^{(n)}-\\text{hat{y}}^{(n)}\\big)$。\",\n    \"问题7\": \"Logistic 回归的训练过程中使用的学习率是什么？\",\n    \"回答7\": \"Logistic 回归的训练过程中使用学习率 $\\text{alpha}$，通过控制学习率的大小来调整每次迭代更新参数时的步长。\",\n    \"问题8\": \"Logistic 回归模型的输出是关于参数的什么函数？\",\n    \"回答8\": \"Logistic 回归模型的输出 $\\text{hat{y}}_{\\boldsymbol{w}_{t}}^{(n)}$ 是关于参数 $\\boldsymbol{w}_{t}$ 的函数，表示当参数为 $\\boldsymbol{w}_{t}$ 时，模型对样本的预测输出。\",\n    \"问题9\": \"Logistic 回归中风险函数关于参数的性质是什么？\",\n    \"回答9\": \"在 Logistic 回归中，风险函数 $\\text{R}(\\boldsymbol{w})$ 是关于参数 $\\boldsymbol{w}$ 的连续可导的凸函数。这意味着除了梯度下降法之外，还可以使用高阶的优化方法（比如牛顿法）来进行优化。\",\n    \"问题10\": \"在 Logistic 回归中是否考虑了正则化项？\",\n    \"回答10\": \"在给定文本中提到为简单起见，忽略了正则化项。因此，在该文本描述的 Logistic 回归中，并未考虑正则化项。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710744587,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1046,
+            "prompt_tokens": 3876,
+            "total_tokens": 4922
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter6",
+        "title": "Rao-Blackwell定理\\label{ssec:6.3.1",
+        "content_length": 3524,
+        "content": "Title: Rao-Blackwell定理\\label{ssec:6.3.1\nContent:\n}\n我们在例 \\ref{exam:6.2.6} 和例 \\ref{exam:6.2.7} 中分别比较了两个无偏估计的优劣，在这两个例子中，好的一个无偏估计都是充分统计量的函数，这不是偶然的，下面我们介绍这方面的有关结论.先从Rao--Blackwell定理谈起.\n\n\\begin{theorem}{Rao--Blackwell定理}{6.3.1}\n  设$X$和$Y$是两个随机变量，$EX=\\mu.\\Var(X)>0$. 我们用条件期望构造一个新的随机变量$\\varphi(Y)$，其定义为\n  \\[\n    \\varphi(y) = E(X|Y=y),\n  \\]\n  则有\n  \\[\n     E\\varphi(Y) = \\mu,\\Var\\big(\\varphi(Y)\\big) \\le \\Var(X),\n  \\]\n  其中等号成立的充分必要条件是$X$和$\\varphi(Y)$几乎处处相等.\n\\end{theorem}\n\n\\begin{proof}\n  我们以$X$和$Y$都是连续型随机变量为例加以证明.设$p(x,y),P_Y(y),h(x|y)$分别为$X$和$Y$的联合密度函数、$Y$的边际密度函数和给定$Y=y$下$X$的条件密度函数，于是条件期望\n  \\begin{gather*}\n    \\varphi(y) = E(X|Y=y) = \\int xh(x|y)\\dd x = \\frac{\\int x\\cdot p(x,y)\\dd x}{p_Y(y)}, \\\\\n    E\\varphi(Y) = \\int\\varphi(y)\\cdot p_Y(y)\\dd y = \\iint c\\cdot p(x,y)\\dd x\\dd y = EX = \\mu,\n  \\end{gather*}\n  这证明了第一个结论，下证第二个结论，我们将$\\Var(X)$写成如下的形式：\n  \\begin{equation}\\label{eq6.3.1}\n    \\begin{aligned}\n    \\Var(X) & = E[ (X-\\varphi(Y)) + (\\varphi(Y) - \\mu) ]^2 \\\\\n    & = E(X-\\varphi(Y))^2 + E(\\varphi(Y)-\\mu)^2 + 2 E[(x-\\varphi(Y))\\cdot (\\varphi(Y) - \\mu)].\n    \\end{aligned}\n  \\end{equation}\n  由于$\\int[x-\\varphi(y)]h(x|y)\\dd x= E(X|Y=y)-\\varphi(y)=0$，故 \\eqref{eq6.3.1} 右端第三项为\n  \\begin{align*}\n    E[(x-\\varphi(Y))\\cdot (\\varphi(Y) - \\mu)] & = \\iint[x-\\varphi(y)]\\cdot [\\varphi(y)-\\mu] \\cdot p(x,y)\\dd x\\dd y \\\\\n    & = \\iint[x-\\varphi(y)]\\cdot [\\varphi(y)-\\mu] \\cdot p_Y(y)h(x|y)\\dd x\\dd y \\\\\n    & = \\int[\\varphi(y)-\\mu]\\left( \\int[x-\\varphi(y)]h(x|y)\\dd x\\right)p_Y(y)\\dd y \\\\\n    & = 0.\n  \\end{align*}\n  而 \\eqref{eq6.3.1} 右端第二项正是$\\varphi(y)$的方差，由此即有\n  \\begin{equation}\\label{eq6.3.2}\n    \\Var(X) = E(X-\\varphi(y))^2 + \\Var(\\varphi(Y)).\n  \\end{equation}\n  由于上式右端第一项非负，这就证明了第二个结论.进一步，等号成立（即$\\Var(X)=\\Var(\\varphi(Y))$）的充要条件为\n  \\begin{equation}\\label{eq6.3.3}\n    P(X - \\varphi(Y)=0) = 1,\n  \\end{equation}\n  即$X$和$\\varphi(Y)$几乎处处相等.\n\\end{proof}\n\n将定理 \\ref{thm:6.3.1} 应用到参数估计问题中可得到如下重要结论：\n\\begin{theorem}{}{6.3.2}\n  设总体概率密度函数是$p(x;\\theta),x_1,x_2,\\cdots,x_n$是其样本，$T=T(x_1,\\cdots,x_n)$是$\\theta$的充分统计量，则对$\\theta$的任一无偏估计$\\hat\\theta=\\hat\\theta(x_1,\\cdots,x_n)$，\n  令$\\tilde\\theta=E(\\hat\\theta|T)$，则$\\tilde\\theta$也是$\\theta$的无偏估计，且\n  \\begin{equation}\\label{eq6.3.4}\n    \\Var(\\tilde\\theta) \\le \\Var(\\hat\\theta).\n  \\end{equation}\n\\end{theorem}\n\\begin{proof}\n  由于$T=T(x_1,\\cdots,x_n)$是充分统计量，故而$\\tilde\\theta=E(\\hat\\theta|T)$与$\\theta$无关，因此它也是一个估计（统计量），只要在定理 \\ref{thm:6.3.1} 中取$X=\\hat\\theta,Y=T$即可完成本定理的证明.\n\\end{proof}\n\n定理 \\ref{thm:6.3.2} 说明，如果无偏估计不是充分统计量的函数，则将之对充分统计量求条件期望可以得到一个新的无偏估计，该估计的方差比原来的估计的方差要小，从而降低了无偏估计的方差.换言之，考虑日的估计问题只需要在基于充分统计量的函数中进行即可，该说法对所有的统计推断问题都是正确的，这便是所谓的\\textbf{充分性原则}. \\index{C!充分性原则}\n\n\\begin{example}\\label{exam:6.3.1}\n  设$x_1,\\cdots,x_n$是来自总体$b(1.p)$的样本，则$\\bar x$（或$T=n\\bar x$）是$p$的充分统计量. 为估计$\\theta=p^2$，可令\n  \\[\n    \\hat\\theta_1 = \\begin{cases}\n      1, & x_1=1, x_2=1; \\\\\n      0, & \\text{其他}.\n    \\end{cases}\n  \\]\n  由于\n  \\[\n    E(\\hat\\theta_1) = P(x_1=1,x_2=1) = p\\cdot p =\\theta,\n  \\]\n  所以，$\\hat\\theta_1$是$\\theta$的无偏估计，这个估计并不好，它只使用了两个观测值，下面我们用Rao--Blackwel定理对之加以改进：求$\\hat\\theta_1$关于充分统计量$T=\\sum_{i=1}^nx_i$的条件期望，过程如下.\n  \\begin{align*}\n    \\hat\\theta & = E(\\hat\\theta_1 | T=t) \\\\\n    & = P(\\hat\\theta_1 = 1 | T=t) \\\\\n    & = \\frac{P(X_1=1,X_2=1,T=t)}{P(=t)} \\\\\n    & = \\frac{P\\left( X_1=1,X_2=1,\\sum_{i=3}^nX_i=t-2 \\right)}{P(T=t)} \\\\\n    & = \\frac{p\\cdot p\\cdot \\binom{n-2}{t-2}p^{t-2}(1-p)^{n-t}}{\\binom ntp^t(1-p)^{n-t}} \\\\\n    & = \\Binom{n-2}{t-2}\\big/\\Binom nt  = \\frac{t(t-1)}{n(n-1)},\n  \\end{align*}\n  其中$t=\\sum_{i=1}^nx_i$. 可以验证，$\\hat\\theta$是$\\theta$的无偏估计，且$\\Var(\\hat\\theta)<\\Var(\\hat\\theta_1)$.\n\\end{example}"
+    },
+    {
+        "id": "chatcmpl-947WiQo33Xm6ef93198pjl9SAiou1",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"Rao-Blackwell定理中，如何通过条件期望构造一个新的随机变量？\",\n    \"回答1\": \"在Rao-Blackwell定理中，通过条件期望构造一个新的随机变量$\\text{varphi}(Y)$的定义为$\\text{varphi}(y) = E(X|Y=y)$。这意味着对于给定的$Y=y$，新的随机变量$\\text{varphi}(Y)$取$X$的条件期望作为其值。\",\n    \"问题2\": \"Rao-Blackwell定理中提到的关于新随机变量$\\text{varphi}(Y)$的期望和方差有什么结论？\",\n    \"回答2\": \"根据Rao-Blackwell定理，对于新构造的随机变量$\\text{varphi}(Y)$，有$E\\text{varphi}(Y) = \\text{mu}$和$\\text{Var}(\\text{varphi}(Y)) \\text{le} \\text{Var}(X)$。其中，等号成立的充分必要条件是$X$和$\\text{varphi}(Y)$几乎处处相等。\",\n    \"问题3\": \"Rao-Blackwell定理中的证明过程是如何进行的？\",\n    \"回答3\": \"在Rao-Blackwell定理的证明中，首先以$X$和$Y$都是连续型随机变量为例加以证明。然后将$\\text{Var}(X)$写成特定形式，并通过一系列推导和变换得出结论。最终得出了关于方差和条件期望的结论，并给出了等号成立的充分必要条件。\",\n    \"问题4\": \"Rao-Blackwell定理如何应用到参数估计问题中？\",\n    \"回答4\": \"将Rao-Blackwell定理应用到参数估计问题中可得到如下重要结论：对于总体概率密度函数和样本，如果$T=T(x_1,\\text{...},x_n)$是$\\theta$的充分统计量，则对$\\theta$的任一无偏估计$\\tilde\\theta=E(\\tilde\\theta|T)$也是$\\theta$的无偏估计，并且有$\\text{Var}(\\tilde\\theta) \\text{le} \\text{Var}(\\tilde\\theta)$。\",\n    \"问题5\": \"Rao-Blackwell定理中提到的充分统计量有什么作用？\",\n    \"回答5\": \"Rao-Blackwell定理说明，如果无偏估计不是充分统计量的函数，则将之对充分统计量求条件期望可以得到一个新的无偏估计。这个新的无偏估计具有更小的方差，从而降低了无偏估计的方差。因此，充分统计量在参数估计问题中起着重要作用，能够帮助改进原有的无偏估计。\",\n    \"问题6\": \"在例子 \\ref{exam:6.3.1} 中，如何使用Rao--Blackwell定理对参数估计进行改进？\",\n    \"回答6\": \"在例子 \\ref{exam:6.3.1} 中，对于来自总体$b(1,p)$的样本，通过Rao--Blackwell定理对参数$p^2$进行估计时，首先构造了一个无偏估计$\\tilde\\theta_1$。然后利用Rao--Blackwell定理对$\\tilde\\theta_1$关于充分统计量$T=\\text{sum}_{i=1}^nx_i$的条件期望进行求解，得到了一个新的无偏估计$\\tilde\\theta$，并且验证了$\\text{Var}(\\tilde\\theta) < \\text{Var}(\\tilde\\theta_1)$。\",\n    \"问题7\": \"Rao-Blackwell定理中提到的充分性原则是什么？\",\n    \"回答7\": \"Rao-Blackwell定理中提到的充分性原则指出，在参数估计问题中只需要在基于充分统计量的函数中进行即可。这一原则对所有的统计推断问题都是正确的，能够帮助降低无偏估计的方差，提高参数估计的准确性。\",\n    \"问题8\": \"Rao-Blackwell定理中提到的条件期望如何影响参数估计？\",\n    \"回答8\": \"根据Rao-Blackwell定理，通过对无偏估计对充分统计量求条件期望可以得到一个新的无偏估计。这个新的无偏估计具有更小的方差，从而能够提高参数估计的准确性和稳定性。\",\n    \"问题9\": \"Rao-Blackwell定理中提到的方差如何影响参数估计？\",\n    \"回答9\": \"根据Rao-Blackwell定理，通过对无偏估计对充分统计量求条件期望可以得到一个新的无偏估计，并且这个新的无偏估计具有更小的方差。因此，通过降低方差可以提高参数估计的准确性和稳定性。\",\n    \"问题10\": \"Rao-Blackwell定理中提到的条件期望如何影响参数估计问题？\",\n    \"回答10\": \"根据Rao-Blackwell定理，通过对无偏估计对充分统计量求条件期望可以得到一个新的无偏估计。这个新的无偏估计具有更小的方差，从而能够提高参数估计问题中参数估计值的准确性和稳定性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710769272,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1543,
+            "prompt_tokens": 4674,
+            "total_tokens": 6217
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

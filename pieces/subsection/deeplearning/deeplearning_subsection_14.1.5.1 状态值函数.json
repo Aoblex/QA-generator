@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "14.1.5.1 状态值函数",
+        "content_length": 2016,
+        "content": "Title: 14.1.5.1 状态值函数\nContent:\n策略 $\\pi$ 的期望回报可以分解为\n\n\n\\begin{align*}\n\\mathbb{E}_{\\tau \\sim p(\\tau)}[G(\\tau)] & =\\mathbb{E}_{S \\sim p\\left(s_{0}\\right)}\\left[\\mathbb{E}_{\\tau \\sim p(\\tau)}\\left[\\sum_{t=0}^{T-1} \\gamma^{t} r_{t+1} \\mid \\tau_{s_{0}}=s\\right]\\right]  \\tag{14.12}\\\\\n& =\\mathbb{E}_{S \\sim p\\left(s_{0}\\right)}\\left[V^{\\pi}(s)\\right] \\tag{14.13}\n\\end{align*}\n\n\n其中 $V^{\\pi}(s)$ 称为状态值函数 (State Value Function), 表示从状态 $s$ 开始, 执行策略 $\\pi$ 得到的期望总回报\n\n\n\\begin{equation*}\nV^{\\pi}(s)=\\mathbb{E}_{\\tau \\sim p(\\tau)}\\left[\\sum_{t=0}^{T-1} \\gamma^{t} r_{t+1} \\mid \\tau_{s_{0}}=s\\right] \\tag{14.14}\n\\end{equation*}\n\n\n其中 $\\tau_{s_{0}}$ 表示轨迹 $\\tau$ 的起始状态.\n\n为了方便起见,我们用 $\\tau_{0: T}$ 来表示轨迹 $s_{0}, a_{0}, s_{1}, \\cdots, s_{T}$, 用 $\\tau_{1: T}$ 来表示轨迹 $s_{1}, a_{1}, \\cdots, s_{T}$, 因此有 $\\tau_{0: T}=s_{0}, a_{0}, \\tau_{1: T}$.\n\n根据马尔可夫性质, $V^{\\pi}(s)$ 可展开得到\n\n\n\\begin{align*}\n& V^{\\pi}(s)=\\mathbb{E}_{\\tau_{0: T} \\sim p(\\tau)}\\left[r_{1}+\\gamma \\sum_{t=1}^{T-1} \\gamma^{t-1} r_{t+1} \\mid \\tau_{s_{0}}=s\\right]  \\tag{14.15}\\\\\n& =\\mathbb{E}_{a \\sim \\pi(a \\mid s)} \\mathbb{E}_{s^{\\prime} \\sim p\\left(s^{\\prime} \\mid s, a\\right)} \\mathbb{E}_{\\tau_{1: T} \\sim p(\\tau)}\\left[r\\left(s, a, s^{\\prime}\\right)+\\gamma \\sum_{t=1}^{T-1} \\gamma^{t-1} r_{t+1} \\mid \\tau_{s_{1}}=s^{\\prime}\\right]  \\tag{14.16}\\\\\n& =\\mathbb{E}_{a \\sim \\pi(a \\mid s)} \\mathbb{E}_{s^{\\prime} \\sim p\\left(s^{\\prime} \\mid s, a\\right)}\\left[r\\left(s, a, s^{\\prime}\\right)+\\gamma \\mathbb{E}_{\\tau_{1: T} \\sim p(\\tau)}\\left[\\sum_{t=1}^{T-1} \\gamma^{t-1} r_{t+1} \\mid \\tau_{s_{1}}=s^{\\prime}\\right]\\right]  \\tag{14.17}\\\\\n& =\\mathbb{E}_{a \\sim \\pi(a \\mid s)} \\mathbb{E}_{s^{\\prime} \\sim p\\left(s^{\\prime} \\mid s, a\\right)}\\left[r\\left(s, a, s^{\\prime}\\right)+\\gamma V^{\\pi}\\left(s^{\\prime}\\right)\\right] . \\tag{14.18}\n\\end{align*}\n\n\n公式 (14.18) 也称为贝尔曼方程 ( Bellman Equation), 表示当前状态的值函数可以通过下个状态的值函数来计算.\n\n如果给定策略 $\\pi(a \\mid s)$, 状态转移概率 $p\\left(s^{\\prime} \\mid s, a\\right)$ 和奖励 $r\\left(s, a, s^{\\prime}\\right)$, 我们就可以通过迭代的方式来计算 $V^{\\pi}(s)$. 由于存在折扣率, 迭代一定步数后, 每个状态的值函数就会固定不变."
+    },
+    {
+        "id": "chatcmpl-945nISyVsI1JfgSlhhaNvZP8vkeru",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 的定义是什么？\",\n    \"回答1\": \"$V^{\\boldsymbol{\\tau}}(s)$ 表示从状态 $s$ 开始，执行策略 $\\boldsymbol{\\tau}$ 得到的期望总回报。具体而言，它是对轨迹 $\\boldsymbol{\\tau}$ 中每一步的奖励进行折现求和得到的期望值。\",\n    \"问题2\": \"状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 的计算公式是什么？\",\n    \"回答2\": \"状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 的计算公式为 $V^{\\boldsymbol{\\tau}}(s)=\\text{E}_{\\boldsymbol{\\tau} \\text{~} p(\\boldsymbol{\\tau})}\\big[\\text{~}\\text{~}\\text{~}\\text{~}\\big] \\text{~}\\text{~}\\text{~}\\text{~}$，其中 $\\boldsymbol{\\tau}$ 表示轨迹，$p(\\boldsymbol{\\tau})$ 表示轨迹的概率分布。\",\n    \"问题3\": \"根据马尔可夫性质，状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 可以如何展开？\",\n    \"回答3\": \"根据马尔可夫性质，状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 可以展开为包含状态转移概率和奖励的期望值的形式。这种展开形式能够更清晰地描述状态值函数与策略、状态转移和奖励之间的关系。\",\n    \"问题4\": \"贝尔曼方程（Bellman Equation）是用来表示什么的？\",\n    \"回答4\": \"贝尔曼方程（Bellman Equation）用来表示当前状态的值函数可以通过下个状态的值函数来计算。它描述了状态值函数之间的递归关系，为动态规划等方法提供了重要理论基础。\",\n    \"问题5\": \"贝尔曼方程（Bellman Equation）的计算公式是什么？\",\n    \"回答5\": \"贝尔曼方程（Bellman Equation）的计算公式为 $V^{\\boldsymbol{\\tau}}(s)=\\text{E}_{a \\text{~} \\boldsymbol{\\tau}(a \\text{~} s)} \\text{E}_{s^{\\boldsymbol{'}} \\text{~} p(s^{\\boldsymbol{'}} \\text{~} s, a)}\\big[\\text{~}\\text{~}\\text{~}\\big]$。其中 $\\boldsymbol{\\tau}(a \\text{~} s)$ 表示在状态 $s$ 下采取动作 $a$ 的策略分布。\",\n    \"问题6\": \"如何通过迭代的方式来计算状态值函数 $V^{\\boldsymbol{\\tau}}(s)$？\",\n    \"回答6\": \"通过给定策略 $\\boldsymbol{\\tau}(a \\text{~} s)$、状态转移概率 $p(s^{\\boldsymbol{'}} \\text{~} s, a)$ 和奖励 $r(s, a, s^{\\boldsymbol{'}})$，可以通过迭代的方式来计算 $V^{\\boldsymbol{\\tau}}(s)$。在每次迭代中，根据贝尔曼方程更新每个状态的值函数，直至收敛为止。\",\n    \"问题7\": \"为什么在存在折扣率的情况下，迭代一定步数后每个状态的值函数会固定不变？\",\n    \"回答7\": \"在存在折扣率的情况下，迭代一定步数后每个状态的值函数会固定不变是因为折扣率会使得未来奖励对当前值函数的影响逐渐减小，并最终趋于稳定。这意味着经过一定步数的迭代后，每个状态的值函数不再发生显著变化。\",\n    \"问题8\": \"轨迹 $\\boldsymbol{\\tau}_{0: T}$ 和 $\\boldsymbol{\\tau}_{1: T}$ 分别表示什么？\",\n    \"回答8\": \"$\\boldsymbol{\\tau}_{0: T}$ 表示轨迹 $s_{0}, a_{0}, s_{1}, \\text{...}, s_{T}$，而 $\\boldsymbol{\\tau}_{1: T}$ 表示轨迹 $s_{1}, a_{1}, \\text{...}, s_{T}$。这种表示方式方便对轨迹进行分析和处理。\",\n    \"问题9\": \"如何理解公式 (14.13) 中的期望操作符 $\\text{E}_{S \\text{~} p(s_{0})}\\big[\\text{~}\\big]$？\",\n    \"回答9\": \"公式 (14.13) 中的期望操作符 $\\text{E}_{S \\text{~} p(s_{0})}\\big[\\text{~}\\big]$ 表示对初始状态 $S$ 的分布 $p(s_{0})$ 进行期望操作。即对初始状态按照其分布进行加权平均，得到期望值。\",\n    \"问题10\": \"状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 的计算需要考虑哪些因素？\",\n    \"回答10\": \"计算状态值函数 $V^{\\boldsymbol{\\tau}}(s)$ 需要考虑给定策略 $\\boldsymbol{\\tau}(a \\text{~} s)$、状态转移概率 $p(s^{\\boldsymbol{'}} \\text{~} s, a)$ 和奖励 $r(s, a, s^{\\boldsymbol{'}})$。这些因素共同影响着在特定策略下从某一状态出发得到的期望总回报。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710762612,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1523,
+            "prompt_tokens": 3652,
+            "total_tokens": 5175
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

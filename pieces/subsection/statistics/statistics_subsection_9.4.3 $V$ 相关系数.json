@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "9.4.3 $V$ 相关系数",
+        "content_length": 460,
+        "content": "Title: 9.4.3 $V$ 相关系数\nContent:\n鉴于 $\\varphi$ 系数无上限, $c$ 系数小于 1 的情况, 格莱姆 (Gramer) 提出了 $\\boldsymbol{V}$ 相关系数（V\\\\\ncorrelation coefficient)。 $V$ 相关系数的计算公式为：\n\n\n\\begin{equation*}\nV=\\sqrt{\\frac{\\chi^{2}}{n \\times \\min [(R-1),(C-1)]}} \\tag{9.6}\n\\end{equation*}\n\n\n它的计算也是以 $\\chi^{2}$ 值为基础的。式中的 $\\min [(R-1),(C-1)]$ 表示取 $(R-1)$, $(C-1)$ 中较小的一个。当两个变量相互独立时, $V=0$; 当两个变量完全相关时, $V=1$ 。所以 $V$ 的取值在 $0 \\sim 1$ 之间。如果列联表中有一维为 2 , 即 $\\min [(R-1),(C-1)]=1$, 则 $V$ 值就等于 $\\varphi$ 值。"
+    },
+    {
+        "id": "chatcmpl-93xxjSNeOB1TBmdS8iHfyJWbhk0M4",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"为什么格莱姆提出了 $V$ 相关系数？\",\n    \"回答1\": \"格莱姆提出了 $V$ 相关系数是因为 $\\boldsymbol{\\text{V}}$ 相关系数能够弥补 $\\boldsymbol{\\text{c}}$ 系数小于 1 和 $\\boldsymbol{\\text{ϕ}}$ 系数无上限的情况。通过引入 $V$ 相关系数，可以更全面地描述两个变量之间的相关程度。\",\n    \"问题2\": \"$V$ 相关系数的计算公式是什么？\",\n    \"回答2\": \"$V$ 相关系数的计算公式为 $V=\\bigg(\\frac{\\boldsymbol{\\text{χ}}^{2}}{n \\times \\text{min}[(R-1),(C-1)]}\\bigg)^{0.5}$，其中 $\\boldsymbol{\\text{χ}}^{2}$ 表示卡方值，$\\text{n}$ 表示样本容量，$\\text{min}[(R-1),(C-1)]$ 表示取 $(R-1)$ 和 $(C-1)$ 中较小的一个。\",\n    \"问题3\": \"$V$ 相关系数的取值范围是多少？\",\n    \"回答3\": \"$V$ 相关系数的取值范围在 $0 \\text{ 至 } 1$ 之间。当两个变量相互独立时，$V=0$；当两个变量完全相关时，$V=1$。\",\n    \"问题4\": \"当列联表中有一维为 2 时，$V$ 值等于多少？\",\n    \"回答4\": \"当列联表中有一维为 2 时，即 $\\text{min}[(R-1),(C-1)]=1$，则 $V$ 值等于 $\\boldsymbol{\\text{ϕ}}$ 值。\",\n    \"问题5\": \"$V$ 相关系数与 $\\boldsymbol{\\text{c}}$ 系数有何异同？\",\n    \"回答5\": \"$V$ 相关系数与 $\\boldsymbol{\\text{c}}$ 系数相似之处在于都用于衡量两个变量之间的相关程度。不同之处在于 $\\boldsymbol{\\text{c}}$ 系数受限于小于 1 的取值范围，而 $V$ 相关系数能够覆盖更广泛的相关程度情况，并且在一定条件下等于 $\\boldsymbol{\\text{ϕ}}$ 值。\",\n    \"问题6\": \"为什么要将 $\\boldsymbol{\\text{χ}}^{2}$ 值作为 $V$ 相关系数的基础？\",\n    \"回答6\": \"将 $\\boldsymbol{\\text{χ}}^{2}$ 值作为 $V$ 相关系数的基础是因为 $\\boldsymbol{\\text{χ}}^{2}$ 统计量能够有效地衡量分类变量之间的相关性和拟合度。通过基于 $\\boldsymbol{\\text{χ}}^{2}$ 值的计算，可以更准确地评估两个变量之间的相关程度。\",\n    \"问题7\": \"$V$ 相关系数对于描述两个变量之间的关系有何优势？\",\n    \"回答7\": \"$V$ 相关系数能够在 $0 \\text{ 至 } 1$ 的取值范围内全面描述两个变量之间的相关程度，包括相互独立和完全相关的情况。这使得 $V$ 相关系数在统计分析中具有更广泛的适用性和表达能力。\",\n    \"问题8\": \"$V$ 相关系数与完全相关时的取值有何特点？\",\n    \"回答8\": \"$V$ 相关系数在两个变量完全相关时取值为 1。这一特点使得 $V$ 相关系数能够清晰地反映出两个变量之间存在着完全的线性相关关系。\",\n    \"问题9\": \"$V$ 相关系数如何受到样本容量影响？\",\n    \"回答9\": \"$V$ 相关系数中包含样本容量 $n$ 的影响，样本容量越大，则 $\\boldsymbol{\\text{χ}}^{2}$ 值相对稳定，从而使得 $V$ 相关系数更加可靠和准确。因此，样本容量对于 $V$ 相关系数的评估具有重要影响。\",\n    \"问题10\": \"$V$ 相关系数与其他相关性指标相比具有哪些独特优势？\",\n    \"回答10\": \"$V$ 相关系数相比其他相关性指标具有更广泛的取值范围和更全面的描述能力。它能够同时考虑相互独立和完全相关的情况，并且在一定条件下等于 $\\boldsymbol{\\text{ϕ}}$ 值，因此在实际应用中具有更灵活和准确的特点。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710732507,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1357,
+            "prompt_tokens": 2862,
+            "total_tokens": 4219
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

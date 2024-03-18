@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "6.3.3 异步的序列到序列模式",
+        "content_length": 2392,
+        "content": "Title: 6.3.3 异步的序列到序列模式\nContent:\n异步的序列到序列模式也称为编码器-解码器 ( Encoder-Decoder) 模型, 即输入序列和输出序列不需要有严格的对应关系, 也不需要保持相同的长度. 比如在机器翻译中, 输入为源语言的单词序列, 输出为目标语言的单词序列.\n\n在异步的序列到序列模式中, 输入为长度为 $T$ 的序列 $\\boldsymbol{x}_{1: T}=\\left(\\boldsymbol{x}_{1}, \\cdots, \\boldsymbol{x}_{T}\\right)$,输出为长度为 $M$ 的序列 $y_{1: M}=\\left(y_{1}, \\cdots, y_{M}\\right)$. 异步的序列到序列模式一般通过先编码后解码的方式来实现. 先将样本 $\\boldsymbol{x}$ 按不同时刻输入到一个循环神经网络 (编码器) 中, 并得到其编码 $\\boldsymbol{h}_{T}$. 然后再使用另一个循环神经网络 (解码器), 得到输出序列 $\\hat{y}_{1: M}$. 为了建立输出序列之间的依赖关系, 在解码器中通常使用非线性的自回归模型. 令 $f_{1}(\\cdot)$ 和 $f_{2}(\\cdot)$ 分别为用作编码器和解码器的循环神经网络, 则编码 \\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n器-解码器模型可以写为\n\n\\[\n\\begin{array}{rlrl}\n\\boldsymbol{h}_{t} & =f_{1}\\left(\\boldsymbol{h}_{t-1}, \\boldsymbol{x}_{t}\\right), & & \\forall t \\in[1, T] \\\\\n\\boldsymbol{h}_{T+t} & =f_{2}\\left(\\boldsymbol{h}_{T+t-1}, \\hat{\\boldsymbol{y}}_{t-1}\\right), & \\forall t \\in[1, M] \\\\\n\\hat{y}_{t} & =g\\left(\\boldsymbol{h}_{T+t}\\right), & \\forall t \\in[1, M] \\tag{6.27}\n\\end{array}\n\\]\n\n其中 $g(\\cdot)$ 为分类器, $\\hat{\\boldsymbol{y}}_{t}$ 为预测输出 $\\hat{y}_{t}$ 的向量表示. 在解码器通常采用自回归模型, 每个时刻的输入为上一时刻的预测结果 $\\hat{y}_{t-1}$.\n\n图6.5给出了异步的序列到序列模式示例, 其中 $\\langle E O S\\rangle$ 表示输入序列的结束,虚线表示将上一个时刻的输出作为下一个时刻的输入.\n\n\n\n自回归模型参见第6.1.2节。\n\n异步的序列到序列模式可以进一步参见第15.6.1节。\n\n图 6.5 异步的序列到序列模式\n\n\\section*{6.4 参数学习}\n循环神经网络的参数可以通过梯度下降方法来进行学习.\n\n以随机梯度下降为例, 给定一个训练样本 $(\\boldsymbol{x}, \\boldsymbol{y})$, 其中 $\\boldsymbol{x}_{1: T}=\\left(\\boldsymbol{x}_{1}, \\cdots, \\boldsymbol{x}_{T}\\right)$为长度是 $T$ 的输入序列, $y_{1: T}=\\left(y_{1}, \\cdots, y_{T}\\right)$ 是长度为 $T$ 的标签序列. 即在每个时刻 $t$,都有一个监督信息 $y_{t}$, 我们定义时刻 $t$ 的损失函数为\n\n\n\\begin{equation*}\n\\mathcal{L}_{t}=\\mathcal{L}\\left(y_{t}, g\\left(\\boldsymbol{h}_{t}\\right)\\right), \\tag{6.28}\n\\end{equation*}\n\n\n其中 $g\\left(\\boldsymbol{h}_{t}\\right)$ 为第 $t$ 时刻的输出, $\\mathcal{L}$ 为可微分的损失函数, 比如交叉熵. 那么整个序列的损失函数为\n\n\n\\begin{equation*}\n\\mathcal{L}=\\sum_{t=1}^{T} \\mathcal{L}_{t} \\tag{6.29}\n\\end{equation*}\n\n\n整个序列的损失函数 $\\mathcal{L}$ 关于参数 $\\boldsymbol{U}$ 的梯度为\n\n\n\\begin{equation*}\n\\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{U}}=\\sum_{t=1}^{T} \\frac{\\partial \\mathcal{L}_{t}}{\\partial \\boldsymbol{U}} \\tag{6.30}\n\\end{equation*}\n\n\n即每个时刻损失 $\\mathcal{L}_{t}$ 对参数 $\\boldsymbol{U}$ 的偏导数之和.\n\n循环神经网络中存在一个递归调用的函数 $f(\\cdot)$, 因此其计算参数梯度的方式和前馈神经网络不太相同. 在循环神经网络中主要有两种计算梯度的方式: 随时间反向传播 (BPTT) 算法和实时循环学习 (RTRL) 算法.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n不失一般性, 这里我们以同步的序列到序列模式为例来介绍循环神经网络的参数学习."
+    },
+    {
+        "id": "chatcmpl-94225zrKPQB5MCD8SkdBsmqpTmq8U",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"异步的序列到序列模式与同步的序列到序列模式有何区别？\",\n    \"回答1\": \"异步的序列到序列模式不需要输入序列和输出序列有严格的对应关系，也不需要保持相同的长度；而同步的序列到序列模式则要求输入和输出序列在时间上一一对应，并且具有相同的长度。\",\n    \"问题2\": \"在异步的序列到序列模式中，编码器-解码器模型是如何实现的？\",\n    \"回答2\": \"在异步的序列到序列模式中，编码器-解码器模型通过先将样本 $\\boldsymbol{x}$ 按不同时刻输入到一个循环神经网络（编码器）中，得到其编码 $\\boldsymbol{h}_{T}$；然后再使用另一个循环神经网络（解码器），得到输出序列 $\\boldsymbol{\\text{y}}_{1:M}$。在解码器中通常使用非线性的自回归模型来建立输出序列之间的依赖关系。\",\n    \"问题3\": \"异步的序列到序列模式中的损失函数是如何定义的？\",\n    \"回答3\": \"在异步的序列到序列模式中，每个时刻 $t$ 的损失函数定义为 $\\boldsymbol{\\text{L}}_{t}=\\boldsymbol{\\text{L}}\\big(y_{t}, g\\big(\\boldsymbol{h}_{t}\\big)\\big)$，其中 $g\\big(\\boldsymbol{h}_{t}\\big)$ 为第 $t$ 时刻的输出，$\\boldsymbol{\\text{L}}$ 为可微分的损失函数，如交叉熵。整个序列的损失函数为 $\\boldsymbol{\\text{L}}=\\text{∑}_{t=1}^{T} \\boldsymbol{\\text{L}}_{t}$。\",\n    \"问题4\": \"在循环神经网络中，参数学习通常采用哪些方法？\",\n    \"回答4\": \"循环神经网络的参数学习通常采用梯度下降方法。具体来说，可以采用随机梯度下降算法，根据每个时刻 $t$ 的损失函数对参数进行更新，以最小化整个序列的损失函数。\",\n    \"问题5\": \"循环神经网络中计算参数梯度的方式有哪些？\",\n    \"回答5\": \"在循环神经网络中主要有两种计算梯度的方式：随时间反向传播（BPTT）算法和实时循环学习（RTRL）算法。这两种算法可以用于计算递归调用函数 $f(\\boldsymbol{\\text{·}})$ 对参数的梯度。\",\n    \"问题6\": \"编码器-解码器模型中的自回归模型是如何工作的？\",\n    \"回答6\": \"在编码器-解码器模型中，解码器通常采用自回归模型。每个时刻的输入为上一时刻的预测结果 $\\boldsymbol{\\text{y}}_{t-1}$，通过非线性自回归模型建立输出序列之间的依赖关系。\",\n    \"问题7\": \"参数学习中的损失函数对参数的偏导数是如何计算得到整个序列的梯度？\",\n    \"回答7\": \"整个序列的损失函数 $\\boldsymbol{\\text{L}}$ 关于参数 $\\boldsymbol{U}$ 的梯度可以通过每个时刻损失 $\\boldsymbol{\\text{L}}_{t}$ 对参数 $\\boldsymbol{U}$ 的偏导数之和来计算，即 $\\frac{\\text{∂} \\boldsymbol{\\text{L}}}{\\text{∂} \\boldsymbol{U}}=\\text{∑}_{t=1}^{T} \\frac{\\text{∂} \\boldsymbol{\\text{L}}_{t}}{\\text{∂} \\boldsymbol{U}}$。\",\n    \"问题8\": \"什么是异步的序列到序列模式？\",\n    \"回答8\": \"异步的序列到序列模式也称为编码器-解码器（Encoder-Decoder）模型，即输入序列和输出序列不需要有严格的对应关系，也不需要保持相同的长度。这种模式适用于例如机器翻译等任务。\",\n    \"问题9\": \"循环神经网络中递归调用函数 $f(\\boldsymbol{\\text{·}})$ 的作用是什么？\",\n    \"回答9\": \"循环神经网络中递归调用函数 $f(\\boldsymbol{\\text{·}})$ 主要用于实现对输入数据和隐藏状态之间复杂非线性关系的建模。它在编码器和解码器中分别对输入和输出进行处理，并帮助建立输入和输出之间的依赖关系。\",\n    \"问题10\": \"参数学习中采用随机梯度下降算法时，如何更新每个时刻 $t$ 的参数？\",\n    \"回答10\": \"在随机梯度下降算法中，给定一个训练样本 $(\\boldsymbol{x}, \\boldsymbol{y})$，根据每个时刻 $t$ 的损失函数对参数进行更新。即根据每个时刻 $t$ 的监督信息 $y_{t}$ 和预测结果 $g\\big(\\boldsymbol{h}_{t}\\big)$ 计算损失函数，并根据梯度下降规则更新参数以最小化整个序列的损失函数。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710748153,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1510,
+            "prompt_tokens": 4022,
+            "total_tokens": 5532
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

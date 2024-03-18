@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter10",
+        "title": "21.1.4 PageRank 的一般定义",
+        "content_length": 2468,
+        "content": "Title: 21.1.4 PageRank 的一般定义\nContent:\nPageRank 一般定义的想法是在基本定义的基础上导入平滑项。\n\n给定一个含有 $n$ 个结点 $v_{i}, i=1,2, \\cdots, n$, 的任意有向图, 假设考虑一个在图上的随机游走模型, 即一阶马尔可夫链, 其转移矩阵是 $M$, 从一个结点到其连出的所有结点的转移概率相等。这个马尔可夫链未必具有平稳分布。假设考虑另一个完全随机游走的模型, 其转移矩阵的元素全部为 $1 / n$, 也就是说从任意一个结点到任意一个结点的转移概率都是 $1 / n$ 。两个转移矩阵的线性组合又构成一个新的转移矩阵, 在其上可以定义一个新的马尔可夫链。容易证明这个马尔可夫链一定具有平稳分布, 且平稳分布满足\n\n\n\\begin{equation*}\n\\boldsymbol{R}=d \\boldsymbol{M} \\boldsymbol{R}+\\frac{1-d}{n} \\boldsymbol{1} \\tag{21.10}\n\\end{equation*}\n\n\n式中 $d(0 \\leqslant d \\leqslant 1)$ 是系数, 称为阻尼因子 (damping factor) ; $\\boldsymbol{R}$ 是 $n$ 维向量; $\\boldsymbol{1}$ 是所有分量为 1 的 $n$ 维向量。 $\\boldsymbol{R}$ 表示的就是有向图的一般 PageRank。\n\n$$\n\\boldsymbol{R}=\\left[\\begin{array}{c}\n\\operatorname{PR}\\left(v_{1}\\right) \\\\\n\\operatorname{PR}\\left(v_{2}\\right) \\\\\n\\vdots \\\\\n\\operatorname{PR}\\left(v_{n}\\right)\n\\end{array}\\right]\n$$\n\n其中, $\\operatorname{PR}\\left(v_{i}\\right), i=1,2, \\cdots, n$, 表示结点 $v_{i}$ 的 PageRank 值。\n\n式 (21.10) 中第一项表示 (状态分布是平稳分布时) 依照转移矩阵 $\\boldsymbol{M}$ 访问各个结点的概\\\\\n率, 第二项表示完全随机访问各个结点的概率。阻尼因子 $d$ 取值由经验决定, 例如, $d=0.85$ 。当 $d$ 接近 1 时, 随机游走主要依照转移矩阵 $M$ 进行; 当 $d$ 接近 0 时, 随机游走主要以等概率随机访问各个结点。\n\n可以由式 (21.10) 写出每个结点的 PageRank, 这是一般 PageRank 的定义。\n\n\n\\begin{equation*}\n\\operatorname{PR}\\left(v_{i}\\right)=d\\left(\\sum_{v_{j} \\in M\\left(v_{i}\\right)} \\frac{\\operatorname{PR}\\left(v_{j}\\right)}{L\\left(v_{j}\\right)}\\right)+\\frac{1-d}{n}, \\quad i=1,2, \\cdots, n \\tag{21.11}\n\\end{equation*}\n\n\n这里 $M\\left(v_{i}\\right)$ 是指向结点 $v_{i}$ 的结点集合, $L\\left(v_{j}\\right)$ 是结点 $v_{j}$ 连出的边的个数。\n\n第二项称为平滑项, 由于采用平滑项, 所有结点的 PageRank 值都不会为 0 , 具有以下性质:\n\n\n\\begin{gather*}\n\\operatorname{PR}\\left(v_{i}\\right)>0, \\quad i=1,2, \\cdots, n  \\tag{21.12}\\\\\n\\sum_{i=1}^{n} \\operatorname{PR}\\left(v_{i}\\right)=1 \\tag{21.13}\n\\end{gather*}\n\n\n下面给出 PageRank 的一般定义。\n\n定义 21.4 (PageRank 的一般定义) 给定一个含有 $n$ 个结点的任意有向图, 在有向图上定义一个一般的随机游走模型, 即一阶马尔可夫链。一般的随机游走模型的转移矩阵由两部分线性组合组成, 一部分是有向图的基本转移矩阵 $M$, 表示从一个结点到其连出的所有结点的转移概率相等, 另一部分是完全随机的转移矩阵, 表示从任意一个结点到任意一个结点的转移概率都是 $1 / n$, 线性组合系数为阻尼因子 $d(0 \\leqslant d \\leqslant 1)$ 。这个一般随机游走的马尔可夫链存在平稳分布, 记作 $\\boldsymbol{R}$ 。定义平稳分布向量 $\\boldsymbol{R}$ 为这个有向图的一般 PageRank。 $\\boldsymbol{R}$ 由公式\n\n\n\\begin{equation*}\n\\boldsymbol{R}=d \\boldsymbol{M} \\boldsymbol{R}+\\frac{1-d}{n} \\mathbf{1} \\tag{21.14}\n\\end{equation*}\n\n\n决定，其中 1 是所有分量为 1 的 $n$ 维向量。\n\n一般 PageRank 的定义意味着互联网浏览者按照以下方法在网上随机游走: 在任意一个网页上, 浏览者或者以概率 $d$ 决定按照超链接随机跳转, 这时以等概率从连接出去的超链接跳转到下一个网页; 或者以概率 $(1-d)$ 决定完全随机跳转, 这时以等概率 $1 / n$ 跳转到任意一个网页。第二个机制保证从没有连接出去的超链接的网页也可以跳转出。这样可以保证平稳分布, 即一般 PageRank 的存在, 因而一般 PageRank 适用于任何结构的网络。"
+    },
+    {
+        "id": "chatcmpl-93zU6S98yYfczXIVjeqvh77hQlsPv",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"PageRank 的一般定义中引入了什么概念？\",\n    \"回答1\": \"PageRank 的一般定义中引入了阻尼因子（damping factor）和平滑项的概念。阻尼因子 $d$ 用于调节随机游走主要依照转移矩阵进行的程度，而平滑项确保所有结点的 PageRank 值都不会为 0。\",\n    \"问题2\": \"PageRank 的一般定义中如何表示结点 $v_i$ 的 PageRank 值？\",\n    \"回答2\": \"PageRank 的一般定义中表示结点 $v_i$ 的 PageRank 值为 $\\text{PR}(v_i)=d\\big(\\frac{\\text{PR}(v_j)}{L(v_j)}\\big)+\\frac{1-d}{n}$，其中 $M(v_i)$ 是指向结点 $v_i$ 的结点集合，$L(v_j)$ 是结点 $v_j$ 连出的边的个数。\",\n    \"问题3\": \"在 PageRank 的一般定义中，阻尼因子 $d$ 的取值有何含义？\",\n    \"回答3\": \"在 PageRank 的一般定义中，阻尼因子 $d$ 的取值由经验决定，例如，通常取 $d=0.85$。当 $d$ 接近 1 时，随机游走主要依照转移矩阵进行；当 $d$ 接近 0 时，随机游走主要以等概率随机访问各个结点。\",\n    \"问题4\": \"PageRank 的一般定义中的平滑项具有什么作用？\",\n    \"回答4\": \"PageRank 的一般定义中的平滑项由于采用平滑项，所有结点的 PageRank 值都不会为 0。这保证了每个结点都有一个非零的 PageRank 值，并且使得所有结点的 PageRank 值之和为 1。\",\n    \"问题5\": \"PageRank 的一般定义如何保证平稳分布的存在？\",\n    \"回答5\": \"PageRank 的一般定义通过引入阻尼因子和完全随机转移矩阵的线性组合，构成一个新的转移矩阵，并在其上定义一个新的马尔可夫链。这样可以保证这个马尔可夫链一定具有平稳分布，从而确保了平稳分布的存在。\",\n    \"问题6\": \"PageRank 的一般定义适用于哪种网络结构？\",\n    \"回答6\": \"PageRank 的一般定义适用于任何结构的网络。它通过引入阻尼因子和完全随机转移矩阵的线性组合来保证平稳分布的存在，因此适用于任何结构的网络。\",\n    \"问题7\": \"PageRank 的一般定义中如何表示平稳分布向量 $\\boldsymbol{R}$？\",\n    \"回答7\": \"PageRank 的一般定义中表示平稳分布向量 $\\boldsymbol{R}$ 为 $\\boldsymbol{R}=d \\boldsymbol{M} \\boldsymbol{R}+\\frac{1-d}{n} \\boldsymbol{1}$，其中 $\\boldsymbol{M}$ 是转移矩阵，$\\boldsymbol{1}$ 是所有分量为 1 的 $n$ 维向量。\",\n    \"问题8\": \"PageRank 的一般定义中如何计算每个结点的 PageRank 值？\",\n    \"回答8\": \"PageRank 的一般定义中计算每个结点的 PageRank 值使用公式 $\\text{PR}(v_i)=d\\big(\\frac{\\text{PR}(v_j)}{L(v_j)}\\big)+\\frac{1-d}{n}$，其中 $M(v_i)$ 是指向结点 $v_i$ 的结点集合，$L(v_j)$ 是结点 $v_j$ 连出的边的个数。\",\n    \"问题9\": \"PageRank 的一般定义中如何调节随机游走主要依照转移矩阵进行的程度？\",\n    \"回答9\": \"PageRank 的一般定义中通过引入阻尼因子 $d$ 来调节随机游走主要依照转移矩阵进行的程度。当 $d$ 接近 1 时，随机游走主要依照转移矩阵进行；当 $d$ 接近 0 时，随机游走主要以等概率随机访问各个结点。\",\n    \"问题10\": \"在 PageRank 的一般定义中，什么是完全随机转移矩阵？\",\n    \"回答10\": \"在 PageRank 的一般定义中，完全随机转移矩阵是指从任意一个结点到任意一个结点的转移概率都是 $1 / n$ 的转移矩阵。它用于构成新的转移矩阵，并在其上定义一个新的马尔可夫链，以确保平稳分布的存在。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710738358,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1369,
+            "prompt_tokens": 4243,
+            "total_tokens": 5612
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

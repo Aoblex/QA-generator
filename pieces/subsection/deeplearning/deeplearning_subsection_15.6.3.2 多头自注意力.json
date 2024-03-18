@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "15.6.3.2 多头自注意力",
+        "content_length": 986,
+        "content": "Title: 15.6.3.2 多头自注意力\nContent:\n自注意力模型可以看作在一个线性投影空间中建立 $\\boldsymbol{H}$ 中不同向量之间的交互关系. 为了提取更多的交互信息, 我们可以使用多头自注意力 (Multi-Head Self-Attention ), 在多个不同的投影空间中捕捉不同的交互信息. 假设在 $M$ 个投影空间中分别应用自注意力模型,有\n\n$$\n\\begin{aligned}\n& \\operatorname{MultiHead}(\\boldsymbol{H})=\\boldsymbol{W}_{o}\\left[\\operatorname{head}_{1} ; \\cdots ; \\operatorname{head}_{M}\\right] \\text {, } \\\\\n& \\text { head }_{m}=\\operatorname{self-att}\\left(\\boldsymbol{Q}_{m}, \\boldsymbol{K}_{m}, \\boldsymbol{V}_{m}\\right), \\\\\n& \\forall m \\in\\{1, \\cdots, M\\}, \\quad \\boldsymbol{Q}_{m}=\\boldsymbol{W}_{q}^{m} \\boldsymbol{H}, \\boldsymbol{K}=\\boldsymbol{W}_{k}^{m} \\boldsymbol{H}, \\boldsymbol{V}=\\boldsymbol{W}_{v}^{m} \\boldsymbol{H},\n\\end{aligned}\n$$\n\n其中 $\\boldsymbol{W}_{o} \\in \\mathbb{R}^{D_{h} \\times M d_{v}}$ 为输出投影矩阵, $\\boldsymbol{W}_{q}^{m} \\in \\mathbb{R}^{D_{k} \\times D_{h}}, \\boldsymbol{W}_{k}^{m} \\in \\mathbb{R}^{D_{k} \\times D_{h}}, \\boldsymbol{W}_{v}^{m} \\in$ $\\mathbb{R}^{D_{v} \\times D_{h}}$ 为投影矩阵, $m \\in\\{1, \\cdots, M\\}$."
+    },
+    {
+        "id": "chatcmpl-946pQjjZZcWseZenCyqOLQRvU7SeO",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"自注意力模型与多头自注意力模型有何区别？\",\n    \"回答1\": \"自注意力模型是在一个线性投影空间中建立不同向量之间的交互关系，而多头自注意力模型则在多个不同的投影空间中捕捉不同的交互信息。多头自注意力通过在多个投影空间中应用自注意力模型，能够提取更多的交互信息。\",\n    \"问题2\": \"多头自注意力模型中的输出是如何计算得到的？\",\n    \"回答2\": \"在多头自注意力模型中，输出由 $M$ 个投影空间中各自应用自注意力模型得到的结果组合而成，计算公式为 $\\text{MultiHead}(\\boldsymbol{H})=\\boldsymbol{W}_{o}\\big[\\text{head}_{1} ; \\text{...} ; \\text{head}_{M}\\big]$。\",\n    \"问题3\": \"多头自注意力模型中的每个 head 是如何计算的？\",\n    \"回答3\": \"在多头自注意力模型中，每个 head 通过应用自注意力模型计算得到，具体公式为 $\\text{head}_{m}=\\text{self-att}(\\boldsymbol{Q}_{m}, \\boldsymbol{K}_{m}, \\boldsymbol{V}_{m})$，其中 $\\boldsymbol{Q}_{m}, \\boldsymbol{K}_{m}, \\boldsymbol{V}_{m}$ 分别由对应投影矩阵与 $\\boldsymbol{H}$ 计算得到。\",\n    \"问题4\": \"多头自注意力模型中的投影矩阵起到什么作用？\",\n    \"回答4\": \"在多头自注意力模型中，投影矩阵用于将输入 $\\boldsymbol{H}$ 投影到不同的维度空间，以便在不同的投影空间中捕捉不同的交互信息。这样可以提高模型对于输入信息的表达能力和学习能力。\",\n    \"问题5\": \"为什么需要使用多头自注意力来提取更多的交互信息？\",\n    \"回答5\": \"使用多头自注意力可以在多个不同的投影空间中捕捉不同的交互信息，从而提取更丰富和全面的交互特征。这有助于模型更好地理解输入数据之间的关系，提高模型的表达能力和泛化能力。\",\n    \"问题6\": \"输出投影矩阵 $\\boldsymbol{W}_{o}$ 的作用是什么？\",\n    \"回答6\": \"输出投影矩阵 $\\boldsymbol{W}_{o}$ 用于将 $M$ 个投影空间中各自应用自注意力模型得到的结果进行线性组合，从而得到最终的输出。它起到了将各个投影空间中的信息整合和融合的作用。\",\n    \"问题7\": \"如何理解多头自注意力模型中的 $M$ 个投影空间？\",\n    \"回答7\": \"$M$ 个投影空间意味着在 $M$ 组不同的投影矩阵作用下，可以得到 $M$ 种不同维度空间中的交互信息。这样可以使模型更全面地理解输入数据之间的关系，提高模型对于复杂数据特征的学习能力。\",\n    \"问题8\": \"为什么需要在多头自注意力模型中使用不同的投影矩阵？\",\n    \"回答8\": \"使用不同的投影矩阵可以将输入数据映射到不同的维度空间，从而在不同维度空间中捕捉更丰富和全面的交互信息。这有助于提高模型对于输入数据特征的表达能力和学习能力。\",\n    \"问题9\": \"多头自注意力模型相比单一注意力模型有何优势？\",\n    \"回答9\": \"多头自注意力模型能够在多个不同维度空间中捕捉不同的交互信息，从而提取更丰富和全面的特征表示。相比单一注意力模型，它具有更强的表达能力和学习能力。\",\n    \"问题10\": \"多头自注意力模型适用于哪些类型的数据处理任务？\",\n    \"回答10\": \"多头自注意力模型适用于需要对输入数据进行全局关联建模、提取全局特征表示并进行复杂交互推理的任务。例如，在自然语言处理领域中，文本生成、机器翻译等任务都可以受益于多头自注意力模型对于全局语义关系的建模能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710766588,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1297,
+            "prompt_tokens": 3052,
+            "total_tokens": 4349
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

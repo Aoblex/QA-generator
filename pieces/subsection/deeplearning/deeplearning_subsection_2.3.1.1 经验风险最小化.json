@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "2.3.1.1 经验风险最小化",
+        "content_length": 3082,
+        "content": "Title: 2.3.1.1 经验风险最小化\nContent:\n由于线性回归的标签 $y$ 和模型输出都为连续的实数值, 因此平方损失函数非常合适衡量真实标签和预测标签之间的差异.\n\n平方损失函数参见第2.2.2.1节。\n\n根据经验风险最小化准则, 训练集 $\\mathcal{D}$ 上的经验风险定义为\n\n\n\\begin{align*}\n\\mathcal{R}(\\boldsymbol{w}) & =\\sum_{n=1}^{N} \\mathcal{L}\\left(y^{(n)}, f\\left(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}\\right)\\right)  \\tag{2.34}\\\\\n& =\\frac{1}{2} \\sum_{n=1}^{N}\\left(y^{(n)}-\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}\\right)^{2}  \\tag{2.35}\\\\\n& =\\frac{1}{2}\\left\\|\\boldsymbol{y}-\\boldsymbol{X}^{\\top} \\boldsymbol{w}\\right\\|^{2}, \\tag{2.36}\n\\end{align*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n其中 $\\boldsymbol{y}=\\left[y^{(1)}, \\cdots, y^{(N)}\\right]^{\\top} \\in \\mathbb{R}^{N}$ 是由所有样本的真实标签组成的列向量, 而 $\\boldsymbol{X} \\in \\mathbb{R}^{(D+1) \\times N}$ 是由所有样本的输入特征 $\\boldsymbol{x}^{(1)}, \\cdots, \\boldsymbol{x}^{(N)}$ 组成的矩阵:\n\n\\[\n\\boldsymbol{X}=\\left[\\begin{array}{cccc}\nx_{1}^{(1)} & x_{1}^{(2)} & \\cdots & x_{1}^{(N)}  \\tag{2.37}\\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\nx_{D}^{(1)} & x_{D}^{(2)} & \\cdots & x_{D}^{(N)} \\\\\n1 & 1 & \\cdots & 1\n\\end{array}\\right]\n\\]\n\n风险函数 $\\mathcal{R}(\\boldsymbol{w})$ 是关于 $\\boldsymbol{w}$ 的凸函数, 其对 $\\boldsymbol{w}$ 的偏导数为\n\n参见习题2-2.\n\n\n\\begin{align*}\n\\frac{\\partial \\mathcal{R}(\\boldsymbol{w})}{\\partial \\boldsymbol{w}} & =\\frac{1}{2} \\frac{\\partial\\left\\|\\boldsymbol{y}-\\boldsymbol{X}^{\\top} \\boldsymbol{w}\\right\\|^{2}}{\\partial \\boldsymbol{w}}  \\tag{2.38}\\\\\n& =-\\boldsymbol{X}\\left(\\boldsymbol{y}-\\boldsymbol{X}^{\\top} \\boldsymbol{w}\\right) \\tag{2.39}\n\\end{align*}\n\n\n令 $\\frac{\\partial}{\\partial \\boldsymbol{w}} \\mathcal{R}(\\boldsymbol{w})=0$, 得到最优的参数 $\\boldsymbol{w}^{*}$ 为\n\n\n\\begin{align*}\n\\boldsymbol{w}^{*} & =\\left(\\boldsymbol{X} \\boldsymbol{X}^{\\top}\\right)^{-1} \\boldsymbol{X} \\boldsymbol{y}  \\tag{2.40}\\\\\n& =\\left(\\sum_{n=1}^{N} \\boldsymbol{x}^{(n)}\\left(\\boldsymbol{x}^{(n)}\\right)^{\\top}\\right)^{-1}\\left(\\sum_{n=1}^{N} \\boldsymbol{x}^{(n)} y^{(n)}\\right) . \\tag{2.41}\n\\end{align*}\n\n\n这种求解线性回归参数的方法也叫最小二乘法 (Least Square Method, LSM ).图2.5给出了用最小二乘法来进行线性回归参数学习的示例.\n\n\n\n图 2.5 用最小二乘法来进行线性回归参数学习的示例\n\n在最小二乘法中, $\\boldsymbol{X} \\boldsymbol{X}^{\\top} \\in \\mathbb{R}^{(D+1) \\times(D+1)}$ 必须存在逆矩阵, 即 $\\boldsymbol{X} \\boldsymbol{X}^{\\boldsymbol{\\top}}$ 是满秩的 $\\left(\\operatorname{rank}\\left(\\boldsymbol{X} \\boldsymbol{X}^{\\top}\\right)=D+1\\right)$. 也就是说, $\\boldsymbol{X}$ 中的行向量之间是线性不相关的, 即每一个 $\\left(\\boldsymbol{X} \\boldsymbol{X}^{\\top}\\right)^{-1} \\boldsymbol{X}$ 也称为 $\\boldsymbol{X}^{\\top}$的伪逆矩阵。\n\n在古代汉语中 “平方”称为“二乘”.\\\\\n特征都和其他特征不相关. 一种常见的 $\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 不可逆情况是样本数量 $N$ 小于特征数量 $(D+1), \\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 的秩为 $N$. 这时会存在很多解 $\\boldsymbol{w}^{*}$, 可以使得 $\\mathcal{R}\\left(\\boldsymbol{w}^{*}\\right)=0$.\n\n当 $\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 不可逆时, 可以通过下面两种方法来估计参数: 1 ) 先使用主成分分析等方法来预处理数据, 消除不同特征之间的相关性, 然后再使用最小二乘法来估计参数; 2 ) 使用梯度下降法来估计参数. 先初始化 $\\boldsymbol{w}=0$, 然后通过下面公式进行迭代:\n\n\n\\begin{equation*}\n\\boldsymbol{w} \\leftarrow \\boldsymbol{w}+\\alpha \\boldsymbol{X}\\left(\\boldsymbol{y}-\\boldsymbol{X}^{\\top} \\boldsymbol{w}\\right) \\tag{2.42}\n\\end{equation*}\n\n\n其中 $\\alpha$ 是学习率. 这种利用梯度下降法来求解的方法也称为最小均方 (Least Mean Squares,LMS ) 算法."
+    },
+    {
+        "id": "chatcmpl-940ksa5FnS362kJR0H7dkPBTnaQfB",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"为什么平方损失函数非常合适用于衡量线性回归的真实标签和预测标签之间的差异？\",\n    \"回答1\": \"平方损失函数非常合适用于衡量线性回归的真实标签和预测标签之间的差异，因为线性回归的标签和模型输出都为连续的实数值。平方损失函数能够对差异进行平方处理，更加敏感地反映出预测值与真实值之间的偏差，同时具有良好的数学性质。\",\n    \"问题2\": \"经验风险最小化准则中的经验风险是如何定义的？\",\n    \"回答2\": \"根据经验风险最小化准则，训练集 $\\boldsymbol{D}$ 上的经验风险定义为 $\\text{R}(\\boldsymbol{w}) =\\text{L}\\big(y^{(n)}, f\\big(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}\\big)\\big)$ 的总和，其中 $\\text{L}$ 代表损失函数。对于线性回归而言，采用平方损失函数，则经验风险可以表示为 $\\text{R}(\\boldsymbol{w}) =\\frac{1}{2} \\text{sum}_{n=1}^{N}\\big(y^{(n)}-\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}\\big)^{2}$。\",\n    \"问题3\": \"风险函数 $\\text{R}(\\boldsymbol{w})$ 对参数 $\\boldsymbol{w}$ 的偏导数是什么？\",\n    \"回答3\": \"风险函数 $\\text{R}(\\boldsymbol{w})$ 对参数 $\\boldsymbol{w}$ 的偏导数为 $\\frac{\\text{partial R}(\\boldsymbol{w})}{\\text{partial} \\boldsymbol{w}} =-\\boldsymbol{X}\\big(\\boldsymbol{y}-\\boldsymbol{X}^{\\top} \\boldsymbol{w}\\big)$。\",\n    \"问题4\": \"如何得到最优的参数 $\\boldsymbol{w}^{*}$？\",\n    \"回答4\": \"通过令 $\\frac{\\text{partial}}{\\text{partial} \\boldsymbol{w}} \\text{R}(\\boldsymbol{w})=0$，可以得到最优的参数 $\\boldsymbol{w}^{*}$，计算公式为 $\\boldsymbol{w}^{*} =\\big(\\boldsymbol{X} \\boldsymbol{X}^{\\top}\\big)^{-1} \\boldsymbol{X} \\boldsymbol{y}$。\",\n    \"问题5\": \"最小二乘法在线性回归参数学习中起到什么作用？\",\n    \"回答5\": \"最小二乘法在线性回归参数学习中用于求解最优参数 $\\boldsymbol{w}^{*}$。通过最小化预测值与真实值之间的平方损失，最小二乘法能够得到使得经验风险最小化的最优参数。\",\n    \"问题6\": \"在最小二乘法中，$\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 必须满足什么条件？\",\n    \"回答6\": \"$\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 必须存在逆矩阵，即 $\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 是满秩的（$\\text{rank}\\big(\\boldsymbol{X} \\boldsymbol{X}^{\\top}\\big)=D+1$）。这意味着在最小二乘法中，样本特征之间必须线性不相关。\",\n    \"问题7\": \"当 $\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 不可逆时，可以采取哪些方法来估计参数？\",\n    \"回答7\": \"当 $\\boldsymbol{X} \\boldsymbol{X}^{\\top}$ 不可逆时，可以采取两种方法来估计参数：一种是先使用主成分分析等方法来预处理数据，消除不同特征之间的相关性，然后再使用最小二乘法来估计参数；另一种是使用梯度下降法来估计参数，即通过迭代更新参数来逼近最优解。\",\n    \"问题8\": \"梯度下降法在线性回归中是如何应用的？\",\n    \"回答8\": \"在线性回归中，梯度下降法通过迭代更新参数来逼近最优解。首先初始化参数 $\\boldsymbol{w}=0$，然后通过迭代公式 $\\boldsymbol{w} \\rightarrow \\boldsymbol{w}+\\beta \\boldsymbol{X}\\big(\\boldsymbol{y}-\\boldsymbol{X}^{\\top} \\boldsymbol{w}\\big)$ 来更新参数，其中 $\\beta$ 是学习率。\",\n    \"问题9\": \"什么是最小均方算法（LMS）？\",\n    \"回答9\": \"最小均方算法（LMS）是一种利用梯度下降法来求解参数的方法。它通过迭代更新参数来逼近使得平方损失函数最小化的最优解，具有较好的收敛性和适用于大规模数据集的特点。\",\n    \"问题10\": \"古代汉语中“平方”是指什么？\",\n    \"回答10\": \"古代汉语中“平方”指的是“二乘”，这与现代数学中平方运算的概念相对应。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710743242,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1483,
+            "prompt_tokens": 4229,
+            "total_tokens": 5712
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter5",
+        "title": "样本方差与样本标准差\\label{ssec:5.3.3",
+        "content_length": 2962,
+        "content": "Title: 样本方差与样本标准差\\label{ssec:5.3.3\nContent:\n}\n\\begin{definition}{}{5.3.3}\n设$x_1,x_2,\\dotsc,x_n$为取自某总体的样本,则它关于样本均值$\\bar x$的平均偏差平方和\n\\begin{equation}\\label{eq:5.3.3}\n{s^\\ast}^2=\\frac1n\\sum_{i=1}^n(x_i-\\bar x)^2\n\\end{equation}\n称为 \\textbf{样本方差}\\index{Y!样本方差}.其算术根$s^\\ast=\\sqrt{{s^\\ast}^2}$称为样本标准差.相对样本方差而言,样本标准差通常更有实际意义,因为它与样本均值具有相同的度量单位.在$n$不大时,常用\n\\begin{equation}\\label{eq:5.3.4}\ns^2=\\frac1{n-1}\\sum_{i=1}^n(x_i-\\bar x)^2\n\\end{equation}\n\n作为样本方差(也称 \\textbf{无偏方差}\\index{W!无偏方差},其含义在第六章讲述),其算术根$s=\\sqrt{s^2}$也称为样本标准差.在实际中, $s^2$比${s^\\ast}^2$更常用,在以后讲样本方差通常指的是$s^2$.\n\\end{definition}\n\n在这个定义中, $n$为 \\textbf{样本量}\\index{Y!样本量}, $\\sum_{i=1}^n(x_i-\\bar x)^2$称为偏差平方和\\index{P!偏差平方和}, $n-1$称为偏差平方和的自由度\\index{Z!自由度}.其含义是: 在$\\bar x$确定后, $n$个偏差$x_1-\\bar x,x_2-\\bar x,\\dotsc,x_n-\\bar x$中只有$n-1$个数据可以自由变动,而第$n$个则不能自由取值,因为$\\sum(x_i-\\bar x)=0$.\n\n样本偏差平方和有三个不同的表达式:\n\\begin{equation}\\label{eq:5.3.5}\n\\sum(x_i-\\bar x)^2=\\sum x_i^2-\\frac{\\bigl(\\sum x_i\\bigr)^2}n=\\sum x_i^2-n\\bar x^2.\n\\end{equation}\n它们都可用来计算样本方差.\n\n在分组样本场合,样本方差的近似计算公式为\n\\begin{equation}\\label{eq:5.3.6}\ns^2=\\frac1{n-1}\\sum_{i=1}^kf_i(x_i-\\bar x)^2=\\frac1{n-1}\\Bigl[\\sum_{i=1}^kf_ix_i^2-n\\bar x^2\\Bigr],\n\\end{equation}\n其中$x_i,f_i$分别为第$i$个区间的组中值和频数, $\\bar x$为~\\eqref{eq:5.3.2} 中给出的样本均值.\n\\begin{example}\\label{exam:5.3.4}\n考察例~\\ref{exam:5.3.1} 的样本,我们已经算得$\\bar x=99.4$,其样本方差与样本标准差分别为\n\\begin{align*}\ns^2&=\\frac1{20-1}[(79-99.4)^2+(84-99.4)^2+\\dotsb+(125-99.4)^2]133.9368,\\\\\ns&=\\sqrt{133.9368}=11.5731,\n\\end{align*}\n对表~\\ref{table5.3.1} 的分组样本,我们可以如表~\\ref{tab:5.3.2} 计算(样本均值也由分组样本计算):\n\\begin{table}[!htb]\n  \\centering\n  \\caption{分组样本方差的计算表}\\label{tab:5.3.2}\n\\begin{tabularx}{\\textwidth}{YYYYY}\n\\toprule\n\\text{组中值}x&\\text{频数}f&xf&x-\\bar x&(x-\\bar x)^2f\\\\\n\\midrule\n82&3&246&-18&972\\\\\n92&5&460&-8&320\\\\\n102&7&714&2&28\\\\\n112&3&336&12&432\\\\\n122&2&244&22&968\\\\\n\\text{和}&20&2000&&2720\\\\\n\\bottomrule\n\\end{tabularx}\n\\end{table}\n于是$\\bar x=\\frac{2000}{20}=100,s^2=\\frac{2720}{20-1}=143.16,s=\\sqrt{143.16}=11.96$.\n\\end{example}\n\n下面的定理给出样本均值的数学期望和方差以及样本方差的数学期望,它不依赖于总体的分布形式.这些结果在后面的讨论中是有用的.\n\\begin{theorem}{}{5.3.4}\n设总体$X$具有二阶矩,即$E(X)=\\mu,\\operatorname{Var}(X)=\\sigma^2<+\\infty,x_1,x_2,\\dotsc,x_n$为从该总体得到的样本, $\\bar x$和$s^2$分别是样本均值和样本方差,则\n\\begin{gather}\nE(\\bar x)=\\mu,\\qquad\\operatorname{Var}(\\bar x)=\\sigma^2/n,\\label{eq:5.3.7}\\\\\nE(s^2)=\\sigma^2.\\label{eq:5.3.8}\n\\end{gather}\n\\end{theorem}\n此定理表明,样本均值的均值与总体均值相同,而样本均值的方差是总体方差的$1/n$.\n\\begin{proof}\n由于\n\\begin{gather*}\nE(\\bar x)=\\frac1nE\\Bigl(\\sum_{i=1}^nx_i\\Bigr)=\\frac{n\\mu}n=\\mu,\\\\\n\\operatorname{Var}(\\bar x)=\\frac1{n^2}\\operatorname{Var}\\Bigl(\\sum_{i=1}^nx_i\\Bigr)\n=\\frac{n\\sigma^2}{n^2}=\\frac{\\sigma^2}n,\n\\end{gather*}\n故~\\eqref{eq:5.3.7} 成立.下证~\\eqref{eq:5.3.8} ,注意到\n\\[\\sum_{i=1}^n(x_i-\\bar x)^2=\\sum_{i=1}^nx_i^2-n\\bar x^2,\\]\n而$Ex_i^2=(Ex_i)^2+\\operatorname{Var}(x_i)=\\mu^2+\\sigma^2,E(\\bar x^2)=(E\\bar x)^2+\\operatorname(Var)(\\bar x)=\\mu^2+\\sigma^2/n$,于是\n\\[E\\Bigl(\\sum_{i=1}^n(x_i-\\bar x)^2\\Bigr)=n(\\mu^2+\\sigma^2)-n(\\mu^2+\\sigma^2/n)=(n-1)\\sigma^2,\\]\n两边各除以$n-1$,即得~\\eqref{eq:5.3.8}.\n\\end{proof}"
+    },
+    {
+        "id": "chatcmpl-93zimHKFeEcrGXsPkfYLXWk8D9Ah4",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"样本方差和样本标准差之间有什么关系？\",\n    \"回答1\": \"样本方差是关于样本均值的平均偏差平方和，而样本标准差是样本方差的算术根。相对样本方差而言，样本标准差通常更有实际意义，因为它与样本均值具有相同的度量单位。\",\n    \"问题2\": \"在什么情况下常用 $s^2$ 作为样本方差？\",\n    \"回答2\": \"在 $n$ 不大时，常用 $s^2=\\frac{1}{n-1}\\text{∑}_{i=1}^n(x_i-\\bar x)^2$ 作为样本方差。这种样本方差也称为无偏方差，其含义在后续讲述中会详细介绍。\",\n    \"问题3\": \"在分组样本场合，如何计算样本方差？\",\n    \"回答3\": \"在分组样本场合，样本方差的近似计算公式为 $s^2=\\frac{1}{n-1}\\text{∑}_{i=1}^kf_i(x_i-\\bar x)^2=\\frac{1}{n-1}\\big[\\text{∑}_{i=1}^kf_ix_i^2-n\\bar x^2\\big]$。其中 $x_i,f_i$ 分别为第 $i$ 个区间的组中值和频数，$\\bar x$ 为样本均值。\",\n    \"问题4\": \"偏差平方和的自由度是什么意思？\",\n    \"回答4\": \"偏差平方和的自由度指的是在样本均值确定后，$n$ 个偏差 $x_1-\\bar x,x_2-\\bar x,\\text{...},x_n-\\bar x$ 中只有 $n-1$ 个数据可以自由变动，而第 $n$ 个则不能自由取值，因为 $\\text{∑}(x_i-\\bar x)=0$。\",\n    \"问题5\": \"样本偏差平方和有哪些不同的表达式？\",\n    \"回答5\": \"样本偏差平方和有三个不同的表达式：$\\text{∑}(x_i-\\bar x)^2=\\text{∑}x_i^2-\\frac{\\bigl(\\text{∑}x_i\\bigr)^2}{n}=\\text{∑}x_i^2-n\\bar x^2$。这些表达式都可以用来计算样本方差。\",\n    \"问题6\": \"如何计算分组样本的样本标准差？\",\n    \"回答6\": \"对于分组样本，可以通过计算分组样本的频数和组中值，并利用公式 $s=\\frac{\\text{√}(143.16)}{20-1}=11.96$ 来计算分组样本的样本标准差。\",\n    \"问题7\": \"定理5.3.4中给出了哪些关于样本均值和样本方差的数学期望？\",\n    \"回答7\": \"定理5.3.4给出了以下关于样本均值和样本方差的数学期望：$E(\\bar x)=\\text{μ}$，$\\text{Var}(\\bar x)=\\frac{\\text{σ}^2}{n}$，$E(s^2)=\\text{σ}^2$。\",\n    \"问题8\": \"定理5.3.4中的结果对于后续讨论有何用处？\",\n    \"回答8\": \"定理5.3.4中的结果表明，样本均值的均值与总体均值相同，而样本均值的方差是总体方差的 $1/n$。这些结果在后面的讨论中是有用的，可以帮助我们理解和分析样本均值和样本方差在统计推断中的应用。\",\n    \"问题9\": \"什么是无偏方差？\",\n    \"回答9\": \"无偏方差是指在 $n$ 不大时常用的一种样本方差计算方法。它相对于其他形式的样本方差更具有实际意义，在后续讲述中会详细介绍其含义和应用。\",\n    \"问题10\": \"为什么在实际中更常用 $s^2$ 而不是 ${s^\\text{*}}^2$？\",\n    \"回答10\": \"在实际中更常用 $s^2$ 而不是 ${s^\\text{*}}^2$ 是因为 $s^2$ 是无偏方差，在一定程度上更能反映总体方差。因此，在实际应用中，通常将样本方差指代为 $s^2$。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710739268,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1287,
+            "prompt_tokens": 4445,
+            "total_tokens": 5732
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

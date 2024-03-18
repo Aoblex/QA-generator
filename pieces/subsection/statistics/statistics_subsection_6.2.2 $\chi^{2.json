@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "6.2.2 $\\chi^{2",
+        "content_length": 3330,
+        "content": "Title: 6.2.2 $\\chi^{2\nContent:\n$ 分布}\n$\\chi$ 分布 (Chi-square distribution) 是由赫尔默特（Helmert）和皮尔逊分别于 1875 年和 1900 年推导出来的。\n\n定义 6.2 设随机变量 $X_{1}, X_{2}, \\cdots, X_{n}$ 相互独立, 且 $X_{i}(i=1,2, \\cdots, n)$ 服从标准正态分布 $N(0,1)$, 则它们的平方和 $\\sum_{i=1}^{n} X_{i}^{2}$ 服从自由度为 $n$ 的 $\\chi^{2}$ 分布。\n\n自由度是统计学中常用的一个概念, 它可以解释为独立变量的个数, 还可解释为二次型的秩。例如, $Y=X^{2}$ 是自由度为 1 的 $\\chi^{2}$ 分布, $\\operatorname{rank}(Y)=1 ; Z=\\sum_{i=1}^{n} X_{i}^{2}$ 是自由度为 $n$的 $\\chi^{2}$ 分布, $\\operatorname{rank}(Z)=n$ 。\n\n关于 $\\chi^{2}$ 分布的密度函数较为复杂, 非统计专业只关心应用的读者不必了解, 加之篇幅有限, 所以本书不介绍 $\\chi^{2}$ 分布、 $t$ 分布、 $F$ 分布的密度函数。有兴趣的读者可参见数学形式比较严谨的有关数理统计图书。\n\n下面给出当 $n=1, n=4, n=10, n=20$ 时, $\\chi^{2}$ 分布的概率密度函数曲线, 如图 6-1 所示。\n\n\\begin{center}\n\\end{center}\n\n图 6-1 $x^{2}$ 分布的示意图\n\n$\\chi^{2}$ 分布的数学期望为:\n\n$$\nE\\left(\\chi^{2}\\right)=n\n$$\n\n$\\chi^{2}$ 分布的方差为:\n\n$$\nD\\left(\\chi^{2}\\right)=2 n\n$$\n\n$\\chi^{2}$ 分布具有可加性, 即若 $\\chi_{1}^{2} \\sim \\chi^{2}\\left(n_{1}\\right), \\chi_{2}^{2} \\sim \\chi^{2}\\left(n_{2}\\right)$, 且独立, 则\n\n$$\n\\chi_{1}^{2}+\\chi_{2}^{2} \\sim \\chi^{2}\\left(n_{1}+n_{2}\\right)\n$$\n\n由图 6-1 还可看出, 当自由度足够大时, $\\chi^{2}$ 分布的概率密度曲线趋于对称。当 $n \\rightarrow+\\infty$ 时, $\\chi^{2}$ 分布的极限分布是正态分布。\n\n$\\chi^{2}(n)$ 的 $p$ 分位数 $\\chi_{p}^{2}(n)$ 可由卡方分布表查得。当自由度 $n$ 很大时, $\\sqrt{2 \\chi^{2}(n)}$ 近似服从 $N(\\sqrt{2 n-1}, 1)$ 。实际上, 当自由度 $n>45$ 时, 有\n\n\n\\begin{equation*}\n\\chi_{p}^{2}(n) \\approx \\frac{1}{2}\\left(\\mu_{p}+\\sqrt{2 n-1}\\right)^{2} \\tag{6.1}\n\\end{equation*}\n\n\n式中, $\\mu_{p}$ 即 $Z_{p}$, 为正态 $p$ 分位数, 可由正态分布表查得。\n\n\\section*{6. $2.3 t$ 分布}\n$t$ 分布 ( $t$ distribution) 也称为学生氏分布, 是戈塞特 (W. S. Gosset) 于 1908 年在一篇以 “Student” (学生) 为笔名的论文中首次提出的。\n\n定义 6.3 设随机变量 $X \\sim N(0,1), Y \\sim \\chi^{2}(n)$, 且 $X$ 与 $Y$ 独立, 则\n\n\n\\begin{equation*}\nt=\\frac{X}{\\sqrt{Y / n}} \\tag{6.2}\n\\end{equation*}\n\n\n其分布称为 $t$ 分布, 记为 $t(n)$, 其中, $n$ 为自由度。\n\n$t$ 分布的密度函数是一偶函数, 其图形如图 6-2 所示。\n\n\\begin{center}\n\\end{center}\n\n图 6-2 $t$ 分布的示意图\n\n当 $n \\geqslant 2$ 时, $t$ 分布的数学期望 $E(t)=0$ 。\n\n当 $n \\geqslant 3$ 时, $t$ 分布的方差 $D(t)=\\frac{n}{n-2}$ 。\n\n由图 6-2 可以看出, $t$ 分布的密度函数曲线与标准正态分布 $N(0,1)$ 的密度函数曲线非常相似, 都是单峰偶函数。只是 $t(n)$ 的密度函数的两侧尾部要比 $N(0,1)$ 的两侧尾部粗一些。 $t(n)$ 的方差比 $N(0,1)$ 的方差大一些。\n\n自由度为 1 的分布称为柯西分布, 随着自由度 $n$ 的增加, $t$ 分布的密度函数越来越接近标准正态分布的密度函数。实际应用中, 一般当 $n \\geqslant 30$ 时, $t$ 分布与标准正态分布就非\\\\\n常接近。 $t$ 分布的诞生对于统计学中小样本理论及其应用有着重要的促进作用。特别是当戈塞特最初提出 $t$ 分布时并不被人们重视和接受。后来费希尔在农业实验中也遇到小样本问题, 这才发现 $t$ 分布有实用价值。1923 年, 费希尔对 $t$ 分布给出严格而简单的证明, 1925 年编制出 $t$ 分布表之后, 戈塞特的小样本方法才被统计界广泛认可。\n\n下面看一个与 $t$ 分布有关的抽样分布。\n\n设 $X_{1}, X_{2}, \\cdots, X_{n}$ 是来自正态分布 $N\\left(\\mu, \\sigma^{2}\\right)$ 的一个样本, $\\bar{X}=\\frac{1}{n} \\sum_{i=1}^{n} X_{i}, S^{2}=\\frac{1}{n-1}$ $\\sum_{i=1}^{n}\\left(X_{i}-\\bar{X}\\right)^{2}$, 则\n\n\n\\begin{equation*}\n\\frac{\\sqrt{n}(\\bar{X}-\\mu)}{S} \\sim t(n-1) \\tag{6.3}\n\\end{equation*}\n\n\n称为服从自由度为 $(n-1)$ 的 $t$ 分布。\n\n设 $X$ 和 $Y$ 是两个相互独立的总体, $X \\sim N\\left(\\mu_{1}, \\sigma^{2}\\right), Y \\sim N\\left(\\mu_{2}, \\sigma^{2}\\right), X_{1}, X_{2}, \\cdots$, $X_{n}$ 是来自 $X$ 的一个样本, $Y_{1}, Y_{2}, \\cdots, Y_{m}$ 是来自 $Y$ 的一个样本, 记\n\n\n\\begin{align*}\n& \\bar{X}=\\frac{1}{n} \\sum_{i=1}^{n} X_{i} \\\\\n& \\bar{Y}=\\frac{1}{m} \\sum_{i=1}^{m} Y_{i} \\\\\n& S_{x}^{2}=\\frac{1}{n-1} \\sum_{i=1}^{n}\\left(X_{i}-\\bar{X}\\right)^{2} \\\\\n& S_{y}^{2}=\\frac{1}{m-1} \\sum_{i=1}^{m}\\left(Y_{i}-\\bar{Y}\\right)^{2} \\\\\n& S_{x y}^{2}=\\frac{(n-1) S_{x}^{2}+(m-1) S_{y}^{2}}{n+m-2} \\\\\n& \\frac{(\\bar{X}-\\bar{Y})-\\left(\\mu_{1}-\\mu_{2}\\right)}{S_{x y}} \\sqrt{\\frac{m n}{m+n}} \\sim t(n+m-2) \\tag{6.4}\n\\end{align*}\n\n\n则"
+    },
+    {
+        "id": "chatcmpl-93vfMZXtUaxhN83PAt84jrNnqnnwG",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是 $\\boldsymbol{\\text{chi}}^2$ 分布？\",\n    \"回答1\": \"$\\boldsymbol{\\text{chi}}^2$ 分布是由赫尔默特和皮尔逊分别于 1875 年和 1900 年推导出来的概率分布。它是由 $n$ 个相互独立且服从标准正态分布 $N(0,1)$ 的随机变量的平方和 $\\boldsymbol{\\text{chi}}^2 = \\textstyle\\big(\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle\\textstyle X_{i}^{2}\\big)$ 组成的。这个平方和服从自由度为 $n$ 的 $\\boldsymbol{\\text{chi}}^2$ 分布。\",\n    \"问题2\": \"自由度在 $\\boldsymbol{\\text{chi}}^2$ 分布中有什么含义？\",\n    \"回答2\": \"自由度是统计学中常用的一个概念，它可以解释为独立变量的个数，也可以解释为二次型的秩。在 $\\boldsymbol{\\text{chi}}^2$ 分布中，自由度 $n$ 表示平方和中相互独立的标准正态分布随机变量的个数。例如，当 $Y=X^{2}$ 是自由度为 1 的 $\\boldsymbol{\\text{chi}}^2$ 分布时，$\\boldsymbol{\\text{rank}}(Y)=1$；而 $\\boldsymbol{Z}=\\textstyle\\big(\\textstyle\\big(\\boldsymbol{\\text{sum}}_{i=1}^{n} X_{i}^{2}\\big)\\big)$ 是自由度为 $n$ 的 $\\boldsymbol{\\text{chi}}^2$ 分布时，$\\boldsymbol{\\text{rank}}(Z)=n$。\",\n    \"问题3\": \"什么是 $t$ 分布？\",\n    \"回答3\": \"$t$ 分布（ $t$ distribution）也称为学生氏分布，是戈塞特于 1908 年在一篇以 “Student” 为笔名的论文中首次提出的概率分布。当随机变量 $X \\thicksim N(0,1)$ 且随机变量 $Y \\thicksim \\boldsymbol{\\text{chi}}^2(n)$，且 $X$ 与 $Y$ 独立时，定义 $t=\\frac{X}{\\boldsymbol{\\root}\\frac{Y}{n}}$，其分布称为 $t$ 分布，记为 $t(n)$，其中，$n$ 为自由度。\",\n    \"问题4\": \"自由度在 $t$ 分布中有什么含义？\",\n    \"回答4\": \"在 $t$ 分布中，自由度 $n$ 表示相关样本数量上的限制。当自由度增加时，$t$ 分布的密度函数曲线越来越接近标准正态分布的密度函数曲线。实际应用中，一般当自由度大于等于 30 时，$t$ 分布与标准正态分布就非常接近。\",\n    \"问题5\": \"什么是柯西分布？\",\n    \"回答5\": \"自由度为 1 的 $t$ 分布称为柯西分布。柯西分布是一种具有重尾特性的概率分布，其密度函数呈现出长而厚重的尾部。柯西分布在统计学和概率论中具有一定的应用价值。\",\n    \"问题6\": \"$t$ 分布与标准正态分布有何异同？\",\n    \"回答6\": \"$t$ 分布与标准正态分布都是单峰偶函数，但是 $t(n)$ 的密度函数的两侧尾部要比标准正态分布的两侧尾部粗一些。此外，$t(n)$ 的方差比标准正态分布的方差大一些。随着自由度 $n$ 的增加，$t$ 分布的密度函数曲线越来越接近标准正态分布的密度函数曲线。\",\n    \"问题7\": \"抽样分布中的 $\\frac{\\boldsymbol{\\root}n(\\bar{X}-\\boldsymbol{\\root}\\frac{n-1}{S})}{S}$ 是什么意义？\",\n    \"回答7\": \"抽样分布中的 $\\frac{\\boldsymbol{\\root}n(\\bar{X}-\\boldsymbol{\\root}\\frac{n-1}{S})}{S}$ 是服从自由度为 $(n-1)$ 的 $t$ 分布。这个抽样分布在统计学中具有重要意义，可用于对样本均值和样本方差进行推断和检验。\",\n    \"问题8\": \"$t$ 分布对统计学中小样本理论及其应用有何重要作用？\",\n    \"回答8\": \"$t$ 分布对统计学中小样本理论及其应用有着重要的促进作用。当戈塞特最初提出 $t$ 分布时并不被人们重视和接受。后来费希尔在农业实验中也遇到小样本问题，这才发现 $t$ 分布有实用价值。1923 年，费希尔对 $t$ 分布给出严格而简单的证明，并编制出了 $t$ 分布表之后，戈塞特的小样本方法才被统计界广泛认可。\",\n    \"问题9\": \"$t(n)$ 的数学期望和方差分别是多少？\",\n    \"回答9\": \"$t(n)$ 的数学期望为 0（当 $n \\thicksim 2$ 时），方差为 $\\frac{n}{n-2}$（当 $n \\thicksim 3$ 时）。这些参数描述了 $t(n)$ 分布的集中趋势和离散程度。\",\n    \"问题10\": \"$\\boldsymbol{\\root}2 \\boldsymbol{\\times} \\boldsymbol{\\root}\\boldsymbol{\\root}\\frac{n-1}{S} \\thicksim N(\\boldsymbol{\\root}2n-1,1)$ 的近似公式是如何得到的？\",\n    \"回答10\": \"$\\boldsymbol{\\root}2 \\boldsymbol{\\times} \\boldsymbol{\\root}\\boldsymbol{\\root}\\frac{n-1}{S} \\thicksim N(\\boldsymbol{\\root}2n-1,1)$ 近似公式可以通过对 $\\boldsymbol{\\root}\\frac{n-1}{S}$ 进行线性变换，并利用正态分布表查得 $\\boldsymbol{\\root}2n-1$ 对应的正态分位数得到。这个近似公式在实际应用中具有一定的实用性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710723680,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1862,
+            "prompt_tokens": 4805,
+            "total_tokens": 6667
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

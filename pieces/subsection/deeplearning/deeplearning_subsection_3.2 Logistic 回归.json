@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "3.2 Logistic 回归",
+        "content_length": 1961,
+        "content": "Title: 3.2 Logistic 回归\nContent:\nLogistic 回归 (Logistic Regression, LR) 是一种常用的处理二分类问题的线性模型. 在本节中,我们采用 $y \\in\\{0,1\\}$ 以符合 Logistic 回归的描述习惯.\n\n为了解决连续的线性函数不适合进行分类的问题, 我们引入非线性函数 $\\mathrm{g}$ : $\\mathbb{R}^{D} \\rightarrow(0,1)$ 来预测类别标签的后验概率 $p(y=1 \\mid \\boldsymbol{x})$.\n\n\n\\begin{equation*}\np(y=1 \\mid \\boldsymbol{x})=g(f(\\boldsymbol{x} ; \\boldsymbol{w})) \\tag{3.12}\n\\end{equation*}\n\n\n其中 $g(\\cdot)$ 通常称为激活函数 (Activation Function), 其作用是把线性函数的值域从实数区间 “挤压” 到了 $(0,1)$ 之间, 可以用来表示概率. 在统计文献中, $g(\\cdot)$ 的逆函数 $g^{-1}(\\cdot)$ 也称为联系函数 (Link Function ).\n\n在 Logistic 回归中, 我们使用 Logistic 函数来作为激活函数. 标签 $y=1$ 的后验概率为\n\nLogistic 函数参见第B.4.2.1节.\n\n\n\\begin{align*}\np(y=1 \\mid \\boldsymbol{x}) & =\\sigma\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}\\right)  \\tag{3.13}\\\\\n& \\triangleq \\frac{1}{1+\\exp \\left(-\\boldsymbol{w}^{\\top} \\boldsymbol{x}\\right)} \\tag{3.14}\n\\end{align*}\n\n\n为简单起见, 这里 $\\boldsymbol{x}=\\left[x_{1}, \\cdots, x_{D}, 1\\right]^{\\top}$ 和 $\\boldsymbol{w}=\\left[w_{1}, \\cdots, w_{D}, b\\right]^{\\top}$ 分别为 $D+1$ 维的增广特征向量和增广权重向量.\n\n标签 $y=0$ 的后验概率为\n\n\n\\begin{align*}\np(y=0 \\mid \\boldsymbol{x}) & =1-p(y=1 \\mid \\boldsymbol{x})  \\tag{3.15}\\\\\n& =\\frac{\\exp \\left(-\\boldsymbol{w}^{\\top} \\boldsymbol{x}\\right)}{1+\\exp \\left(-\\boldsymbol{w}^{\\top} \\boldsymbol{x}\\right)} \\tag{3.16}\n\\end{align*}\n\n\n将公式(3.14)进行变换后得到\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n\n\\begin{equation*}\n\\boldsymbol{w}^{\\top} \\boldsymbol{x}=\\log \\frac{p(y=1 \\mid \\boldsymbol{x})}{1-p(y=1 \\mid \\boldsymbol{x})} \\tag{3.17}\n\\end{equation*}\n\n\n\n\\begin{equation*}\n=\\log \\frac{p(y=1 \\mid \\boldsymbol{x})}{p(y=0 \\mid \\boldsymbol{x})} \\tag{3.18}\n\\end{equation*}\n\n\n其中 $\\frac{p(y=1 \\mid \\boldsymbol{x})}{p(y=0 \\mid \\boldsymbol{x})}$ 为样本 $\\boldsymbol{x}$ 为正反例后验概率的比值, 称为几率 (Odds ), 几率的对数称为对数几率 (Log Odds, 或 Logit). 公式(3.17) 中等号的左边是线性函数,这样 Logistic 回归可以看作预测值为 “标签的对数几率” 的线性回归模型. 因此, Logistic 回归也称为对数几率回归 ( Logit Regression ).\n\n图3.4给出了使用线性回归和 Logistic 回归来解决一维数据的二分类问题的示例.\n\n\n\n(a) 线性回归\n\n\n\n(b) Logistic 回归\n\n图 3.4 一维数据的二分类问题示例"
+    },
+    {
+        "id": "chatcmpl-9415HxOXSAbFKMaZPqavKhOfasW8p",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"Logistic 回归与线性回归有何区别？\",\n    \"回答1\": \"Logistic 回归和线性回归的主要区别在于其预测值的不同。线性回归的预测值是连续的实数，而 Logistic 回归引入了非线性函数来预测类别标签的后验概率，将预测值限制在 $(0,1)$ 区间内，可以用来表示概率。\",\n    \"问题2\": \"在 Logistic 回归中，激活函数的作用是什么？\",\n    \"回答2\": \"在 Logistic 回归中，激活函数的作用是把线性函数的值域从实数区间 “挤压” 到了 $(0,1)$ 之间，从而可以用来表示概率。这样做是为了解决连续的线性函数不适合进行分类的问题。\",\n    \"问题3\": \"Logistic 函数在 Logistic 回归中起到什么作用？\",\n    \"回答3\": \"在 Logistic 回归中，使用 Logistic 函数作为激活函数来计算标签 $y=1$ 的后验概率。Logistic 函数将线性函数的结果转换为 $(0,1)$ 区间内的概率值，其表达式为 $p(y=1 \\text{ 为 } \\boldsymbol{x}) = \\frac{1}{1+\\text{exp}(-\\boldsymbol{w}^{\\top} \\boldsymbol{x})}$。\",\n    \"问题4\": \"如何计算标签 $y=0$ 的后验概率？\",\n    \"回答4\": \"标签 $y=0$ 的后验概率可以通过 $1-p(y=1 \\text{ 为 } \\boldsymbol{x})$ 或者 $\\frac{\\text{exp}(-\\boldsymbol{w}^{\\top} \\boldsymbol{x})}{1+\\text{exp}(-\\boldsymbol{w}^{\\top} \\boldsymbol{x})}$ 进行计算。\",\n    \"问题5\": \"Logistic 回归中的对数几率是如何定义的？\",\n    \"回答5\": \"在 Logistic 回归中，对数几率是指样本 $\\boldsymbol{x}$ 为正反例后验概率的比值，即 $\\frac{p(y=1 \\text{ 为 } \\boldsymbol{x})}{p(y=0 \\text{ 为 } \\boldsymbol{x})}$。对数几率的计算公式为 $\\boldsymbol{w}^{\\top} \\boldsymbol{x} = \\text{log} \\frac{p(y=1 \\text{ 为 } \\boldsymbol{x})}{p(y=0 \\text{ 为 } \\boldsymbol{x})}$。\",\n    \"问题6\": \"Logistic 回归为什么被称为对数几率回归？\",\n    \"回答6\": \"Logistic 回归被称为对数几率回归是因为其预测值可以看作是 “标签的对数几率” 的线性回归模型。通过对数几率的计算，Logistic 回归实际上是在进行 “标签的对数几率” 的预测。\",\n    \"问题7\": \"Logistic 回归和线性回归分别适用于什么样的问题？\",\n    \"回答7\": \"Logistic 回归适用于处理二分类问题，通过引入非线性函数来预测类别标签的后验概率。而线性回归适用于预测连续的实数数值，常用于回归分析和预测问题。\",\n    \"问题8\": \"Logistic 函数在统计学中还有什么其他名称？\",\n    \"回答8\": \"在统计学中，Logistic 函数的逆函数 $g^{-1}(\\boldsymbol{\\bullet})$ 也称为联系函数（Link Function），它通常用于广义线性模型中。\",\n    \"问题9\": \"增广特征向量和增广权重向量在 Logistic 回归中有何作用？\",\n    \"回答9\": \"增广特征向量 $\\boldsymbol{x}$ 和增广权重向量 $\\boldsymbol{w}$ 分别用于表示输入特征和模型参数，并且通过增广特征向量和增广权重向量的定义，使得对数几率的计算更加方便和统一。\",\n    \"问题10\": \"图3.4中展示了什么内容？\",\n    \"回答10\": \"图3.4展示了使用线性回归和 Logistic 回归来解决一维数据的二分类问题的示例。其中 (a) 展示了线性回归的情况，(b) 展示了 Logistic 回归的情况。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710744507,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1238,
+            "prompt_tokens": 3602,
+            "total_tokens": 4840
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

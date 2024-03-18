@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter5",
+        "title": "10.1.1 隐马尔可夫模型的定义",
+        "content_length": 3778,
+        "content": "Title: 10.1.1 隐马尔可夫模型的定义\nContent:\n定义 10.1 (隐马尔可夫模型) 隐马尔可夫模型是关于时序的概率模型, 描述由一个隐藏的马尔可夫链随机生成不可观测的状态随机序列, 再由各个状态生成一个观测从而产生观测随机序列的过程。隐藏的马尔可夫链随机生成的状态的序列称为状态序列 (state sequence); 每个状态生成一个观测, 而由此产生的观测的随机序列称为观测序列 (observation sequence)。序列的每一个位置又可以看作是一个时刻。\n\n隐马尔可夫模型由初始概率分布、状态转移概率分布以及观测概率分布确定。隐马尔可夫模型的形式定义如下:\n\n设 $Q$ 是所有可能的状态的集合, $V$ 是所有可能的观测的集合:\n\n$$\nQ=\\left\\{q_{1}, q_{2}, \\cdots, q_{N}\\right\\}, \\quad V=\\left\\{v_{1}, v_{2}, \\cdots, v_{M}\\right\\}\n$$\n\n其中, $N$ 是可能的状态数, $M$ 是可能的观测数。\n\n$I$ 是长度为 $T$ 的状态序列, $O$ 是对应的观测序列:\n\n$$\nI=\\left(i_{1}, i_{2}, \\cdots, i_{T}\\right), \\quad O=\\left(o_{1}, o_{2}, \\cdots, o_{T}\\right)\n$$\n\n$A$ 是状态转移概率矩阵:\n\n\n\\begin{equation*}\nA=\\left[a_{i j}\\right]_{N \\times N} \\tag{10.1}\n\\end{equation*}\n\n\n其中,\n\n\n\\begin{equation*}\na_{i j}=P\\left(i_{t+1}=q_{j} \\mid i_{t}=q_{i}\\right), \\quad i=1,2, \\cdots, N, \\quad j=1,2, \\cdots, N \\tag{10.2}\n\\end{equation*}\n\n\n是在时刻 $t$ 处于状态 $q_{i}$ 的条件下在时刻 $t+1$ 转移到状态 $q_{j}$ 的概率。\\\\\n$B$ 是观测概率矩阵:\n\n\n\\begin{equation*}\nB=\\left[b_{j}(k)\\right]_{N \\times M} \\tag{10.3}\n\\end{equation*}\n\n\n其中，\n\n\n\\begin{equation*}\nb_{j}(k)=P\\left(o_{t}=v_{k} \\mid i_{t}=q_{j}\\right), \\quad k=1,2, \\cdots, M, \\quad j=1,2, \\cdots, N \\tag{10.4}\n\\end{equation*}\n\n\n是在时刻 $t$ 处于状态 $q_{j}$ 的条件下生成观测 $v_{k}$ 的概率。\n\n$\\pi$ 是初始状态概率向量:\n\n\n\\begin{equation*}\n\\pi=\\left(\\pi_{i}\\right) \\tag{10.5}\n\\end{equation*}\n\n\n其中,\n\n\n\\begin{equation*}\n\\pi_{i}=P\\left(i_{1}=q_{i}\\right), \\quad i=1,2, \\cdots, N \\tag{10.6}\n\\end{equation*}\n\n\n是时刻 $t=1$ 处于状态 $q_{i}$ 的概率。\n\n隐马尔可夫模型由初始状态概率向量 $\\pi$ 、状态转移概率矩阵 $A$ 和观测概率矩阵 $B$ 决定。 $\\pi$ 和 $A$ 决定状态序列, $B$ 决定观测序列。因此, 隐马尔可夫模型 $\\lambda$ 可以用三元符号表示,即\n\n\n\\begin{equation*}\n\\lambda=(A, B, \\pi) \\tag{10.7}\n\\end{equation*}\n\n\n$A, B, \\pi$ 称为隐马尔可夫模型的三要素。\n\n状态转移概率矩阵 $A$ 与初始状态概率向量 $\\pi$ 确定了隐藏的马尔可夫链, 生成不可观测的状态序列。观测概率矩阵 $B$ 确定了如何从状态生成观测, 与状态序列综合确定了如何产生观测序列。\n\n从定义可知, 隐马尔可夫模型作了两个基本假设:\n\n(1) 齐次马尔可夫性假设, 即假设隐藏的马尔可夫链在任意时刻 $t$ 的状态只依赖于其前一时刻的状态，与其他时刻的状态及观测无关，也与时刻 $t$ 无关:\n\n\n\\begin{equation*}\nP\\left(i_{t} \\mid i_{t-1}, o_{t-1}, \\cdots, i_{1}, o_{1}\\right)=P\\left(i_{t} \\mid i_{t-1}\\right), \\quad t=1,2, \\cdots, T \\tag{10.8}\n\\end{equation*}\n\n\n（2）观测独立性假设，即假设任意时刻的观测只依赖于该时刻的马尔可夫链的状态，与其他观测及状态无关:\n\n\n\\begin{equation*}\nP\\left(o_{t} \\mid i_{T}, o_{T}, i_{T-1}, o_{T-1}, \\cdots, i_{t+1}, o_{t+1}, i_{t}, i_{t-1}, o_{t-1}, \\cdots, i_{1}, o_{1}\\right)=P\\left(o_{t} \\mid i_{t}\\right) \\tag{10.9}\n\\end{equation*}\n\n\n隐马尔可夫模型可以用于标注, 这时状态对应着标记。标注问题是给定观测的序列预测其对应的标记序列。可以假设标注问题的数据是由隐马尔可夫模型生成的, 这样我们可以利用隐马尔可夫模型的学习与预测算法进行标注。\n\n下面看一个隐马尔可夫模型的例子。\n\n例 10.1 (盒子和球模型) 假设有 4 个盒子, 每个盒子里都装有红、白两种颜色的球, 盒子里的红、白球数由表 10.1 列出。\n\n按照下面的方法抽球, 产生一个球的颜色的观测序列:\n\n\\begin{itemize}\n  \\item 首先, 从 4 个盒子里以等概率随机选取 1 个盒子, 从这个盒子里随机抽出 1 个球, 记录其颜色后，放回。\\\\\n表 10.1 各盒子的红、白球数\n\\end{itemize}\n\n\\begin{center}\n\\begin{tabular}{ccccc}\n\\hline\n & \\multicolumn{3}{c}{盒} & 子 \\\\\n\\cline { 2 - 6 }\n & 1 & 2 & 3 & 4 \\\\\n\\hline\n红球数 & 5 & 3 & 6 & 8 \\\\\n白球数 & 5 & 7 & 4 & 2 \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n\\begin{itemize}\n  \\item 然后, 从当前盒子随机转移到下一个盒子, 规则是: 如果当前盒子是盒子 1 , 那么下一盒子一定是盒子 2 ; 如果当前是盒子 2 或 3 , 那么分别以概率 0.4 和 0.6 转移到左边或右边的盒子; 如果当前是盒子 4 , 那么各以 0.5 的概率停留在盒子 4 或转移到盒子 3 。\n  \\item 确定转移的盒子后, 再从这个盒子里随机抽出 1 个球, 记录其颜色, 放回。\n  \\item 如此下去, 重复进行 5 次, 得到一个球的颜色的观测序列:\n\\end{itemize}\n\n$$\nO=(\\text { 红, 红, 白, 白, 红 })\n$$\n\n在这个过程中, 观察者只能观测到球的颜色的序列, 观测不到球是从哪个盒子取出的, 即观测不到盒子的序列。\n\n在这个例子中有两个随机序列, 一个是盒子的序列 (状态序列), 一个是球的颜色的观测序列 (观测序列)。前者是隐藏的, 只有后者是可观测的。这是一个隐马尔可夫模型的例子。根据所给条件, 可以明确状态集合、观测集合、序列长度以及模型的三要素。\n\n盒子对应状态, 状态的集合是\n\n$$\nQ=\\{\\text { 盒子 } 1, \\text { 盒子 } 2, \\text { 盒子 } 3 \\text {, 盒子 } 4\\}, N=4\n$$\n\n球的颜色对应观测，观测的集合是\n\n$$\nV=\\{\\text { 红, 白 }\\}, M=2\n$$\n\n状态序列和观测序列长度 $T=5$ 。\n\n初始概率分布为\n\n$$\n\\pi=(0.25,0.25,0.25,0.25)^{\\mathrm{T}}\n$$\n\n状态转移概率分布为\n\n$$\nA=\\left[\\begin{array}{llll}\n0 & 1 & 0 & 0 \\\\\n0.4 & 0 & 0.6 & 0 \\\\\n0 & 0.4 & 0 & 0.6 \\\\\n0 & 0 & 0.5 & 0.5\n\\end{array}\\right]\n$$\n\n观测概率分布为\n\n$$\nB=\\left[\\begin{array}{ll}\n0.5 & 0.5 \\\\\n0.3 & 0.7 \\\\\n0.6 & 0.4 \\\\\n0.8 & 0.2\n\\end{array}\\right]\n$$"
+    },
+    {
+        "id": "chatcmpl-948b4cvddHMIoluv2pQTbBD2Sb7Wz",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"隐马尔可夫模型中的状态序列和观测序列有何含义？\",\n    \"回答1\": \"隐马尔可夫模型中的状态序列是由隐藏的马尔可夫链随机生成的不可观测的状态随机序列，而观测序列是由各个状态生成的观测从而产生的可观测的随机序列。\",\n    \"问题2\": \"隐马尔可夫模型的形式定义中包括哪些基本要素？\",\n    \"回答2\": \"隐马尔可夫模型的形式定义包括初始概率分布、状态转移概率分布以及观测概率分布这三个基本要素。\",\n    \"问题3\": \"隐马尔可夫模型中状态转移概率矩阵 $A$ 的含义是什么？\",\n    \"回答3\": \"在隐马尔可夫模型中，状态转移概率矩阵 $A$ 表示在时刻 $t$ 处于状态 $q_{i}$ 的条件下在时刻 $t+1$ 转移到状态 $q_{j}$ 的概率。\",\n    \"问题4\": \"隐马尔可夫模型中观测概率矩阵 $B$ 的作用是什么？\",\n    \"回答4\": \"在隐马尔可夫模型中，观测概率矩阵 $B$ 确定了在时刻 $t$ 处于状态 $q_{j}$ 的条件下生成观测 $v_{k}$ 的概率。\",\n    \"问题5\": \"隐马尔可夫模型的初始状态概率向量 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{pi}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}$ 的含义是什么？\",\n    \"回答5\": \"在隐马尔可夫模型中，初始状态概率向量 $\\boldsymbol{\\boldsymbol{pi}}$ 表示时刻 $t=1$ 处于状态 $q_{i}$ 的概率。\",\n    \"问题6\": \"隐马尔可夫模型的两个基本假设分别是什么？\",\n    \"回答6\": \"隐马尔可夫模型作了齐次马尔可夫性假设和观测独立性假设。齐次马尔可夫性假设表明隐藏的马尔可夫链在任意时刻 $t$ 的状态只依赖于其前一时刻的状态；观测独立性假设表明任意时刻的观测只依赖于该时刻的马尔可夫链的状态。\",\n    \"问题7\": \"隐马尔可夫模型可以用于解决什么问题？\",\n    \"回答7\": \"隐马尔可夫模型可以用于标注问题，即给定观测的序列预测其对应的标记序列。通过利用隐马尔可夫模型的学习与预测算法进行标注，可以解决这类问题。\",\n    \"问题8\": \"在例子“盒子和球模型”中，盒子对应着隐马尔可夫模型中的什么要素？\",\n    \"回答8\": \"在例子“盒子和球模型”中，盒子对应着隐马尔可夫模型中的状态，即隐藏的马尔可夫链可能处于的各种状态。\",\n    \"问题9\": \"在例子“盒子和球模型”中，球的颜色对应着隐马尔可夫模型中的什么要素？\",\n    \"回答9\": \"在例子“盒子和球模型”中，球的颜色对应着隐马尔可夫模型中的观测，即由各个状态生成的观测从而产生的可观测的随机序列。\",\n    \"问题10\": \"在例子“盒子和球模型”中，如何确定了初始概率分布、状态转移概率分布以及观测概率分布？\",\n    \"回答10\": \"在例子“盒子和球模型”中，初始概率分布、状态转移概率分布以及观测概率分布是根据具体情况给定的条件来确定的。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710773386,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1319,
+            "prompt_tokens": 5332,
+            "total_tokens": 6651
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

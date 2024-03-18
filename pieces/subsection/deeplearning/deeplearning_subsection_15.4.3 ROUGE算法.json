@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "15.4.3 ROUGE算法",
+        "content_length": 1000,
+        "content": "Title: 15.4.3 ROUGE算法\nContent:\nROUGE ( Recall-Oriented Understudy for Gisting Evaluation ) 算法最早应用于文本摘要领域. 和 BLEU 算法类似, 但 ROUGE 算法计算的是召回率 ( Recall ).\n\n令 $\\boldsymbol{x}$ 为从模型分布 $p_{\\theta}$ 中生成的一个候选序列, $\\boldsymbol{s}^{(1)}, \\cdots, \\boldsymbol{s}^{(K)}$ 为从真实数据分布中采样出的一组参考序列, $\\mathcal{W}$ 为从参考序列中提取 $\\mathrm{N}$ 元组合的集合, ROUGE$\\mathrm{N}$ 算法的定义为\n\n\n\\begin{equation*}\n\\operatorname{ROUGE}-\\mathrm{N}(\\boldsymbol{x})=\\frac{\\sum_{k=1}^{K} \\sum_{w \\in \\mathcal{W}} \\min \\left(c_{w}(\\boldsymbol{x}), c_{w}\\left(\\boldsymbol{s}^{(k)}\\right)\\right)}{\\sum_{k=1}^{K} \\sum_{w \\in \\mathcal{W}} c_{w}\\left(\\boldsymbol{s}^{(k)}\\right)} \\tag{15.42}\n\\end{equation*}\n\n\n其中 $c_{w}(\\boldsymbol{x})$ 是 $\\mathrm{N}$ 元组合 $w$ 在生成序列 $\\boldsymbol{x}$ 中出现的次数, $c_{w}\\left(\\boldsymbol{s}^{(k)}\\right)$ 是 $\\mathrm{N}$ 元组合 $w$ 在参考序列 $\\boldsymbol{s}^{(k)}$ 中出现的次数.\n\n\\section*{15.5 序列生成模型中的学习问题}\n使用最大似然估计来学习自回归序列生成模型时, 会存在以下三个主要问题: 曝光偏差问题、训练目标不一致问题和计算效率问题. 下面我们分别介绍这三个问题以及解决方法.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}"
+    },
+    {
+        "id": "chatcmpl-946flIkGhQNYtplSuL0UgfPBbiCfV",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"ROUGE算法和BLEU算法有何相似之处？\",\n    \"回答1\": \"ROUGE算法和BLEU算法都应用于文本摘要领域。它们都是用来评估生成的候选序列与参考序列之间的相似度。然而，ROUGE算法计算的是召回率，而BLEU算法则计算的是精确度和召回率的调和平均。\",\n    \"问题2\": \"ROUGE-N算法的定义是什么？\",\n    \"回答2\": \"ROUGE-N算法的定义为 $\\text{ROUGE}-N(\\boldsymbol{x})=\\frac{\\text{sum}_{k=1}^{K} \\text{sum}_{w \\text{ 在 } \\text{mathcal{W}}} \\text{min} \\big(c_{w}(\\boldsymbol{x}), c_{w}(\\boldsymbol{s}^{(k)})\\big)}{\\text{sum}_{k=1}^{K} \\text{sum}_{w \\text{ 在 } \\text{mathcal{W}}} c_{w}(\\boldsymbol{s}^{(k)})}$，其中 $c_{w}(\\boldsymbol{x})$ 是 $\\text{N}$ 元组合 $w$ 在生成序列 $\\boldsymbol{x}$ 中出现的次数，$c_{w}(\\boldsymbol{s}^{(k)})$ 是 $\\text{N}$ 元组合 $w$ 在参考序列 $\\boldsymbol{s}^{(k)}$ 中出现的次数。\",\n    \"问题3\": \"在ROUGE-N算法中，$\\boldsymbol{x}$ 和 $\\boldsymbol{s}^{(k)}$ 分别代表什么？\",\n    \"回答3\": \"$\\boldsymbol{x}$ 代表从模型分布 $p_{\\theta}$ 中生成的一个候选序列，而 $\\boldsymbol{s}^{(1)}, \\text{...}, \\boldsymbol{s}^{(K)}$ 代表从真实数据分布中采样出的一组参考序列。\",\n    \"问题4\": \"ROUGE-N算法中的$\\text{mathcal{W}}$表示什么？\",\n    \"回答4\": \"$\\text{mathcal{W}}$ 表示从参考序列中提取 $\\text{N}$ 元组合的集合。在ROUGE-N算法中，$\\text{mathcal{W}}$ 用于对比候选序列和参考序列中的相似性。\",\n    \"问题5\": \"使用最大似然估计来学习自回归序列生成模型时会面临哪三个主要问题？\",\n    \"回答5\": \"使用最大似然估计来学习自回归序列生成模型时会存在曝光偏差问题、训练目标不一致问题和计算效率问题。\",\n    \"问题6\": \"曝光偏差问题在自回归序列生成模型中指什么？\",\n    \"回答6\": \"曝光偏差问题指的是在训练过程中，模型在生成阶段接触到的信息与训练阶段不一致，导致模型性能下降的现象。这种不一致性可能会导致生成的序列质量下降。\",\n    \"问题7\": \"训练目标不一致问题在自回归序列生成模型中如何体现？\",\n    \"回答7\": \"训练目标不一致问题指的是在训练过程中使用最大似然估计时，模型在训练阶段和生成阶段所优化的目标不一致。这可能导致模型在生成阶段无法有效地优化真实的评价指标，从而影响生成序列的质量。\",\n    \"问题8\": \"自回归序列生成模型中的计算效率问题如何影响模型训练和推理？\",\n    \"回答8\": \"自回归序列生成模型中的计算效率问题可能导致训练和推理过程变得非常耗时。特别是对于长序列或大规模数据集，计算效率低下会限制模型的训练速度和推理速度，影响模型的实际应用。\",\n    \"问题9\": \"ROUGE算法最早应用于哪个领域？\",\n    \"回答9\": \"ROUGE算法最早应用于文本摘要领域。它被设计用来评估自动摘要系统生成的摘要与参考摘要之间的相似度。\",\n    \"问题10\": \"除了文本摘要领域，ROUGE算法还可以应用于哪些其他领域？\",\n    \"回答10\": \"除了文本摘要领域，ROUGE算法还可以应用于机器翻译、问答系统、对话系统等自然语言处理任务中，用于评估生成文本与参考文本之间的相似度和质量。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710765989,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1316,
+            "prompt_tokens": 3097,
+            "total_tokens": 4413
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter4",
+        "title": "8.1.3 AdaBoost 的例子 (1)",
+        "content_length": 2402,
+        "content": "Title: 8.1.3 AdaBoost 的例子 (1)\nContent:\n例 8.1 给定如表 8.1 所示训练数据。假设弱分类器由 $x<v$ 或 $x>v$ 产生, 其阈值 $v$ 使该分类器在训练数据集上分类误差率最低。试用 AdaBoost 算法学习一个强分类器。\n\n表 8.1 训练数据表\n\n\\begin{center}\n\\begin{tabular}{ccccccccccc}\n\\hline\n序号 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\\\\n\\hline\n$x$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\\\\n$y$ & 1 & 1 & 1 & -1 & -1 & -1 & 1 & 1 & 1 & -1 \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n解 初始化数据权值分布:\n\n$$\n\\begin{aligned}\nD_{1} & =\\left(w_{11}, w_{12}, \\cdots, w_{110}\\right) \\\\\nw_{1 i} & =0.1, \\quad i=1,2, \\cdots, 10\n\\end{aligned}\n$$\n\n对 $m=1$,\n\n(a) 在权值分布为 $D_{1}$ 的训练数据上, 阈值 $v$ 取 2.5 时分类误差率最低, 故基本分类器为\n\n$$\nG_{1}(x)= \\begin{cases}1, & x<2.5 \\\\ -1, & x>2.5\\end{cases}\n$$\n\n(b) $G_{1}(x)$ 在训练数据集上的误差率 $e_{1}=P\\left(G_{1}\\left(x_{i}\\right) \\neq y_{i}\\right)=0.3$ 。\n\n(c) 计算 $G_{1}(x)$ 的系数: $\\alpha_{1}=\\frac{1}{2} \\log \\frac{1-e_{1}}{e_{1}}=0.4236$ 。\n\n(d) 更新训练数据的权值分布:\n\n$$\n\\begin{aligned}\nD_{2}= & \\left(w_{21}, \\cdots, w_{2 i}, \\cdots, w_{210}\\right) \\\\\nw_{2 i}= & \\frac{w_{1 i}}{Z_{1}} \\exp \\left(-\\alpha_{1} y_{i} G_{1}\\left(x_{i}\\right)\\right), \\quad i=1,2, \\cdots, 10 \\\\\nD_{2}= & (0.07143,0.07143,0.07143,0.07143,0.07143,0.07143, \\\\\n& 0.16667,0.16667,0.16667,0.07143)\n\\end{aligned}\n$$\n\n$$\nf_{1}(x)=0.4236 G_{1}(x)\n$$\n\n分类器 $\\operatorname{sign}\\left(f_{1}(x)\\right)$ 在训练数据集上有 3 个误分类点。\n\n(1) 例题来源于 \\href{http://www.csie.edu.tw}{http://www.csie.edu.tw}。\\\\\n对 $m=2$,\n\n(a) 在权值分布为 $D_{2}$ 的训练数据上, 阈值 $v$ 是 8.5 时分类误差率最低, 基本分类器为\n\n$$\nG_{2}(x)= \\begin{cases}1, & x<8.5 \\\\ -1, & x>8.5\\end{cases}\n$$\n\n(b) $G_{2}(x)$ 在训练数据集上的误差率 $e_{2}=0.2143$ 。\n\n(c) 计算 $\\alpha_{2}=0.6496$ 。\n\n(d) 更新训练数据权值分布:\n\n$$\n\\begin{aligned}\nD_{3}= & (0.0455,0.0455,0.0455,0.1667,0.1667,0.1667, \\\\\n& 0.1060,0.1060,0.1060,0.0455) \\\\\nf_{2}(x)= & 0.4236 G_{1}(x)+0.6496 G_{2}(x)\n\\end{aligned}\n$$\n\n分类器 $\\operatorname{sign}\\left(f_{2}(x)\\right)$ 在训练数据集上有 3 个误分类点。\n\n对 $m=3$,\n\n(a) 在权值分布为 $D_{3}$ 的训练数据上, 阈值 $v$ 是 5.5 时分类误差率最低, 基本分类器为\n\n$$\nG_{3}(x)= \\begin{cases}1, & x>5.5 \\\\ -1, & x<5.5\\end{cases}\n$$\n\n(b) $G_{3}(x)$ 在训练数据集上的误差率 $e_{3}=0.1820$ 。\n\n(c) 计算 $\\alpha_{3}=0.7514$ 。\n\n(d) 更新训练数据的权值分布:\n\n$$\nD_{4}=(0.125,0.125,0.125,0.102,0.102,0.102,0.065,0.065,0.065,0.125)\n$$\n\n于是得到:\n\n$$\nf_{3}(x)=0.4236 G_{1}(x)+0.6496 G_{2}(x)+0.7514 G_{3}(x)\n$$\n\n分类器 $\\operatorname{sign}\\left(f_{3}(x)\\right)$ 在训练数据集上的误分类点个数为 0 。\n\n于是最终分类器为\n\n$$\nG(x)=\\operatorname{sign}\\left(f_{3}(x)\\right)=\\operatorname{sign}\\left(0.4236 G_{1}(x)+0.6496 G_{2}(x)+0.7514 G_{3}(x)\\right)\n$$"
+    },
+    {
+        "id": "chatcmpl-93w6VLuK2cM2rz7qqCMDnVG5E0mTb",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"AdaBoost 算法中的弱分类器是如何产生的？\",\n    \"回答1\": \"在 AdaBoost 算法中，弱分类器由 $x<v$ 或 $x>v$ 产生，其中阈值 $v$ 是使该分类器在训练数据集上分类误差率最低的值。\",\n    \"问题2\": \"在 AdaBoost 算法中，如何初始化训练数据的权值分布？\",\n    \"回答2\": \"在 AdaBoost 算法中，初始化数据权值分布为 $D_{1}=\\big(w_{11}, w_{12}, \\text{...}, w_{110}\\big)$，其中 $w_{1 i}=0.1, i=1,2, \\text{...}, 10$。\",\n    \"问题3\": \"在 AdaBoost 算法中，如何计算基本分类器的误差率？\",\n    \"回答3\": \"在 AdaBoost 算法中，对于基本分类器 $G_m(x)$，其在训练数据集上的误差率为 $e_m=P\\big(G_m\\big(x_i\\big) \\neq y_i\\big)$。\",\n    \"问题4\": \"AdaBoost 算法中如何更新训练数据的权值分布？\",\n    \"回答4\": \"在 AdaBoost 算法中，更新训练数据的权值分布时，根据当前基本分类器的系数 $\\beta_m$ 和误差率 $e_m$，通过公式 $w_{m+1 i}=\\frac{w_{m i}}{Z_m} \\text{exp}\\big(-\\beta_m y_i G_m\\big(x_i\\big)\\big)$ 来更新权值分布。\",\n    \"问题5\": \"在 AdaBoost 算法中，如何计算最终的强分类器？\",\n    \"回答5\": \"在 AdaBoost 算法中，最终的强分类器由多个基本分类器加权组合而成，具体计算公式为 $F(x)=\\text{sign}\\big(\\beta_1 G_1(x)+\\beta_2 G_2(x)+\\text{...}+\\beta_m G_m(x)\\big)$。\",\n    \"问题6\": \"弱分类器和强分类器有什么区别？\",\n    \"回答6\": \"弱分类器是指分类准确率略高于随机猜测的基本分类器，而强分类器是由多个弱分类器组合而成，在整体上具有更高的分类准确率。\",\n    \"问题7\": \"为什么需要使用 AdaBoost 算法学习一个强分类器？\",\n    \"回答7\": \"AdaBoost 算法能够通过迭代学习一系列基本分类器，并将它们组合成一个强分类器。这样的方法能够有效提高分类准确率，并且对异常值具有较好的鲁棒性。\",\n    \"问题8\": \"在 AdaBoost 算法中，如何选择基本分类器的阈值？\",\n    \"回答8\": \"在 AdaBoost 算法中，选择基本分类器的阈值时，需要使该分类器在训练数据集上的分类误差率最低。通常通过尝试不同的阈值来找到最佳的分类效果。\",\n    \"问题9\": \"AdaBoost 算法中的系数 $\\beta_m$ 是如何计算得到的？\",\n    \"回答9\": \"在 AdaBoost 算法中，基本分类器 $G_m(x)$ 的系数 $\\beta_m$ 是通过公式 $\\beta_m=\\frac{1}{2} \\text{log} \\frac{1-e_m}{e_m}$ 计算得到的。\",\n    \"问题10\": \"在 AdaBoost 算法中，如何判断最终强分类器是否达到预期效果？\",\n    \"回答10\": \"在 AdaBoost 算法中，可以通过观察最终强分类器在训练数据集上的误分类点个数来判断其效果。如果误分类点个数为 0，则说明最终强分类器已经达到预期效果。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710725363,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1068,
+            "prompt_tokens": 4009,
+            "total_tokens": 5077
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

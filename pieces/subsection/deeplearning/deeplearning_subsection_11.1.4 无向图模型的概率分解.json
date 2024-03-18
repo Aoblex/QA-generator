@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "11.1.4 无向图模型的概率分解",
+        "content_length": 3124,
+        "content": "Title: 11.1.4 无向图模型的概率分解\nContent:\n团 由于无向图模型并不提供一个变量的拓扑顺序，因此无法用链式法则对 $p(\\boldsymbol{x})$ 进行逐一分解. 无向图模型的联合概率一般以全连通子图为单位进行分解.无向图中的一个全连通子图, 称为团 (Clique), 即团内的所有节点之间都连边.在图11.7所示的无向图中共有 7 个团, 包括 $\\left\\{X_{1}, X_{2}\\right\\},\\left\\{X_{1}, X_{3}\\right\\},\\left\\{X_{2}, X_{3}\\right\\},\\left\\{X_{3}, X_{4}\\right\\}$, $\\left\\{X_{2}, X_{4}\\right\\},\\left\\{X_{1}, X_{2}, X_{3}\\right\\},\\left\\{X_{2}, X_{3}, X_{4}\\right\\}$.\n\n在所有团中，如果一个团不能被其他的团包含，这个团就是一个最大团 ( Maximal Clique).\n\n\n\n图 11.7 无向图模型中的团和最大团\n\n因子分解 无向图中的联合概率可以分解为一系列定义在最大团上的非负函数的乘积形式.\n\n定理 11.1 - Hammersley-Clifford 定理：如果一个分布 $p(\\boldsymbol{x})>0$ 满足无向图 $G$ 中的局部马尔可夫性质, 当且仅当 $p(\\boldsymbol{x})$ 可以表示为一系列定义在最大团上的非负函数的乘积形式,即\n\n\n\\begin{equation*}\np(\\boldsymbol{x})=\\frac{1}{Z} \\prod_{c \\in \\mathcal{C}} \\phi_{c}\\left(\\boldsymbol{x}_{c}\\right) \\tag{11.16}\n\\end{equation*}\n\n\n其中 $\\mathcal{C}$ 为 $G$ 中的最大团集合, $\\phi_{c}\\left(\\boldsymbol{x}_{c}\\right) \\geq 0$ 是定义在团 $c$ 上的势能函数 ( Potential Function ), $Z$ 是配分函数 ( Partition Function ), 用来将乘积归一化为概率形式:\n\n\n\\begin{equation*}\nZ=\\sum_{x \\in X} \\prod_{c \\in \\mathcal{C}} \\phi_{c}\\left(\\boldsymbol{x}_{c}\\right) \\tag{11.17}\n\\end{equation*}\n\n\n其中 $X$ 为随机向量 $X$ 的取值空间.\n\nHammersley-Clifford 定理的证明可以参考 [Koller et al., 2009]. 无向图模型与有向图模型的一个重要区别是有配分函数 $Z$. 配分函数的计算复杂度是指数级的,因此在推断和参数学习时都需要重点考虑.\n\n吉布斯分布 公式(11.16) 中定义的分布形式也称为吉布斯分布 (Gibbs Distribution ). 根据 Hammersley-Clifford 定理, 无向图模型和吉布斯分布是一致的.吉布斯分布一定满足马尔可夫随机场的条件独立性质, 并且马尔可夫随机场的概率分布一定可以表示成吉布斯分布.\n\n由于势能函数必须为正, 因此我们一般定义为\n\n\n\\begin{equation*}\n\\phi_{c}\\left(\\boldsymbol{x}_{c}\\right)=\\exp \\left(-E_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right), \\tag{11.18}\n\\end{equation*}\n\n\n其中 $E_{c}\\left(\\boldsymbol{x}_{c}\\right)$ 为能量函数 (Energy Function).\n\n\\href{https://nndl.github.io/%E9%85%8D%E5%88%86%E5%87%BD%E6%95%B0%E7%9A%84%E8%AE%A1%E7%AE%97%E5%8F%82%E8%A7%81%E7%AC%AC11.3.1.2%E8%8A%82%E3%80%82}{https://nndl.github.io/配分函数的计算参见第11.3.1.2节。}\n\n这里的负号是遵从物理上习惯, 即能量越低意味着概率越高。\\\\\n因此,无向图上定义的概率分布可以表示为\n\n\n\\begin{align*}\nP(\\boldsymbol{x}) & =\\frac{1}{Z} \\prod_{c \\in \\mathcal{C}} \\exp \\left(-E_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right)  \\tag{11.19}\\\\\n& =\\frac{1}{Z} \\exp \\left(\\sum_{c \\in \\mathcal{C}}-E_{c}\\left(\\boldsymbol{x}_{c}\\right)\\right) . \\tag{11.20}\n\\end{align*}\n\n\n这种形式的分布又称为玻尔兹曼分布 (Boltzmann Distribution ). 任何一个无向图模型都可以用公式(11.20) 来表示其联合概率.\n\n玻尔兹曼分布参见第12.1节。\n\n玻尔兹曼机参见第12.1节。受限玻尔兹曼机参见第12.2节。\n\n其中函数 $f_{c}\\left(\\boldsymbol{x}_{c}\\right)$ 为定义在 $\\boldsymbol{x}_{c}$ 上的特征向量, $\\theta_{c}$ 为权重向量. 这样联合概率 $p(\\boldsymbol{x})$的对数形式为\n\n\n\\begin{equation*}\n\\log p(\\boldsymbol{x} ; \\theta)=\\sum_{c \\in \\mathcal{C}} \\theta_{c}^{\\top} f_{c}\\left(\\boldsymbol{x}_{c}\\right)-\\log Z(\\theta), \\tag{11.22}\n\\end{equation*}\n\n\n其中 $\\theta$ 代表所有势能函数中的参数 $\\theta_{c}$. 这种形式的无向图模型也称为对数线性模型 (Log-Linear Model) 或最大熵模型（Maximum Entropy Model）[Berger et al., 1996; Della Pietra et al., 1997]. 图11.8a所示是一个常用的最大熵模型.\n\n如果用对数线性模型来建模条件概率 $p(y \\mid \\boldsymbol{x})$,\n\n\n\\begin{equation*}\np(y \\mid \\boldsymbol{x} ; \\theta)=\\frac{1}{Z(\\boldsymbol{x} ; \\theta)} \\exp \\left(\\theta^{\\top} f(\\boldsymbol{x}, y)\\right) \\tag{11.23}\n\\end{equation*}\n\n\n其中 $Z(\\boldsymbol{x} ; \\theta)=\\sum_{y} \\exp \\left(\\theta^{\\top} f_{y}(\\boldsymbol{x}, y)\\right)$.\n\n对数线性模型也称为条件最大熵模型或Softmax 回归模型."
+    },
+    {
+        "id": "chatcmpl-944zx8jwlR62mo1aRqDK724vcuNdk",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"无向图模型中的团和最大团有何区别？\",\n    \"回答1\": \"无向图模型中的一个全连通子图称为团，即团内的所有节点之间都连边。而最大团是指在所有团中，如果一个团不能被其他的团包含，这个团就是一个最大团。\",\n    \"问题2\": \"Hammersley-Clifford 定理是关于什么内容的？\",\n    \"回答2\": \"Hammersley-Clifford 定理是关于无向图模型中的联合概率分解形式的定理。它指出，如果一个分布满足无向图中的局部马尔可夫性质，那么该分布可以表示为一系列定义在最大团上的非负函数的乘积形式。\",\n    \"问题3\": \"配分函数在无向图模型中起到什么作用？\",\n    \"回答3\": \"配分函数 $Z$ 在无向图模型中用来将定义在最大团上的非负函数的乘积归一化为概率形式。它的计算复杂度是指数级的，因此在推断和参数学习时都需要重点考虑。\",\n    \"问题4\": \"无向图模型中的吉布斯分布和马尔可夫随机场有何关联？\",\n    \"回答4\": \"根据 Hammersley-Clifford 定理，无向图模型和吉布斯分布是一致的。吉布斯分布一定满足马尔可夫随机场的条件独立性质， 并且马尔可夫随机场的概率分布一定可以表示成吉布斯分布。\",\n    \"问题5\": \"玻尔兹曼分布在无向图模型中扮演着什么角色？\",\n    \"回答5\": \"玻尔兹曼分布是无向图模型上定义的概率分布形式之一。它可以表示为定义在最大团上的势能函数的指数形式，用于表示联合概率。这种形式的分布也称为玻尔兹曼分布或Boltzmann Distribution。\",\n    \"问题6\": \"无向图模型中的对数线性模型具有什么特点？\",\n    \"回答6\": \"对数线性模型是无向图模型中常用的一种模型形式，也称为对数线性模型或最大熵模型。它可以用来建模条件概率，并具有较强的表达能力和灵活性。\",\n    \"问题7\": \"对数线性模型中的对数概率形式是如何定义的？\",\n    \"回答7\": \"对数线性模型中，联合概率 $p(\\boldsymbol{x} ; \\theta)$ 的对数形式定义为 $\\text{log} p(\\boldsymbol{x} ; \\theta)=\\text{log} \\big(\\frac{1}{Z}\\big) + \\text{log} \\big(\\text{exp} \\big(\\textstyle\\big(\\textstyle\\text{sum}_{c \\text{ 在 } \\boldsymbol{C}} \\theta_{c}^{\\top} f_{c}\\big)\\big)\\big)$。\",\n    \"问题8\": \"受限玻尔兹曼机在无向图模型中有何作用？\",\n    \"回答8\": \"受限玻尔兹曼机是无向图模型中常用的一种模型形式，用于建模条件概率。它通过定义在特征向量上的权重向量来表示条件概率，并在训练和推断过程中发挥重要作用。\",\n    \"问题9\": \"在无向图模型中，如何计算配分函数 $Z$？\",\n    \"回答9\": \"在无向图模型中，配分函数 $Z$ 的计算复杂度是指数级的。通常需要通过对所有可能取值进行求和或积分来计算配分函数，这在实际应用中可能会面临挑战。\",\n    \"问题10\": \"无向图模型与有向图模型在配分函数方面有何区别？\",\n    \"回答10\": \"无向图模型与有向图模型的一个重要区别是有配分函数 $Z$。有向图模型通常不需要配分函数来归一化联合概率，而无向图模型需要通过配分函数将定义在最大团上的非负函数的乘积归一化为概率形式。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710759553,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1229,
+            "prompt_tokens": 4404,
+            "total_tokens": 5633
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

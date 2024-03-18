@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter4",
+        "title": "7.3.3 常用核函数",
+        "content_length": 2781,
+        "content": "Title: 7.3.3 常用核函数\nContent:\n\\begin{enumerate}\n  \\item 多项式核函数 (polynomial kernel function)\n\\end{enumerate}\n\n\n\\begin{equation*}\nK(x, z)=(x \\cdot z+1)^{p} \\tag{7.88}\n\\end{equation*}\n\n\n对应的支持向量机是一个 $p$ 次多项式分类器。在此情形下, 分类决策函数成为\n\n\n\\begin{equation*}\nf(x)=\\operatorname{sign}\\left[\\sum_{i=1}^{N_{s}} a_{i}^{*} y_{i}\\left(x_{i} \\cdot x+1\\right)^{p}+b^{*}\\right] \\tag{7.89}\n\\end{equation*}\n\n\n\\section*{2. 高斯核函数 (Gaussian kernel function)}\n\n\\begin{equation*}\nK(x, z)=\\exp \\left(-\\frac{\\|x-z\\|^{2}}{2 \\sigma^{2}}\\right) \\tag{7.90}\n\\end{equation*}\n\n\n对应的支持向量机是高斯径向基函数（radial basis function）分类器。在此情形下, 分类决策函数成为\n\n\n\\begin{equation*}\nf(x)=\\operatorname{sign}\\left[\\sum_{i=1}^{N_{s}} a_{i}^{*} y_{i} \\exp \\left(-\\frac{\\left\\|x-x_{i}\\right\\|^{2}}{2 \\sigma^{2}}\\right)+b^{*}\\right] \\tag{7.91}\n\\end{equation*}\n\n\n\\section*{3. 字符串核函数 (string kernel function)}\n核函数不仅可以定义在欧氏空间上, 还可以定义在离散数据的集合上。比如, 字符串核是定义在字符串集合上的核函数。字符串核函数在文本分类、信息检索、生物信息学等方面都有应用。\n\n考虑一个有限字符表 $\\Sigma$ 。字符串 $s$ 是从 $\\Sigma$ 中取出的有限个字符的序列, 包括空字符串。字符串 $s$ 的长度用 $|s|$ 表示, 它的元素记作 $s(1) s(2) \\cdots s(|s|)$ 。两个字符串 $s$ 和 $t$ 的连接记作 $s t$ 。所有长度为 $n$ 的字符串的集合记作 $\\Sigma^{n}$, 所有字符串的集合记作 $\\Sigma^{*}=\\bigcup_{n=0}^{\\infty} \\Sigma^{n}$ 。\n\n考虑字符串 $s$ 的子串 $u$ 。给定一个指标序列 $i=\\left(i_{1}, i_{2}, \\cdots, i_{|u|}\\right), 1 \\leqslant i_{1}<i_{2}<\\cdots<$ $i_{|u|} \\leqslant|s|, s$ 的子串定义为 $u=s(i)=s\\left(i_{1}\\right) s\\left(i_{2}\\right) \\cdots s\\left(i_{|u|}\\right)$, 其长度记作 $l(i)=i_{|u|}-i_{1}+1$ 。如果 $i$ 是连续的, 则 $l(i)=|u|$; 否则, $l(i)>|u|$ 。\n\n假设 $\\mathcal{S}$ 是长度大于或等于 $n$ 的字符串的集合, $s$ 是 $\\mathcal{S}$ 的元素。现在建立字符串集合 $\\mathcal{S}$到特征空间 $\\mathcal{H}_{n}=R^{\\Sigma^{n}}$ 的映射 $\\phi_{n}(s) \\circ R^{\\Sigma^{n}}$ 表示定义在 $\\Sigma^{n}$ 上的实数空间, 其每一维对应一个字符串 $u \\in \\Sigma^{n}$, 映射 $\\phi_{n}(s)$ 将字符串 $s$ 对应于空间 $R^{\\Sigma^{n}}$ 的一个向量, 其在 $u$ 维上的取值为\n\n\n\\begin{equation*}\n\\left[\\phi_{n}(s)\\right]_{u}=\\sum_{i: s(i)=u} \\lambda^{l(i)} \\tag{7.92}\n\\end{equation*}\n\n\n这里, $0<\\lambda \\leqslant 1$ 是一个衰减参数, $l(i)$ 表示字符串 $i$ 的长度, 求和在 $s$ 中所有与 $u$ 相同的子串上进行。\n\n例如, 假设 $\\Sigma$ 为英文字符集, $n$ 为 $3, \\mathcal{S}$ 为长度大于或等于 3 的字符串的集合。考虑将字符集 $\\mathcal{S}$ 映射到特征空间 $H_{3}$ 。 $H_{3}$ 的一维对应于字符串 asd。这时, 字符串 “Nasdaq” 与 “lass das” 在这一维上的值分别是 $\\left[\\phi_{3} \\text { (Nasdaq) }\\right]_{\\text {asd }}=\\lambda^{3}$ 和 $\\left[\\phi_{3} \\text { (lass } \\square \\text { das) }\\right]_{\\text {asd }}=2 \\lambda^{5}$ ( $\\square$ 为空格)。在第 1 个字符串里, asd 是连续的子串。在第 2 个字符串里, asd 是长度为 5 的不连续子串,共出现两次。\\\\\n两个字符串 $s$ 和 $t$ 上的字符串核函数是基于映射 $\\phi_{n}$ 的特征空间中的内积:\n\n\n\\begin{align*}\nk_{n}(s, t) & =\\sum_{u \\in \\Sigma^{n}}\\left[\\phi_{n}(s)\\right]_{u}\\left[\\phi_{n}(t)\\right]_{u} \\\\\n& =\\sum_{u \\in \\Sigma^{n}} \\sum_{(i, j): s(i)=t(j)=u} \\lambda^{l(i)} \\lambda^{l(j)} \\tag{7.93}\n\\end{align*}\n\n\n字符串核函数 $k_{n}(s, t)$ 给出了字符串 $s$ 和 $t$ 中长度等于 $n$ 的所有子串组成的特征向量的余弦相似度 (cosine similarity)。直观上, 两个字符串相同的子串越多, 它们就越相似, 字符串核函数的值就越大。字符串核函数可以由动态规划快速地计算。"
+    },
+    {
+        "id": "chatcmpl-93w54KCSx97YZFMsu3y9Rj2ymuIBJ",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"多项式核函数的定义是什么？\",\n    \"回答1\": \"多项式核函数的定义为 $K(x, z)=(x \\boldsymbol{\\bullet} z+1)^{p}$，其中 $p$ 为多项式的次数。对应的支持向量机是一个 $p$ 次多项式分类器。\",\n    \"问题2\": \"多项式核函数对应的支持向量机的分类决策函数是怎样的？\",\n    \"回答2\": \"对应的支持向量机的分类决策函数为 $f(x)=\\text{sign}\\bigg[\\text{sign}\\bigg(\\textstyle\\bigsum_{i=1}^{N_{s}} a_{i}^{*} y_{i}\\big(x_{i} \\boldsymbol{\\bullet} x+1\\big)^{p}+b^{*}\\bigg)\\bigg]$。\",\n    \"问题3\": \"高斯核函数的定义是什么？\",\n    \"回答3\": \"高斯核函数的定义为 $K(x, z)=\\text{exp}\\bigg(-\\frac{\\big\\backslash x-z\\big\\backslash^{2}}{2 \\boldsymbol{sigma}}^{2}}$。\",\n    \"问题4\": \"高斯核函数对应的支持向量机的分类决策函数是怎样的？\",\n    \"回答4\": \"对应的支持向量机的分类决策函数为 $f(x)=\\text{sign}\\bigg[\\text{sign}\\bigg(\\textstyle\\bigsum_{i=1}^{N_{s}} a_{i}^{*} y_{i} \\text{exp}\\bigg(-\\frac{\\big\\backslash x-x_{i}\\big\\backslash^{2}}{2 \\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{sigma}}}^{2}}}\\bigg)+b^{*}\\bigg)\\bigg]$。\",\n    \"问题5\": \"字符串核函数是如何定义在离散数据的集合上的？\",\n    \"回答5\": \"字符串核函数是定义在字符串集合上的核函数。它通过将字符串映射到特征空间，并计算特征空间中的内积来衡量字符串之间的相似度。具体地，字符串 $s$ 的子串 $u$ 被映射到特征空间中，其映射值为 $\\textstyle\\bigsum_{i: s(i)=u} \\boldsymbol{\\backslash lambda}^{l(i)}$，其中 $\\backslash lambda$ 是衰减参数，$l(i)$ 表示字符串 $i$ 的长度。\",\n    \"问题6\": \"字符串核函数的计算公式是什么？\",\n    \"回答6\": \"字符串核函数 $k_{n}(s, t)$ 的计算公式为 $k_{n}(s, t)=\\textstyle\\bigsum_{u \\text{ 在 } \\backslash Sigma^{n}}\\textstyle\\bigsum_{(i, j): s(i)=t(j)=u} \\backslash lambda^{l(i)} \\backslash lambda^{l(j)}$。这个公式给出了字符串 $s$ 和 $t$ 中长度等于 $n$ 的所有子串组成的特征向量的余弦相似度。\",\n    \"问题7\": \"字符串核函数在哪些领域有应用？\",\n    \"回答7\": \"字符串核函数在文本分类、信息检索、生物信息学等方面都有应用。它能够衡量字符串之间的相似度，因此在需要处理文本数据或生物序列数据时具有重要作用。\",\n    \"问题8\": \"支持向量机中常用的核函数有哪些？\",\n    \"回答8\": \"支持向量机中常用的核函数包括多项式核函数、高斯核函数以及其他类型的核函数（如字符串核函数）。这些核函数能够将输入数据映射到高维特征空间，并在特征空间中进行非线性分类或回归。\",\n    \"问题9\": \"支持向量机中核函数的作用是什么？\",\n    \"回答9\": \"支持向量机中的核函数能够将输入数据映射到高维特征空间，从而使得原本线性不可分的数据在新的特征空间中变得线性可分。这样可以通过线性分类器来处理原本非线性可分的问题，提高了支持向量机模型的表达能力和适应性。\",\n    \"问题10\": \"字符串核函数如何快速计算？\",\n    \"回答10\": \"字符串核函数可以由动态规划快速地计算。通过动态规划算法，可以有效地计算出字符串之间长度等于 $n$ 的所有子串组成的特征向量的余弦相似度，从而快速得到字符串核函数的值。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710725274,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1385,
+            "prompt_tokens": 4166,
+            "total_tokens": 5551
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

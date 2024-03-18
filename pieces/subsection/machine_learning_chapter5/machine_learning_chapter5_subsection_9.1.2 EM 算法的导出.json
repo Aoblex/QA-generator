@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter5",
+        "title": "9.1.2 EM 算法的导出",
+        "content_length": 4011,
+        "content": "Title: 9.1.2 EM 算法的导出\nContent:\n上面叙述了 $\\mathrm{EM}$ 算法。为什么 $\\mathrm{EM}$ 算法能近似实现对观测数据的极大似然估计呢? 下面通过近似求解观测数据的对数似然函数的极大化问题来导出 $\\mathrm{EM}$ 算法, 由此可以清楚地看出 EM 算法的作用。\n\n我们面对一个含有隐变量的概率模型, 目标是极大化观测数据（不完全数据） $Y$ 关于参数 $\\theta$ 的对数似然函数, 即极大化\n\n\n\\begin{align*}\nL(\\theta) & =\\log P(Y \\mid \\theta)=\\log \\sum_{Z} P(Y, Z \\mid \\theta) \\\\\n& =\\log \\left(\\sum_{Z} P(Y \\mid Z, \\theta) P(Z \\mid \\theta)\\right) \\tag{9.12}\n\\end{align*}\n\n\n注意到这一极大化的主要困难是式 (9.12) 中有未观测数据并有包含和（或积分）的对数。\n\n事实上, $\\mathrm{EM}$ 算法是通过迭代逐步近似极大化 $L(\\theta)$ 的。假设在第 $i$ 次迭代后 $\\theta$ 的估计值是 $\\theta^{(i)}$ 。我们希望新估计值 $\\theta$ 能使 $L(\\theta)$ 增加, 即 $L(\\theta)>L\\left(\\theta^{(i)}\\right)$, 并逐步达到极大值。为此,考虑两者的差:\n\n$$\nL(\\theta)-L\\left(\\theta^{(i)}\\right)=\\log \\left(\\sum_{Z} P(Y \\mid Z, \\theta) P(Z \\mid \\theta)\\right)-\\log P\\left(Y \\mid \\theta^{(i)}\\right)\n$$\n\n利用 Jensen 不等式 (Jensen inequality) (1) 得到其下界:\n\n$$\n\\begin{aligned}\nL(\\theta)-L\\left(\\theta^{(i)}\\right) & =\\log \\left(\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\frac{P(Y \\mid Z, \\theta) P(Z \\mid \\theta)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right)}\\right)-\\log P\\left(Y \\mid \\theta^{(i)}\\right) \\\\\n& \\geqslant \\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\log \\frac{P(Y \\mid Z, \\theta) P(Z \\mid \\theta)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right)}-\\log P\\left(Y \\mid \\theta^{(i)}\\right) \\\\\n& =\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\log \\frac{P(Y \\mid Z, \\theta) P(Z \\mid \\theta)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right) P\\left(Y \\mid \\theta^{(i)}\\right)}\n\\end{aligned}\n$$\n\n(1) 这里用到的是 $\\log \\sum_{j} \\lambda_{j} y_{j} \\geqslant \\sum_{j} \\lambda_{j} \\log y_{j}$, 其中 $\\lambda_{j} \\geqslant 0, \\sum_{j} \\lambda_{j}=1$ 。\\\\\n令\n\n\n\\begin{equation*}\nB\\left(\\theta, \\theta^{(i)}\\right) \\hat{=} L\\left(\\theta^{(i)}\\right)+\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\log \\frac{P(Y \\mid Z, \\theta) P(Z \\mid \\theta)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right) P\\left(Y \\mid \\theta^{(i)}\\right)} \\tag{9.13}\n\\end{equation*}\n\n\n则\n\n\n\\begin{equation*}\nL(\\theta) \\geqslant B\\left(\\theta, \\theta^{(i)}\\right) \\tag{9.14}\n\\end{equation*}\n\n\n即函数 $B\\left(\\theta, \\theta^{(i)}\\right)$ 是 $L(\\theta)$ 的一个下界, 而且由式 (9.13) 可知:\n\n\n\\begin{equation*}\nL\\left(\\theta^{(i)}\\right)=B\\left(\\theta^{(i)}, \\theta^{(i)}\\right) \\tag{9.15}\n\\end{equation*}\n\n\n因此, 任何可以使 $B\\left(\\theta, \\theta^{(i)}\\right)$ 增大的 $\\theta$ 也可以使 $L(\\theta)$ 增大。为了使 $L(\\theta)$ 有尽可能大的增长,选择 $\\theta^{(i+1)}$ 使 $B\\left(\\theta, \\theta^{(i)}\\right)$ 达到极大, 即\n\n\n\\begin{equation*}\n\\theta^{(i+1)}=\\arg \\max _{\\theta} B\\left(\\theta, \\theta^{(i)}\\right) \\tag{9.16}\n\\end{equation*}\n\n\n现在求 $\\theta^{(i+1)}$ 的表达式。省去对 $\\theta$ 的极大化而言是常数的项, 由式 (9.16)、式 (9.13) 及式 (9.10), 有\n\n\n\\begin{align*}\n\\theta^{(i+1)} & =\\arg \\max _{\\theta}\\left(L\\left(\\theta^{(i)}\\right)+\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\log \\frac{P(Y \\mid Z, \\theta) P(Z \\mid \\theta)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right) P\\left(Y \\mid \\theta^{(i)}\\right)}\\right) \\\\\n& =\\arg \\max _{\\theta}\\left(\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\log (P(Y \\mid Z, \\theta) P(Z \\mid \\theta))\\right) \\\\\n& =\\arg \\max _{\\theta}\\left(\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\log P(Y, Z \\mid \\theta)\\right) \\\\\n& =\\arg \\max _{\\theta} Q\\left(\\theta, \\theta^{(i)}\\right) \\tag{9.17}\n\\end{align*}\n\n\n式 (9.17) 等价于 EM 算法的一次迭代, 即求 $Q$ 函数及其极大化。EM 算法是通过不断求解下界的极大化逼近求解对数似然函数极大化的算法。\n\n图 9.1 给出 $\\mathrm{EM}$ 算法的直观解释。图中上方曲线为 $L(\\theta)$, 下方曲线为 $B\\left(\\theta, \\theta^{(i)}\\right)$ 。根据\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_85ccebcbbc039fa5a6c0g-15}\n\\end{center}\n\n图 $9.1 \\mathrm{EM}$ 算法的解释\\\\\n式 (9.14), $B\\left(\\theta, \\theta^{(i)}\\right)$ 为对数似然函数 $L(\\theta)$ 的下界。根据式 (9.15), 两个函数在点 $\\theta=\\theta^{(i)}$ 处相等。根据式 (9.16) 和式 (9.17), EM 算法找到下一个点 $\\theta^{(i+1)}$ 使函数 $B\\left(\\theta, \\theta^{(i)}\\right)$ 极大化, 也使函数 $Q\\left(\\theta, \\theta^{(i)}\\right)$ 极大化。这时由于 $L(\\theta) \\geqslant B\\left(\\theta, \\theta^{(i)}\\right)$ 和函数 $B\\left(\\theta, \\theta^{(i)}\\right)$ 的增加, 保证了对数似然函数 $L(\\theta)$ 在每次迭代中也是增加的。 $\\mathrm{EM}$ 算法在点 $\\left.\\theta^{(i+1)}\\right)$ 重新计算 $Q$ 函数值, 进行下一次迭代。在这个过程中, 对数似然函数 $L(\\theta)$ 不断增大。从图可以推断出 $\\mathrm{EM}$ 算法不能保证找到全局最优值。"
+    },
+    {
+        "id": "chatcmpl-948TBryML197i1lDigvRzzzw5vIUA",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"为什么EM算法能近似实现对观测数据的极大似然估计？\",\n    \"回答1\": \"EM算法通过迭代逐步近似极大化观测数据关于参数的对数似然函数。它利用Jensen不等式得到对数似然函数的下界，并通过求解下界的极大化来逼近求解对数似然函数的极大化。因此，EM算法能够近似实现对观测数据的极大似然估计。\",\n    \"问题2\": \"EM算法是如何通过迭代逐步近似极大化对数似然函数的？\",\n    \"回答2\": \"EM算法在每次迭代中，通过求解对数似然函数的下界的极大化来逼近求解对数似然函数的极大化。它找到下一个点使得下界函数极大化，同时也使得一个特定函数极大化，从而保证了对数似然函数在每次迭代中是增加的。\",\n    \"问题3\": \"EM算法中的$B(\\theta, \\theta^{(i)})$函数有什么作用？\",\n    \"回答3\": \"$B(\\theta, \\theta^{(i)})$函数是对数似然函数$L(\\theta)$的一个下界，同时也是通过求解该函数的极大化来逼近求解对数似然函数的极大化。它在EM算法中起到了重要的作用。\",\n    \"问题4\": \"EM算法如何保证对数似然函数在每次迭代中是增加的？\",\n    \"回答4\": \"EM算法通过找到下一个点使得下界函数$B(\\theta, \\theta^{(i)})$极大化，同时也使得一个特定函数极大化，从而保证了对数似然函数在每次迭代中是增加的。这保证了EM算法能够逐步逼近对数似然函数的极大化。\",\n    \"问题5\": \"EM算法在每次迭代中如何选择新的参数估计值？\",\n    \"回答5\": \"在每次迭代中，EM算法选择新的参数估计值$\\theta^{(i+1)}$使得下界函数$B(\\theta, \\theta^{(i)})$达到极大，即$\\theta^{(i+1)}=\\text{arg}\\text{max}_{\\theta} B(\\theta, \\theta^{(i)})$。这样可以保证对数似然函数在每次迭代中是增加的。\",\n    \"问题6\": \"为什么EM算法不能保证找到全局最优值？\",\n    \"回答6\": \"根据图示解释，EM算法通过不断求解下界的极大化逼近求解对数似然函数的极大化。虽然能够保证对数似然函数在每次迭代中是增加的，但由于其局部搜索性质，不能保证找到全局最优值。\",\n    \"问题7\": \"Jensen不等式在EM算法中起到了什么作用？\",\n    \"回答7\": \"Jensen不等式在EM算法中用于得到对数似然函数的下界，从而帮助逐步近似极大化观测数据关于参数的对数似然函数。它是推导EM算法过程中重要的一步。\",\n    \"问题8\": \"EM算法如何通过求解$Q$函数及其极大化来进行一次迭代？\",\n    \"回答8\": \"EM算法通过求解$Q$函数及其极大化来进行一次迭代。具体地，它选择新的参数估计值$\\theta^{(i+1)}$使得$Q(\\theta, \\theta^{(i)})$达到极大，即$\\theta^{(i+1)}=\\text{arg}\\text{max}_{\\theta} Q(\\theta, \\theta^{(i)})$。\",\n    \"问题9\": \"EM算法如何保证对数似然函数$L(\\theta)$在每次迭代中都是增加的？\",\n    \"回答9\": \"EM算法通过找到下一个点使得下界函数$B(\\theta, \\theta^{(i)})$极大化，同时也使得一个特定函数极大化，从而保证了对数似然函数在每次迭代中是增加的。这一性质是EM算法能够逐步逼近对数似然函数的极大化的关键。\",\n    \"问题10\": \"EM算法如何利用下界函数和特定函数进行参数更新？\",\n    \"回答10\": \"EM算法利用下界函数$B(\\theta, \\theta^{(i)})$和特定函数进行参数更新，选择新的参数估计值$\\theta^{(i+1)}$使得下界函数达到极大，即$\\theta^{(i+1)}=\\text{arg}\\text{max}_{\\theta} B(\\theta, \\theta^{(i)})$。这样可以保证对数似然函数在每次迭代中是增加的。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710772897,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1355,
+            "prompt_tokens": 4722,
+            "total_tokens": 6077
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

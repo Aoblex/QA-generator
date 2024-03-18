@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter10",
+        "title": "20.4.2 变分 EM 算法",
+        "content_length": 1534,
+        "content": "Title: 20.4.2 变分 EM 算法\nContent:\n变分推理中, 可以通过迭代的方法最大化证据下界, 这时算法是 EM 算法的推广, 称为变分 EM 算法。\n\n假设模型是联合概率分布 $p(x, z \\mid \\theta)$, 其中 $x$ 是观测变量, $z$ 是隐变量, $\\theta$ 是参数。目标是\n\n(1) 平均场的概念最初来自物理学。\\\\\n通过观测数据的概率 (证据) $\\log p(x \\mid \\theta)$ 的最大化, 估计模型的参数 $\\theta$ 。使用变分推理, 导入平均场 $q(z)=\\prod_{i=1}^{n} q\\left(z_{i}\\right)$, 定义证据下界\n\n\n\\begin{equation*}\nL(q, \\theta)=E_{q}[\\log p(x, z \\mid \\theta)]-E_{q}[\\log q(z)] \\tag{20.39}\n\\end{equation*}\n\n\n通过迭代, 分别以 $q$ 和 $\\theta$ 为变量对证据下界进行最大化, 就得到变分 EM 算法。\n\n\\section*{算法 20.3 (变分 EM 算法)}\n循环执行以下 $\\mathrm{E}$ 步和 $\\mathrm{M}$ 步, 直到收玫。\n\n(1) $\\mathrm{E}$ 步: 固定 $\\theta$, 求 $L(q, \\theta)$ 对 $q$ 的最大化。\n\n(2) $\\mathrm{M}$ 步：固定 $q$, 求 $L(q, \\theta)$ 对 $\\theta$ 的最大化。\n\n给出模型参数 $\\theta$ 的估计值。\n\n根据变分推理原理, 观测数据的概率和证据下界满足\n\n\n\\begin{equation*}\n\\log p(x \\mid \\theta)-L(q, \\theta)=D(q(z) \\| p(z \\mid x, \\theta)) \\geqslant 0 \\tag{20.40}\n\\end{equation*}\n\n\n变分 EM 算法的迭代过程中, 以下关系成立:\n\n\n\\begin{equation*}\n\\log p\\left(x \\mid \\theta^{(t-1)}\\right)=L\\left(q^{(t)}, \\theta^{(t-1)}\\right) \\leqslant L\\left(q^{(t)}, \\theta^{(t)}\\right) \\leqslant \\log p\\left(x \\mid \\theta^{(t)}\\right) \\tag{20.41}\n\\end{equation*}\n\n\n其中上角标 $t-1$ 和 $t$ 表示迭代次数, 左边的等式基于 $\\mathrm{E}$ 步计算和变分推理原理, 中间的不等式基于 $\\mathrm{M}$ 步计算, 右边的不等式基于变分推理原理。说明每次迭代都保证观测数据的概率不递减。因此, 变分 EM 算法一定收玫, 但可能收玫到局部最优。\n\nEM 算法实际也是对证据下界进行最大化。不妨对照 9.4 节 EM 算法的推广, EM 算法的推广是求 $\\mathrm{F}$ 函数的极大-极大算法, 其中的 $\\mathrm{F}$ 函数就是证据下界。 $\\mathrm{EM}$ 算法假设 $q(z)=p(z \\mid x)$且 $p(z \\mid x)$ 容易计算, 而变分 $\\mathrm{EM}$ 算法考虑一般情况使用容易计算的平均场 $q(z)=\\prod_{i=1}^{n} q\\left(z_{i}\\right)$ 。当模型复杂时, EM 算法末必可用, 但变分 EM 算法仍然可以使用。"
+    },
+    {
+        "id": "chatcmpl-93zPbbifFyRslu1P0z7UzJtSYdmSr",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"变分 EM 算法与 EM 算法有何关系？\",\n    \"回答1\": \"变分 EM 算法是 EM 算法的推广。EM 算法实际上也是对证据下界进行最大化。而变分 EM 算法通过迭代的方法最大化证据下界，是对 EM 算法的一种扩展。\",\n    \"问题2\": \"在变分推理中，如何定义证据下界 $L(q, \\theta)$？\",\n    \"回答2\": \"在变分推理中，通过引入平均场 $q(z)=\\bigg(\\text{乘积}_{i=1}^{n} q\\big(z_{i}\\big)\\bigg)$，定义证据下界为 $L(q, \\theta)=E_{q}\\big[\\text{log } p(x, z \\text{  }\\big|\\text{  } \\theta)\\big]-E_{q}\\big[\\text{log } q(z)\\big]$。\",\n    \"问题3\": \"变分 EM 算法的迭代过程中，观测数据的概率和证据下界之间有什么关系？\",\n    \"回答3\": \"在变分 EM 算法的迭代过程中，观测数据的概率和证据下界满足 $\\text{log } p(x \\text{  }\\big|\\text{  } \\theta)-L(q, \\theta)=D(q(z) \\text{  }\\big\\backslash\\big\\backslash\\text{  } p(z \\text{  }\\big|\\text{  } x, \\theta)) \\text{  }\\big\\backslash\\big\\backslash\\text{  } 0$。这表明每次迭代都保证观测数据的概率不递减。\",\n    \"问题4\": \"变分 EM 算法的 $\\text{E}$ 步和 $\\text{M}$ 步分别是如何进行的？\",\n    \"回答4\": \"在变分 EM 算法中，$\\text{E}$ 步固定 $\\theta$，求 $L(q, \\theta)$ 对 $q$ 的最大化；$\\text{M}$ 步固定 $q$，求 $L(q, \\theta)$ 对 $\\theta$ 的最大化。\",\n    \"问题5\": \"变分 EM 算法的收敛性质是怎样的？\",\n    \"回答5\": \"变分 EM 算法一定会收敛，但可能只收敛到局部最优解。在算法的迭代过程中，每次迭代都保证观测数据的概率不递减，从而保证了算法的收敛性。\",\n    \"问题6\": \"为什么当模型复杂时，EM 算法可能无法使用，而变分 EM 算法仍然可以使用？\",\n    \"回答6\": \"当模型复杂时，EM 算法可能无法使用，因为计算后验概率 $p(z \\text{  }\\big|\\text{  } x)$ 可能会变得困难。而变分 EM 算法考虑一般情况使用容易计算的平均场 $q(z)=\\bigg(\\text{乘积}_{i=1}^{n} q\\big(z_{i}\\big)\\bigg)$，因此即使在模型复杂时仍然可以使用。\",\n    \"问题7\": \"EM 算法和变分 EM 算法在对证据下界进行最大化时有何不同之处？\",\n    \"回答7\": \"EM 算法假设 $q(z)=p(z \\text{  }\\big|\\text{  } x)$且 $p(z \\text{  }\\big|\\text{  } x)$ 容易计算，而变分 EM 算法考虑一般情况使用容易计算的平均场 $q(z)=\\bigg(\\text{乘积}_{i=1}^{n} q\\big(z_{i}\\big)\\bigg)$。这意味着在处理复杂模型时，EM 算法可能无法使用，而变分 EM 算法仍然可以使用。\",\n    \"问题8\": \"在变分推理中，平均场的概念最初来自哪个学科？\",\n    \"回答8\": \"平均场的概念最初来自物理学。在物理学中，平均场理论被广泛应用于描述多体系统中粒子之间相互作用的平均效应。\",\n    \"问题9\": \"在变分推理中，为什么要通过迭代的方法最大化证据下界？\",\n    \"回答9\": \"在变分推理中，通过迭代的方法最大化证据下界是为了逐步优化模型参数 $\\theta$ 和平均场 $q$，从而得到更好的模型拟合效果和参数估计结果。\",\n    \"问题10\": \"变分 EM 算法与传统 EM 算法相比有何优势？\",\n    \"回答10\": \"与传统 EM 算法相比，变分 EM 算法在处理复杂模型时具有更强的适用性。它通过引入容易计算的平均场 $q(z)$，能够处理复杂模型下后验概率难以计算的情况，从而提高了算法的灵活性和适应性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710738079,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1410,
+            "prompt_tokens": 3576,
+            "total_tokens": 4986
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

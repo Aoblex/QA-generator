@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter1",
+        "title": "1.4.1 训练误差与测试误差",
+        "content_length": 1416,
+        "content": "Title: 1.4.1 训练误差与测试误差\nContent:\n机器学习的目的是使学到的模型不仅对已知数据而且对未知数据都能有很好的预测能力。不同的学习方法会给出不同的模型。当损失函数给定时, 基于损失函数的模型的训练误差 (training error) 和模型的测试误差 (test error) 就自然成为学习方法评估的标准。注意,机器学习方法具体采用的损失函数未必是评估时使用的损失函数。当然, 让两者一致是比较理想的。\n\n假设学习到的模型是 $Y=\\hat{f}(X)$, 训练误差是模型 $Y=\\hat{f}(X)$ 关于训练数据集的平均损失:\n\n\n\\begin{equation*}\nR_{\\mathrm{emp}}(\\hat{f})=\\frac{1}{N} \\sum_{i=1}^{N} L\\left(y_{i}, \\hat{f}\\left(x_{i}\\right)\\right) \\tag{1.18}\n\\end{equation*}\n\n\n其中, $N$ 是训练样本容量。\n\n测试误差是模型 $Y=\\hat{f}(X)$ 关于测试数据集的平均损失:\n\n\n\\begin{equation*}\ne_{\\text {test }}=\\frac{1}{N^{\\prime}} \\sum_{i=1}^{N^{\\prime}} L\\left(y_{i}, \\hat{f}\\left(x_{i}\\right)\\right) \\tag{1.19}\n\\end{equation*}\n\n\n其中, $N^{\\prime}$ 是测试样本容量。\n\n例如, 当损失函数是 0-1 损失时, 测试误差就变成了常见的测试数据集上的误差率 (error rate):\n\n\n\\begin{equation*}\ne_{\\text {test }}=\\frac{1}{N^{\\prime}} \\sum_{i=1}^{N^{\\prime}} I\\left(y_{i} \\neq \\hat{f}\\left(x_{i}\\right)\\right) \\tag{1.20}\n\\end{equation*}\n\n\n这里 $I$ 是指示函数 (indicator function), 即 $y \\neq \\hat{f}(x)$ 时为 1 , 否则为 0 。\n\n相应地, 常见的测试数据集上的精确率 (accuracy) 为\n\n\n\\begin{equation*}\nr_{\\text {test }}=\\frac{1}{N^{\\prime}} \\sum_{i=1}^{N^{\\prime}} I\\left(y_{i}=\\hat{f}\\left(x_{i}\\right)\\right) \\tag{1.21}\n\\end{equation*}\n\n\n显然，\n\n$$\nr_{\\text {test }}+e_{\\text {test }}=1\n$$\n\n训练误差的大小对判断给定的问题是不是一个容易学习的问题是有意义的, 但本质上不重要。测试误差反映了学习方法对未知的测试数据集的预测能力, 是学习中的重要概念。显然, 给定两种学习方法, 测试误差小的方法具有更好的预测能力, 是更有效的方法。通常将学习方法对未知数据的预测能力称为泛化能力 (generalization ability), 这个问题将在 1.6 节继续论述。\n\n\n\\end{CJK*}\n\\end{document}"
+    },
+    {
+        "id": "chatcmpl-93zdkBrnuo4RJhgIRr50SuR7tma2e",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"训练误差和测试误差在机器学习中的作用是什么？\",\n    \"回答1\": \"训练误差和测试误差是评估学习方法的标准。训练误差反映了模型在训练数据集上的拟合程度，而测试误差则反映了模型对未知数据的预测能力。通过比较训练误差和测试误差，可以评估学习方法的泛化能力和有效性。\",\n    \"问题2\": \"如何计算模型的训练误差和测试误差？\",\n    \"回答2\": \"模型的训练误差是指模型关于训练数据集的平均损失，计算公式为 $R_{\\text{emp}}(\\tilde{f})=\\frac{1}{N} \\text{ 为 } \\text{sum}_{i=1}^{N} L\\big(y_{i}, \\tilde{f}\\big(x_{i}\\big)\\big)$。而测试误差是指模型关于测试数据集的平均损失，计算公式为 $e_{\\text{test}}=\\frac{1}{N^{\\text{'}}} \\text{ 为 } \\text{sum}_{i=1}^{N^{\\text{'}}} L\\big(y_{i}, \\tilde{f}\\big(x_{i}\\big)\\big)$。\",\n    \"问题3\": \"当损失函数是 0-1 损失时，测试误差体现为什么常见的指标？\",\n    \"回答3\": \"当损失函数是 0-1 损失时，测试误差体现为常见的测试数据集上的误差率（error rate），计算公式为 $e_{\\text{test}}=\\frac{1}{N^{\\text{'}}} \\text{ 为 } \\text{sum}_{i=1}^{N^{\\text{'}}} I\\big(y_{i} \\neq \\tilde{f}\\big(x_{i}\\big)\\big)$。这里 $I$ 是指示函数，即 $y \\neq \\tilde{f}(x)$ 时为 1，否则为 0。\",\n    \"问题4\": \"测试数据集上的精确率是如何定义的？\",\n    \"回答4\": \"测试数据集上的精确率定义为 $r_{\\text{test}}=\\frac{1}{N^{\\text{'}}} \\text{ 为 } \\text{sum}_{i=1}^{N^{\\text{'}}} I\\big(y_{i}=\\tilde{f}\\big(x_{i}\\big)\\big)$。它表示模型在测试数据集上正确预测的比例。\",\n    \"问题5\": \"训练误差和测试误差之间有怎样的关系？\",\n    \"回答5\": \"训练误差反映了模型在训练数据集上的拟合程度，而测试误差反映了模型对未知数据的预测能力。通常情况下，训练误差会小于或等于测试误差。这是因为模型在训练数据上进行了拟合，但其泛化能力需要通过测试误差来验证。\",\n    \"问题6\": \"什么是学习方法对未知数据的预测能力？\",\n    \"回答6\": \"学习方法对未知数据的预测能力通常称为泛化能力（generalization ability）。它反映了模型对未知数据的预测准确性和稳健性，是评估学习方法有效性和实用性的重要概念。\",\n    \"问题7\": \"如何评价两种学习方法的有效性？\",\n    \"回答7\": \"给定两种学习方法，通常通过比较它们在测试数据集上的测试误差来评价其有效性。测试误差小的方法具有更好的预测能力，因此被认为是更有效的学习方法。\",\n    \"问题8\": \"什么是常见的测试数据集上的精确率？\",\n    \"回答8\": \"常见的测试数据集上的精确率表示模型在测试数据集上正确预测的比例。它是衡量模型分类准确性的重要指标。\",\n    \"问题9\": \"训练误差和测试误差对于判断一个问题是否容易学习有何意义？\",\n    \"回答9\": \"训练误差的大小对判断给定的问题是否容易学习是有意义的，但本质上不重要。而测试误差反映了学习方法对未知的测试数据集的预测能力，是学习中更重要的概念。\",\n    \"问题10\": \"泛化能力在机器学习中具有怎样的重要性？\",\n    \"回答10\": \"泛化能力在机器学习中具有重要性，它反映了模型对未知数据的预测能力和稳健性。通过评估泛化能力，可以判断模型在实际应用中是否具有良好的适应性和准确性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710738956,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1371,
+            "prompt_tokens": 3469,
+            "total_tokens": 4840
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

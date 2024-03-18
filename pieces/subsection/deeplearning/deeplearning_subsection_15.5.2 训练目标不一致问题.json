@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "15.5.2 训练目标不一致问题",
+        "content_length": 1504,
+        "content": "Title: 15.5.2 训练目标不一致问题\nContent:\n序列生成模型的好坏通常采用和任务相关的指标来进行评价, 比如 BLEU 、 ROUGE 等. 然而, 在训练时通常是使用最大似然估计来优化模型, 这导致训练目标和评价方法不一致. 并且这些评价指标一般都是不可微的, 无法直接使用基于梯度的方法来进行优化.\n\n基于强化学习的序列生成 为了可以直接优化评价目标, 我们可以将自回归序列生成看作一种马尔可夫决策过程,并使用强化学习的方法来进行训练.\n\n参见第14.1.3节.\n\n在第 $t$ 步, 动作 $a_{t}$ 可以看作从词表中选择一个词, 策略为 $\\pi_{\\theta}\\left(a \\mid s_{t}\\right)$, 其中状态 $s_{t}$ 为之前步骤中生成的前缀序列 $\\boldsymbol{x}_{1:(t-1)}$. 我们可以把一个序列 $\\boldsymbol{x}_{1: T}$ 看作马尔可夫决策过程的一个轨迹 (trajectory):\n\n\n\\begin{equation*}\n\\tau=\\left\\{s_{1}, a_{1}, s_{2}, a_{2}, \\ldots, s_{T}, a_{T}\\right\\} \\tag{15.43}\n\\end{equation*}\n\n\n轨迹 $\\tau$ 的概率为\n\n\n\\begin{equation*}\np_{\\theta}(\\tau)=\\prod_{t=1}^{T} \\pi_{\\theta}\\left(a_{t}=x_{t} \\mid s_{t}=x_{1:(t-1)}\\right) \\tag{15.44}\n\\end{equation*}\n\n\n其中状态转移概率 $p\\left(s_{t}=\\boldsymbol{x}_{1: t-1} \\mid s_{t-1}=\\boldsymbol{x}_{1:(t-2)}, a_{t-1}=x_{t-1}\\right)=1$ 是确定性的,可以被忽略.\n\n强化学习的目标是学习一个策略 $\\pi_{\\theta}\\left(a \\mid s_{t}\\right)$ 使得期望回报最大,\n\n\n\\begin{align*}\n\\mathcal{J}(\\theta) & =\\mathbb{E}_{\\tau \\sim p_{\\theta}(\\tau)}[G(\\tau)]  \\tag{15.45}\\\\\n& =\\mathbb{E}_{\\boldsymbol{x}_{1: T} \\sim p_{\\theta}\\left(\\boldsymbol{x}_{1: T}\\right)}\\left[G\\left(\\boldsymbol{x}_{1: T}\\right)\\right] \\tag{15.46}\n\\end{align*}\n\n\n其中 $G\\left(\\boldsymbol{x}_{1: T}\\right)$ 为序列 $\\boldsymbol{x}_{1: T}$ 的总回报, 可以为 BLEU、ROUGE 或其他评价指标.\n\n这样, 序列生成问题就转换为强化学习问题, 其策略函数 $\\pi_{\\theta}\\left(a \\mid s_{t}\\right)$ 可以通过 REINFORCE算法或演员-评论员算法来进行学习. 为了改进强化学习的效率, 策略函数 $\\pi_{\\theta}\\left(a \\mid s_{t}\\right)$ 一般会通过最大似然估计来进行预训练.\n\n基于强化学习的序列生成模型不但可以解决训练和评价目标不一致问题,也可以有效地解决曝光偏差问题."
+    },
+    {
+        "id": "chatcmpl-946gSp9teW46JP5p65jO1o9Iec4qR",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"序列生成模型的好坏通常如何进行评价？\",\n    \"回答1\": \"序列生成模型的好坏通常采用和任务相关的指标来进行评价，比如 BLEU、ROUGE 等。这些评价指标能够反映模型在生成序列任务上的性能表现。\",\n    \"问题2\": \"在训练时通常使用什么方法来优化序列生成模型？\",\n    \"回答2\": \"在训练时通常使用最大似然估计来优化序列生成模型。然而，这导致训练目标和评价方法不一致，因为评价指标一般都是不可微的，无法直接使用基于梯度的方法来进行优化。\",\n    \"问题3\": \"强化学习是如何应用于序列生成模型的训练中的？\",\n    \"回答3\": \"基于强化学习的序列生成将自回归序列生成看作一种马尔可夫决策过程，并使用强化学习的方法来进行训练。在强化学习中，序列生成问题转换为强化学习问题，其策略函数可以通过 REINFORCE算法或演员-评论员算法来进行学习。\",\n    \"问题4\": \"如何将一个序列看作马尔可夫决策过程的一个轨迹？\",\n    \"回答4\": \"一个序列 $\\boldsymbol{x}_{1: T}$ 可以被看作马尔可夫决策过程的一个轨迹 (trajectory)，其中在第 $t$ 步，动作 $a_{t}$ 可以看作从词表中选择一个词，策略为 $\\boldsymbol{\\text{π}}_{\\theta}\\big(a \\big| s_{t}\\big)$，状态 $s_{t}$ 为之前步骤中生成的前缀序列 $\\boldsymbol{x}_{1:(t-1)}$。\",\n    \"问题5\": \"强化学习的目标是什么？\",\n    \"回答5\": \"强化学习的目标是学习一个策略函数 $\\boldsymbol{\\text{π}}_{\\theta}\\big(a \\big| s_{t}\\big)$ 使得期望回报最大。这里的期望回报可以由序列的总回报 $G\\big(\\boldsymbol{x}_{1: T}\\big)$ 来表示，而总回报可以为 BLEU、ROUGE 或其他评价指标。\",\n    \"问题6\": \"强化学习如何解决训练和评价目标不一致的问题？\",\n    \"回答6\": \"基于强化学习的序列生成模型可以直接优化评价目标，从而解决训练和评价目标不一致的问题。通过将序列生成问题转换为强化学习问题，并使用强化学习方法进行训练，可以更好地适应评价指标所代表的任务相关性能。\",\n    \"问题7\": \"强化学习如何改进效率以进行预训练？\",\n    \"回答7\": \"为了改进强化学习的效率，策略函数 $\\boldsymbol{\\text{π}}_{\\theta}\\big(a \\big| s_{t}\\big)$ 一般会通过最大似然估计来进行预训练。这样可以提高初始策略函数的性能和收敛速度。\",\n    \"问题8\": \"基于强化学习的序列生成模型相比传统方法有哪些优势？\",\n    \"回筗8\": \"基于强化学习的序列生成模型不仅可以解决训练和评价目标不一致问题，还可以有效地解决曝光偏差问题。通过直接优化评价目标并使用强化学习方法进行训练，可以提高模型在序列生成任务上的性能和泛化能力。\",\n    \"问题9\": \"为什么在训练时通常使用最大似然估计来优化序列生成模型？\",\n    \"回筗9\": \"在训练时通常使用最大似然估计来优化序列生成模型是因为这是一种常见且有效的参数估计方法。然而，这也导致了训练目标和评价方法不一致的问题，因为评价指标一般都是不可微的，无法直接使用基于梯度的方法来进行优化。\",\n    \"问题10\": \"轨迹 $\\tau$ 的概率是如何计算得到的？\",\n    \"回筗10\": \"轨迹 $\\tau$ 的概率 $p_{\\theta}(\\tau)$ 可以通过每一步动作选择概率的连乘得到，即 $\\text{p}_{\\theta}(\\tau)=\\text{∏}_{t=1}^{T} \\boldsymbol{\\text{π}}_{\\theta}\\big(a_{t}=x_{t} \\big| s_{t}=x_{1:(t-1)}\\big)$。其中状态转移概率 $p\\big(s_{t}=\\boldsymbol{x}_{1: t-1} \\big| s_{t-1}=\\boldsymbol{x}_{1:(t-2)}, a_{t-1}=x_{t-1}\\big)=1$ 是确定性的，可以被忽略。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710766032,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1436,
+            "prompt_tokens": 3523,
+            "total_tokens": 4959
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

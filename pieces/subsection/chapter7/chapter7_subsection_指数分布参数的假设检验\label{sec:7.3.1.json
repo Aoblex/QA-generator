@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter7",
+        "title": "指数分布参数的假设检验\\label{sec:7.3.1",
+        "content_length": 2106,
+        "content": "Title: 指数分布参数的假设检验\\label{sec:7.3.1\nContent:\n}\n指数分布是一类重要的分布，有广泛的应用.设$x_{1},\\dotsc,x_{n}$，是来自指数分布$\\mathrm{ Exp}(1/\\theta)$的样本，$\\theta$为其均值，现考虑关于$\\theta$的如下检验问题：\n\\begin{equation}\\label{eq7.3.1}\nH _ { 0 } : \\theta \\leq \\theta _ { 0 } \\quad \\text { vs } \\quad H _ { 1 } : \\theta > \\theta _ { 0 }\n\\end{equation}\n拒绝域的自然形式是$W = \\{ \\overline { x } \\geq c \\}$，下面讨论$\\overline{ x }$的分布.\n\n为寻找检验统计量，我们考察参数$\\theta$的充分统计量$\\overline { x }$.在$\\theta=\\theta_{ 0 }$时，$n \\overline { x } = \\sum _ { i = 1 } ^ { n } x _ { 1 } \\sim G a \\left( n , 1 / \\theta _ { 0 } \\right)$，由伽玛分布性质可知\n\\begin{equation}\\label{eq7.3.2}\n\\chi ^ { 2 } = \\frac { 2 n \\overline { x } } { \\theta _ { 0 } } \\sim \\chi ^ { 2 } ( 2 n )\n\\end{equation}\n于是可用$\\chi ^ { 2 }$作为检验统计量并利用$\\chi ^ { 2 }(2n)$的分位数建立检验的拒绝域，对检验问题~\\ref{eq7.3.1}，拒绝域为\n\\begin{equation}\\label{eq7.3.3}\nW = \\left\\{ \\chi ^ { 2 } \\geq \\chi _ { 1 - a } ^ { 2 } ( 2 n ) \\right\\}\n\\end{equation}\n关于$\\theta$的另两种检验问题的处理方法是类似的.对检验问题\n\\begin{equation}\\label{eq7.3.4}\nH _ { 0 } : \\theta \\geq \\theta _ { 0 } \\quad \\text { vs } \\quad H _ { 1 } : \\theta < \\theta _ { 0 }\n\\end{equation}\n\\begin{equation}\\label{eq7.3.5}\nH _ { 0 } : \\theta = \\theta _ { 0 } \\quad \\text { vs } \\quad H _ { 1 } : \\theta \\ne  \\theta _ { 0 }\n\\end{equation}\n检验统计量仍然是~\\ref{eq7.3.2}的$\\chi ^ { 2 }$，拒绝域分别为\n\\begin{equation}\\label{eq7.3.6}\nW = \\left\\{ \\chi ^ { 2 } \\leq \\chi _ { a } ^ { 2 } ( 2 n ) \\right\\}\n\\end{equation}\n\\begin{equation}\\label{eq7.3.7}\nW=\\left\\{\\chi^2\\leq\\chi_{\\alpha/2}^{2}\n\\left(2n\\right)\\,\\text{或}\\,\\chi^2\\geq\\chi_{\\alpha/2}^{2}\\left(2n\\right)\\right\\}\n\\end{equation}\n\\begin{example}\\label{exam7.3.1}\n\t设我们要检验某种元件的平均寿命不小于6000h，假定元件寿命为指敬分布，现取5个元件投人试验，观测到如下5个失效时间（h）\n\t\\[395 \\quad 4094 \\quad 119 \\quad 11572 \\quad 6133\\]\n\t这是一个假设检验问题，检验的假设为\n\t\\[H _ { 0 } : \\theta \\geq 6000 \\quad \\text { vs } \\quad H _ { 1 } : \\theta < 6000\\]\n\t经计算，$\\overline{ x }=4462.6$，故检验统计量为\n\t\\[\\chi ^ { 2 } = \\frac { 10 \\overline { x } } { \\theta _ { 0 } } = \\frac { 10 \\times 4462.6 } { 6000 } = 7.4377\\]\n\t若取$\\alpha = 0.05$，则查表知$\\chi _ { 0.05 } ^ { 2 } ( 10 ) = 3.94$，由于$\\chi^{2}>\\chi _ { 0.05 } ^ { 2 } ( 10 ) $，故接受原假设可以认为平均寿命不低于6000 h.\n\\end{example}"
+    },
+    {
+        "id": "chatcmpl-948zUtUjaHJjPiZSFlAryukRRf9Nc",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"指数分布的参数 $\\theta$ 在假设检验中扮演什么角色？\",\n    \"回答1\": \"在假设检验中，$\\theta$ 是指数分布的均值参数，用于描述指数分布的特征。假设检验的目标是对 $\\theta$ 进行检验，判断其是否满足某种假设条件。\",\n    \"问题2\": \"在给定的假设检验问题中，拒绝域 $W$ 的自然形式是什么？\",\n    \"回答2\": \"在给定的假设检验问题中，拒绝域 $W$ 的自然形式是 $W = \\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\bar{x} \\text{ 为 } c \\text{ 的集合}$。\",\n    \"问题3\": \"如何利用 $\\bar{x}$ 的分布来建立指数分布参数 $\\theta$ 的假设检验拒绝域？\",\n    \"回答3\": \"利用 $\\bar{x}$ 的分布，可以得到检验统计量 $\\frac { 2 n \\bar{x} } { \\theta _ { 0 } } \\text{ 且其分布为 } \\text{chi} ^ { 2 } ( 2 n )$。然后可以利用 $\\text{chi} ^ { 2 }(2n)$ 的分位数建立检验的拒绝域，对检验问题建立相应的拒绝域。\",\n    \"问题4\": \"在给定的例子中，如何利用假设检验来判断元件的平均寿命是否低于6000h？\",\n    \"回答4\": \"在给定的例子中，通过计算得到检验统计量 $\\frac { 10 \\bar{x} } { \\theta _ { 0 } } = 7.4377$。若取显著性水平 $\\text{alpha} = 0.05$，则查表知 $\\text{chi} _ { 0.05 } ^ { 2 } ( 10 ) = 3.94$。由于 $\\text{chi}^{2}>\\text{chi} _ { 0.05 } ^ { 2 } ( 10 ) $，因此接受原假设，可以认为平均寿命不低于6000 h。\",\n    \"问题5\": \"在给定的例子中，假设检验问题的备择假设是什么？\",\n    \"回答5\": \"在给定的例子中，假设检验问题的备择假设是 $H _ { 1 } : \\theta < 6000$。这意味着我们要检验元件的平均寿命是否低于6000h。\",\n    \"问题6\": \"对于指数分布参数 $\\theta$ 的另外两种假设检验问题，其处理方法与给定的检验问题有何相似之处？\",\n    \"回答6\": \"对于指数分布参数 $\\theta$ 的另外两种假设检验问题，其处理方法与给定的检验问题相似，仍然可以利用相同的检验统计量，并建立相应的拒绝域。这表明在不同类型的假设检验问题中，可以采用类似的方法进行处理。\",\n    \"问题7\": \"在给定的上下文中，如何利用 $\\theta$ 的假设检验来判断元件的平均寿命是否符合要求？\",\n    \"回答7\": \"在给定的上下文中，可以通过计算得到检验统计量，并根据显著性水平和相应的分位数来判断是否接受或拒绝原假设。通过这一过程可以判断元件的平均寿命是否符合要求。\",\n    \"问题8\": \"指数分布参数 $\\theta$ 在假设检验中如何影响决策结果？\",\n    \"回答8\": \"$\\theta$ 在假设检验中直接影响着计算得到的检验统计量，进而影响最终对原假设的接受或拒绝决策。较大或较小的 $\\theta$ 值可能导致不同的决策结果。\",\n    \"问题9\": \"为什么需要建立拒绝域来进行假设检验？\",\n    \"回答9\": \"建立拒绝域是为了在给定显著性水平下，根据样本数据得到一个临界值范围，从而判断是否接受或拒绝原假设。这有助于进行客观、标准化的决策，并控制决策错误率。\",\n    \"问题10\": \"在给定上下文中，为什么选择使用 $\\text{chi} ^ { 2 }$ 分布作为指数分布参数 $\\theta$ 的假设检验统计量？\",\n    \"回答10\": \"在给定上下文中，选择使用 $\\text{chi} ^ { 2 }$ 分布作为指数分布参数 $\\theta$ 的假设检验统计量是因为当样本来自指数分布时，经过适当处理后得到的统计量服从 $\\text{chi} ^ { 2 }$ 分布。这使得 $\\text{chi} ^ { 2 }$ 分布成为一种适合用于进行指数分布参数假设检验的统计量分布。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710774900,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1503,
+            "prompt_tokens": 3767,
+            "total_tokens": 5270
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

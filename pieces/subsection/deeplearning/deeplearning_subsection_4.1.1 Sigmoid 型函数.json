@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "4.1.1 Sigmoid 型函数",
+        "content_length": 1319,
+        "content": "Title: 4.1.1 Sigmoid 型函数\nContent:\nSigmoid 型函数是指一类 $\\mathrm{S}$ 型曲线函数, 为两端饱和函数. 常用的 Sigmoid 型函数有 Logistic 函数和 Tanh 函数.\n\n\\section*{数学小知识 1 饱和}\n对于函数 $f(x)$, 若 $x \\rightarrow-\\infty$ 时, 其导数 $f^{\\prime}(x) \\rightarrow 0$, 则称其为左饱和. 若 $x \\rightarrow+\\infty$ 时, 其导数 $f^{\\prime}(x) \\rightarrow 0$, 则称其为右饱和. 当同时满足左、右饱和时, 就称为两端饱和.\n\nLogistic 函数 Logistic 函数定义为\n\n\n\\begin{equation*}\n\\sigma(x)=\\frac{1}{1+\\exp (-x)} \\tag{4.4}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\nLogistic 函数可以看成是一个 “挤压” 函数, 把一个实数域的输入 “挤压” 到 $(0,1)$. 当输入值在 0 附近时,Sigmoid 型函数近似为线性函数; 当输入值靠近两端时, 对输入进行抑制. 输入越小, 越接近于 0 ; 输入越大, 越接近于 1 . 这样的特点也和生物神经元类似,对一些输入会产生兴奋 (输出为 1 ), 对另一些输入产生抑制 (输出为 0 ). 和感知器使用的阶跃激活函数相比, Logistic 函数是连续可导的,其数学性质更好.\n\n因为 Logistic 函数的性质, 使得装备了 Logistic 激活函数的神经元具有以下两点性质: 1 ) 其输出直接可以看作概率分布, 使得神经网络可以更好地和统计学习模型进行结合. 2 ) 其可以看作一个软性门 (Soft Gate ), 用来控制其他神经元输出信息的数量.\n\nTanh 函数 Tanh 函数也是一种 Sigmoid 型函数. 其定义为\n\n\n\\begin{equation*}\n\\tanh (x)=\\frac{\\exp (x)-\\exp (-x)}{\\exp (x)+\\exp (-x)} \\tag{4.5}\n\\end{equation*}\n\n\nTanh 函数可以看作放大并平移的 Logistic 函数, 其值域是 $(-1,1)$.\n\n\n\\begin{equation*}\n\\tanh (x)=2 \\sigma(2 x)-1 \\tag{4.6}\n\\end{equation*}\n\n\n图4.2 给出了 Logistic 函数和 Tanh 函数的形状. Tanh 函数的输出是零中心化的 (Zero-Centered), 而 Logistic 函数的输出恒大于 0 . 非零中心化的输出会参见第7.4节.使得其后一层的神经元的输入发生偏置偏移 ( Bias Shift), 并进一步使得梯度下降的收敛速度变慢.\n\n\n\n图 4.2 Logistic 函数和 Tanh函数"
+    },
+    {
+        "id": "chatcmpl-941FW1cNTgygqj4XPAVpg44Rw8LF0",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"Sigmoid 型函数的定义是什么？\",\n    \"回答1\": \"Sigmoid 型函数是指一类 $\\text{S}$ 型曲线函数，为两端饱和函数。常用的 Sigmoid 型函数有 Logistic 函数和 Tanh 函数。\",\n    \"问题2\": \"什么是函数的饱和？\",\n    \"回答2\": \"对于函数 $f(x)$，若 $x \\rightarrow-\\text{无穷}$ 时，其导数 $f^{\\text{prime}}(x) \\rightarrow 0$，则称其为左饱和。若 $x \\rightarrow+\\text{无穷}$ 时，其导数 $f^{\\text{prime}}(x) \\rightarrow 0$，则称其为右饱和。当同时满足左、右饱和时，就称为两端饱和。\",\n    \"问题3\": \"Logistic 函数的定义是什么？\",\n    \"回答3\": \"Logistic 函数定义为 $\\text{σ}(x)=\\frac{1}{1+\\text{exp}(-x)}$。\",\n    \"问题4\": \"Logistic 函数有哪些特点？\",\n    \"回答4\": \"Logistic 函数可以看成是一个 “挤压” 函数，把一个实数域的输入 “挤压” 到 $(0,1)$。当输入值在 0 附近时，Sigmoid 型函数近似为线性函数；当输入值靠近两端时，对输入进行抑制。因为 Logistic 函数的性质，使得装备了 Logistic 激活函数的神经元具有以下两点性质：1）其输出直接可以看作概率分布，使得神经网络可以更好地和统计学习模型进行结合。2）其可以看作一个软性门 (Soft Gate)，用来控制其他神经元输出信息的数量。\",\n    \"问题5\": \"Tanh 函数的定义是什么？\",\n    \"回答5\": \"Tanh 函数定义为 $\\tanh (x)=\\frac{\\text{exp}(x)-\\text{exp}(-x)}{\\text{exp}(x)+\\text{exp}(-x)}$。\",\n    \"问题6\": \"Tanh 函数与 Logistic 函数有何区别？\",\n    \"回答6\": \"Tanh 函数可以看作放大并平移的 Logistic 函数，其值域是 $(-1,1)$。Tanh 函数的输出是零中心化的 (Zero-Centered)，而 Logistic 函数的输出恒大于 0。\",\n    \"问题7\": \"Logistic 函数和 Tanh 函数分别在哪个区间内取值？\",\n    \"回答7\": \"Logistic 函数的取值范围是 $(0,1)$，而 Tanh 函数的取值范围是 $(-1,1)$。\",\n    \"问题8\": \"Sigmoid 型函数在神经网络中有什么作用？\",\n    \"回答8\": \"Sigmoid 型函数（包括 Logistic 函数和 Tanh 函数）在神经网络中用于引入非线性，同时具有压缩和放大输入的特性。它们能够更好地捕捉输入和输出之间的复杂非线性关系，从而提高神经网络的表达能力和学习能力。\",\n    \"问题9\": \"Sigmoid 型函数与感知器使用的阶跃激活函数相比有什么优势？\",\n    \"回答9\": \"与感知器使用的阶跃激活函数相比，Sigmoid 型函数（如 Logistic 函数和 Tanh 函数）是连续可导的，具有更好的数学性质。这使得神经网络具有更强的学习能力和适应复杂数据分布的能力。\",\n    \"问题10\": \"Sigmoid 型函数在神经网络中如何影响梯度下降的收敛速度？\",\n    \"回答10\": \"Sigmoid 型函数中的 Tanh 函数输出是零中心化的，而 Logistic 函数输出恒大于 0。非零中心化的输出会导致后一层神经元的输入发生偏置偏移 (Bias Shift)，并进一步使得梯度下降的收敛速度变慢。这种影响需要在神经网络训练过程中进行有效处理以提高训练效率。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710745142,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1152,
+            "prompt_tokens": 3396,
+            "total_tokens": 4548
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

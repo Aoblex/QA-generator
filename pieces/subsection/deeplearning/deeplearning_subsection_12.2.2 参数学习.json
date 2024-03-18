@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "12.2.2 参数学习",
+        "content_length": 2901,
+        "content": "Title: 12.2.2 参数学习\nContent:\n和玻尔兹曼机一样, 受限玻尔兹曼机通过最大化似然函数来找到最优的参数 $\\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b}$. 给定一组训练样本 $\\mathcal{D}=\\left\\{\\hat{\\boldsymbol{v}}^{(1)}, \\hat{\\boldsymbol{v}}^{(2)}, \\cdots, \\hat{\\boldsymbol{v}}^{(N)}\\right\\}$, 其对数似然函数为\n\n\n\\begin{equation*}\n\\mathcal{L}(\\mathcal{D} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})=\\frac{1}{N} \\sum_{n=1}^{N} \\log p\\left(\\hat{\\boldsymbol{v}}^{(n)} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b}\\right) \\tag{12.50}\n\\end{equation*}\n\n\n和玻尔兹曼机类似, 在受限玻尔兹曼机中, 对数似然函数 $\\mathcal{L}(\\mathcal{D} ; \\boldsymbol{W}, \\boldsymbol{b})$ 对参参见公式(12.23).数 $w_{i j}, a_{i}, b_{j}$ 的偏导数为\n\n\n\\begin{align*}\n& \\frac{\\partial \\mathcal{L}(\\mathcal{D} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})}{\\partial w_{i j}}=\\mathbb{E}_{\\hat{p}(\\boldsymbol{v})} \\mathbb{E}_{p(\\boldsymbol{h} \\mid \\boldsymbol{v})}\\left[v_{i} h_{j}\\right]-\\mathbb{E}_{p(\\boldsymbol{v}, \\boldsymbol{h})}\\left[v_{i} h_{j}\\right],  \\tag{12.51}\\\\\n& \\frac{\\partial \\mathcal{L}(\\mathcal{D} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})}{\\partial a_{i}}=\\mathbb{E}_{\\hat{p}(\\boldsymbol{v})} \\mathbb{E}_{p(\\boldsymbol{h} \\mid \\boldsymbol{v})}\\left[v_{i}\\right]-\\mathbb{E}_{p(\\boldsymbol{v}, \\boldsymbol{h})}\\left[v_{i}\\right],  \\tag{12.52}\\\\\n& \\frac{\\partial \\mathcal{L}(\\mathcal{D} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})}{\\partial b_{j}}=\\mathbb{E}_{\\hat{p}(\\boldsymbol{v})} \\mathbb{E}_{p(\\boldsymbol{h} \\mid \\boldsymbol{v})}\\left[h_{j}\\right]-\\mathbb{E}_{p(\\boldsymbol{v}, \\boldsymbol{h})}\\left[h_{j}\\right], \\tag{12.53}\n\\end{align*}\n\n\n其中 $\\hat{p}(\\boldsymbol{v})$ 为训练数据集上 $\\boldsymbol{v}$ 的实际分布.\n\n公式(12.51)、公式(12.52)和公式(12.53) 中都需要计算配分函数 $Z$ 以及两个期望 $\\mathbb{E}_{p(\\boldsymbol{h} \\mid \\boldsymbol{v})}$ 和 $\\mathbb{E}_{p(\\boldsymbol{h}, \\boldsymbol{v})}$, 因此很难计算,一般需要通过 MCMC 方法来近似计算.\n\n首先, 将可观测向量 $\\boldsymbol{v}$ 设为训练样本中的值并固定, 然后根据条件概率对隐向量 $\\boldsymbol{h}$ 进行采样, 这时受限玻尔兹曼机的值记为 $\\langle\\cdot\\rangle_{\\text {data }}$. 然后再不固定可观测向量 $\\boldsymbol{v}$, 通过吉布斯采样来轮流更新 $\\boldsymbol{v}$ 和 $\\boldsymbol{h}$. 当达到热平衡状态时, 采集 $\\boldsymbol{v}$ 和 $\\boldsymbol{h}$ 的值，记为 $\\langle\\cdot\\rangle_{\\text {model }}$.\n\n采用梯度上升方法时, 参数 $\\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b}$ 可以用下面公式近似地更新：\n\n\n\\begin{align*}\nw_{i j} & \\leftarrow w_{i j}+\\alpha\\left(\\left\\langle v_{i} h_{j}\\right\\rangle_{\\text {data }}-\\left\\langle v_{i} h_{j}\\right\\rangle_{\\text {model }}\\right),  \\tag{12.54}\\\\\na_{i} & \\leftarrow a_{i}+\\alpha\\left(\\left\\langle v_{i}\\right\\rangle_{\\text {data }}-\\left\\langle v_{i}\\right\\rangle_{\\text {model }}\\right),  \\tag{12.55}\\\\\nb_{j} & \\leftarrow b_{j}+\\alpha\\left(\\left\\langle h_{j}\\right\\rangle_{\\text {data }}-\\left\\langle h_{j}\\right\\rangle_{\\text {model }}\\right), \\tag{12.56}\n\\end{align*}\n\n\n其中 $\\alpha>0$ 为学习率.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n根据受限玻尔兹曼机的条件独立性, 可以对可观测变量和隐变量进行分组轮流采样, 如图12.4中所示. 这样, 受限玻尔兹曼机的采样效率会比一般的玻尔兹曼机有很大提高, 但一般还是需要通过很多步采样才可以采集到符合真实分布的样本."
+    },
+    {
+        "id": "chatcmpl-945LEyuqfruuxBFl18X1xc8qyk33n",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"受限玻尔兹曼机的参数学习是如何进行的？\",\n    \"回答1\": \"受限玻尔兹曼机通过最大化似然函数来找到最优的参数 $\\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b}$。给定一组训练样本 $\\boldsymbol{D}=\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\boldsymbol{v}^{(1)}, \\boldsymbol{v}^{(2)}, \\text{...}, \\boldsymbol{v}^{(N)}\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big$, 其对数似然函数为 $\\frac{1}{N} \\text{ 为 } n=1 \\text{ 为 } N \\text{ 为 } \\text{log} p(\\boldsymbol{v}^{(n)} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})$。\",\n    \"问题2\": \"受限玻尔兹曼机中的偏导数计算公式是怎样的？\",\n    \"回答2\": \"在受限玻尔兹曼机中，对数似然函数的偏导数计算公式为 $\\frac{\\text{d} \\text{log} p(\\boldsymbol{v}^{(n)} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})}{w_{i j}}=\\text{E}_{p(\\boldsymbol{h} | \\boldsymbol{v})}\\text{E}_{p(\\boldsymbol{v}, \\boldsymbol{h})}[v_{i} h_{j}]-E_{p(\\boldsymbol{v}, \\boldsymbol{h})}[v_{i} h_{j}]$，$\\frac{\\text{d} \\text{log} p(\\boldsymbol{v}^{(n)} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})}{a_{i}}=\\text{E}_{p(\\boldsymbol{h} | \\boldsymbol{v})}\\text{E}_{p(\\boldsymbol{v}, \\boldsymbol{h})}[v_{i}]-E_{p(\\boldsymbol{v}, \\boldsymbol{h})}[v_{i}]$，$\\frac{\\text{d} \\text{log} p(\\boldsymbol{v}^{(n)} ; \\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b})}{b_{j}}=\\text{E}_{p(\\boldsymbol{h} | \\boldsymbol{v})}\\text{E}_{p(\\boldsymbol{v}, \\boldsymbol{h})}[h_{j}]-E_{p(\\boldsymbol{v}, \\boldsymbol{h})}[h_{j}]$。\",\n    \"问题3\": \"受限玻尔兹曼机中的梯度上升方法是如何更新参数的？\",\n    \"回答3\": \"采用梯度上升方法时，参数 $\\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b}$ 可以用下面公式近似地更新：$w_{i j}  w_{i j}+\\beta(\\text{\\textlangle v}_{i} h_{j}\\rangle_{data}-< v_{i} h_{j}\\rangle_{model}), a_{i}  a_{i}+\\beta(< v_{i}>_{data}-< v_{i}>_{model}), b_{j}  b_{j}+\\beta(< h_{j}>_{data}-< h_{j}>_{model})$，其中 $\\beta>0$ 为学习率。\",\n    \"问题4\": \"在受限玻尔兹曼机中，如何通过 MCMC 方法来近似计算配分函数和期望值？\",\n    \"回答4\": \"在受限玻尔兹曼机中，首先将可观测向量 $\\boldsymbol{v}$ 设为训练样本中的值并固定，然后根据条件概率对隐向量 $\\boldsymbol{h}$ 进行采样。接着再不固定可观测向量 $\\boldsymbol{v}$，通过吉布斯采样来轮流更新 $\\boldsymbol{v}$ 和 $\\boldsymbol{h}$。当达到热平衡状态时，采集 $\\boldsymbol{v}$ 和 $\\boldsymbol{h}$ 的值，记为 $\\text{\\textlangle}\\rangle_{model}$。\",\n    \"问题5\": \"受限玻尔兹曼机的采样效率相比一般的玻尔兹曼机有何提高？\",\n    \"回答5\": \"根据受限玻尔兹曼机的条件独立性, 可以对可观测变量和隐变量进行分组轮流采样。这样, 受限玻尔兹曼机的采样效率会比一般的玻尔兹曼机有很大提高, 但一般还是需要通过很多步采样才可以采集到符合真实分布的样本。\",\n    \"问题6\": \"受限玻尔兹曼机和玻尔兹曼机之间有何相似之处？\",\n    \"回答6\": \"和玻尔兹曼机一样, 受限玻尔兹曼机通过最大化似然函数来找到最优的参数 $\\boldsymbol{W}, \\boldsymbol{a}, \\boldsymbol{b}$。两者都涉及到对数似然函数和参数的优化。\",\n    \"问题7\": \"受限玻尔兹曼机中的参数学习过程是否依赖于训练数据集上 $\\boldsymbol{v}$ 的实际分布？\",\n    \"回答7\": \"是的，受限玻尔兹曼机中的参数学习过程依赖于训练数据集上 $\\boldsymbol{\\nu}$ 的实际分布。对数似然函数中涉及到训练数据集上 $\\nu$ 的实际分布。\",\n    \"问题8\": \"在受限玻尔兹曼机中，如何近似地计算参数的更新？\",\n    \"回答8\": \"在受限玻尔兹曼机中，参数 $\\boldsymbol{\\nu}$ 可以用梯度上升方法近似地更新。具体地，通过计算数据分布和模型分布下的期望值，并使用学习率来更新参数。\",\n    \"问题9\": \"在受限玻尔兹曼机中，如何通过 MCMC 方法来近似计算配分函数和期望值？\",\n    \"回答9\": \"在受限玻尔兹曼机中，通过 MCMC 方法来近似计算配分函数和期望值时，首先将可观测向量 $\\nu$ 设为训练样本中的值并固定，然后根据条件概率对隐向量进行采样。接着再不固定可观测向量，通过吉布斯采样来轮流更新可观测向量和隐向量。当达到热平衡状态时，采集可观测向量和隐向量的值，记为模型分布下的期望值。\",\n    \"问题10\": \"受限玻尔兹曼机中参数更新公式中的学习率有何作用？\",\n    \"回答10\": \"在受限玻尔兹曼机中，参数更新公式中的学习率决定了每次迭代中参数更新的步长。学习率越大，则每次迭代更新的步长越大；学习率越小，则每次迭代更新的步长越小。学习率的选择会影响参数更新的速度和稳定性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710760872,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 2062,
+            "prompt_tokens": 4055,
+            "total_tokens": 6117
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

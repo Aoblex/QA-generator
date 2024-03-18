@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "4.1.3 Swish 函数",
+        "content_length": 747,
+        "content": "Title: 4.1.3 Swish 函数\nContent:\nSwish 函数[Ramachandran et al., 2017] 是一种自门控 ( Self-Gated) 激活函数, 定义为\n\n\n\\begin{equation*}\n\\operatorname{swish}(x)=x \\sigma(\\beta x) \\tag{4.26}\n\\end{equation*}\n\n\n其中 $\\sigma(\\cdot)$ 为 Logistic 函数, $\\beta$ 为可学习的参数或一个固定超参数. $\\sigma(\\cdot) \\in(0,1)$ 可以看作一种软性的门控机制. 当 $\\sigma(\\beta x)$ 接近于 1 时, 门处于 “开”状态, 激活函数的输出近似于 $x$ 本身; 当 $\\sigma(\\beta x)$ 接近于 0 时, 门的状态为 “关”, 激活函数的输出近似于 0.\n\n图4.5给出了 Swish 函数的示例.\n\n\n\n图 4.5 Swish 函数\n\n当 $\\beta=0$ 时, Swish函数变成线性函数 $x / 2$. 当 $\\beta=1$ 时, Swish函数在 $x>0$时近似线性, 在 $x<0$ 时近似饱和, 同时具有一定的非单调性. 当 $\\beta \\rightarrow+\\infty$ 时, $\\sigma(\\beta x)$ 趋向于离散的 0-1 函数, Swish 函数近似为 ReLU 函数. 因此, Swish函数可 \\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n以看作线性函数和 ReLU 函数之间的非线性插值函数, 其程度由参数 $\\beta$ 控制."
+    },
+    {
+        "id": "chatcmpl-941MRiqd9PRFLSNdeX4JiQxugjCHT",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"Swish 函数与传统激活函数有何不同之处？\",\n    \"回答1\": \"Swish 函数是一种自门控激活函数，定义为 $\\text{swish}(x)=x \\text{  }\\text{σ}(\\beta x)$，其中 $\\text{σ}(\\bullet)$ 为 Logistic 函数，$\\beta$ 为可学习的参数或一个固定超参数。这与传统的激活函数有所不同，传统激活函数通常不具有自门控机制。\",\n    \"问题2\": \"Swish 函数的定义中，$\\text{σ}(\\beta x)$ 的作用是什么？\",\n    \"回答2\": \"在 Swish 函数的定义中，$\\text{σ}(\\beta x)$ 可以看作一种软性的门控机制。当 $\\text{σ}(\\beta x)$ 接近于 1 时，门处于 “开”状态，激活函数的输出近似于 $x$ 本身；当 $\\text{σ}(\\beta x)$ 接近于 0 时，门的状态为 “关”，激活函数的输出近似于 0。\",\n    \"问题3\": \"当参数 $\\beta=0$ 时，Swish 函数有怎样的特性？\",\n    \"回答3\": \"当参数 $\\beta=0$ 时，Swish 函数变成线性函数 $x / 2$。这意味着在这种情况下，Swish 函数的输出与输入成线性关系。\",\n    \"问题4\": \"当参数 $\\beta=1$ 时，Swish 函数有怎样的特性？\",\n    \"回答4\": \"当参数 $\\beta=1$ 时，Swish 函数在 $x>0$ 时近似线性，在 $x<0$ 时近似饱和，并且具有一定的非单调性。这表明在这种情况下，Swish 函数在正数范围内表现出线性特性，在负数范围内表现出饱和特性，并且具有一定的非单调性。\",\n    \"问题5\": \"当参数 $\\beta \\rightarrow +\\text{∞}$ 时，Swish 函数趋向于什么形式？\",\n    \"回答5\": \"当参数 $\\beta \\rightarrow +\\text{∞}$ 时，$\\text{σ}(\\beta x)$ 趋向于离散的 0-1 函数，Swish 函数近似为 ReLU 函数。这意味着在这种情况下，Swish 函数趋向于类似于 ReLU 函数的形式。\",\n    \"问题6\": \"Swish 函数可以被看作是哪两种函数之间的非线性插值函数？\",\n    \"回答6\": \"Swish 函数可以被看作是线性函数和 ReLU 函数之间的非线性插值函数，其程度由参数 $\\beta$ 控制。这表明 Swish 函数在一定程度上融合了线性函数和 ReLU 函数的特性，并且通过参数 $\\beta$ 的调节可以实现不同程度的非线性插值。\",\n    \"问题7\": \"Swish 函数的自门控机制对于激活函数有何影响？\",\n    \"回答7\": \"Swish 函数的自门控机制使得激活函数在输入较大或较小时能够更加灵活地调节输出，从而更好地适应不同范围内的输入数据。这种自门控机制增强了激活函数对输入数据的适应能力。\",\n    \"问题8\": \"Swish 函数相比传统激活函数有何优势？\",\n    \"回答8\": \"Swish 函数相比传统激活函数具有自门控机制，能够更好地适应不同范围内的输入数据，并且通过参数调节可以实现不同程度的非线性插值。这使得 Swish 函数在一定程度上具有更强的表达能力和灵活性。\",\n    \"问题9\": \"Swish 函数适用于哪些类型的神经网络模型？\",\n    \"回答9\": \"Swish 函数适用于需要更灵活、更具表达能力的神经网络模型。其自门控机制和非线性插值特性使得它能够更好地适应复杂的非线性关系，并且通过参数调节可以实现不同程度的非线性变换。\",\n    \"问题10\": \"Swish 函数在神经网络中起到什么作用？\",\n    \"回答10\": \"Swish 函数在神经网络中用于引入非线性，并通过自门控机制和非线性插值特性来增强神经网络模型对输入数据的适应能力。它能够更好地捕捉输入和输出之间复杂的非线性关系，从而提高神经网络模型的表达能力和学习能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710745571,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1330,
+            "prompt_tokens": 2996,
+            "total_tokens": 4326
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

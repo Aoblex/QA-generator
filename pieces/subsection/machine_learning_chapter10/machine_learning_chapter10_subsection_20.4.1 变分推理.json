@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter10",
+        "title": "20.4.1 变分推理",
+        "content_length": 2067,
+        "content": "Title: 20.4.1 变分推理\nContent:\n变分推理 (variational inference) 是贝叶斯学习中常用的、含有隐变量模型的学习和推理方法。变分推理和马尔可夫链蒙特卡罗法 (MCMC) 属于不同的技巧。MCMC 通过随机抽样的方法近似地计算模型的后验概率, 变分推理则通过解析的方法计算模型的后验概率的近似值。\n\n变分推理的基本想法如下。假设模型是联合概率分布 $p(x, z)$, 其中 $x$ 是观测变量（数据), $z$ 是隐变量, 包括参数。目标是学习模型的后验概率分布 $p(z \\mid x)$, 用模型进行概率推理。但这是一个复杂的分布, 直接估计分布的参数很困难。所以考虑用概率分布 $q(z)$ 近似条件概率分布 $p(z \\mid x)$, 用 $\\mathrm{KL}$ 散度 $D(q(z) \\| p(z \\mid x))$ 计算两者的相似度, $q(z)$ 称为变分分布 (variational distribution)。如果能找到与 $p(z \\mid x)$ 在 KL 散度意义下最近的分布 $q^{*}(z)$, 则可以用这个分布近似 $p(z \\mid x)$ 。\n\n\n\\begin{equation*}\np(z \\mid x) \\approx q^{*}(z) \\tag{20.34}\n\\end{equation*}\n\n\n图 20.6 给出了 $q^{*}(z)$ 与 $p(z \\mid x)$ 的关系。 $\\mathrm{KL}$ 散度的定义见附录 $\\mathrm{E}$ 。\n\nKL 散度可以写成以下形式:\n\n\n\\begin{align*}\nD(q(z) \\| p(z \\mid x)) & =E_{q}[\\log q(z)]-E_{q}[\\log p(z \\mid x)] \\\\\n& =E_{q}[\\log q(z)]-E_{q}[\\log p(x, z)]+\\log p(x) \\\\\n& =\\log p(x)-\\left\\{E_{q}[\\log p(x, z)]-E_{q}[\\log q(z)]\\right\\} \\tag{20.35}\n\\end{align*}\n\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_3182641e7f8cf23e4171g-02}\n\\end{center}\n\n图 20.6 变分推理的原理\n\n注意到 KL 散度大于等于零, 当且仅当两个分布一致时为零, 由此可知式 (20.35) 右端第一项与第二项满足关系\n\n\n\\begin{equation*}\n\\log p(x) \\geqslant E_{q}[\\log p(x, z)]-E_{q}[\\log q(z)] \\tag{20.36}\n\\end{equation*}\n\n\n不等式右端是左端的下界, 左端称为证据 (evidence), 右端称为证据下界 (evidence lower bound, ELBO）, 证据下界记作\n\n\n\\begin{equation*}\nL(q)=E_{q}[\\log p(x, z)]-E_{q}[\\log q(z)] \\tag{20.37}\n\\end{equation*}\n\n\nKL 散度 (20.35) 的最小化可以通过证据下界 (20.37) 的最大化实现, 因为目标是求 $q(z)$使 KL 散度最小化, 这时 $\\log p(x)$ 是常量。因此, 变分推理变成求解证据下界最大化的问题。\n\n变分推理可以从另一个角度理解。目标是通过证据 $\\log p(x)$ 的最大化估计联合概率分布 $p(x, z)$ 。因为含有隐变量 $z$, 直接对证据进行最大化困难, 转而根据式 (20.36) 对证据下界进行最大化。\n\n对变分分布 $q(z)$ 要求是具有容易处理的形式, 通常假设 $q(z)$ 对 $z$ 的所有分量都是互相独立的 (实际是条件独立于参数), 即满足\n\n\n\\begin{equation*}\nq(z)=q\\left(z_{1}\\right) q\\left(z_{2}\\right) \\cdots q\\left(z_{n}\\right) \\tag{20.38}\n\\end{equation*}\n\n\n这时的变分分布称为平均场（mean field） (1) KL 散度的最小化或证据下界最大化实际是在平均场的集合, 即满足独立假设的分布集合 $Q=\\left\\{q(z) \\mid q(z)=\\prod_{i=1}^{n} q\\left(z_{i}\\right)\\right\\}$ 之中进行的。\n\n总结起来, 变分推理有以下几个步骤: 定义变分分布 $q(z)$; 推导其证据下界表达式; 用最优化方法对证据下界进行优化, 如坐标上升, 得到最优分布 $q^{*}(z)$, 作为后验分布 $p(z \\mid x)$ 的近似。"
+    },
+    {
+        "id": "chatcmpl-93zLUX7HFOefjyyx87CaghsqFGhvc",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"变分推理和马尔可夫链蒙特卡罗法 (MCMC) 的区别是什么？\",\n    \"回答1\": \"变分推理通过解析的方法计算模型的后验概率的近似值，而MCMC则通过随机抽样的方法近似地计算模型的后验概率。因此，两种方法在计算后验概率的方式和原理上存在明显的区别。\",\n    \"问题2\": \"变分推理的基本想法是什么？\",\n    \"回答2\": \"变分推理的基本想法是用概率分布 $q(z)$ 近似条件概率分布 $p(z \\text{ 在 } x)$，并通过 $\\text{KL}$ 散度 $D(q(z) \\text{ 在 } p(z \\text{ 在 } x))$ 计算两者的相似度。如果能找到与 $p(z \\text{ 在 } x)$ 在 KL 散度意义下最近的分布 $q^{*}(z)$，则可以用这个分布近似 $p(z \\text{ 在 } x)$。\",\n    \"问题3\": \"变分推理中的 $\\text{KL}$ 散度有什么特点？\",\n    \"回答3\": \"$\\text{KL}$ 散度大于等于零，当且仅当两个分布一致时为零。根据这一特点，可以得到式 (20.35) 右端第一项与第二项满足关系 $\\text{log} p(x) \\text{ 大于等于 } E_{q}[\\text{log} p(x, z)]-E_{q}[\\text{log} q(z)]$。\",\n    \"问题4\": \"变分推理中的证据下界 (ELBO) 是什么？\",\n    \"回答4\": \"不等式右端是左端的下界, 左端称为证据 (evidence), 右端称为证据下界 (evidence lower bound, ELBO）。证据下界记作 $L(q)=E_{q}[\\text{log} p(x, z)]-E_{q}[\\text{log} q(z)]$。\",\n    \"问题5\": \"变分推理中的最优化目标是什么？\",\n    \"回答5\": \"变分推理中的最优化目标是求解证据下界最大化的问题。通过最大化证据下界，可以实现对 $\\text{KL}$ 散度的最小化，从而得到使 $\\text{log} p(x)$ 最大化的最优分布 $q^{*}(z)$，作为后验分布 $p(z \\text{ 在 } x)$ 的近似。\",\n    \"问题6\": \"变分推理中如何对变分分布 $q(z)$ 进行假设？\",\n    \"回答6\": \"对变分分布 $q(z)$ 要求是具有容易处理的形式，通常假设 $q(z)$ 对 $z$ 的所有分量都是互相独立的（实际是条件独立于参数），即满足 $q(z)=q\\big(z_{1}\\big) q\\big(z_{2}\\big) \\text{...} q\\big(z_{n}\\big)$。这时的变分分布称为平均场（mean field）。\",\n    \"问题7\": \"变分推理包括哪些基本步骤？\",\n    \"回答7\": \"变分推理包括定义变分分布 $q(z)$、推导其证据下界表达式、用最优化方法对证据下界进行优化（如坐标上升），得到最优分布 $q^{*}(z)$ 作为后验分布 $p(z \\text{ 在 } x)$ 的近似。\",\n    \"问题8\": \"变分推理和马尔可夫链蒙特卡罗法 (MCMC) 分别适用于什么样的模型？\",\n    \"回答8\": \"变分推理适用于含有隐变量模型的学习和推理，通过解析的方法计算模型的后验概率的近似值。而MCMC适用于通过随机抽样的方法近似地计算模型的后验概率。两种方法在模型类型和计算方式上有所不同。\",\n    \"问题9\": \"为什么直接对含有隐变量的模型进行后验概率估计很困难？\",\n    \"回答9\": \"直接对含有隐变量的模型进行后验概率估计很困难，因为这是一个复杂的分布，直接估计参数很困难。因此需要使用近似方法来计算模型的后验概率，其中变分推理是一种常用且有效的方法。\",\n    \"问题10\": \"为什么在变分推理中要对证据下界进行最大化？\",\n    \"回答10\": \"在变分推理中要对证据下界进行最大化，因为含有隐变量 $z$，直接对证据进行最大化困难。转而根据式 (20.36) 对证据下界进行最大化，可以更容易地实现对后验概率近似值的计算。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710737824,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1381,
+            "prompt_tokens": 3958,
+            "total_tokens": 5339
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

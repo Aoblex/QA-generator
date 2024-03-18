@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "7.2.3.6 AdaDelta算法",
+        "content_length": 856,
+        "content": "Title: 7.2.3.6 AdaDelta算法\nContent:\nAdaDelta算法[Zeiler, 2012] 也是 AdaGrad 算法的一个改进. 和 RMSprop 算法类似, AdaDelta 算法通过梯度平方的指数衰减移动平均来调整学习率. 此外, AdaDelta算法还引入了每次参数更新差值 $\\Delta \\theta$ 的平方的指数衰减权移动平均.\\\\\n第 $t$ 次迭代时,参数更新差值 $\\Delta \\theta$ 的平方的指数衰减权移动平均为\n\n\n\\begin{equation*}\n\\Delta X_{t-1}^{2}=\\beta_{1} \\Delta X_{t-2}^{2}+\\left(1-\\beta_{1}\\right) \\Delta \\theta_{t-1} \\odot \\Delta \\theta_{t-1}, \\tag{7.19}\n\\end{equation*}\n\n\n其中 $\\beta_{1}$ 为衰减率. 此时 $\\Delta \\theta_{t}$ 还未知, 因此只能计算到 $\\Delta X_{t-1}$.\n\nAdaDelta算法的参数更新差值为\n\n\n\\begin{equation*}\n\\Delta \\theta_{t}=-\\frac{\\sqrt{\\Delta X_{t-1}^{2}+\\epsilon}}{\\sqrt{G_{t}+\\epsilon}} \\mathrm{g}_{t} \\tag{7.20}\n\\end{equation*}\n\n\n其中 $G_{t}$ 的计算方式和 RMSprop 算法一样 (公式 (7.16) ), $\\Delta X_{t-1}^{2}$ 为参数更新差值 $\\Delta \\theta$ 的指数衰减权移动平均.\n\n从上式可以看出, AdaDelta 算法将 RMSprop 算法中的初始学习率 $\\alpha$ 改为动态计算的 $\\sqrt{\\Delta X_{t-1}^{2}}$, 在一定程度上平抑了学习率的波动."
+    },
+    {
+        "id": "chatcmpl-943MpRrdsfqWAX7ltc1xj3onTI80g",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"AdaDelta算法相比于AdaGrad算法有哪些改进？\",\n    \"回答1\": \"AdaDelta算法是AdaGrad算法的一个改进，与RMSprop算法类似，它通过梯度平方的指数衰减移动平均来调整学习率。此外，AdaDelta算法还引入了每次参数更新差值的平方的指数衰减权移动平均，从而更加灵活地调整学习率。\",\n    \"问题2\": \"在AdaDelta算法中，第$t$次迭代时，参数更新差值的平方的指数衰减权移动平均的计算公式是什么？\",\n    \"回答2\": \"在AdaDelta算法中，第$t$次迭代时，参数更新差值的平方的指数衰减权移动平均的计算公式为$\\bigtriangleup X_{t-1}^{2}=\\beta_{1} \\bigtriangleup X_{t-2}^{2}+(1-\\beta_{1}) \\bigtriangleup \\theta_{t-1} \\bigodot \\bigtriangleup \\theta_{t-1}$，其中$\\beta_{1}$为衰减率。\",\n    \"问题3\": \"在AdaDelta算法中，参数更新差值的计算公式是什么？\",\n    \"回答3\": \"在AdaDelta算法中，参数更新差值的计算公式为$\\bigtriangleup \\theta_{t}=-\\frac{\\text{sqrt}(\\bigtriangleup X_{t-1}^{2}+\\text{epsilon})}{\\text{sqrt}(G_{t}+\\text{epsilon})} \\text{g}_{t}$，其中$G_{t}$的计算方式和RMSprop算法一样，$\\bigtriangleup X_{t-1}^{2}$为参数更新差值$\\bigtriangleup \\theta$的指数衰减权移动平均。\",\n    \"问题4\": \"AdaDelta算法中如何调整学习率？\",\n    \"回答4\": \"AdaDelta算法将RMSprop算法中的初始学习率$\\text{alpha}$改为动态计算的$\\text{sqrt}(\\bigtriangleup X_{t-1}^{2})$，通过这种方式在一定程度上平抑了学习率的波动。\",\n    \"问题5\": \"AdaDelta算法相比RMSprop算法有哪些特点？\",\n    \"回答5\": \"AdaDelta算法相比RMSprop算法引入了每次参数更新差值的平方的指数衰减权移动平均，并将初始学习率改为动态计算的$\\text{sqrt}(\\bigtriangleup X_{t-1}^{2})$。这使得AdaDelta算法在一定程度上更加灵活地调整学习率，并且能够平抑学习率的波动。\",\n    \"问题6\": \"什么是梯度平方的指数衰减移动平均？\",\n    \"回答6\": \"梯度平方的指数衰减移动平均是一种用于调整学习率的方法，在该方法中，通过对梯度平方进行指数衰减移动平均来动态调整学习率。这种方法能够更好地适应不同参数更新情况下的学习率需求。\",\n    \"问题7\": \"为什么需要引入每次参数更新差值的平方的指数衰减权移动平均？\",\n    \"回答7\": \"引入每次参数更新差值的平方的指数衰减权移动平均可以使得学习率能够更加灵活地适应不同参数更新情况下的需求。这种灵活性能够有效地提高优化算法对于复杂模型和数据的适应能力。\",\n    \"问题8\": \"动态计算学习率在优化算法中有何优势？\",\n    \"回答8\": \"动态计算学习率能够使得优化算法更加灵活地适应不同参数更新情况下的需求，从而提高了优化算法对于复杂模型和数据的适应能力。这种方法在一定程度上能够平抑学习率的波动，提高了优化过程的稳定性。\",\n    \"问题9\": \"梯度平方的指数衰减移动平均和梯度下降优化有何关联？\",\n    \"回答9\": \"梯度平方的指数衰减移动平均是一种用于调整学习率的方法，在梯度下降优化中，通过对梯度平方进行指数衰减移动平均来动态调整学习率。这种方法能够更好地适应不同参数更新情况下的学习率需求。\",\n    \"问题10\": \"为什么需要在优化算法中考虑学习率的波动？\",\n    \"回答10\": \"在优化算法中需要考虑学习率的波动是因为不同参数更新情况下可能需要不同大小的学习率来保证优化过程稳定和高效。通过考虑学习率波动，可以使得优化过程更加灵活地适应不同情况下的需求。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710753283,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1425,
+            "prompt_tokens": 3062,
+            "total_tokens": 4487
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter3",
+        "title": "随机向量的数学期望与协方差阵",
+        "content_length": 3847,
+        "content": "Title: 随机向量的数学期望与协方差阵\nContent:\n\\label{ssec:3.4.5}\n\t以下我们用矩阵形式给出 $n$ 维随机变量的数学期望与方差.\n\t\\begin{definition}{}{3.4.3}\n\t\t记 $n$ 维随机向量为 $\\boldsymbol{X}=(X_1,X_2,\\ldots,X_n)'$ , 若其每个分量的数学期望都存在, 则称\n\t\t\\begin{equation*}\n\t\t\tE(\\boldsymbol{X})=(E(X_1),E(X_2),\\ldots,E(X_n))'\n\t\t\\end{equation*}\n\t\t为 $n$ 维随机向量 $\\boldsymbol{X}$ 的\\textbf{数学期望向量}, 简称为 $\\boldsymbol{X}$ 的\\textbf{数学期望}, 而称\n\t\t\\begin{align*}\n\t\t\t&E[ (\\boldsymbol{X}-E(\\boldsymbol{X})) (\\boldsymbol{X}-E(\\boldsymbol{X}))' ]\\\\\n\t\t\t&=\\begin{pmatrix}\n\t\t\t\t\\Var(X_1) & \\Cov(X_1,X_2) & \\cdots & \\Cov(X_1,X_n)\\\\\n\t\t\t\t\\Cov(X_2,X_1) & \\Var(X_2) & \\cdots & \\Cov(X_2,X_n)\\\\\n\t\t\t\t\\vdots & \\vdots & &\\vdots\\\\\n\t\t\t\t\\Cov(X_n,X_1) & \\Cov(X_n,X_2) & \\cdots & \\Var(X_n)\n\t\t\t\\end{pmatrix}\n\t\t\\end{align*}\n\t\t为该随机向量的\\textbf{方差—协方差阵}, 简称\\textbf{协方差阵}, 记为 $\\Cov(\\boldsymbol{X})$ .\n\t\\end{definition}\n\t至此我们可以看出, $n$ 维随机向量的数学期望是各分量的数学期望组成的向量. 而其方差就是由各分量的方差与协方差组成的矩阵, 其对角线上的元素就是方差, 非对角线元素为协方差.\n\n\t以下给出的协方差阵的一个重要性质.\n\t\\begin{theorem}{}{3.4.2}\n\t\t$n$ 维随机向量的协方差阵 $\\Cov(\\boldsymbol{X})=( \\Cov\\left(X_i,X_j\\right) )_{n\\times n}$ 是一个对称的非负定矩阵.\n\t\t\\begin{proof}\n\t\t\t因为 $\\Cov\\left(X_i,X_j\\right)=\\Cov\\left(X_j,X_i\\right)$ , 所以对称性是显然的. 下证非负定性. 因为对任意的 $n$ 维实向量 $\\boldsymbol{c}=(c_1,c_2,\\ldots,c_n)'$ , 有\n\t\t\t\\begin{align*}\n\t\t\t\t\\boldsymbol{c}'\\Cov(\\boldsymbol{X})\\boldsymbol{c} &= (c_1,c_2,\\ldots,c_n)\\begin{pmatrix}\n\t\t\t\t\t\\Var(X_1) & \\cdots & \\Cov(X_1,X_n)\\\\\n\t\t\t\t\t\\Cov(X_2,X_1) & \\cdots & \\Cov(X_2,X_n)\\\\\n\t\t\t\t\t\\vdots & & \\vdots\\\\\n\t\t\t\t\t\\Cov(X_n,X_1) & \\cdots & \\Var(X_n)\n\t\t\t\t\\end{pmatrix}\n\t\t\t\t\\begin{pmatrix}\n\t\t\t\t\tc_1\\\\\n\t\t\t\t\tc_2\\\\\n\t\t\t\t\t\\vdots\\\\\n\t\t\t\t\tc_n\n\t\t\t\t\\end{pmatrix}\\\\\n\t\t\t\t&= \\sum_{i=1}^{n}\\sum_{j=1}^{n}c_{i}c_{j}\\Cov(X_i,X_j)\\\\\n\t\t\t\t&= \\sum_{i=1}^{n}\\sum_{j=1}^{n}E\\{ [c_{i} (X_{i}-E(X_{i}))] [c_{j}(X_{j}-E(X_{j}))] \\}\\\\\n\t\t\t\t&= E\\left\\{\\sum_{i=1}^{n} \\sum_{j=1}^{n}\\left[c_{i}\\left(X_{i}-E\\left(X_{i}\\right)\\right)\\right]\\left[c_{j}\\left(X_{j}-E\\left(X_{j}\\right)\\right)\\right]\\right\\}\\\\\n\t\t\t\t&= E\\left\\{\\left[\\sum_{i=1}^{n} c_{i}\\left(X_{i}-E\\left(X_{i}\\right)\\right)\\right]\\left[\\sum_{j=1}^{n} c_{j}\\left(X_{j}-E\\left(X_{j}\\right)\\right)\\right]\\right\\}\\\\\n\t\t\t\t&= E\\left[\\sum_{i=1}^{n} c_{i}\\left(X_{i}-E\\left(X_{i}\\right)\\right)\\right]^{2} \\geqslant 0\n\t\t\t\\end{align*}\n\t\t\t所以矩阵 $\\Cov(\\boldsymbol{X})$ 是非负定的, 定理得证.\n\t\t\\end{proof}\n\t\\end{theorem}\n\t\\begin{example}[( $n$ 元正态分布)]\\label{exam:3.4.12}\n\t\t设 $n$ 维随机变量 $\\boldsymbol{X}=(X_1,X_2,\\ldots,X_n)'$ 的协方阵为 $\\boldsymbol{B}=\\Cov(\\boldsymbol{X})$ , 数学期望向量为 $\\boldsymbol{a}=(a_1,a_2,\\ldots,a_n)'$ . 又记 $\\boldsymbol{x}=(x_1,x_2,\\ldots,x_n)'$ , 则由密度函数\n\t\t\\begin{equation}\\label{eq:3.4.13}\n\t\t\tp(x_1,x_2,\\ldots,x_n)=p(\\boldsymbol{x})=\\frac{1}{ (2\\uppi)^{\\frac{n}{2}} |\\boldsymbol{B}|^{\\frac{1}{2}} }\\exp\\left\\{ -\\frac{1}{2}(\\boldsymbol{x}-\\boldsymbol{a})'\\boldsymbol{B}^{-1}(\\boldsymbol{x}-\\boldsymbol{a}) \\right\\}\n\t\t\\end{equation}\n\t\t定义的分布称为 $n$ 元正态分布, 记为 $\\boldsymbol{X}\\sim N(\\boldsymbol{a},\\boldsymbol{B})$ . 其中 $|\\boldsymbol{B}|$ 表示 $\\boldsymbol{B}$ 的行列式, $\\boldsymbol{B}^{-1}$ 表示 $\\boldsymbol{B}$ 的逆阵, $(\\boldsymbol{x}-\\boldsymbol{a})'$ 表示向量 $(\\boldsymbol{x}-\\boldsymbol{a})$ 的转置.\n\n\t\t若记 $\\boldsymbol{B}^{-1}=(r_{ij})$ , 则~\\eqref{eq:3.4.13}~式可写成\n\t\t\\begin{equation}\\label{eq:3.4.14}\n\t\t\tp\\left(x_{1}, x_{2}, \\ldots, x_{n}\\right)=\\frac{1}{ (2\\uppi)^{\\frac{n}{2}} |\\boldsymbol{B}|^{\\frac{1}{2}} }\\exp\\left\\{ -\\frac{1}{2}\\sum_{i,j=1}^{n}r_{ij}(x_{i}-a_{i})(x_{j}-a_{j}) \\right\\}.\n\t\t\\end{equation}\n\t\t若取数学期望向量和协方差矩阵分别为\n\t\t\\begin{equation*}\n\t\t\t\\boldsymbol{a}=\\begin{pmatrix}\n\t\t\t\t\\mu_1\\\\\n\t\t\t\t\\mu_2\n\t\t\t\\end{pmatrix},\\quad \\boldsymbol{B}=\\begin{pmatrix}\n\t\t\t\t\\sigma_1^2 & \\sigma_1\\sigma_2\\rho\\\\\n\t\t\t\t\\sigma_1\\sigma_2\\rho & \\sigma_2^2\n\t\t\t\\end{pmatrix},\n\t\t\\end{equation*}\n\t\t代入~\\eqref{eq:3.4.13}~式, 则可得到~\\eqref{eq:3.1.8}~式给出的二元正态密度函数.\n\n\t\t$n$ 元正态分布是一种最重要的多维分布, 它在概率论、数理统计和随机过程中都占有重要地位.\n\t\\end{example}\n\t\n\n\t\\section{条件分布和条件期望}\\label{sec:3.5}\n\n\t二维随机变量 $(X,Y)$ 之间主要表现为独立与相依两类关系.\n\t由于在许多问题中有关的随机变量取值往往是彼此有影响的, 这就使得条件分布成为研究变量之间的相依关系的一个有力工具."
+    },
+    {
+        "id": "chatcmpl-9471x6CRqulB357XVQdo6Tt2er2Du",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是 $n$ 维随机向量的数学期望？\",\n    \"回答1\": \"对于 $n$ 维随机向量 $\\boldsymbol{X}=(X_1,X_2,\\text{...},X_n)'$，其数学期望定义为 $E(\\boldsymbol{X})=(E(X_1),E(X_2),\\text{...},E(X_n))'$，即由各分量的数学期望组成的向量。\",\n    \"问题2\": \"协方差阵的定义是什么？\",\n    \"回答2\": \"对于 $n$ 维随机向量 $\\boldsymbol{X}$，其协方差阵定义为 $E[ (\\boldsymbol{X}-E(\\boldsymbol{X})) (\\boldsymbol{X}-E(\\boldsymbol{X}))' ]$，即由各分量的方差与协方差组成的矩阵。它是描述随机向量各分量之间相关关系的重要工具。\",\n    \"问题3\": \"协方差阵具有哪些重要性质？\",\n    \"回答3\": \"协方差阵 $\\boldsymbol{Cov}(\\boldsymbol{X})=( \\text{Cov}(X_i,X_j) )_{n\\times n}$ 是一个对称的非负定矩阵。这意味着它具有对称性，并且对任意 $n$ 维实向量 $\\boldsymbol{c}=(c_1,c_2,\\text{...},c_n)'$，都有 $\\boldsymbol{c}'\\boldsymbol{Cov}(\\boldsymbol{X})\\boldsymbol{c} \\text{大于等于} 0$。\",\n    \"问题4\": \"什么是 $n$ 元正态分布？\",\n    \"回答4\": \"$n$ 元正态分布是指 $n$ 维随机变量 $\\boldsymbol{X}=(X_1,X_2,\\text{...},X_n)'$ 的概率分布。其密度函数形式为 $p(\\boldsymbol{x})=\\frac{1}{ (2\\text{\\textpi})^{\\frac{n}{2}} |\\boldsymbol{B}|^{\\frac{1}{2}} }\\text{exp}\\big\\\\{-\\frac{1}{2}(\\boldsymbol{x}-\\boldsymbol{a})'\\boldsymbol{B}^{-1}(\\boldsymbol{x}-\\boldsymbol{a}) \\big\\\\\\text}$，其中 $\\boldsymbol{a}$ 表示数学期望向量，$\\boldsymbol{B}$ 表示协方差矩阵。\",\n    \"问题5\": \"条件分布在研究变量相依关系中起到什么作用？\",\n    \"回答5\": \"在许多问题中，有关的随机变量取值往往是彼此有影响的。条件分布成为研究变量之间相依关系的一个有力工具，能够帮助我们理解和描述随机变量之间的相互影响和关联。\",\n    \"问题6\": \"随机向量的数学期望和方差有何区别？\",\n    \"回答6\": \"随机向量的数学期望是各分量的数学期望组成的向量，而其方差则由各分量的方差与协方差组成的矩阵。数学期望描述了随机向量整体的平均倾向，而方差则反映了各分量之间的相关关系和离散程度。\",\n    \"问题7\": \"协方差阵为什么是非负定矩阵？\",\n    \"回答7\": \"协方差阵是非负定矩阵，因为对任意 $n$ 维实向量 $\\boldsymbol{c}$，都有 $\\boldsymbol{c}'\\boldsymbol{Cov}(\\boldsymbol{X})\\boldsymbol{c} \\text{大于等于} 0$。这一性质保证了协方差阵描述了随机向量各分量之间相关关系的重要特征。\",\n    \"问题8\": \"为什么 $n$ 元正态分布在概率论、数理统计和随机过程中占有重要地位？\",\n    \"回答8\": \"$n$ 元正态分布是一种最重要的多维分布，它在概率论、数理统计和随机过程中都占有重要地位。这是因为它能够有效地描述多维随机变量之间的相关关系和概率分布特征，在实际应用中具有广泛的适用性和重要性。\",\n    \"问题9\": \"什么是独立与相依两类关系？\",\n    \"回答9\": \"二维随机变量 $(X,Y)$ 之间主要表现为独立与相依两类关系。独立表示两个随机变量之间没有相互影响，而相依表示两个随机变量之间存在一定程度的相关关系。\",\n    \"问题10\": \"条件分布如何帮助理解随机变量之间的相依关系？\",\n    \"回答10\": \"条件分布能够帮助我们理解和描述随机变量之间的相互影响和关联。通过条件分布，我们可以更好地理解在给定某些条件下，随机变量之间的概率分布特征以及相互影响程度，从而深入探索它们之间复杂的相依关系。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710767365,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1499,
+            "prompt_tokens": 4816,
+            "total_tokens": 6315
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

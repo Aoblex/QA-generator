@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "8.2.1.3 多头注意力",
+        "content_length": 508,
+        "content": "Title: 8.2.1.3 多头注意力\nContent:\n多头注意力 (Multi-Head Attention ) 是利用多个查询 $\\boldsymbol{Q}=\\left[\\boldsymbol{q}_{1}, \\cdots, \\boldsymbol{q}_{M}\\right]$, 来并行地从输入信息中选取多组信息. 每个注意力关注输入信息的不同部分.\n\n\n\\begin{equation*}\n\\operatorname{att}((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{Q})=\\operatorname{att}\\left((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q}_{1}\\right) \\oplus \\cdots \\oplus \\operatorname{att}\\left((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q}_{M}\\right) \\tag{8.11}\n\\end{equation*}\n\n\n其中 $\\oplus$ 表示向量拼接."
+    },
+    {
+        "id": "chatcmpl-944WzK9LdOgKlVJT6Fmlj4fOy9Om8",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"多头注意力是如何利用多个查询来选取多组信息的？\",\n    \"回答1\": \"多头注意力利用多个查询 $\\boldsymbol{Q}=\\big[\\boldsymbol{q}_{1}, \\text{...}, \\boldsymbol{q}_{M}\\big]$ 并行地从输入信息中选取多组信息。每个注意力关注输入信息的不同部分，通过并行处理多个查询，实现对输入信息的多方面关注。\",\n    \"问题2\": \"多头注意力中的 att 函数是如何计算的？\",\n    \"回答2\": \"在多头注意力中，att 函数的计算是通过并行处理每个查询 $\\boldsymbol{q}_{i}$，并将结果进行向量拼接。具体地，att 函数的计算公式为 $\\text{att}((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{Q})=\\text{att}\\big((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q}_{1}\\big) \\bigoplus \\text{...} \\bigoplus \\text{att}\\big((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q}_{M}\\big)$。\",\n    \"问题3\": \"多头注意力是如何实现对输入信息的多方面关注的？\",\n    \"回答3\": \"多头注意力通过并行处理多个查询 $\\boldsymbol{q}_{i}$，并将每个查询的注意力结果进行向量拼接，从而实现对输入信息的多方面关注。每个查询关注输入信息的不同部分，整体上实现了对输入信息的全局关注。\",\n    \"问题4\": \"在多头注意力中，向量拼接的作用是什么？\",\n    \"回答4\": \"在多头注意力中，向量拼接的作用是将并行处理得到的每个查询的注意力结果合并成一个更加综合和全面的表示。这样可以综合考虑多个查询对输入信息的关注，提高模型对输入信息的表达能力。\",\n    \"问题5\": \"多头注意力相比单头注意力有什么优势？\",\n    \"回答5\": \"相比单头注意力，多头注意力能够并行地从输入信息中选取多组信息，实现对输入信息的多方面关注。这样可以更好地捕捉输入信息中的复杂关系和特征，提高模型对输入信息的表达能力和学习能力。\",\n    \"问题6\": \"在多头注意力中，为什么需要使用并行处理？\",\n    \"回答6\": \"在多头注意力中，使用并行处理可以同时从输入信息中选取多组信息，每个注意力关注输入信息的不同部分。这样能够更好地捕捉输入信息中的不同特征和关系，提高模型对输入信息的全局理解和表达能力。\",\n    \"问题7\": \"为什么需要在多头注意力中引入向量拼接操作？\",\n    \"回答7\": \"在多头注意力中引入向量拼接操作是为了将并行处理得到的每个查询的注意力结果合并成一个更加综合和全面的表示。这样可以综合考虑多个查询对输入信息的关注，提高模型对输入信息的表达能力。\",\n    \"问题8\": \"多头注意力如何帮助神经网络模型提高表达能力？\",\n    \"回答8\": \"多头注意力通过并行处理多个查询，并引入向量拼接操作，实现了对输入信息的多方面关注和综合表示。这有助于神经网络模型更好地捕捉输入信息中的复杂关系和特征，提高模型对输入信息的表达能力。\",\n    \"问题9\": \"在神经网络模型中，为什么需要引入复杂的注意力机制？\",\n    \"回答9\": \"在神经网络模型中引入复杂的注意力机制能够帮助模型更好地理解和利用输入信息中的复杂关系和特征。这有助于提高模型对输入信息的表达能力和学习能力，从而提升模型在各种任务中的性能。\",\n    \"问题10\": \"向量拼接操作在神经网络模型中有何作用？\",\n    \"回答10\": \"在神经网络模型中，向量拼接操作可以将不同来源或处理得到的向量进行合并，形成更加综合和全面的表示。这有助于综合考虑不同来源或处理得到的信息，提高模型对输入数据或特征的表达能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710757757,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1239,
+            "prompt_tokens": 2778,
+            "total_tokens": 4017
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "4.2.3 图网络",
+        "content_length": 3161,
+        "content": "Title: 4.2.3 图网络\nContent:\n前馈网络和记忆网络的输入都可以表示为向量或向量序列. 但实际应用中很多数据是图结构的数据, 比如知识图谱、社交网络、分子 (Molecular) 网络等. \\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n前馈网络和记忆网络很难处理图结构的数据.\n\n图网络是定义在图结构数据上的神经网络 (第6.8节). 图中每个节点都由一个或一组神经元构成. 节点之间的连接可以是有向的, 也可以是无向的. 每个节点可以收到来自相邻节点或自身的信息.\n\n图网络是前馈网络和记忆网络的泛化,包含很多不同的实现方式, 比如 图卷积网络 (Graph Convolutional Network, GCN ) [Kipf et al., 2016]、图注意力网络 (Graph Attention Network, GAT ) [Veličković et al., 2017]、消息传递神经网络 ( Message Passing Neural Network, MPNN ) [Gilmer et al., 2017]等.\n\n图4.6给出了前馈网络、记忆网络和图网络的网络结构示例, 其中圆形节点表示一个神经元, 方形节点表示一组神经元.\n\n\n\n(a) 前馈网络\n\n\n\n(b) 记忆网络\n\n\n\n(c) 图网络\n\n图 4.6 三种不同的网络结构示例\n\n\\section*{4.3 前馈神经网络}\n给定一组神经元, 我们可以将神经元作为节点来构建一个网络. 不同的神经网络模型有着不同网络连接的拓扑结构. 一种比较直接的拓扑结构是前馈网络. 前馈神经网络 (Feedforward Neural Network, FNN) 是最早发明的简单人工神经网络. 前馈神经网络也经常称为多层感知器 (Multi-Layer Perceptron, MLP ) . 但多层感知器的叫法并不是十分合理, 因为前馈神经网络其实是由多层的 Logistic 回归模型 (连续的非线性函数) 组成, 而不是由多层的感知器 (不连续的非线性函数 ) 组成 [Bishop, 2007].\n\n在前馈神经网络中, 各神经元分别属于不同的层. 每一层的神经元可以接收前一层神经元的信号, 并产生信号输出到下一层. 第 0 层称为输入层, 最后一层称为输出层, 其他中间层称为隐藏层. 整个网络中无反馈, 信号从输入层向输出层单向传播, 可用一个有向无环图表示.\n\n图4.7给出了前馈神经网络的示例.\\\\\n输人层隐藏层\n\n\n\n图 4.7 多层前馈神经网络\n\n表4.1给出了描述前馈神经网络的记号.\n\n表 4.1 前馈神经网络的记号\n\n\\begin{center}\n\\begin{tabular}{ll}\n\\hline\n记号 & 含义 \\\\\n\\hline\n$L$ & 神经网络的层数 \\\\\n$M_{l}$ & 第 $l$ 层神经元的个数 \\\\\n$f_{l}(\\cdot)$ & 第 $l$ 层神经元的激活函数 \\\\\n$\\boldsymbol{W}^{(l)} \\in \\mathbb{R}^{M_{l} \\times M_{l-1}}$ & 第 $l-1$ 层到第 $l$ 层的权重矩阵 \\\\\n$\\boldsymbol{b}^{(l)} \\in \\mathbb{R}^{M_{l}}$ & 第 $l-1$ 层到第 $l$ 层的偏置 \\\\\n$\\boldsymbol{z}^{(l)} \\in \\mathbb{R}^{M_{l}}$ & 第 $l$ 层神经元的净输入 ( 净活性值 $)$ \\\\\n$\\boldsymbol{a}^{(l)} \\in \\mathbb{R}^{M_{l}}$ & 第 $l$ 层神经元的输出 ( 活性值 ) \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n令 $\\boldsymbol{a}^{(0)}=\\boldsymbol{x}$, 前馈神经网络通过不断迭代下面公式进行信息传播：\n\n\n\\begin{align*}\n& \\boldsymbol{z}^{(l)}=\\boldsymbol{W}^{(l)} \\boldsymbol{a}^{(l-1)}+\\boldsymbol{b}^{(l)},  \\tag{4.32}\\\\\n& \\boldsymbol{a}^{(l)}=f_{l}\\left(\\boldsymbol{z}^{(l)}\\right) . \\tag{4.33}\n\\end{align*}\n\n\n首先根据第 $l-1$ 层神经元的活性值 (Activation) $\\boldsymbol{a}^{(l-1)}$ 计算出第 $l$ 层神经元的净活性值 (Net Activation) $\\boldsymbol{z}^{(l)}$, 然后经过一个激活函数得到第 $l$ 层神经元的活性值. 因此,我们也可以把每个神经层看作一个仿射变换 (Affine Transformation )和一个非线性变换.\n\n公式 (4.32) 和公式(4.33) 也可以合并写为:\n\n\n\\begin{equation*}\n\\boldsymbol{z}^{(l)}=\\boldsymbol{W}^{(l)} f_{l-1}\\left(\\boldsymbol{z}^{(l-1)}\\right)+\\boldsymbol{b}^{(l)}, \\tag{4.34}\n\\end{equation*}\n\n\n或者\n\n\n\\begin{equation*}\n\\boldsymbol{a}^{(l)}=f_{l}\\left(\\boldsymbol{W}^{(l)} \\boldsymbol{a}^{(l-1)}+\\boldsymbol{b}^{(l)}\\right) . \\tag{4.35}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n这样, 前馈神经网络可以通过逐层的信息传递, 得到网络最后的输出 $\\boldsymbol{a}^{(L)}$.整个网络可以看作一个复合函数 $\\phi(\\boldsymbol{x} ; \\boldsymbol{W}, \\boldsymbol{b})$, 将向量 $\\boldsymbol{x}$ 作为第 1 层的输入 $\\boldsymbol{a}^{(0)}$, 将第 $L$ 层的输出 $\\boldsymbol{a}^{(L)}$ 作为整个函数的输出.\n\n\n\\begin{equation*}\n\\boldsymbol{x}=\\boldsymbol{a}^{(0)} \\rightarrow \\boldsymbol{z}^{(1)} \\rightarrow \\boldsymbol{a}^{(1)} \\rightarrow \\boldsymbol{z}^{(2)} \\rightarrow \\cdots \\rightarrow \\boldsymbol{a}^{(L-1)} \\rightarrow \\boldsymbol{z}^{(L)} \\rightarrow \\boldsymbol{a}^{(L)}=\\phi(\\boldsymbol{x} ; \\boldsymbol{W}, \\boldsymbol{b}), \\tag{4.36}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{W}, \\boldsymbol{b}$ 表示网络中所有层的连接权重和偏置."
+    },
+    {
+        "id": "chatcmpl-941RZhazAzIXnLGFMFhI0rUjp1LiM",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"前馈网络和记忆网络难以处理图结构的数据的原因是什么？\",\n    \"回答1\": \"前馈网络和记忆网络难以处理图结构的数据，主要是因为图结构数据中的节点之间的连接关系可能是有向的或无向的，每个节点可以收到来自相邻节点或自身的信息。而前馈网络和记忆网络通常只能处理向量或向量序列的输入，难以直接适应图结构数据中复杂的节点连接关系。\",\n    \"问题2\": \"图网络相对于前馈网络和记忆网络的作用是什么？\",\n    \"回答2\": \"图网络是定义在图结构数据上的神经网络，能够更好地处理图结构数据中节点之间复杂的连接关系。每个节点由一个或一组神经元构成，节点之间的连接可以是有向的或无向的，每个节点可以收到来自相邻节点或自身的信息。因此，图网络是前馈网络和记忆网络的泛化，能够更灵活地适应图结构数据。\",\n    \"问题3\": \"图网络中包括哪些不同的实现方式？\",\n    \"回答3\": \"图网络包括很多不同的实现方式，比如图卷积网络 (Graph Convolutional Network, GCN )、图注意力网络 (Graph Attention Network, GAT )、消息传递神经网络 ( Message Passing Neural Network, MPNN )等。这些不同的实现方式可以根据具体任务和数据特点选择合适的模型来处理图结构数据。\",\n    \"问题4\": \"前馈神经网络（FNN）与多层感知器（MLP）之间有何区别？\",\n    \"回答4\": \"前馈神经网络（Feedforward Neural Network, FNN）也经常称为多层感知器（Multi-Layer Perceptron, MLP）。但多层感知器的叫法并不是十分合理，因为前馈神经网络其实是由多层的 Logistic 回归模型组成，而不是由多层的感知器组成。因此，虽然两者通常被用作代表同一种类型的神经网络，但在实际组成和结构上存在一定差异。\",\n    \"问题5\": \"前馈神经网络中各层神经元之间是如何传播信息的？\",\n    \"回答5\": \"在前馈神经网络中，各神经元分别属于不同的层。每一层的神经元可以接收前一层神经元的信号，并产生信号输出到下一层。整个网络中无反馈，信号从输入层向输出层单向传播。通过不断迭代公式进行信息传播，最终得到网络最后的输出。\",\n    \"问题6\": \"前馈神经网络中描述记号 $\\boldsymbol{W}^{(l)}$ 的含义是什么？\",\n    \"回答6\": \"在前馈神经网络中，描述记号 $\\boldsymbol{W}^{(l)} \\text{ 的含义是第 } l-1 \\text{ 层到第 } l \\text{ 层的权重矩阵}$。它表示了上一层到当前层之间神经元连接权重的矩阵形式。\",\n    \"问题7\": \"在前馈神经网络中，如何计算每一层神经元的净活性值 $\\boldsymbol{z}^{(l)}$？\",\n    \"回答7\": \"在前馈神经网络中，每一层神经元的净活性值 $\\boldsymbol{z}^{(l)}$ 可以通过公式 $\\boldsymbol{z}^{(l)}=\\boldsymbol{W}^{(l)} \\boldsymbol{a}^{(l-1)}+\\boldsymbol{b}^{(l)}$ 进行计算。其中 $\\boldsymbol{W}^{(l)}$ 表示第 $l-1$ 层到第 $l$ 层的权重矩阵，$\\boldsymbol{a}^{(l-1)}$ 表示上一层神经元的输出，$\\boldsymbol{b}^{(l)}$ 表示偏置。\",\n    \"问题8\": \"在前馈神经网络中，如何计算每一层神经元的输出 $\\boldsymbol{a}^{(l)}$？\",\n    \"回答8\": \"在前馈神经网络中，每一层神经元的输出 $\\boldsymbol{a}^{(l)}$ 可以通过公式 $\\boldsymbol{a}^{(l)}=f_{l}\\big(\\boldsymbol{z}^{(l)}\\big)$ 进行计算。其中 $f_{l}\\big(\\boldsymbol{z}^{(l)}\\big)$ 表示第 $l$ 层神经元的激活函数。\",\n    \"问题9\": \"前馈神经网络通过逐层信息传递得到最终输出 $\\boldsymbol{a}^{(L)}$ 的过程可以用什么方式表示？\",\n    \"回答9\": \"前馈神经网络通过逐层信息传递得到最终输出 $\\boldsymbol{a}^{(L)}$ 的过程可以用一个有向无环图表示。整个过程可以看作一个复合函数 $\\boldsymbol{x}=\\boldsymbol{a}^{(0)} \\rightarrow \\boldsymbol{z}^{(1)} \\rightarrow \\boldsymbol{a}^{(1)} \\rightarrow \\boldsymbol{z}^{(2)} \\rightarrow \\text{...} \\rightarrow \\boldsymbol{a}^{(L-1)} \\rightarrow \\boldsymbol{z}^{(L)} \\rightarrow \\boldsymbol{a}^{(L)}=\\text{φ}\\big(\\boldsymbol{x} ; \\boldsymbol{W}, \\boldsymbol{b}\\big)$。\",\n    \"问题10\": \"前馈神经网络与图卷积网络（GCN）之间有何区别？\",\n    \"回答10\": \"前馈神经网络是最早发明的简单人工神经网络，主要由多层 Logistic 回归模型组成。而图卷积网络（Graph Convolutional Network, GCN）是定义在图结构数据上的神经网络，在处理图结构数据中节点之间复杂连接关系方面具有更强大的表达能力和学习能力。因此，两者在应用场景和处理对象上存在较大差异。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710745889,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1714,
+            "prompt_tokens": 4502,
+            "total_tokens": 6216
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

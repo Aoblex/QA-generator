@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter10",
+        "title": "21.2.1 迭代算法",
+        "content_length": 3278,
+        "content": "Title: 21.2.1 迭代算法\nContent:\n给定一个含有 $n$ 个结点的有向图, 转移矩阵为 $M$, 有向图的一般 PageRank 由迭代公式\n\n\n\\begin{equation*}\n\\boldsymbol{R}_{t+1}=d \\boldsymbol{M} \\boldsymbol{R}_{t}+\\frac{1-d}{n} \\boldsymbol{1} \\tag{21.15}\n\\end{equation*}\n\n\n的极限向量 $\\boldsymbol{R}$ 确定。\n\nPageRank 的迭代算法就是按照这个一般定义进行迭代, 直至收玫。\n\n\\section*{算法 21.1 (PageRank 的迭代算法)}\n输入: 含有 $n$ 个结点的有向图, 转移矩阵 $\\boldsymbol{M}$, 阻尼因子 $d$, 初始向量 $\\boldsymbol{R}_{0}$ 。\n\n输出: 有向图的 PageRank 向量 $\\boldsymbol{R}$ 。\n\n(1) 令 $t=0$;\n\n(2) 计算\n\n$$\n\\boldsymbol{R}_{t+1}=d \\boldsymbol{M} \\boldsymbol{R}_{t}+\\frac{1-d}{n} \\boldsymbol{1}\n$$\n\n(3) 如果 $\\boldsymbol{R}_{t+1}$ 与 $\\boldsymbol{R}_{t}$ 充分接近, 令 $\\boldsymbol{R}=\\boldsymbol{R}_{t+1}$, 停止迭代;\n\n(4) 否则, 令 $t=t+1$, 执行步骤 (2)。\n\n例 21.3 给定图 21.4 所示的有向图, 取 $d=0.8$, 求图的 PageRank。\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_3182641e7f8cf23e4171g-19}\n\\end{center}\n\n图 21.4 有向图\n\n解 从图 21.4 得知转移矩阵为\n\n$$\n\\boldsymbol{M}=\\left[\\begin{array}{cccc}\n0 & 1 / 2 & 0 & 0 \\\\\n1 / 3 & 0 & 0 & 1 / 2 \\\\\n1 / 3 & 0 & 1 & 1 / 2 \\\\\n1 / 3 & 1 / 2 & 0 & 0\n\\end{array}\\right]\n$$\n\n按照式 (21.15) 计算:\n\n$$\n\\begin{aligned}\n& d \\boldsymbol{M}=\\frac{4}{5} \\times\\left[\\begin{array}{cccc}\n0 & 1 / 2 & 0 & 0 \\\\\n1 / 3 & 0 & 0 & 1 / 2 \\\\\n1 / 3 & 0 & 1 & 1 / 2 \\\\\n1 / 3 & 1 / 2 & 0 & 0\n\\end{array}\\right]=\\left[\\begin{array}{cccc}\n0 & 2 / 5 & 0 & 0 \\\\\n4 / 15 & 0 & 0 & 2 / 5 \\\\\n4 / 15 & 0 & 4 / 5 & 2 / 5 \\\\\n4 / 15 & 2 / 5 & 0 & 0\n\\end{array}\\right] \\\\\n& \\frac{1-d}{n} \\boldsymbol{1}=\\left[\\begin{array}{c}\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20\n\\end{array}\\right]\n\\end{aligned}\n$$\n\n迭代公式为\n\n$$\n\\boldsymbol{R}_{t+1}=\\left[\\begin{array}{cccc}\n0 & 2 / 5 & 0 & 0 \\\\\n4 / 15 & 0 & 0 & 2 / 5 \\\\\n4 / 15 & 0 & 4 / 5 & 2 / 5 \\\\\n4 / 15 & 2 / 5 & 0 & 0\n\\end{array}\\right] \\boldsymbol{R}_{t}+\\left[\\begin{array}{c}\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20\n\\end{array}\\right]\n$$\n\n令初始向量\n\n$$\n\\boldsymbol{R}_{0}=\\left[\\begin{array}{c}\n1 / 4 \\\\\n1 / 4 \\\\\n1 / 4 \\\\\n1 / 4\n\\end{array}\\right]\n$$\n\n进行迭代:\n\n$$\n\\begin{aligned}\n& \\boldsymbol{R}_{1}=\\left[\\begin{array}{cccc}\n0 & 2 / 5 & 0 & 0 \\\\\n4 / 15 & 0 & 0 & 2 / 5 \\\\\n4 / 15 & 0 & 4 / 5 & 2 / 5 \\\\\n4 / 15 & 2 / 5 & 0 & 0\n\\end{array}\\right]\\left[\\begin{array}{c}\n1 / 4 \\\\\n1 / 4 \\\\\n1 / 4 \\\\\n1 / 4\n\\end{array}\\right]+\\left[\\begin{array}{c}\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20\n\\end{array}\\right]=\\left[\\begin{array}{c}\n9 / 60 \\\\\n13 / 60 \\\\\n25 / 60 \\\\\n13 / 60\n\\end{array}\\right] \\\\\n& \\boldsymbol{R}_{2}=\\left[\\begin{array}{cccc}\n0 & 2 / 5 & 0 & 0 \\\\\n4 / 15 & 0 & 0 & 2 / 5 \\\\\n4 / 15 & 0 & 4 / 5 & 2 / 5 \\\\\n4 / 15 & 2 / 5 & 0 & 0\n\\end{array}\\right]\\left[\\begin{array}{c}\n9 / 60 \\\\\n13 / 60 \\\\\n25 / 60 \\\\\n13 / 60\n\\end{array}\\right]+\\left[\\begin{array}{c}\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20 \\\\\n1 / 20\n\\end{array}\\right]=\\left[\\begin{array}{c}\n41 / 300 \\\\\n53 / 300 \\\\\n153 / 300 \\\\\n53 / 300\n\\end{array}\\right]\n\\end{aligned}\n$$\n\n等。最后得到:\n\n$$\n\\left[\\begin{array}{c}\n1 / 4 \\\\\n1 / 4 \\\\\n1 / 4 \\\\\n1 / 4\n\\end{array}\\right],\\left[\\begin{array}{c}\n9 / 60 \\\\\n13 / 60 \\\\\n25 / 60 \\\\\n13 / 60\n\\end{array}\\right],\\left[\\begin{array}{c}\n41 / 300 \\\\\n53 / 300 \\\\\n153 / 300 \\\\\n53 / 300\n\\end{array}\\right],\\left[\\begin{array}{c}\n543 / 4500 \\\\\n707 / 4500 \\\\\n2543 / 4500 \\\\\n707 / 4500\n\\end{array}\\right], \\cdots,\\left[\\begin{array}{c}\n15 / 148 \\\\\n19 / 148 \\\\\n95 / 148 \\\\\n19 / 148\n\\end{array}\\right]\n$$\n\n计算结果表明, 结点 C 的 PageRank 值超过一半, 其他结点也有相应的 PageRank 值。"
+    },
+    {
+        "id": "chatcmpl-93zUNTCeEcE6KjDeyt1LkSjPaG9S8",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"PageRank 的迭代公式是什么？\",\n    \"回答1\": \"PageRank 的迭代公式为 $\\boldsymbol{R}_{t+1}=d \\boldsymbol{M} \\boldsymbol{R}_{t}+\\frac{1-d}{n} \\boldsymbol{1}$，其中 $\\boldsymbol{R}_{t+1}$ 表示第 $t+1$ 次迭代的 PageRank 向量，$d$ 为阻尼因子，$\\boldsymbol{M}$ 为转移矩阵，$\\boldsymbol{R}_{t}$ 为第 $t$ 次迭代的 PageRank 向量，$n$ 为结点个数，$\\boldsymbol{1}$ 为全1向量。\",\n    \"问题2\": \"PageRank 的迭代算法的输入和输出是什么？\",\n    \"回答2\": \"PageRank 的迭代算法的输入包括含有 $n$ 个结点的有向图、转移矩阵 $\\boldsymbol{M}$、阻尼因子 $d$ 和初始向量 $\\boldsymbol{R}_{0}$；输出是有向图的 PageRank 向量 $\\boldsymbol{R}$。\",\n    \"问题3\": \"PageRank 的迭代算法中的迭代步骤是怎样的？\",\n    \"回答3\": \"PageRank 的迭代算法中的迭代步骤包括：(1) 令 $t=0$；(2) 计算 $\\boldsymbol{R}_{t+1}=d \\boldsymbol{M} \\boldsymbol{R}_{t}+\\frac{1-d}{n} \\boldsymbol{1}$；(3) 如果 $\\boldsymbol{R}_{t+1}$ 与 $\\boldsymbol{R}_{t}$ 充分接近，则令 $\\boldsymbol{R}=\\boldsymbol{R}_{t+1}$，停止迭代；(4) 否则，令 $t=t+1$，执行步骤 (2)。\",\n    \"问题4\": \"阻尼因子 $d$ 在 PageRank 中起到什么作用？\",\n    \"回答4\": \"阻尼因子 $d$ 在 PageRank 中起到平衡随机跳转和按转移矩阵进行传递的作用。它能够控制随机跳转的概率，使得在随机跳转和按转移矩阵传递之间取得平衡，从而更好地反映网页的重要性。\",\n    \"问题5\": \"PageRank 迭代算法中的转移矩阵 $\\boldsymbol{M}$ 是如何定义的？\",\n    \"回答5\": \"在 PageRank 迭代算法中，转移矩阵 $\\boldsymbol{M}$ 是由有向图的连接关系决定的。它表示了网页之间的链接关系和跳转概率，是根据网页之间的链接关系构建而成的概率转移矩阵。\",\n    \"问题6\": \"PageRank 迭代算法中如何确定迭代终止条件？\",\n    \"回答6\": \"在 PageRank 迭代算法中，确定迭代终止条件是通过比较当前迭代得到的 PageRank 向量 $\\boldsymbol{R}_{t+1}$ 与上一次迭代得到的 PageRank 向量 $\\boldsymbol{R}_{t}$ 是否充分接近来实现的。当两者充分接近时，即满足终止条件，停止迭代。\",\n    \"问题7\": \"如何利用给定图和转移矩阵计算 PageRank？\",\n    \"回答7\": \"利用给定图和转移矩阵计算 PageRank 需要按照 PageRank 的迭代公式进行计算。首先根据给定图构建转移矩阵 $\\boldsymbol{M}$，然后选择合适的初始向量 $\\boldsymbol{R}_{0}$ 和阻尼因子 $d$，通过多次迭代计算得到收敛的 PageRank 向量 $\\boldsymbol{R}$。\",\n    \"问题8\": \"PageRank 迭代算法中如何选择初始向量 $\\boldsymbol{R}_{0}$？\",\n    \"回答8\": \"在 PageRank 迭代算法中，初始向量 $\\boldsymbol{R}_{0}$ 的选择通常是均匀分布或者根据特定规则进行初始化。常见的做法是将初始向量设置为每个结点具有相同的初始权重值，以确保开始时每个结点具有相同的重要性。\",\n    \"问题9\": \"PageRank 迭代算法中如何选择阻尼因子 $d$ 的数值？\",\n    \"回答9\": \"在实际应用中，选择阻尼因子 $d$ 的数值通常是基于经验或者试验性地确定。一般来说，较常用的数值为 0.85 或 0.8。选择合适的阻尼因子数值可以平衡随机跳转和传递过程，在一定程度上影响 PageRank 结果。\",\n    \"问题10\": \"PageRank 迭代算法如何应用于实际情景中的网页排名？\",\n    \"回答10\": \"在实际情景中，可以利用 PageRank 迭代算法对网页进行排名。通过构建网页之间的链接关系和转移矩阵，并选择合适的初始向量和阻尼因子，进行多次迭代计算得到收敛的 PageRank 向量。最终根据得到的 PageRank 值对网页进行排序，以反映网页在网络中的重要性和影响力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710738375,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1494,
+            "prompt_tokens": 4288,
+            "total_tokens": 5782
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

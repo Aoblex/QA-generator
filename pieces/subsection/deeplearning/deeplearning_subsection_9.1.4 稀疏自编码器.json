@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "9.1.4 稀疏自编码器",
+        "content_length": 1704,
+        "content": "Title: 9.1.4 稀疏自编码器\nContent:\n自编码器除了可以学习低维编码之外, 也能够学习高维的稀疏编码. 假设中间隐藏层 $\\boldsymbol{z}$ 的维度 $M$ 大于输入样本 $\\boldsymbol{x}$ 的维度 $D$, 并让 $\\boldsymbol{z}$ 尽量稀疏, 这就是稀疏自编码器 (Sparse Auto-Encoder) . 和稀疏编码一样, 稀疏自编码器的优点是有很高的可解释性,并同时进行了隐式的特征选择.\n\n通过给自编码器中隐藏层单元 $\\boldsymbol{z}$ 加上稀疏性限制, 自编码器可以学习到数据中一些有用的结构. 给定 $N$ 个训练样本 $\\left\\{\\boldsymbol{x}^{(n)}\\right\\}_{n=1}^{N}$, 稀疏自编码器的目标函数为\n\n\n\\begin{equation*}\n\\left.\\mathcal{L}=\\sum_{n=1}^{N} \\| \\boldsymbol{x}^{(n)}-\\boldsymbol{x}^{(n)}\\right)\\left\\|^{2}+\\eta \\rho(\\boldsymbol{Z})+\\lambda\\right\\| \\boldsymbol{W} \\|^{2} \\tag{9.23}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n其中 $\\boldsymbol{Z}=\\left[\\boldsymbol{z}^{(1)}, \\cdots, \\boldsymbol{z}^{(N)}\\right]$ 表示所有训练样本的编码, $\\rho(\\boldsymbol{Z})$ 为稀疏性度量函数, $\\boldsymbol{W}$表示自编码器中的参数.\n\n稀疏性度量函数 $\\rho(\\boldsymbol{Z})$ 可以使用公式 (9.13) 公式(9.15) 中的稀疏性定义, 分别计算每个编码 $\\boldsymbol{z}^{(n)}$ 的稀疏度, 再进行求和. 此外, $\\rho(\\boldsymbol{Z})$ 还可以定义为一组训练样本中每一个神经元激活的概率.\n\n给定 $N$ 个训练样本, 隐藏层第 $j$ 个神经元平均活性值为\n\n\n\\begin{equation*}\n\\hat{\\rho}_{j}=\\frac{1}{N} \\sum_{n=1}^{N} z_{j}^{(n)} \\tag{9.24}\n\\end{equation*}\n\n\n其中 $\\hat{\\rho}_{j}$ 可以近似地看作第 $j$ 个神经元激活的概率. 我们希望 $\\hat{\\rho}_{j}$ 接近于一个事先给定的值 $\\rho^{*}$, 比如 0.05 , 可以通过 $\\mathrm{KL}$ 距离来衡量 $\\hat{\\rho}_{j}$ 和 $\\rho^{*}$ 的差异, 即\n\n\n\\begin{equation*}\n\\mathrm{KL}\\left(\\rho^{*} \\| \\hat{\\rho}_{j}\\right)=\\rho^{*} \\log \\frac{\\rho^{*}}{\\hat{\\rho}_{j}}+\\left(1-\\rho^{*}\\right) \\log \\frac{1-\\rho^{*}}{1-\\hat{\\rho}_{j}} \\tag{9.25}\n\\end{equation*}\n\n\n如果 $\\hat{\\rho}_{j}=\\rho^{*}$, 则 $\\operatorname{KL}\\left(\\rho^{*} \\| \\hat{\\rho}_{j}\\right)=0$.\n\n稀疏性度量函数定义为\n\n\n\\begin{equation*}\n\\rho(\\boldsymbol{Z})=\\sum_{j=1}^{p} \\mathrm{KL}\\left(\\rho^{*} \\| \\hat{\\rho}_{j}\\right) \\tag{9.26}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-944g4WUsMOKF92IgLENhDNzuZYrjs",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"稀疏自编码器相比普通自编码器有什么特点？\",\n    \"回答1\": \"稀疏自编码器除了可以学习低维编码之外，还能够学习高维的稀疏编码。通过给中间隐藏层 $\\boldsymbol{z}$ 加上稀疏性限制，稀疏自编码器可以学习到数据中一些有用的结构。这使得稀疏自编码器具有更高的可解释性，并同时进行了隐式的特征选择。\",\n    \"问题2\": \"稀疏自编码器的目标函数是如何定义的？\",\n    \"回答2\": \"稀疏自编码器的目标函数为 $\\begin{equation*}\\begin{aligned} \\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}=\\text{L}= \\tag{9.23}\\right)\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right\\right$，其中 $\\boldsymbol{Z}$ 表示所有训练样本的编码，$\\rho(\\boldsymbol{Z})$ 为稀疏性度量函数，$\\boldsymbol{W}$表示自编码器中的参数。\",\n    \"问题3\": \"如何计算隐藏层第 $j$ 个神经元的平均活性值？\",\n    \"回答3\": \"隐藏层第 $j$ 个神经元的平均活性值 $\\begin{equation*}\\begin{aligned} \\text{}=\\frac{\\text{}=1}{N} \\text{}_{n=1}^{N} z_{j}^{(n)} \\tag{9.24}\\right)\\right)\\right)\\right)\\right)\\right)\\right)\\right)\\right)\\right)\\right)\\right)$。\",\n    \"问题4\": \"如何衡量隐藏层神经元激活的概率与预设值之间的差异？\",\n    \"回答4\": \"可以通过 $\\begin{equation*}\\begin{aligned} \\text{}\\text{}\\text{}\\text{}(\\rho^{*} \\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}\\text{}=0.05 , \\tag{9.25}\\right)\\right)\\right)\\right)\\right)\\right)$来衡量隐藏层神经元激活的概率与预设值之间的差异。\",\n    \"问题5\": \"稀疏性度量函数 $\\rho(\\boldsymbol{Z})$ 的定义是什么？\",\n    \"回答5\": \"稀疏性度量函数定义为 $\\begin{equation*}\\begin{aligned} \\rho(\\boldsymbol{Z})=\\text{}\\text{}_{j=1}^{p} \\text{}(\\rho^{*} \\text{}\\text{}_{j}) \\tag{9.26}\\right)\\right)\\right)$，其中 $\\rho^{*}$ 是预设的激活概率值。\",\n    \"问题6\": \"稀疏自编码器和稀疏编码有何相似之处？\",\n    \"回答6\": \"稀疏自编码器和稀疏编码都具有高度的可解释性，并且能够进行隐式的特征选择。它们都通过引入稀疏性限制来学习数据中的有用结构，从而提高模型的表达能力和泛化能力。\",\n    \"问题7\": \"稀疏自编码器如何利用稀疏性限制来学习数据中的有用结构？\",\n    \"回答7\": \"通过给自编码器中隐藏层单元 $\\boldsymbol{z}$ 加上稀疏性限制，自编码器可以学习到数据中一些有用的结构。这种限制使得隐藏层神经元的平均活性值接近于预设的激活概率值，从而实现对数据中有用结构的学习。\",\n    \"问题8\": \"为什么稀疏自编码器具有更高的可解释性？\",\n    \"回答8\": \"稀疏自编码器具有更高的可解释性是因为它通过引入稀疏性限制来学习数据中一些有用的结构。这使得模型学到的特征更加清晰和可解释，有助于理解数据中的规律和特征。\",\n    \"问题9\": \"稀疏自编码器如何进行隐式的特征选择？\",\n    \"回答9\": \"通过给隐藏层加上稀疏性限制，稀疏自编码器可以使得部分神经元的平均活性值接近于预设值，从而实现了对输入特征的隐式选择。这意味着只有部分神经元对输入数据进行编码，从而实现了隐式的特征选择。\",\n    \"问题10\": \"在稀疏自编码器中，如何衡量隐藏层神经元激活概率与预设值之间的差异？\",\n    \"回答10\": \"在稀疏自编码器中，可以通过计算 $\\begin{equation*}\\begin{aligned} \\rho(\\boldsymbol{Z})=\\text{}\\text{}_{j=1}^{p} \\text{}(\\rho^{*} \\text{}\\text{}_{j}) \\tag{9.26}\\right)\\right)\\right)$ 来衡量隐藏层神经元激活概率与预设值之间的差异。这使得模型能够更好地学习到数据中有用的结构，并进行隐式的特征选择。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710758320,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1568,
+            "prompt_tokens": 3575,
+            "total_tokens": 5143
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "5.3.1 卷积神经网络的反向传播算法",
+        "content_length": 2567,
+        "content": "Title: 5.3.1 卷积神经网络的反向传播算法\nContent:\n卷积层和汇聚层中误差项的计算有所不同,因此我们分别计算其误差项.\n\n汇聚层 当第 $l+1$ 层为汇聚层时, 因为汇聚层是下采样操作, $l+1$ 层的每个神经元的误差项 $\\delta$ 对应于第 $l$ 层的相应特征映射的一个区域. $l$ 层的第 $p$ 个特征映射中的每个神经元都有一条边和 $l+1$ 层的第 $p$ 个特征映射中的一个神经元相连. 根 \\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n据链式法则, 第 $l$ 层的一个特征映射的误差项 $\\delta^{(l, p)}$, 只需要将 $l+1$ 层对应特征映射的误差项 $\\delta^{(l+1, p)}$ 进行上采样操作 (和第 $l$ 层的大小一样), 再和 $l$ 层特征映射的激活值偏导数逐元素相乘, 就得到了 $\\delta^{(l, p)}$.\n\n第 $l$ 层的第 $p$ 个特征映射的误差项 $\\delta(l, p)$ 的具体推导过程如下:\n\n\n\\begin{align*}\n\\delta^{(l, p)} & \\triangleq \\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{Z}^{(l, p)}}  \\tag{5.32}\\\\\n& =\\frac{\\partial \\boldsymbol{X}^{(l, p)}}{\\partial \\boldsymbol{Z}^{(l, p)}} \\frac{\\partial \\boldsymbol{Z}^{(l+1, p)}}{\\partial \\boldsymbol{X}^{(l, p)}} \\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{Z}^{(l+1, p)}}  \\tag{5.33}\\\\\n& =f_{l}^{\\prime}\\left(\\boldsymbol{Z}^{(l, p)}\\right) \\odot \\mathrm{up}\\left(\\delta^{(l+1, p)}\\right), \\tag{5.34}\n\\end{align*}\n\n\n其中 $f_{l}^{\\prime}(\\cdot)$ 为第 $l$ 层使用的激活函数导数, up 为上采样函数 ( up sampling), 与汇聚层中使用的下采样操作刚好相反. 如果下采样是最大汇聚, 误差项 $\\delta^{(l+1, p)}$ 中每个值会直接传递到前一层对应区域中的最大值所对应的神经元, 该区域中其他神经元的误差项都设为 0 . 如果下采样是平均汇聚, 误差项 $\\delta^{(l+1, p)}$ 中每个值会被平均分配到前一层对应区域中的所有神经元上.\n\n卷积层 当 $l+1$ 层为卷积层时, 假设特征映射净输入 $z^{(l+1)} \\in \\mathbb{R}^{M^{\\prime} \\times N^{\\prime} \\times P}$, 其中第 $p(1 \\leq p \\leq P)$ 个特征映射净输入\n\n\n\\begin{equation*}\n\\boldsymbol{Z}^{(l+1, p)}=\\sum_{d=1}^{D} \\boldsymbol{W}^{(l+1, p, d)} \\otimes \\boldsymbol{X}^{(l, d)}+b^{(l+1, p)} \\tag{5.35}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{W}^{(l+1, p, d)}$ 和 $b^{(l+1, p)}$ 为第 $l+1$ 层的卷积核以及偏置. 第 $l+1$ 层中共有 $P \\times D$个卷积核和 $P$ 个偏置.\n\n第 $l$ 层的第 $d$ 个特征映射的误差项 $\\delta(l, d)$ 的具体推导过程如下:\n\n\n\\begin{align*}\n\\delta^{(l, d)} & \\triangleq \\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{Z}^{(l, d)}}  \\tag{5.36}\\\\\n& =\\frac{\\partial \\boldsymbol{X}^{(l, d)}}{\\partial \\boldsymbol{Z}^{(l, d)}} \\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{X}^{(l, d)}}  \\tag{5.37}\\\\\n& =f_{l}^{\\prime}\\left(\\boldsymbol{Z}^{(l, d)}\\right) \\odot \\sum_{P=1}^{P}\\left(\\operatorname{rot} 180\\left(\\boldsymbol{W}^{(l+1, p, d)}\\right) \\tilde{\\otimes} \\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{Z}^{(l+1, p)}}\\right)  \\tag{5.38}\\\\\n& =f_{l}^{\\prime}\\left(\\boldsymbol{Z}^{(l, d)}\\right) \\odot \\sum_{P=1}^{P}\\left(\\operatorname{rot} 180\\left(\\boldsymbol{W}^{(l+1, p, d)}\\right) \\tilde{\\otimes} \\delta^{(l+1, p)}\\right), \\tag{5.39}\n\\end{align*}\n\n\n根据公式(5.21)\n\n其中 $\\tilde{\\otimes}$ 为宽卷积.\n\n\\section*{5.4 几种典型的卷积神经网络}\n本节介绍几种广泛使用的典型深层卷积神经网络.\n\\footnotetext{\\href{https://nndl.github.io/}{https://nndl.github.io/}\n}"
+    },
+    {
+        "id": "chatcmpl-941qcwmVxje48V5nhsVQQ1bZEhZpi",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"卷积层和汇聚层中误差项的计算有何不同？\",\n    \"回答1\": \"在汇聚层中，误差项 $\\boldsymbol{\\text{delta}}^{(l, p)}$ 对应于第 $l$ 层的相应特征映射的一个区域，并且需要进行上采样操作。而在卷积层中，误差项 $\\boldsymbol{\\text{delta}}^{(l, d)}$ 需要进行宽卷积操作，并且涉及卷积核的旋转和与下一层误差项的卷积运算。\",\n    \"问题2\": \"汇聚层中的误差项 $\\boldsymbol{\\text{delta}}^{(l, p)}$ 是如何计算得到的？\",\n    \"回答2\": \"汇聚层中的误差项 $\\boldsymbol{\\text{delta}}^{(l, p)}$ 的计算涉及使用链式法则，需要将 $l+1$ 层对应特征映射的误差项 $\\boldsymbol{\\text{delta}}^{(l+1, p)}$ 进行上采样操作（和第 $l$ 层的大小一样），再和 $l$ 层特征映射的激活函数导数逐元素相乘。\",\n    \"问题3\": \"卷积层中的误差项 $\\boldsymbol{\\text{delta}}^{(l, d)}$ 是如何计算得到的？\",\n    \"回答3\": \"卷积层中的误差项 $\\boldsymbol{\\text{delta}}^{(l, d)}$ 的计算涉及使用卷积核的旋转、宽卷积操作以及与下一层误差项的卷积运算。具体推导过程包括对第 $l$ 层特征映射净输入的激活函数导数和卷积核与下一层误差项的卷积运算。\",\n    \"问题4\": \"汇聚层中的上采样函数和下采样操作有何区别？\",\n    \"回答4\": \"汇聚层中的上采样函数（up sampling）与下采样操作相反。如果下采样是最大汇聚，误差项 $\\boldsymbol{\\text{delta}}^{(l+1, p)}$ 中每个值会直接传递到前一层对应区域中的最大值所对应的神经元，而其他神经元的误差项设为 0。如果下采样是平均汇聚，误差项 $\\boldsymbol{\\text{delta}}^{(l+1, p)}$ 中每个值会被平均分配到前一层对应区域中的所有神经元上。\",\n    \"问题5\": \"卷积层中的宽卷积（wide convolution）是指什么？\",\n    \"回答5\": \"宽卷积（wide convolution）是指在卷积神经网络中，对于特征映射净输入的误差项 $\\boldsymbol{\\text{delta}}^{(l, d)}$ 进行卷积核旋转和与下一层误差项的卷积运算。它是卷积层中误差项计算过程中重要的一步，用于有效地传播误差并更新网络参数。\",\n    \"问题6\": \"为什么需要介绍几种典型的深层卷积神经网络？\",\n    \"回答6\": \"介绍几种典型的深层卷积神经网络有助于了解不同结构和设计思路对于图像识别和其他任务的影响。这些典型网络模型通常具有良好的性能和广泛的应用，可以作为实践中参考和借鉴，同时也有助于推动深度学习领域的发展。\",\n    \"问题7\": \"深层卷积神经网络在图像识别领域有何优势？\",\n    \"回答7\": \"深层卷积神经网络在图像识别领域具有优势，因为它们能够通过多层次、逐级抽象地提取图像特征，并且具备较强的非线性建模能力。这使得深度卷积神经网络能够更好地捕捉图像中复杂的结构和语义信息，从而提高图像识别任务的准确性和鲁棒性。\",\n    \"问题8\": \"深层卷积神经网络在其他领域是否也具有广泛应用？\",\n    \"回答8\": \"是的，深层卷积神经网络不仅在图像识别领域广泛应用，在语音识别、自然语言处理、医学影像分析等领域也取得了显著成就。其强大的特征提取能力和非线性建模能力使得深度卷积神经网络成为许多复杂任务中的首选模型。\",\n    \"问题9\": \"深度学习领域还有哪些重要研究方向？\",\n    \"回答9\": \"除了深度卷积神经网络，深度学习领域还包括循环神经网络、生成对抗网络、强化学习等研究方向。这些方向涵盖了从序列数据处理到无监督学习再到决策优化等多个领域，是深度学习领域未来发展的重要方向。\",\n    \"问题10\": \"如何获取更多关于深度学习领域研究成果和进展的信息？\",\n    \"回答10\": \"获取更多关于深度学习领域研究成果和进展可以通过阅读学术期刊、会议论文以及相关领域专家撰写的书籍和技术报告。此外，还可以关注各类学术会议和研讨会，以及在线社区和平台上发布的最新研究成果和技术进展。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710747442,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1730,
+            "prompt_tokens": 4144,
+            "total_tokens": 5874
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

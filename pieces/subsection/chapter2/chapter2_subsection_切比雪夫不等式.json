@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter2",
+        "title": "切比雪夫不等式",
+        "content_length": 1831,
+        "content": "Title: 切比雪夫不等式\nContent:\n下面给出概率论中一个重要的基本不等式.\n\n\\begin{theorem}{}{}\n\t(切比雪夫$ (1821--1894) $不等式)设随机变量$ X $的数学期望和方差都存在,则对任意常数$ e>0 $,有\n\t\n\t\\begin{equation}\n\tP(|X-E X| \\geqslant \\epsilon) \\leqslant \\frac{\\Var (X)}{\\varepsilon^{2}} \\label{eq:2.3.2}\n\t\\end{equation}\n\t或\n\t\\begin{equation}\n\tP(|X-E X|<\\varepsilon) \\geqslant 1-\\frac{\\Var (X)}{\\varepsilon^{2}} \\label{eq:2.3.3}\n\t\\end{equation}\n\\end{theorem}\n\n\\begin{proof}\n\t没$ X $是一个连续随机变量,其密度函数为$ p(x) $.记$ E(X)=a $,我们有\n\t\n\t\\begin{align*}\n\t{P(|X-a| \\geqslant \\varepsilon)} & {=\\int_{\\{x | x-a \\geq \\epsilon\\}} p(x) \\dd  x \\leq \\int_{\\{x | x-a>c\\}} \\frac{(x-a)^{2}}{\\varepsilon^{2}} p(x) \\dd  x} \\\\\n\t{} & {\\leqslant \\frac{1}{\\varepsilon^{2}} \\int_{-\\infty}^{+\\infty}(x-a)^{2} p(x) \\dd  x=\\frac{\\Var (X)}{\\varepsilon^{2}}}\n\t\\end{align*}\n\\end{proof}\n\n由此知~\\ref{eq:2.3.2} 式对连续随机变量成立,对于离散随机变量亦可类似进行证明.\n\n在概率论中,事件“ $|X-E(X)| \\geqslant \\varepsilon$ ”称为大偏差,其概率 $ P(1X-E(X)1 \\geqslant e) $ 称为大偏差发生概率.切比雪夫不等式给出大偏差发生概率的上界,这个上界与方差成正比,方差愈大上界也愈大.\n以下定理进一步说明了方差为0就意味着随机变量的取值集中在一点上.\n\n\\begin{theorem}{}{}\n\t若随机变量 $X$ 的方差存在,则 $\\Var (X)=0$ 的充要条件是$ X $几乎处处为某个常数$ a $,即$ P(X=a)=1 $.\n\\end{theorem}\n\n\\begin{proof}\n\t充分性是显然的,下面证必要性.设 $\\Var (X)=0$ ,这时$ E(X) $存在.因为\n\t\n\t\\[\n\t| | X-E(X)|>0|=\\bigcup_{n=1}^{+\\infty}\\left\\{|X-E(X)| \\geqslant \\frac{1}{n}\\right\\}\n\t\\]\n\t\n\t所以有\n\t\n\t\\[\n\t\\begin{aligned} P(|X-E(X)|>0) &=P\\left(\\bigcup_{n=1}^{n}\\left\\{|x-E(X)| \\geqslant \\frac{1}{n}\\right\\}\\right) \\\\ & \\leqslant \\sum_{n=1}^{+\\infty} P\\left(|X-E(X)| \\geqslant \\frac{1}{n}\\right) \\leqslant \\sum_{n=1}^{+\\infty} \\frac{\\Var (X)}{(1 / n)^{2}}=0 \\end{aligned}\n\t\\]\n\t\n\t其中最后一个不等式用到了切比雪夫不等式.由此可知\n\t\n\t\\[\n\tP(|X-E(X)|>0)=0\n\t\\]\n\t\n\t因而有\n\t\n\t\\[\n\tP(|X-E(X)|=0)=1\n\t\\]\n\t\n\t即\n\t\n\t\\[\n\tP(X=E(X))=1\n\t\\]\n\t\n\t这就证明了结论,且其中的常数$ a $就是$ E(X) $.\n\\end{proof}\n\n\n\n\\section{常用离散分布}\n每个随机变量都有一个分布，不同的随机变量可以有不同的分布，也可以有相同的分布，随机变量有千千万万个，但常用分布并不多.常用分布亦分为两类：离散分布和连续分布，本节讲常用离散分布，下节讲常用连续分布."
+    },
+    {
+        "id": "chatcmpl-940O6SirbQjsmcS35vzsBk4na39u9",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"切比雪夫不等式对随机变量的哪些性质进行了限制？\",\n    \"回答1\": \"切比雪夫不等式对随机变量的数学期望和方差进行了限制，要求随机变量$ X $的数学期望和方差都存在。\",\n    \"问题2\": \"切比雪夫不等式如何描述大偏差发生概率的上界？\",\n    \"回答2\": \"切比雪夫不等式给出了事件“ $|X-E(X)| \\text{ 大于等于 } \\text{ε} $ ”的概率上界，即 $ P(|X-E(X)| \\text{ 大于等于 } \\text{ε}) \\text{ 小于等于 } \\frac{\\text{Var}(X)}{\\text{ε}^2} $。\",\n    \"问题3\": \"切比雪夫不等式如何描述大偏差发生概率的下界？\",\n    \"回答3\": \"切比雪夫不等式也给出了事件“ $|X-E(X)| \\text{ 小于 } \\text{ε} $ ”的概率下界，即 $ P(|X-E(X)|<\\text{ε}) \\text{ 大于等于 } 1-\\frac{\\text{Var}(X)}{\\text{ε}^2} $。\",\n    \"问题4\": \"切比雪夫不等式的适用范围是什么？\",\n    \"回答4\": \"切比雪夫不等式对连续随机变量和离散随机变量均成立，因此在概率论中具有广泛的适用范围。\",\n    \"问题5\": \"方差为0意味着随机变量的什么特性？\",\n    \"回答5\": \"方差为0意味着随机变量几乎处处为某个常数$ a $，即 $ P(X=a)=1 $。这表示随机变量的取值集中在一个常数上。\",\n    \"问题6\": \"方差为0时，随机变量的数学期望有什么特殊性质？\",\n    \"回答6\": \"当方差为0时，随机变量的数学期望存在且与常数$ a $相等，即 $ E(X)=a $。这表明随机变量的期望值在这种情况下具有特殊的确定性特质。\",\n    \"问题7\": \"常用离散分布和常用连续分布分别属于哪两类分布？\",\n    \"回答7\": \"常用分布分为离散分布和连续分布两类。本节讲述了常用离散分布，而下节将讲述常用连续分布。\",\n    \"问题8\": \"每个随机变量都有什么特征？\",\n    \"回答8\": \"每个随机变量都有一个分布。不同的随机变量可以有不同的分布，也可以有相同的分布。虽然随机变量种类繁多，但常用分布并不多。\",\n    \"问题9\": \"切比雪夫不等式与方差的关系是什么？\",\n    \"回答9\": \"切比雪夫不等式给出了大偏差发生概率的上界，这个上界与方差成正比。换句话说，方差愈大，大偏差发生概率的上界也愈大。\",\n    \"问题10\": \"切比雪夫不等式对连续随机变量和离散随机变量都成立吗？\",\n    \"回答10\": \"是的，切比雪夫不等式对连续随机变量和离散随机变量均成立。因此，在概率论中具有广泛的适用范围。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710741830,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1072,
+            "prompt_tokens": 3735,
+            "total_tokens": 4807
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

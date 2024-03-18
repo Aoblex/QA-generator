@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter8",
+        "title": "问题的提出",
+        "content_length": 4210,
+        "content": "Title: 问题的提出\nContent:\n前面几章我们讨论的都是一个总体或者两个总体的统计分析问题, 在实际工作中我们还会经常碰到多个总体均值的比较问题, 处理这类问题通常采用所谓的方差分析方法. 本节将叙述这个方法, 先看一个例子.\n\n\\begin{example}\\label{exam:8.1.1}\n在饲料养鸡增肥的研究中, 某研究所提出三种饲料配方：$A_1$ 是以鱼粉为主的饲料, $A_2$ 是以槐树粉为主的饲料, $A_3$ 是以苜蓿粉为主的饲料. 为比较三种饲料的效果, 特选 24 只相似的雏鸡随机均分为三组, 每组各喂一种饲料, 60 天后观察它们的重量. 试验结果如下表所示：\n\n\\begin{table}[htbp]\n  \\centering\n  \\caption{鸡饲料试验数据}\n    \\begin{tabular}{c|rrrrrrrr}\n    \\toprule\n    饲料 $A$   & \\multicolumn{7}{c}{鸡重/\\si{\\gram}                     } &      \\\\\n    \\midrule\n    $A_1$  & 1073  & 1009  & 1060  & 1001  & 1002  & 1012  & 1009  & 1028 \\\\\n    $A_2$  & 1107  & 1092  & 990   & 1109  & 1090  & 1074  & 1122  & 1001 \\\\\n    $A_3$  & 1093  & 1029  & 1080  & 1021  & 1022  & 1032  & 1029  & 1048 \\\\\n    \\bottomrule\n    \\end{tabular}%\n  \\label{tab:8.1.1}%\n\\end{table}%\n\\end{example}\n\n本例~\\ref{exam:8.1.1} 中, 我们要比较的是三种饲料对鸡的增肥作用是否相同. 为此, 把饲料称为\\textbf{因子}\\index{Y!因子}, 记为 $A$, 三种不同的配方称为因子 $A$ 的三个水平, 记为 $A_1$, $A_2$, $A_3$, 使用配方 $A_i$ 下第 $j$ 只鸡 60 天后的重量用 $y_{ij}$ 表示, $i = 1,2,3$, $j =1,2,3,\\ldots,10$. 我们的目的是比较三种不同饲料配方下鸡的平均重量是否相等, 为此, 需要做一些基本假定, 把所研究的问题归结为一个统计问题, 然后用方差分析的方法进行解决.\n\n在例~\\ref{exam:8.1.1} 中, 我们只考察了一个因子, 称其为单因子试验. 通常, 在单因子试验中, 记因子为 $A$, 设其有 $r$ 个水平, 记为 $A_1,A_2,\\ldots,A_r$, 在每一水平下考察的指标可以看成一个总体, 现有 $r$ 个水平, 故有 $r$ 个总体, 假定：\n\n\\begin{enumerate}\n  \\item 每一总体均为正态分布, 记为 $N(\\mu_i, \\sigma_i^2)$, $i=1,\\cdots,r$；\\label{enu:8.1.2.1}\n  \\item 各总体的方差相同, 记为 $\\sigma_1^2 = \\sigma_2^2=\\cdots=\\sigma_r^2=\\sigma^2$；\\label{enu:8.1.2.2}\n  \\item 从每一总体中抽取的样本是相互独立的, 即所有的试验结果 $y_{ij}$ 都相互独立.\n\\end{enumerate}\n\n这三个假定都可以用统计方法进行验证. 譬如, 利用正态性检验（\\ref{ssec:7.4.3} 节）验证~\\ref{enu:8.1.2.1} 成立；利用后面~\\S\\ref{sec:8.3} 的方差齐次性检验验证~\\ref{enu:8.1.2.2} 成立；而试验结果 $y_{ij}$ 的独立性可由随机化实现, 这里的随机化是指所有试验按随机次序进行.\n\n我们要做的工作是比较各水平下的均值是否相同, 即要对如下的一个假设进行检验,\n\\begin{equation}\n  H_0 \\text{：} \\mu_1 = \\mu_2 = \\cdots = \\mu_r,\\label{eq:8.1.1}\n\\end{equation}\n其备择假设为\n\\begin{equation*}\n  H_1 \\text{ : } \\mu_1,\\mu_2,\\cdots,\\mu_r \\text{ 不全相等, }\n\\end{equation*}\n在不会引起误解的情况下, $H_1$ 通常可省略不写.\n\n如果 $H_0$ 成立, 因子 $A$ 的 $r$ 个水平均值相同, 称因子 $A$ 的 $r$ 个水平间没有显著差异, 简称因子 $A$ \\textbf{不显著}\\index{B!不显著}；反之, 当 $H_0$ 不成立时, 因子 $A$ 的 $r$ 个水平均值不全相同, 这时称因子 $A$ 的不同水平间有显著差异, 简称因子 $A$ \\textbf{显著}\\index{X!显著}.\n\n为对假设~(\\ref{eq:8.1.1}) 进行检验, 需要从每一水平下的总体抽取样本, 设从第 $i$ 个水平下的总体获得 $m$ 个试验结果(简单起见, 这里先假设个水平下试验的重复数相同, 后面会看到, 重复数不同时的处理方式与此基本一致, 略有差异),记 $y_{ij}$ 表示第 $i$ 个总体的第 $j$ 次重复试验结果. 共得到如下 $r \\times m$ 个试验结果:\n\\begin{equation*}\n  y_{ij}, \\; i=1,2,\\cdots,r, \\; j = 1,2,\\cdots,m,\n\\end{equation*}\n其中 $r$ 为水平数, $m$ 为重复数, $i$ 为水平编号, $j$ 为重复编号.\n\n在水平 $A_i$ 下的试验结果 $y_{ij}$ 与该水平下的指标均值 $\\mu_i$ 一般总是有差距的, 记 $\\varepsilon_{ij} = y_{ij} - \\mu_i$, $\\varepsilon_{ij}$ 称为随机误差. 于是有\n\\begin{equation}\n  \\label{eq:8.1.2}\n  y_{ij} = \\mu_i + \\varepsilon_{ij}\n\\end{equation}\n\n~(\\ref{eq:8.1.2}) 式称为试验结果 $y_{ij}$ 的\\textbf{数据结构式}\\index{S!数据结构式}. 把三个假定用子数据结构式就可以写出单因子方差分析的统计模型：\n\\begin{equation}\n  \\label{eq:8.1.3}\n  \\begin{cases}\n    y_{ij}  = \\mu_i + \\varepsilon_{ij}, \\; i = 1,2,\\cdots,r,\\; j = 1,2,\\cdots,m; \\\\\n    \\text{诸 $\\varepsilon_{ij}$ 相互独立, 且都服从 $N(0,\\sigma^2)$ }.\n  \\end{cases}\n\\end{equation}\n\n为了能更好地描述数据, 常在方差分析中引入总均值与效应的概念. 称诸 $\\mu_i$ 的平均(所有试验结果的均值的平均)\n\\begin{equation}\n  \\label{eq.8.1.4}\n  \\mu = \\frac{1}{r} (\\mu_1 + \\cdots + \\mu_r) = \\frac{1}{r} \\sum_{i=1}^{r} \\mu_i\n\\end{equation}\n为总均值. 称第 $i$ 水平下的均值 $\\mu_i$ 与总均值 $\\mu$ 的差\n\\begin{equation}\n  \\label{eq:8.1.5}\n  a_i = \\mu_i - \\mu, \\quad i = 1,2,\\cdots,r\n\\end{equation}\n为因子 $A$ 的第 $i$ 水平的\\textbf{主效应}\\index{Z!主效应}, 简称为 $A_i$ 的效应.\n\n容易看出\n% \\begin{align}\n%   \\sum_{i=1}^{r} a_i = 0, \\label{eq:8.1.6}\\\\\n%   \\mu_i = \\mu + a_i, \\label{eq:8.1.7}\n% \\end{align}\n\\begin{equation}\n  \\label{eq:8.1.6}\n  \\sum_{i=1}^{r} a_i = 0,\n\\end{equation}\n\\begin{equation}\n  \\label{eq:8.1.7}\n  \\mu_i = \\mu + a_i,\n\\end{equation}\n这表明第 $i$ 个总体均值是由总均值与该水平的效应叠加而成的, 从而模型~(\\ref{eq:8.1.3}) 可以改写为\n\\begin{equation}\n  \\label{eq:8.1.8}\n  \\begin{cases}\n    y_{ij}  = \\mu + a_i + \\varepsilon_{ij}, \\quad i = 1,2,\\cdots,r,\\; j = 1,2,\\cdots,m; \\\\\n    \\sum_{i=1}^{r} a_i = 0; \\\\\n    \\text{$\\varepsilon_{ij}$ 相互独立, 且都服从 $N(0,\\sigma^2)$ }.\n  \\end{cases}\n\\end{equation}\n假设~(\\ref{eq:8.1.1}) 可改写为\n\\begin{equation}\n  H_0 \\textrm{ : } a_1 = a_2 = \\cdots = a_r,\\label{eq:8.1.9}\n\\end{equation}\n其备择假设为\n\\begin{equation*}\n  H_1 \\text{ : } a_1,a_2,\\cdots,a_r \\text{ 不全为 0.}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-9491nNSP5RW5dv1zYwl4yA8SqLDYo",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"方差分析方法通常用于处理什么类型的统计分析问题？\",\n    \"回答1\": \"方差分析方法通常用于处理多个总体均值的比较问题，即比较多个总体之间的平均值是否存在显著差异。\",\n    \"问题2\": \"在例子中，为什么要进行饲料养鸡增肥的研究？\",\n    \"回答2\": \"在例子中，进行饲料养鸡增肥的研究是为了比较三种饲料对鸡的增肥作用是否相同，从而评估不同饲料配方的效果。\",\n    \"问题3\": \"在单因子试验中，假定了哪些条件？\",\n    \"回答3\": \"在单因子试验中，假定了每一总体均为正态分布，各总体的方差相同，并且从每一总体中抽取的样本是相互独立的。\",\n    \"问题4\": \"在单因子试验中，对假设进行检验的目的是什么？\",\n    \"回答4\": \"在单因子试验中，对假设进行检验的目的是比较各水平下的均值是否相同，即检验因子 $A$ 的 $r$ 个水平间是否存在显著差异。\",\n    \"问题5\": \"试验结果 $y_{ij}$ 的数据结构式是什么？\",\n    \"回答5\": \"试验结果 $y_{ij}$ 的数据结构式为 $y_{ij} = \\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\\text{。}\",\n    \"问题6\": \"什么是因子 $A$ 的主效应？\",\n    \"回答6\": \"因子 $A$ 的主效应指第 $i$ 水平下的均值 $\\boldsymbol{mu}_i$ 与总均值 $\\boldsymbol{mu}$ 的差，记为 $\\boldsymbol{a}_i = \\boldsymbol{mu}_i - \\boldsymbol{mu}$。它反映了不同水平下因子 $A$ 对试验结果的影响程度。\",\n    \"问题7\": \"方差分析模型中的总均值 $\\boldsymbol{mu}$ 是如何定义的？\",\n    \"回答7\": \"方差分析模型中的总均值 $\\boldsymbol{mu}$ 定义为所有试验结果的均值的平均，即 $\\frac{1}{r} (\\boldsymbol{mu}_1 + \\text{...} + \\boldsymbol{mu}_r) = \\frac{1}{r} \\text{∑}_{i=1}^{r} \\boldsymbol{mu}_i$。\",\n    \"问题8\": \"方差分析模型中的备择假设是什么？\",\n    \"回答8\": \"方差分析模型中的备择假设是 $\\text{H}_1 \\text{: } \\boldsymbol{a}_1,\\boldsymbol{a}_2,\\text{...},\\boldsymbol{a}_r \\text{ 不全为 0}$。这表示不同水平下因子 $A$ 的效应不全相等。\",\n    \"问题9\": \"方差分析模型中的数据结构式有什么作用？\",\n    \"回答9\": \"方差分析模型中的数据结构式用于描述试验结果与总均值、水平效应和随机误差之间的关系。它是建立方差分析统计模型的基础。\",\n    \"问题10\": \"在单因子试验中，假设~(\\ref{eq:8.1.1}) 成立意味着什么？\",\n    \"回答10\": \"$\\text{H}_0$ 成立意味着因子 $A$ 的 $r$ 个水平均值相同，即因子 $A$ 的 $r$ 个水平间没有显著差异。而当 $\\text{H}_0$ 不成立时，因子 $A$ 的不同水平间存在显著差异。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710775043,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1191,
+            "prompt_tokens": 5490,
+            "total_tokens": 6681
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "13.2.3 生成网络",
+        "content_length": 1926,
+        "content": "Title: 13.2.3 生成网络\nContent:\n生成模型的联合分布 $p(\\boldsymbol{x}, \\boldsymbol{z} ; \\theta)$ 可以分解为两部分: 隐变量 $\\boldsymbol{z}$ 的先验分布 $p(\\boldsymbol{z} ; \\theta)$ 和条件概率分布 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$.\n\n先验分布 $p(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 为简单起见, 我们一般假设隐变量 $\\boldsymbol{z}$ 的先验分布为各向同性的标准高斯分布 $\\mathcal{N}(\\boldsymbol{z} \\mid \\mathbf{0}, \\boldsymbol{I})$. 隐变量 $\\boldsymbol{z}$ 的每一维之间都是独立的.\n\n条件概率分布 $p(x \\mid z ; \\theta)$ 条件概率分布 $p(x \\mid z ; \\theta)$ 可以通过生成网络来建模. 为简单起见, 我们同样用参数化的分布族来表示条件概率分布 $p(x \\mid z ; \\theta)$, 这些分布族的参数可以用生成网络计算得到.\n\n根据变量 $\\boldsymbol{x}$ 的类型不同, 可以假设 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$ 服从不同的分布族.\n\n(1) 如果 $\\boldsymbol{x} \\in\\{0,1\\}^{D}$ 是 $D$ 维的二值的向量, 可以假设 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$ 服从多变量的伯努利分布,即\n\n\n\\begin{align*}\np(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta) & =\\prod_{d=1}^{D} p\\left(x_{d} \\mid \\boldsymbol{z} ; \\theta\\right)  \\tag{13.16}\\\\\n& =\\prod_{d=1}^{D} \\gamma_{d}^{x_{d}}\\left(1-\\gamma_{d}\\right)^{\\left(1-x_{d}\\right)}, \\tag{13.17}\n\\end{align*}\n\n\n其中 $\\gamma_{d} \\triangleq p\\left(x_{d}=1 \\mid z ; \\theta\\right)$ 为第 $d$ 维分布的参数. 分布的参数 $\\gamma=\\left[\\gamma_{1}, \\cdots, \\gamma_{D}\\right]^{\\top}$ 可以通过生成网络来预测.\n\n(2) 如果 $\\boldsymbol{x} \\in \\mathbb{R}^{D}$ 是 $D$ 维的连续向量, 可以假设 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$ 服从对角化协方差的高斯分布, 即\n\n\n\\begin{equation*}\np(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)=\\mathcal{N}\\left(\\boldsymbol{x} ; \\mu_{G}, \\sigma_{G}^{2} \\boldsymbol{I}\\right) \\tag{13.18}\n\\end{equation*}\n\n\n其中 $\\mu_{G} \\in \\mathbb{R}^{D}$ 和 $\\sigma_{G} \\in \\mathbb{R}^{D}$ 同样可以用生成网络 $f_{G}(\\boldsymbol{z} ; \\theta)$ 来预测.\n\n生成网络的目标 生成网络 $f_{G}(\\boldsymbol{z} ; \\theta)$ 的目标是找到一组网络参数 $\\theta^{*}$ 来最大化证据下界 $\\operatorname{ELBO}(q, \\boldsymbol{x} ; \\boldsymbol{\\theta}, \\boldsymbol{\\phi})$, 即\n\n可以看作 EM 算法中的 M 步.\n\n\n\\begin{equation*}\n\\theta^{*}=\\underset{\\theta}{\\arg \\max } \\operatorname{ELBO}(q, x ; \\theta, \\phi) . \\tag{13.19}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-945Tn2szmEBXLG7KJ0SzIKvb8JDpo",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"生成模型的联合分布 $p(\\boldsymbol{x}, \\boldsymbol{z} ; \\theta)$ 可以如何分解？\",\n    \"回答1\": \"生成模型的联合分布 $p(\\boldsymbol{x}, \\boldsymbol{z} ; \\theta)$ 可以分解为两部分: 隐变量 $\\boldsymbol{z}$ 的先验分布 $p(\\boldsymbol{z} ; \\theta)$ 和条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$。\",\n    \"问题2\": \"隐变量 $\\boldsymbol{z}$ 的先验分布一般假设为什么分布？\",\n    \"回答2\": \"为简单起见，一般假设隐变量 $\\boldsymbol{z}$ 的先验分布为各向同性的标准高斯分布 $\\text{N}(\\boldsymbol{z} \\big| \\textbf{0}, \\boldsymbol{I})$，其中隐变量 $\\boldsymbol{z}$ 的每一维之间都是独立的。\",\n    \"问题3\": \"条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$ 可以通过什么来建模？\",\n    \"回答3\": \"条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$ 可以通过生成网络来建模。为简单起见，可以用参数化的分布族来表示条件概率分布，这些分布族的参数可以用生成网络计算得到。\",\n    \"问题4\": \"对于二值的向量 $\\boldsymbol{x} \\bigin\\big\\brace{0,1}^{D}$，其条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$ 服从什么分布？\",\n    \"回答4\": \"对于二值的向量 $\\boldsymbol{x} \\bigin\\big\\brace{0,1}^{D}$，可以假设其条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$ 服从多变量的伯努利分布。\",\n    \"问题5\": \"连续向量 $\\boldsymbol{x} \\bigin \\textbf{R}^{D}$ 的条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$ 服从什么分布？\",\n    \"回答5\": \"连续向量 $\\boldsymbol{x} \\bigin \\textbf{R}^{D}$ 的条件概率分布 $p(\\boldsymbol{x} \\big| \\boldsymbol{z} ; \\theta)$ 可以假设服从对角化协方差的高斯分布。\",\n    \"问题6\": \"生成网络的目标是什么？\",\n    \"回答6\": \"生成网络的目标是找到一组网络参数 $\\theta^{*}$ 来最大化证据下界 $\\text{ELBO}(q, \\boldsymbol{x} ; \\theta, \\boldsymbol{\\textbf{\\textphi}})$。\",\n    \"问题7\": \"生成网络的目标函数可以看作是什么算法中的 M 步？\",\n    \"回答7\": \"生成网络的目标函数可以看作 EM 算法中的 M 步。\",\n    \"问题8\": \"生成网络如何预测条件概率分布的参数？\",\n    \"回答8\": \"生成网络可以通过计算得到参数化的分布族来预测条件概率分布的参数，例如对于二值向量，可以用生成网络来预测伯努利分布的参数；对于连续向量，可以用生成网络来预测高斯分布的均值和方差。\",\n    \"问题9\": \"生成网络在最大化证据下界时起到了什么作用？\",\n    \"回答9\": \"生成网络在最大化证据下界时起到了 EM 算法中的 M 步作用，通过调整网络参数来最大化证据下界，从而提高生成模型对数据的拟合能力。\",\n    \"问题10\": \"为什么要假设隐变量 $\\boldsymbol{z}$ 的先验分布为各向同性的标准高斯分布？\",\n    \"回答10\": \"假设隐变量 $\\boldsymbol{z}$ 的先验分布为各向同性的标准高斯分布是为了简化模型，并且使得生成网络更容易学习和推断出合理的后验分布。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710761403,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1167,
+            "prompt_tokens": 3561,
+            "total_tokens": 4728
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

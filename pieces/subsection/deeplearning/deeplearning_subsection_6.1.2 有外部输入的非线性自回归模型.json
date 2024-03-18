@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "6.1.2 有外部输入的非线性自回归模型",
+        "content_length": 1022,
+        "content": "Title: 6.1.2 有外部输入的非线性自回归模型\nContent:\n自回归模型 (AutoRegressive Model, AR) 是统计学上常用的一类时间序列模型,用一个变量 $\\boldsymbol{y}_{t}$ 的历史信息来预测自己.\n\n\n\\begin{equation*}\n\\boldsymbol{y}_{t}=w_{0}+\\sum_{k=1}^{K} w_{k} \\boldsymbol{y}_{t-k}+\\epsilon_{t} \\tag{6.2}\n\\end{equation*}\n\n\n其中 $K$ 为超参数, $w_{0}, \\cdots, w_{K}$ 为可学习参数, $\\epsilon_{t} \\sim \\mathcal{N}\\left(0, \\sigma^{2}\\right)$ 为第 $t$ 个时刻的噪声,方差 $\\sigma^{2}$ 和时间无关.\n\n有外部输入的非线性自回归模型 ( Nonlinear AutoRegressive with Exogenous Inputs Model, NARX ) [Leontaritis et al., 1985] 是自回归模型的扩展, 在每个时刻 $t$ 都有一个外部输入 $\\boldsymbol{x}_{t}$, 产生一个输出 $\\boldsymbol{y}_{t}$. NARX通过一个延时器记录最近 $K_{x}$ 次的外部输入和最近 $K_{y}$ 次的输出, 第 $\\mathrm{t}$ 个时刻的输出 $\\boldsymbol{y}_{t}$ 为\n\n\n\\begin{equation*}\n\\boldsymbol{y}_{t}=f\\left(\\boldsymbol{x}_{t}, \\boldsymbol{x}_{t-1}, \\cdots, \\boldsymbol{x}_{t-K_{x}}, \\boldsymbol{y}_{t-1}, \\boldsymbol{y}_{t-2}, \\cdots, \\boldsymbol{y}_{t-K_{y}}\\right), \\tag{6.3}\n\\end{equation*}\n\n\n其中 $f(\\cdot)$ 表示非线性函数, 可以是一个前馈网络, $K_{x}$ 和 $K_{y}$ 为超参数.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}"
+    },
+    {
+        "id": "chatcmpl-941yilHSI2YvyDymsTjLy1Ad5Mb72",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"自回归模型 (AR) 与非线性自回归模型 (NARX) 有何区别？\",\n    \"回答1\": \"自回归模型 (AR) 通过历史信息来预测自身，而非线性自回归模型 (NARX) 是自回归模型的扩展，引入了外部输入 $\\boldsymbol{x}_{t}$ 来产生输出 $\\boldsymbol{y}_{t}$。NARX 模型通过记录最近 $K_{x}$ 次的外部输入和最近 $K_{y}$ 次的输出来预测当前时刻的输出。\",\n    \"问题2\": \"自回归模型中的超参数 $K$ 代表什么意义？\",\n    \"回答2\": \"在自回归模型中，超参数 $K$ 表示使用历史信息的时间跨度，即通过前 $K$ 个时刻的 $\\boldsymbol{y}$ 来预测当前时刻的 $\\boldsymbol{y}_{t}$。这决定了模型对历史信息的依赖程度。\",\n    \"问题3\": \"非线性自回归模型中的外部输入 $\\boldsymbol{x}_{t}$ 如何影响输出 $\\boldsymbol{y}_{t}$？\",\n    \"回答3\": \"在非线性自回归模型中，外部输入 $\\boldsymbol{x}_{t}$ 通过一个非线性函数 $f(\\boldsymbol{x}_{t}, \\boldsymbol{x}_{t-1}, \\text{...}, \\boldsymbol{y}_{t-K_{y}})$ 影响输出 $\\boldsymbol{y}_{t}$。这意味着外部输入会影响当前时刻的输出，同时还考虑了最近 $K_{x}$ 次的外部输入和最近 $K_{y}$ 次的输出。\",\n    \"问题4\": \"NARX 模型中的延时器有什么作用？\",\n    \"回答4\": \"NARX 模型中的延时器用于记录最近 $K_{x}$ 次的外部输入和最近 $K_{y}$ 次的输出。这些记录用于构建非线性函数，从而影响当前时刻的输出 $\\boldsymbol{y}_{t}$。\",\n    \"问题5\": \"NARX 模型中的非线性函数 $f(\\boldsymbol{x}_{t}, \\boldsymbol{x}_{t-1}, \\text{...}, \\boldsymbol{y}_{t-K_{y}})$ 可以是什么形式？\",\n    \"回答5\": \"NARX 模型中的非线性函数 $f(\\boldsymbol{x}_{t}, \\boldsymbol{x}_{t-1}, \\text{...}, \\boldsymbol{y}_{t-K_{y}})$ 可以是一个前馈网络，也可以是其他形式的非线性函数。这使得 NARX 模型能够灵活地处理复杂的非线性关系。\",\n    \"问题6\": \"自回归模型中的噪声项 $\\boldsymbol{\\text{epsilon}}_t$ 有何特点？\",\n    \"回答6\": \"在自回归模型中，噪声项 $\\boldsymbol{\\text{epsilon}}_t$ 通常服从均值为0、方差为 $\\text{$\\text{sigma}^2$}$ 的正态分布 $\\text{$\\text{N}(\\text{0, $\\text{sigma}^2$})$}$。这意味着噪声在时间上是无关的，且具有一定的随机性。\",\n    \"问题7\": \"自回归模型中的可学习参数 $w_0, w_1, \\text{...}, w_K$ 如何影响预测结果？\",\n    \"回答7\": \"在自回归模型中，可学习参数 $w_0, w_1, \\text{...}, w_K$ 用于对历史信息进行加权，并影响预测结果。它们决定了历史信息对当前时刻预测结果的贡献程度。\",\n    \"问题8\": \"为什么需要使用非线性自回归模型来处理时间序列数据？\",\n    \"回答8\": \"非线性自回归模型能够更好地捕捉时间序列数据中复杂的非线性关系。相比于简单的自回归模型，引入了外部输入和非线性函数后，能够更准确地预测时间序列数据的变化趋势。\",\n    \"问题9\": \"超参数 $K_x$ 和 $K_y$ 在 NARX 模型中有何作用？\",\n    \"回答9\": \"超参数 $K_x$ 和 $K_y$ 分别表示记录最近 $K_x$ 次外部输入和最近 $K_y$ 次输出。它们决定了模型对外部输入和历史输出信息的记忆长度，从而影响了当前时刻输出的预测。\",\n    \"问题10\": \"NARX 模型相比于简单自回归模型有何优势？\",\n    \"回答10\": \"NARX 模型相比于简单自回归模型具有更强的表达能力和灵活性。引入了外部输入和非线性函数后，能够更好地适应复杂的时间序列数据，并提高预测精度。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710747944,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1395,
+            "prompt_tokens": 3092,
+            "total_tokens": 4487
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

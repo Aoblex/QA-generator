@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter14",
+        "title": "28.1.1 模型",
+        "content_length": 2851,
+        "content": "Title: 28.1.1 模型\nContent:\n目标是从已给训练数据中学习生成数据的模型, 用模型自动生成新的数据, 包括图像、语音数据。一个直接的方法是假设已给数据是由一个概率分布产生的数据, 通过极大似然估计学习这个概率分布, 即概率密度函数。当数据分布非常复杂时, 很难给出适当的概率密度函数的定义, 以及有效地学习概率密度函数。生成对抗网络 GAN 不直接定义和学习数据生成的概率分布, 而是通过导入评价生成数据 “真假” 的机制来解决这个问题。\n\nGAN 由一个生成网络 (generator) 和一个判别网络 (discriminator) 组成, 相互进行博峦 (对抗), 生成网络生成数据 (假数据), 判别网络判别数据是已给数据 (真数据) 还是生成数据 (假数据)。学习的过程就是博恋的过程。生成网络和判别网络不断提高自己的能力, 当最终达到纳什均衡 (Nash equilibrium) 时, 生成网络可以以假乱真地生成数据, 判别网络不能判断数据的真假。\n\n这里假设生成网络和判别网络是深度神经网络, 都有足够强的学习能力。训练数据并没\\\\\n有直接用于生成网络的学习, 而是用于判别网络的学习。判别网络能力提高之后用于生成网络能力的提高, 生成网络能力提高之后再用于判别网络能力的提高, 不断循环。\n\n图 28.1 显示 GAN 的框架。假设已给训练数据 $\\mathcal{D}$ 遵循分布 $P_{\\mathrm{data}}(\\boldsymbol{x})$, 其中 $\\boldsymbol{x}$ 是样本。生成网络用 $\\boldsymbol{x}=G(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 表示, 其中 $\\boldsymbol{z}$ 是输入向量 (种子), $\\boldsymbol{x}$ 是输出向量 (生成数据), $\\boldsymbol{\\theta}$ 是网络参数。判别网络是一个二类分类器, 用 $P(1 \\mid \\boldsymbol{x})=D(\\boldsymbol{x} ; \\boldsymbol{\\varphi})$ 表示, 其中 $\\boldsymbol{x}$ 是输入向量, $P(1 \\mid \\boldsymbol{x})$和 $1-P(1 \\mid \\boldsymbol{x})$ 是输出概率, 分别表示输入 $\\boldsymbol{x}$ 来自训练数据和生成数据的概率, $\\boldsymbol{\\varphi}$ 是网络参数。种子 $\\boldsymbol{z}$ 遵循分布 $P_{\\text {seed }}(\\boldsymbol{z})$, 如标准正态分布或均匀分布。生成网络生成的数据分布表示为 $P_{\\text {gen }}(\\boldsymbol{x})$, 由 $P_{\\text {seed }}(\\boldsymbol{z})$ 和 $\\boldsymbol{x}=G(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 决定。\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_2ac75b94a84b35ee81e4g-08}\n\\end{center}\n\n图 28.1 GAN 的框架\n\n如果生成网络参数 $\\theta$ 固定, 可以通过最大化以下目标函数学习判别网络参数 $\\varphi$, 使其具备判别真假数据的能力。\n\n\n\\begin{equation*}\n\\max _{\\boldsymbol{\\varphi}}\\left\\{E_{\\boldsymbol{x} \\sim P_{\\text {data }(\\boldsymbol{x})}}[\\log D(\\boldsymbol{x} ; \\boldsymbol{\\varphi})]+E_{\\boldsymbol{z} \\sim P_{\\mathrm{seed}}(\\boldsymbol{z})}[\\log (1-D(G(\\boldsymbol{z} ; \\boldsymbol{\\theta}) ; \\overline{\\boldsymbol{\\varphi}})]\\}\\right. \\tag{28.1}\n\\end{equation*}\n\n\n如果判别网络参数 $\\varphi$ 固定, 那么可以通过最小化以下目标函数学习生成网络参数 $\\boldsymbol{\\theta}$, 使其具备以假乱真地生成数据的能力。\n\n\n\\begin{equation*}\n\\min _{\\boldsymbol{\\theta}}\\left\\{E_{\\boldsymbol{z} \\sim P_{\\text {seed }}(\\boldsymbol{z})}[\\log (1-D(G(\\boldsymbol{z} ; \\boldsymbol{\\theta}) ; \\overline{\\boldsymbol{\\varphi}})]\\}\\right. \\tag{28.2}\n\\end{equation*}\n\n\n判别网络和生成网络形成博弈关系, 可以定义以下的极小极大问题, 也就是 GAN 的学习目标函数。\n\n\n\\begin{equation*}\n\\min _{\\boldsymbol{\\theta}} \\max _{\\boldsymbol{\\varphi}}\\left\\{E_{\\boldsymbol{x} \\sim P_{\\text {data }(\\boldsymbol{x})}}[\\log D(\\boldsymbol{x} ; \\boldsymbol{\\varphi})]+E_{\\boldsymbol{z} \\sim P_{\\text {seed }}(\\boldsymbol{z})}[\\log (1-D(G(\\boldsymbol{z} ; \\boldsymbol{\\theta}) ; \\boldsymbol{\\varphi})]\\}\\right. \\tag{28.3}\n\\end{equation*}\n\n\n后述定理证明这个极小极大问题的解 $\\varphi^{*}$ 和 $\\boldsymbol{\\theta}^{*}$ 存在, 也就是纳什均衡存在。GAN 的学习算法就是求极小极大问题的最优解的方法。\n\n可以对 GAN 做这样一个比喻。生成网络是仿造者, 判别网络是鉴别者。仿造者制作噟品; 鉴别者既得到真品又得到赝品, 判断作品的真伪。仿造者与鉴别者之间展开博亪, 各自不断提高自己的能力, 最终仿造者制作出的噟品真假难辨, 鉴别者无法判断作品的真伪。注意在这个过程中鉴别者间接地把自己的判别方法告诉了仿造者, 所以两者之间既有对抗关系,又有 “合作” 关系。"
+    },
+    {
+        "id": "chatcmpl-940FZKjxtlUPUNw2BwwYIk5OEsR70",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"生成对抗网络 GAN 与传统方法学习数据生成的概率分布有何不同？\",\n    \"回答1\": \"生成对抗网络 GAN 不直接定义和学习数据生成的概率分布，而是通过导入评价生成数据“真假”的机制来解决这个问题。相比之下，传统方法则是假设已给数据是由一个概率分布产生的数据，并通过极大似然估计学习这个概率分布，即概率密度函数。\",\n    \"问题2\": \"生成对抗网络 GAN 由哪两个主要组成部分构成？它们之间的关系是什么？\",\n    \"回答2\": \"生成对抗网络 GAN 由一个生成网络 (generator) 和一个判别网络 (discriminator) 组成，它们相互进行博弈（对抗）。生成网络负责生成数据（假数据），判别网络负责判别数据是已给数据（真数据）还是生成数据（假数据）。它们之间形成一种对抗关系，通过相互提高自己的能力来达到纳什均衡。\",\n    \"问题3\": \"在生成对抗网络 GAN 中，如何表示生成网络和判别网络的能力提高的过程？\",\n    \"回答3\": \"在生成对抗网络 GAN 中，训练数据并没有直接用于生成网络的学习，而是用于判别网络的学习。判别网络能力提高之后用于生成网络能力的提高，生成网络能力提高之后再用于判别网络能力的提高，不断循环。这种循环过程体现了生成网络和判别网络能力提高的过程。\",\n    \"问题4\": \"在 GAN 的框架中，如何表示已给训练数据遵循的分布？\",\n    \"回答4\": \"在 GAN 的框架中，假设已给训练数据 $\\text{D}$ 遵循分布 $P_{\\text{data}}(\\boldsymbol{x})$，其中 $\\boldsymbol{x}$ 是样本。这个假设为后续的生成和判别过程提供了基础。\",\n    \"问题5\": \"如何表示生成网络和判别网络在 GAN 中的数学模型？\",\n    \"回答5\": \"在 GAN 中，生成网络用 $\\boldsymbol{x}=G(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 表示，其中 $\\boldsymbol{z}$ 是输入向量（种子），$\\boldsymbol{x}$ 是输出向量（生成数据），$\\boldsymbol{\\theta}$ 是网络参数。判别网络则是一个二类分类器，用 $P(1 \\text{ 为 } \\boldsymbol{x})=D(\\boldsymbol{x} ; \\boldsymbol{\\text{varphi}})$ 表示，其中 $\\boldsymbol{x}$ 是输入向量，$P(1 \\text{ 为 } \\boldsymbol{x})$ 和 $1-P(1 \\text{ 为 } \\boldsymbol{x})$ 是输出概率，分别表示输入 $\\boldsymbol{x}$ 来自训练数据和生成数据的概率，$\\boldsymbol{\\text{varphi}}$ 是网络参数。\",\n    \"问题6\": \"如何表示在 GAN 中学习判别网络参数 $\\text{varphi}$ 的目标函数？\",\n    \"回答6\": \"如果生成网络参数 $\\theta$ 固定，可以通过最大化以下目标函数学习判别网络参数 $\\text{varphi}$，使其具备判别真假数据的能力。目标函数表达式为 $\\text{max}_{\\text{varphi}}\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big[E_{x \\text{ 从 } P_{\\text{data}}(\\boldsymbol{x})}[\\text{log} D(\\boldsymbol{x} ; \\text{varphi})]+E_{z \\text{ 从 } P_{\\text{seed}}(\\boldsymbol{z})}[\\text{log} (1-D(G(\\boldsymbol{z} ; \\theta)) ; \\bar{\\text{varphi}})]\\big]\\big]\\big]\\big]\\big]\\big]\\big]\\big]\\big]\\big]\\big]\\big]\\big]$。\",\n    \"问题7\": \"如何表示在 GAN 中学习生成网络参数 $\\theta$ 的目标函数？\",\n    \"回答7\": \"如果判别网络参数 $\\text{varphi}$ 固定，可以通过最小化以下目标函数学习生成网络参数 $\\theta$，使其具备以假乱真地生成数据的能力。目标函数表达式为 $\\text{min}_{\\theta}\\big[E_{z \\text{ 从 } P_{\\text{seed}}(\\boldsymbol{z})}[\\text{log} (1-D(G(\\boldsymbol{z} ; \\theta)) ; \\bar{\\text{varphi}})]\\big]$。\",\n    \"问题8\": \"GAN 的学习目标函数是如何定义的？\",\n    \"回答8\": \"判别网络和生成网络形成博弈关系，可以定义以下的极小极大问题，也就是 GAN 的学习目标函数。目标函数表达式为 $\\text{min}_{\\theta} \\text{max}_{\\text{varphi}}\\big[E_{x \\text{ 从 } P_{\\text{data}}(\\boldsymbol{x})}[\\text{log} D(\\boldsymbol{x} ; \\text{varphi})]+E_{z \\text{ 从 } P_{\\text{seed}}(\\boldsymbol{z})}[\\text{log} (1-D(G(\\boldsymbol{z} ; \\theta)) ; \\text{varphi})]\\big]$。\",\n    \"问题9\": \"GAN 的学习算法是用来解决什么问题？\",\n    \"回答9\": \"GAN 的学习算法是用来求极小极大问题的最优解的方法。它旨在找到使得判别网络和生成网络达到纳什均衡的最优参数配置。\",\n    \"问题10\": \"如何比喻生成对抗网络 GAN 中的生成网络和判别网络之间的关系？\",\n    \"回答10\": \"可以对生成对抗网络 GAN 做这样一个比喻：生成网络是仿造者，判别网络是鉴别者。仿造者制作作品；鉴别者既得到真品又得到赝品，判断作品的真伪。仿造者与鉴别者之间展开博弈，各自不断提高自己的能力，最终仿造者制作出的作品真假难辨，鉴别者无法判断作品的真伪。注意在这个过程中鉴别者间接地把自己的判别方法告诉了仿造者，所以两者之间既有对抗关系又有“合作”关系。\" \n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710741301,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1824,
+            "prompt_tokens": 4261,
+            "total_tokens": 6085
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

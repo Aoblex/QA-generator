@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "7.5.2 层归一化",
+        "content_length": 1665,
+        "content": "Title: 7.5.2 层归一化\nContent:\n批量归一化是对一个中间层的单个神经元进行归一化操作, 因此要求小批量样本的数量不能太小, 否则难以计算单个神经元的统计信息. 此外, 如果一个神经元的净输入的分布在神经网络中是动态变化的, 比如循环神经网络, 那么就无法应用批量归一化操作.\n\n参见习题7-8.\n\n层归一化 ( Layer Normalization ) [Ba et al., 2016] 是和批量归一化非常类似的方法. 和批量归一化不同的是, 层归一化是对一个中间层的所有神经元进行归一化.\n\n对于一个深度神经网络, 令第 $l$ 层神经元的净输入为 $\\boldsymbol{z}^{(l)}$, 其均值和方差为\n\n\n\\begin{align*}\n\\mu^{(l)} & =\\frac{1}{M_{l}} \\sum_{i=1}^{M_{l}} z_{i}^{(l)}  \\tag{7.58}\\\\\n\\sigma^{(l)^{2}} & =\\frac{1}{M_{l}} \\sum_{i=1}^{M_{l}}\\left(z_{i}^{(l)}-\\mu^{(l)}\\right)^{2} \\tag{7.59}\n\\end{align*}\n\n\n其中 $M_{l}$ 为第 $l$ 层神经元的数量.\n\n层归一化定义为\n\n\n\\begin{align*}\n\\hat{\\boldsymbol{z}}^{(l)} & =\\frac{\\boldsymbol{z}^{(l)}-\\mu^{(l)}}{\\sqrt{\\sigma^{(l)^{2}}+\\epsilon}} \\odot \\gamma+\\beta  \\tag{7.60}\\\\\n& \\triangleq \\mathrm{LN}_{\\gamma, \\beta}\\left(\\boldsymbol{z}^{(l)}\\right) \\tag{7.61}\n\\end{align*}\n\n\n其中 $\\boldsymbol{\\gamma}$ 和 $\\beta$ 分别代表缩放和平移的参数向量, 和 $\\boldsymbol{z}^{(l)}$ 维数相同.\n\n循环神经网络中的层归一化 层归一化可以应用在循环神经网络中, 对循环神经层进行归一化操作. 假设在时刻 $t$, 循环神经网络的隐藏层为 $\\boldsymbol{h}_{t}$, 其层归一化的更新为\n\n参见公式(6.6).\n\n\n\\begin{align*}\n\\boldsymbol{z}_{t} & =\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t},  \\tag{7.62}\\\\\n\\boldsymbol{h}_{t} & =f\\left(\\operatorname{LN}_{\\gamma, \\beta}\\left(\\boldsymbol{z}_{t}\\right)\\right), \\tag{7.63}\n\\end{align*}\n\n\n其中输入为 $\\boldsymbol{x}_{t}$ 为第 $t$ 时刻的输入, $\\boldsymbol{U}$ 和 $\\boldsymbol{W}$ 为网络参数.\n\n在标准循环神经网络中, 循环神经层的净输入一般会随着时间慢慢变大或变小, 从而导致梯度爆炸或消失. 而层归一化的循环神经网络可以有效地缓解这种状况.\n\n层归一化和批量归一化整体上是十分类似的, 差别在于归一化的方法不同.对于 $K$ 个样本的一个小批量集合 $\\boldsymbol{Z}^{(l)}=\\left[\\boldsymbol{z}^{(1, l)} ; \\cdots ; \\boldsymbol{z}^{(K, l)}\\right]$, 层归一化是对矩阵 $Z^{(l)}$ 的每一列进行归一化, 而批量归一化是对每一行进行归一化.一般而言,批量归一化是一种更好的选择. 当小批量样本数量比较小时,可以选择层归一化."
+    },
+    {
+        "id": "chatcmpl-943q8EwqGxnNqbiEPiJnb6RlWsXG5",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"批量归一化和层归一化的计算对象有何区别？\",\n    \"回答1\": \"批量归一化是对一个中间层的单个神经元进行归一化操作，而层归一化是对一个中间层的所有神经元进行归一化。因此，批量归一化针对单个神经元的净输入进行归一化，而层归一化则对整个中间层的净输入进行归一化。\",\n    \"问题2\": \"层归一化中的均值和方差是如何计算的？\",\n    \"回答2\": \"对于一个深度神经网络，第 $l$ 层神经元的净输入为 $\\boldsymbol{z}^{(l)}$，其均值和方差分别由公式 $\\frac{1}{M_{l}} \\text{ 为 } \\text{第 } l \\text{ 层神经元的数量}$ 和 $\\frac{1}{M_{l}} \\text{ 为 } \\text{第 } l \\text{ 层神经元的数量}$ 给出。\",\n    \"问题3\": \"层归一化的定义是什么？\",\n    \"回答3\": \"层归一化定义为 $\\frac{\\boldsymbol{z}^{(l)}-\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{z}^{(l)}-\\text{为 } \\text{第 } l \\text{ 层神经元的数量}}\\right)^{2}}+\\text{为 } \\text{第 } l \\text{ 层神经元的数量}}\\right)^{2}}+\\beta  \\tag{7.60}$。这意味着对于第 $l$ 层神经元的净输入 $\\boldsymbol{z}^{(l)}$，通过均值和方差进行归一化，并引入缩放和平移参数向量。\",\n    \"问题4\": \"层归一化在循环神经网络中的作用是什么？\",\n    \"回答4\": \"层归一化可以应用在循环神经网络中，对循环神经层进行归一化操作。在标准循环神经网络中，循环神经层的净输入会随着时间慢慢变大或变小，从而导致梯度爆炸或消失。而层归一化的循环神经网络可以有效地缓解这种状况。\",\n    \"问题5\": \"层归一化和批量归一化的主要区别是什么？\",\n    \"回答5\": \"层归一化和批量归一化整体上是十分类似的，差别在于归一化的方法不同。对于 $K$ 个样本的一个小批量集合 $\\boldsymbol{Z}^{(l)}=\\big[\\boldsymbol{z}^{(1, l)} ; \\text{...} ; \\boldsymbol{z}^{(K, l)}\\big]$，层归一化是对矩阵 $Z^{(l)}$ 的每一列进行归一化，而批量归一化是对每一行进行归一化。因此，批量归一化针对小批量样本进行归一化，而层归一化则针对整个中间层进行归一化。\",\n    \"问题6\": \"为什么要求小批量样本的数量不能太小才能应用批量归一化？\",\n    \"回答6\": \"批量归一化是对一个中间层的单个神经元进行归一化操作，因此要求小批量样本的数量不能太小，否则难以计算单个神经元的统计信息。这是因为需要足够多的样本来计算均值和方差等统计信息，以确保准确性和稳定性。\",\n    \"问题7\": \"为什么在动态变化的净输入分布情况下无法应用批量归一化操作？\",\n    \"回答7\": \"如果一个神经元的净输入分布在神经网络中是动态变化的，比如在循环神经网络中，那么就无法应用批量归一化操作。这是因为动态变化的分布会导致统计信息（如均值和方差）难以稳定计算，从而影响批量归一化的效果。\",\n    \"问题8\": \"缩放和平移参数向量 $\\boldsymbol{\\beta}$ 和 $\\boldsymbol{\\beta}$ 在层归一化中起到什么作用？\",\n    \"回答8\": \"缩放和平移参数向量 $\\boldsymbol{\\beta}$ 和 $\\beta$ 在层归一化中起到调整和平移归一化后的净输入 $\\tilde{\\boldsymbol{z}}^{(l)}$ 的作用。通过调整缩放参数和平移参数，可以灵活地控制每个神经元净输入的幅度和位置，从而提高模型表达能力。\",\n    \"问题9\": \"层归一化相比于批量归一化有何优势？\",\n    \"回答9\": \"相比于批量归一化，层归一化更适合在小批量样本数量较小时使用。此外，在动态变化的净输入分布情况下，无法应用批量归一化操作时，层归一化可以作为替代方案。另外，在循环神经网络中，层归一化能够有效地缓解梯度爆炸或消失问题。\",\n    \"问题10\": \"为什么在标准循环神经网络中会出现梯度爆炸或消失问题？\",\n    \"回答10\": \"在标准循环神经网络中，循环神经层的净输入会随着时间慢慢变大或变小，从而导致梯度爆炸或消失。这是因为随着时间步长增加，梯度会不断地相乘或相加，导致梯度指数级增长或指数级衰减，从而出现梯度爆炸或消失问题。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710755100,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1789,
+            "prompt_tokens": 3671,
+            "total_tokens": 5460
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter9",
+        "title": "19.4.2 Metropolis-Hastings 算法",
+        "content_length": 794,
+        "content": "Title: 19.4.2 Metropolis-Hastings 算法\nContent:\n\\section*{算法 19.2 (Metropolis-Hastings 算法)}\n输入: 抽样的目标分布的密度函数 $p(x)$, 函数 $f(x)$ 。\n\n输出: $p(x)$ 的随机样本 $x_{m+1}, x_{m+2}, \\cdots, x_{n}$, 函数样本均值 $f_{m n}$ 。\n\n参数: 收玫步数 $m$, 迭代步数 $n$ 。\n\n(1) 任意选择一个初始值 $x_{0}$ 。\n\n(2) 对 $i=1,2, \\cdots, n$ 循环执行:\n\n（a）设状态 $x_{i-1}=x$ ，按照建议分布 $q\\left(x, x^{\\prime}\\right)$ 随机抽取一个候选状态 $x^{\\prime}$ 。\n\n(b) 计算接受概率:\n\n$$\n\\alpha\\left(x, x^{\\prime}\\right)=\\min \\left\\{1, \\frac{p\\left(x^{\\prime}\\right) q\\left(x^{\\prime}, x\\right)}{p(x) q\\left(x, x^{\\prime}\\right)}\\right\\}\n$$\n\n(c) 从区间 $(0,1)$ 中按均匀分布随机抽取一个数 $u$ 。若 $u \\leqslant \\alpha\\left(x, x^{\\prime}\\right)$, 则状态 $x_{i}=x^{\\prime}$;否则, 状态 $x_{i}=x$ 。\n\n(3) 得到样本集合 $\\left\\{x_{m+1}, x_{m+2}, \\cdots, x_{n}\\right\\}$, 计算\n\n$$\nf_{m n}=\\frac{1}{n-m} \\sum_{i=m+1}^{n} f\\left(x_{i}\\right)\n$$"
+    },
+    {
+        "id": "chatcmpl-948ECggk4XXml0XxkrEojZD4sgCAm",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"Metropolis-Hastings 算法的输入和输出是什么？\",\n    \"回答1\": \"Metropolis-Hastings 算法的输入是抽样的目标分布的密度函数 $p(x)$ 和函数 $f(x)$，输出是 $p(x)$ 的随机样本 $x_{m+1}, x_{m+2}, \\text{...}, x_{n}$，以及函数样本均值 $f_{m n}$。\",\n    \"问题2\": \"Metropolis-Hastings 算法中的参数 $m$ 和 $n$ 分别代表什么意义？\",\n    \"回答2\": \"在 Metropolis-Hastings 算法中，参数 $m$ 代表收敛步数，即算法收敛到目标分布所需的步数；参数 $n$ 代表迭代步数，即算法执行的总步数。\",\n    \"问题3\": \"Metropolis-Hastings 算法中的步骤 (1) 中选择初始值的作用是什么？\",\n    \"回答3\": \"在 Metropolis-Hastings 算法中，步骤 (1) 中选择初始值 $x_0$ 的作用是确定起始状态，作为算法迭代的起点。初始值的选择可能会影响算法的收敛性和效率。\",\n    \"问题4\": \"Metropolis-Hastings 算法中的步骤 (2) 中的接受概率 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}$ 是如何计算的？\",\n    \"回答4\": \"在 Metropolis-Hastings 算法中，步骤 (2) 中计算接受概率 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}} \\frac{p\\big(x^{'})q\\big(x^{'},x\\big)}{p(x)q\\big(x,x^{'}\\big)}\\right\\rbrace}$。其中，$p(x)$ 是目标分布的密度函数，$q(x, x^{'})$ 是建议分布。\",\n    \"问题5\": \"Metropolis-Hastings 算法中的步骤 (2) 中的随机抽取数 $u$ 的作用是什么？\",\n    \"回答5\": \"在 Metropolis-Hastings 算法中，步骤 (2) 中从区间 $(0,1)$ 中按均匀分布随机抽取一个数 $u$。这个随机抽取的数 $u$ 用于决定是否接受候选状态 $x^{'}$。若 $u \\text{小于等于} \\text{接受概率}$，则接受候选状态；否则保持原状态。\",\n    \"问题6\": \"Metropolis-Hastings 算法中的步骤 (3) 中的样本集合如何得到？\",\n    \"回答6\": \"在 Metropolis-Hastings 算法中，步骤 (3) 中得到样本集合 $\\big\\brace{x_{m+1}, x_{m+2}, \\text{...}, x_{n}\\big\\rbrace$ 是通过执行一定数量的迭代后得到的。每次迭代都会产生一个候选状态，并根据接受概率决定是否接受该状态，最终形成样本集合。\",\n    \"问题7\": \"Metropolis-Hastings 算法适用于解决什么类型的问题？\",\n    \"回答7\": \"Metropolis-Hastings 算法适用于解决概率分布采样问题，特别是当目标分布的密度函数形式复杂或无法直接抽样时，可以通过该算法生成目标分布的随机样本。\",\n    \"问题8\": \"Metropolis-Hastings 算法与其他采样方法相比有什么优势？\",\n    \"回答8\": \"相比其他采样方法，Metropolis-Hastings 算法具有较强的适应性和灵活性。它能够通过建议分布和接受概率灵活地调整采样过程，适用于各种类型和复杂度的目标分布。\",\n    \"问题9\": \"Metropolis-Hastings 算法中建议分布 $q(x, x^{'})$ 的选择有何影响？\",\n    \"回答9\": \"Metropolis-Hastings 算法中建议分布 $q(x, x^{'})$ 的选择直接影响着候选状态的生成和接受概率的计算。合适的建议分布能够提高采样效率和收敛速度，而不恰当的选择可能导致采样效率低下或收敛困难。\",\n    \"问题10\": \"Metropolis-Hastings 算法中函数样本均值 $f_{m n}$ 的计算公式是什么？\",\n    \"回答10\": \"在 Metropolis-Hastings 算法中，函数样本均值 $f_{m n}$ 的计算公式为 $f_{m n}=\\frac{1}{n-m} \\text{sum}_{i=m+1}^{n} f\\big(x_i\\big)$。即将从第 $m+1$ 步到第 $n$ 步得到的函数值求平均，用于估计目标分布对应函数 $f(x)$ 的期望值。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710771968,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1551,
+            "prompt_tokens": 3029,
+            "total_tokens": 4580
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

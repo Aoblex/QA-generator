@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "15.5.3 计算效率问题",
+        "content_length": 1607,
+        "content": "Title: 15.5.3 计算效率问题\nContent:\n序列生成模型的输出层为词表中所有词的条件概率, 需要 Softmax归一化.当词表比较大时,计算效率比较低.\n\n在第 $t$ 步时, 前缀序列为 $\\tilde{h}_{t}=x_{1:(t-1)}$, 词 $x_{t}$ 的条件概率为\n\n\n\\begin{equation*}\np_{\\theta}\\left(x_{t} \\mid \\tilde{h}_{t}\\right)=\\operatorname{softmax}\\left(s\\left(x_{t}, \\tilde{h}_{t} ; \\theta\\right)\\right) \\tag{15.47}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n$s\\left(x_{t}, \\tilde{h}_{t} ; \\theta\\right)=\\left[\\hat{\\boldsymbol{o}}_{t}\\right]_{k_{x_{t}}}$, $\\hat{\\boldsymbol{o}}_{t}$ 为末归一化的网络输出, $k_{x_{t}}$ 为 $x_{t}$ 在词表 $\\mathcal{V}$ 中的索引，参见公式(15.29).\n\n\n\\begin{align*}\n& =\\frac{\\exp \\left(s\\left(x_{t}, \\tilde{h}_{t} ; \\theta\\right)\\right)}{\\sum_{v \\in \\mathcal{V}} \\exp \\left(s\\left(v, \\tilde{h}_{t} ; \\theta\\right)\\right)},  \\tag{15.48}\\\\\n& =\\frac{\\exp \\left(s\\left(x_{t}, \\tilde{h}_{t} ; \\theta\\right)\\right)}{Z\\left(\\tilde{h}_{t} ; \\theta\\right)}, \\tag{15.49}\n\\end{align*}\n\n\n其中 $s\\left(x_{t}, \\tilde{h}_{t} ; \\theta\\right)$ 为未经过 $\\operatorname{Softmax}$ 归一化的得分函数, $Z\\left(\\tilde{h}_{t} ; \\theta\\right)$ 为配分函数 ( Partition Function ) :\n\n\n\\begin{equation*}\nZ\\left(\\tilde{h}_{t} ; \\theta\\right)=\\sum_{v \\in \\mathcal{V}} \\exp \\left(s\\left(v, \\tilde{h}_{t} ; \\theta\\right)\\right) \\tag{15.50}\n\\end{equation*}\n\n\n配分函数的计算需要对词表中所有的词 $v$ 计算 $s\\left(v, \\tilde{h}_{t} ; \\theta\\right)$ 并求和. 当词表比较大时, 计算开销非常大. 比如在自然语言中, 词表 $\\mathcal{V}$ 的规模一般在 1 万到 10 万之间. 在训练时, 每个样本都要计算一次配分函数, 这样每一轮迭代需要计算 $T$次配分函数 ( $T$ 为训练文本长度), 导致整个训练过程变得十分耗时. 因此在实践中, 我们通常采用一些近似估计的方法来加快训练速度. 常用的方法可以分为两类:1) 层次化的 Softmax 方法, 将标准 Softmax 函数的扁平结构转换为层次化结构;2) 基于采样的方法, 通过采样来近似计算更新梯度.\n\n本节介绍三种加速训练速度的方法: 层次化 Softmax、重要性采样和噪声对比估计."
+    },
+    {
+        "id": "chatcmpl-946jhOW9SuhMMYLr3gexS8thZzn7u",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"序列生成模型的输出层为什么需要进行 Softmax 归一化？\",\n    \"回答1\": \"序列生成模型的输出层为词表中所有词的条件概率，需要进行 Softmax 归一化是为了将未经过归一化的得分函数转化为概率分布，使得每个词的概率值在0到1之间，并且所有词的概率之和为1。\",\n    \"问题2\": \"在计算效率低的情况下，为什么配分函数的计算开销非常大？\",\n    \"回答2\": \"配分函数的计算需要对词表中所有的词 $v$ 计算 $s\\big(v, \\tilde{h}_{t} ; \\theta\\big)$ 并求和。当词表比较大时，计算开销非常大，因为需要对每个词进行得分函数的计算并求和，这在大规模词表下会导致计算量巨大。\",\n    \"问题3\": \"训练时每个样本都要计算一次配分函数，这会导致什么问题？\",\n    \"回答3\": \"在训练时，每个样本都要计算一次配分函数，这样每一轮迭代需要计算 $T$ 次配分函数（$T$ 为训练文本长度），导致整个训练过程变得十分耗时。这会导致训练时间长、计算开销大，影响模型的训练效率。\",\n    \"问题4\": \"介绍一种加速训练速度的方法，并简要说明其原理。\",\n    \"回答4\": \"一种加速训练速度的方法是基于采样的方法。通过采样来近似计算更新梯度。该方法通过对样本进行随机采样，从而减少了对整个词表进行计算的开销，从而加快了训练速度。\",\n    \"问题5\": \"什么是层次化 Softmax 方法？它是如何加速训练速度的？\",\n    \"回答5\": \"层次化 Softmax 方法是将标准 Softmax 函数的扁平结构转换为层次化结构。它通过构建树状结构来表示词表中所有词的条件概率，从而减少了计算开销。通过层次化结构，可以更高效地计算条件概率，从而加速了训练速度。\",\n    \"问题6\": \"重要性采样是如何加速训练速度的？\",\n    \"回答6\": \"重要性采样是一种基于采样的方法，它通过对样本进行重要性加权的随机采样来近似计算更新梯度。通过引入重要性权重，可以更有效地利用有限的采样数据来近似计算配分函数，从而加快了训练速度。\",\n    \"问题7\": \"噪声对比估计是如何加速训练速度的？\",\n    \"回答7\": \"噪声对比估计是一种基于采样的方法，它通过引入噪声信号和对比项来近似计算更新梯度。通过引入噪声信号和对比项，可以有效地减少对整个词表进行计算的开销，从而加快了训练速度。\",\n    \"问题8\": \"为什么在实践中通常采用一些近似估计的方法来加快训练速度？\",\n    \"回答8\": \"在实践中通常采用一些近似估计的方法来加快训练速度是因为配分函数的计算开销非常大，在大规模词表下会导致训练时间长、计算开销大。因此，为了提高训练效率，通常采用近似估计方法来加快配分函数的计算。\",\n    \"问题9\": \"配分函数在序列生成模型中起到什么作用？\",\n    \"回答9\": \"配分函数在序列生成模型中起到归一化作用，将未经过归一化的得分函数转化为概率分布。它是所有可能输出序列的条件概率之和，用于保证输出序列的条件概率之和为1。\",\n    \"问题10\": \"如何解释序列生成模型中配分函数计算开销大带来的问题？\",\n    \"回答10\": \"序列生成模型中配分函数计算开销大会导致训练时间长、计算开销大，影响模型的训练效率。特别是在大规模词表下，需要对每个词进行得分函数的计算并求和，导致整个训练过程变得十分耗时。因此需要采用一些近似估计方法来加快配分函数的计算以提高训练效率。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710766233,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1373,
+            "prompt_tokens": 3503,
+            "total_tokens": 4876
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

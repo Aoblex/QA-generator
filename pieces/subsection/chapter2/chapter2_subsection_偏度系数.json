@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter2",
+        "title": "偏度系数",
+        "content_length": 1930,
+        "content": "Title: 偏度系数\nContent:\n\\begin{definition}{}{2.7.5}\n  设随机变量$X$的三阶矩存在，则称比值\n  \\begin{equation}\\label{eq2.7.9}\n    \\beta_1 = \\frac{E[X-E(X)]^3}{[E(X-E(X))^2]^{3/2}} = \\frac{\\nu_3}{(\\nu_2)^{3/2}}\n  \\end{equation}\n  为$X$的分布的\\textbf{偏度系数}，\\index{S!数字特征!偏度系数}简称\\textbf{偏度}.\n\\end{definition}\n\n偏度系数可以描述分布的形状特征，其取值的正负反映的是\n\n\\begin{itemize}\n  \\item 当$\\beta_1>0$时，分布为正偏或右偏，见图 \\ref{fig2.7.3}(a).\n\n  \\item 当$\\beta_1=0$时，分布关于其均值$E(X)$对称，见图 \\ref{fig2.7.3}(b).\n\n  \\item 当$\\beta_1<0$时，分布为负偏或左偏，见图 \\ref{fig2.7.3}(c).\n\\end{itemize}\n\n\\begin{figure}[!ht]\n  \\centering\n  \\subfloat[]{\n    \\begin{tikzpicture}\n  \\draw [-Stealth] (0,0) node[below left]{$O$} -- (2,0) node [below]{$\\beta_1>0$} -- (4,0) node[below]{$x$};\n  \\draw [-Stealth] (0,0) -- (0,4) node [right]{$p(x)$};\n  \\draw [thick] (0,0) [bend left = 10] to (0.8,2.6) [bend left = 42] to (1.4,2.8)\n  [bend left = 23] to (1.51,2.65) [bend right = 15] to (2.8,0.5) [bend right =13] to (3.5,0.1);\n\\end{tikzpicture}\n  }\\;\n  \\subfloat[]{\n   \\begin{tikzpicture}\n  \\draw [-Stealth] (-0.4,0) node[below left]{$O$} -- (4,0) node[below]{$x$};\n  \\draw [-Stealth] (0,0) -- (0,4) node [right]{$p(x)$};\n  \\draw[thick] (-0.3,0.1) [bend right = 25] to (1.2,2.4) [bend left = 15] to (1.5,3.1)\n  [bend left=55] to (1.7,3.1) [bend left =10] to (1.9,2.2) [bend right=30] to (3.5,0.1);\n\n  \\draw [thick,densely dashed] (1.6,3.15) -- (1.6,0) node[below] {$\\beta_1=0$};\n\\end{tikzpicture}\n  }\\;\n  \\subfloat[]{\n    \\begin{tikzpicture}\n  \\draw [-Stealth] (0,0) node[below left]{$O$} -- (2,0) node [below]{$\\beta_1<0$} -- (4,0) node[below]{$x$};\n  \\draw [-Stealth] (0,0) -- (0,4) node [right]{$p(x)$};\n  \\draw [thick] (0.2,0.1) [bend right=25] to (2.4,2.6) [bend left=19] to (2.6,2.9) [bend left=30] to (2.8,2.9) [bend left=20] to (2.9,2.7)\n  [bend right=10] to (3.6,0.2) [bend right=25] to (3.8,0.01) ;\n\\end{tikzpicture}\n  }\n  \\caption{三种不同偏度的分布}\n\\end{figure}\n\n譬如，正态分布$N(\\mu,\\sigma^2)$是关于其均值$E(X)=\\mu$是对称的，所以正态分布的偏度$\\beta_1=0$."
+    },
+    {
+        "id": "chatcmpl-940TUYUwOPQuQoPRZxjDsarS2h3X2",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"偏度系数的计算公式是什么？\",\n    \"回答1\": \"偏度系数的计算公式为 $\\beta_1 = \\frac{E[X-E(X)]^3}{[E(X-E(X))^2]^{3/2}} = \\frac{\\nu_3}{(\\nu_2)^{3/2}}$，其中 $E(X)$ 代表随机变量 $X$ 的期望值，$\\nu_2$ 代表 $X$ 的方差，$\\nu_3$ 代表 $X$ 的三阶中心距。\",\n    \"问题2\": \"偏度系数可以描述分布的哪些形状特征？\",\n    \"回答2\": \"偏度系数可以描述分布的偏斜程度。当偏度系数 $\\beta_1>0$ 时，分布为正偏或右偏；当 $\\beta_1=0$ 时，分布关于其均值对称；当 $\\beta_1<0$ 时，分布为负偏或左偏。\",\n    \"问题3\": \"偏度系数为正时代表什么？\",\n    \"回答3\": \"当偏度系数 $\\beta_1>0$ 时，代表分布为正偏或右偏。这意味着分布的尾部相对于其均值更长，分布整体向右侧偏移。\",\n    \"问题4\": \"偏度系数为负时代表什么？\",\n    \"回答4\": \"当偏度系数 $\\beta_1<0$ 时，代表分布为负偏或左偏。这意味着分布的尾部相对于其均值更长，分布整体向左侧偏移。\",\n    \"问题5\": \"正态分布的偏度系数是多少？\",\n    \"回答5\": \"正态分布的偏度系数为 $\\beta_1=0$。这是因为正态分布关于其均值是对称的，因此其偏度系数为零。\",\n    \"问题6\": \"偏度系数的计算中涉及哪些统计量？\",\n    \"回答6\": \"在计算偏度系数时，涉及随机变量的期望值、方差和三阶中心距。这些统计量反映了随机变量分布的集中程度、离散程度以及偏斜程度。\",\n    \"问题7\": \"什么样的分布具有正偏或右偏特征？\",\n    \"回答7\": \"当一个分布具有正偏或右偏特征时，其偏度系数 $\\beta_1>0$。这意味着分布整体向右侧偏移，尾部相对于均值更长。\",\n    \"问题8\": \"什么样的分布具有负偏或左偏特征？\",\n    \"回答8\": \"当一个分布具有负偏或左偏特征时，其偏度系数 $\\beta_1<0$。这意味着分布整体向左侧偏移，尾部相对于均值更长。\",\n    \"问题9\": \"除了描述形状特征外，偏度系数还能反映什么信息？\",\n    \"回答9\": \"除了描述分布的形状特征外，偏度系数还能反映分布数据在均值两侧的不对称程度。通过偏度系数可以判断数据在均值附近的密集程度和尾部延伸程度。\",\n    \"问题10\": \"在图示中，如何区分三种不同偏度的分布？\",\n    \"回答10\": \"在图示中，可以通过观察横轴上 $\\beta_1$ 的取值来区分三种不同偏度的分布。当 $\\beta_1>0$ 时，表示正偏或右偏；当 $\\beta_1=0$ 时，表示关于均值对称；当 $\\beta_1<0$ 时，表示负偏或左偏。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710742164,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1093,
+            "prompt_tokens": 3637,
+            "total_tokens": 4730
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

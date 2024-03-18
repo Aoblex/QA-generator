@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "3.4.4.1 广义感知器的收敛性",
+        "content_length": 3545,
+        "content": "Title: 3.4.4.1 广义感知器的收敛性\nContent:\n广义感知器在满足广义线性可分条件时, 也能够保证在有限步骤内收玫. 广义线性可分条件的定义如下:\\\\\n定义 3.3-广义线性可分: 对于训练集 $\\mathcal{D}=\\left\\{\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}\\right)\\right\\}_{n=1}^{N}$, 如果存在一个正的常数 $\\gamma(\\gamma>0)$ 和权重向量 $\\boldsymbol{w}^{*}$, 并且 $\\left\\|\\boldsymbol{w}^{*}\\right\\|=1$, 对所有 $n$ 都满足 $\\left\\langle\\boldsymbol{w}^{*}, \\phi\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}\\right)\\right\\rangle-\\left\\langle\\boldsymbol{w}^{*}, \\phi\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}\\right)\\right\\rangle \\geq \\gamma, \\boldsymbol{y} \\neq \\boldsymbol{y}^{(n)}\\left(\\phi\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}\\right) \\in \\mathbb{R}^{D}\\right.$ 为样本 $\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}$ 的联合特征向量 ), 那么训练集 $\\mathcal{D}$ 在联合特征向量空间中是线性可分的.\n\n广义感知器的收敛性定义如下:\n\n定理 3.2 - 广义感知器收敛性: 如果训练集 $\\mathcal{D}=\\left\\{\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}\\right)\\right\\}_{n=1}^{N}$ 是广义线性可分的, 并令 $R$ 是所有样本中真实标签和错误标签在特征空间 $\\phi(\\boldsymbol{x}, \\boldsymbol{y})$ 最远的距离, 即\n\n\n\\begin{equation*}\nR=\\max _{n} \\max _{\\boldsymbol{z} \\neq \\boldsymbol{y}^{(n)}}\\left\\|\\phi\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{y}^{(n)}\\right)-\\phi\\left(\\boldsymbol{x}^{(n)}, \\boldsymbol{z}\\right)\\right\\|, \\tag{3.81}\n\\end{equation*}\n\n\n那么广义感知器参数学习算法3.3的权重更新次数不超过 $\\frac{R^{2}}{\\gamma^{2}}$.\n\n[Collins, 2002] 给出了广义感知器在广义线性可分的收玫性证明, 具体推导过程和两类感知器比较类似.\n\n\\section*{3.5 支持向量机}\n支持向量机 (Support Vector Machine, SVM ) 是一个经典的二分类算法，其找到的分割超平面具有更好的鲁棒性, 因此广泛使用在很多任务上, 并表现出了很强优势.\n\n给定一个二分类器数据集 $\\mathcal{D}=\\left\\{\\left(\\boldsymbol{x}^{(n)}, y^{(n)}\\right)\\right\\}_{n=1}^{N}$, 其中 $y_{n} \\in\\{+1,-1\\}$, 如果两类样本是线性可分的,即存在一个超平面\n\n\n\\begin{equation*}\n\\boldsymbol{w}^{\\top} \\boldsymbol{x}+b=0 \\tag{3.82}\n\\end{equation*}\n\n\n将两类样本分开,那么对于每个样本都有 $y^{(n)}\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\right)>0$.\n\n数据集 $\\mathcal{D}$ 中每个样本 $\\boldsymbol{x}^{(n)}$ 到分割超平面的距离为:\n\n\n\\begin{equation*}\n\\gamma^{(n)}=\\frac{\\left|\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\right|}{\\|\\boldsymbol{w}\\|}=\\frac{y^{(n)}\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\right)}{\\|\\boldsymbol{w}\\|} . \\tag{3.83}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/%E5%B9%BF%E4%B9%89%E7%BA%BF%E6%80%A7%E5%8F%AF%E5%88%86%E6%98%AF%E5%A4%9A%E7%B1%BB%E7%BA%BF%E6%80%A7%E5%8F%AF%E5%88%86%E7%9A%84%E6%89%A9%E5%B1%95}{https://nndl.github.io/广义线性可分是多类线性可分的扩展}, 参见定义3.2.参见习题3-8.\n\n本节中不使用增广的特征向量和特征权重.\\\\\n我们定义间隔 (Margin ) $\\gamma$ 为整个数据集 $D$ 中所有样本到分割超平面的最短距离:\n\n\n\\begin{equation*}\n\\gamma=\\min _{n} \\gamma^{(n)} \\tag{3.84}\n\\end{equation*}\n\n\n如果间隔 $\\gamma$ 越大, 其分割超平面对两个数据集的划分越稳定, 不容易受噪声等因素影响. 支持向量机的目标是寻找一个超平面 $\\left(\\boldsymbol{w}^{*}, b^{*}\\right)$ 使得 $\\gamma$ 最大, 即\n\n\n\\begin{align*}\n\\max _{\\boldsymbol{w}, b} & \\gamma  \\tag{3.85}\\\\\n\\text { s.t. } & \\frac{y^{(n)}\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\right)}{\\|\\boldsymbol{w}\\|} \\geq \\gamma, \\forall n \\in\\{1, \\cdots, N\\} .\n\\end{align*}\n\n\n由于同时缩放 $\\boldsymbol{w} \\rightarrow k \\boldsymbol{w}$ 和 $b \\rightarrow k b$ 不会改变样本 $\\boldsymbol{x}^{(n)}$ 到分割超平面的距离,我们可以限制 $\\|\\boldsymbol{w}\\| \\cdot \\gamma=1$, 则公式(3.85)等价于\n\n间隔为 $\\gamma=\\frac{1}{\\|\\boldsymbol{w}\\|}$.\n\n\n\\begin{align*}\n\\max _{\\boldsymbol{w}, b} & \\frac{1}{\\|\\boldsymbol{w}\\|^{2}}  \\tag{3.86}\\\\\n\\text { s.t. } & y^{(n)}\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\right) \\geq 1, \\forall n \\in\\{1, \\cdots, N\\} .\n\\end{align*}\n\n\n数据集中所有满足 $y^{(n)}\\left(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\right)=1$ 的样本点, 都称为支持向量 (Support Vector ).\n\n对于一个线性可分的数据集, 其分割超平面有很多个,但是间隔最大的超平面是唯一的. 图3.6给定了支持向量机的最大间隔分割超平面的示例, 其中轮廓线加粗的样本点为支持向量.\n\n\n\n图 3.6 支持向量机示例\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}"
+    },
+    {
+        "id": "chatcmpl-941EYmifYgQxC3Pr1S8s6jsPjaQ8u",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"广义感知器和广义线性可分条件的关系是什么？\",\n    \"回答1\": \"广义感知器在满足广义线性可分条件时，能够保证在有限步骤内收敛。广义线性可分条件指的是对于训练集 $\\boldsymbol{D}$，如果存在一个正的常数 $\\boldsymbol{\\text{γ}}(\\boldsymbol{\\text{γ}}>0)$ 和权重向量 $\\boldsymbol{w}^{*}$，对所有 $n$ 都满足一定条件，那么训练集 $\\boldsymbol{D}$ 在联合特征向量空间中是线性可分的。\",\n    \"问题2\": \"广义感知器的收敛性是如何定义的？\",\n    \"回答2\": \"广义感知器的收敛性定义为如果训练集 $\\boldsymbol{D}$ 是广义线性可分的，并且满足一定条件，那么广义感知器参数学习算法的权重更新次数不超过一个特定的值。\",\n    \"问题3\": \"广义感知器参数学习算法3.3的权重更新次数与哪些因素有关？\",\n    \"回答3\": \"广义感知器参数学习算法3.3的权重更新次数与训练集的广义线性可分性以及样本中真实标签和错误标签在特征空间最远距离 $R$、正的常数 $\\boldsymbol{\\text{γ}}$ 相关。\",\n    \"问题4\": \"支持向量机（SVM）适用于什么类型的数据集？\",\n    \"回答4\": \"支持向量机适用于二分类器数据集，其中两类样本是线性可分的。即存在一个超平面将两类样本分开。\",\n    \"问题5\": \"支持向量机中的间隔（Margin）是如何定义的？\",\n    \"回答5\": \"支持向量机中的间隔定义为整个数据集中所有样本到分割超平面的最短距离。如果间隔越大，分割超平面对两个数据集的划分越稳定，不容易受噪声等因素影响。\",\n    \"问题6\": \"支持向量机的目标是什么？\",\n    \"回答6\": \"支持向量机的目标是寻找一个超平面使得间隔最大化。即找到一个超平面使得所有样本到该超平面的距离最大。\",\n    \"问题7\": \"支持向量机中支持向量是指什么？\",\n    \"回答7\": \"支持向量机中支持向量指数据集中满足一定条件 $y^{(n)}\\big(\\boldsymbol{w}^{\\top} \\boldsymbol{x}^{(n)}+b\\big)=1$ 的样本点。\",\n    \"问题8\": \"对于一个线性可分的数据集，其分割超平面有多少个？\",\n    \"回答8\": \"对于一个线性可分的数据集，其分割超平面有很多个，但是间隔最大的超平面是唯一的。\",\n    \"问题9\": \"支持向量机示例中轮廓线加粗的样本点代表什么？\",\n    \"回答9\": \"支持向量机示例中轮廓线加粗的样本点代表支持向量，即满足一定条件并对最终分类结果产生影响的样本点。\",\n    \"问题10\": \"支持向量机在实际应用中具有哪些优势？\",\n    \"回答10\": \"支持向量机找到的分割超平面具有更好的鲁棒性，因此在很多任务上表现出了很强优势。它能够有效处理高维数据、具有较强泛化能力，并且在处理非线性问题时可以通过核技巧进行转化。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710745082,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1073,
+            "prompt_tokens": 4579,
+            "total_tokens": 5652
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

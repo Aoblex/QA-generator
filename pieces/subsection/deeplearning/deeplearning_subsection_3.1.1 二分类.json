@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "3.1.1 二分类",
+        "content_length": 2472,
+        "content": "Title: 3.1.1 二分类\nContent:\n二分类 (Binary Classification) 问题的类别标签 $y$ 只有两种取值，通常可以设为 $\\{+1,-1\\}$ 或 $\\{0,1\\}$. 在二分类问题中, 常用正例 (Positive Sample) 和负例 ( Negative Sample) 来分别表示属于类别 +1 和 -1 的样本.\n\n在二分类问题中, 我们只需要一个线性判别函数 $f(\\boldsymbol{x} ; \\boldsymbol{w})=\\boldsymbol{w}^{\\top} \\boldsymbol{x}+b$. 特征空间 $\\mathbb{R}^{D}$ 中所有满足 $f(\\boldsymbol{x} ; \\boldsymbol{w})=0$ 的点组成一个分割超平面 (Hyperplane), 称为决策边界 (Decision Boundary) 或决策平面 (Decision Surface). 决策边界将特征空间一分为二,划分成两个区域,每个区域对应一个类别.\n\n所谓 “线性分类模型” 就是指其决策边界是线性超平面. 在特征空间中，决策平面与权重向量 $\\boldsymbol{w}$ 正交. 特征空间中每个样本点到决策平面的有向距离 (Signed Distance) 为\n\n\n\\begin{equation*}\n\\gamma=\\frac{f(\\boldsymbol{x} ; \\boldsymbol{w})}{\\|\\boldsymbol{w}\\|} \\tag{3.6}\n\\end{equation*}\n\n\n$\\gamma$ 也可以看作点 $\\boldsymbol{x}$ 在 $\\boldsymbol{w}$ 方向上的投影.\n\n图3.2给出了一个二分类问题的线性决策边界示例, 其中样本特征向量 $\\boldsymbol{x}=$ $\\left[x_{1}, x_{2}\\right]$, 权重向量 $\\boldsymbol{w}=\\left[w_{1}, w_{2}\\right]$.\n\n\\href{https://nndl.github.io/%E8%B6%85%E5%B9%B3%E9%9D%A2%E5%B0%B1%E6%98%AF%E4%B8%89%E7%BB%B4%E7%A9%BA%E9%97%B4%E4%B8%AD%E7%9A%84%E5%B9%B3%E9%9D%A2%E5%9C%A8%E6%9B%B4%E9%AB%98%E7%BB%B4%E7%A9%BA%E9%97%B4%E7%9A%84%E6%8E%A8%E5%B9%BF}{https://nndl.github.io/超平面就是三维空间中的平面在更高维空间的推广}. $D$ 维空间中的超平面是 $D-1$ 维的。在二维空间中, 决策边界为一个直线; 在三维空间中, 决策边界为一个平面; 在高维空间中，决策边界为一个超平面.\n\n参见习题3-2.\n\n\n\n图 3.2 二分类的决策边界示例\n\n给定 $N$ 个样本的训练集 $\\mathcal{D}=\\left\\{\\left(\\boldsymbol{x}^{(n)}, y^{(n)}\\right)\\right\\}_{n=1}^{N}$, 其中 $y^{(n)} \\in\\{+1,-1\\}$, 线性模型试图学习到参数 $\\boldsymbol{w}^{*}$, 使得对于每个样本 $\\left(\\boldsymbol{x}^{(n)}, y^{(n)}\\right)$ 尽量满足\n\n$$\n\\begin{aligned}\n& f\\left(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}^{*}\\right)>0 \\quad \\text { if } \\quad y^{(n)}=1 \\text {, } \\\\\n& f\\left(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}^{*}\\right)<0 \\quad \\text { if } \\quad y^{(n)}=-1 .\n\\end{aligned}\n$$\n\n上面两个公式也可以合并, 即参数 $\\boldsymbol{w}^{*}$ 尽量满足\n\n\n\\begin{equation*}\ny^{(n)} f\\left(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}^{*}\\right)>0, \\quad \\forall n \\in[1, N] . \\tag{3.8}\n\\end{equation*}\n\n\n定义 3.1 - 两类线性可分: 对于训练集 $\\mathcal{D}=\\left\\{\\left(\\boldsymbol{x}^{(n)}, y^{(n)}\\right)\\right\\}_{n=1}^{N}$, 如果存在权重向量 $\\boldsymbol{w}^{*}$, 对所有样本都满足 $y f\\left(\\boldsymbol{x} ; \\boldsymbol{w}^{*}\\right)>0$, 那么训练集 $\\mathcal{D}$ 是线性可分的.\n\n为了学习参数 $\\boldsymbol{w}$, 我们需要定义合适的损失函数以及优化方法. 对于二分类问题, 最直接的损失函数为 0-1 损失函数, 即\n\n\n\\begin{equation*}\n\\mathcal{L}_{01}(y, f(\\boldsymbol{x} ; \\boldsymbol{w}))=I(y f(\\boldsymbol{x} ; \\boldsymbol{w})<0), \\tag{3.9}\n\\end{equation*}\n\n\n其中 $I(\\cdot)$ 为指示函数. 但 $0-1$ 损失函数的数学性质不好, 其关于 $\\boldsymbol{w}$ 的导数为 0 , 从而导致无法优化 $\\boldsymbol{w}$."
+    },
+    {
+        "id": "chatcmpl-940zeodii4gvNdGb3eypmkjCIYgLA",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"二分类问题中的类别标签 $y$ 通常可以设为哪些取值？\",\n    \"回答1\": \"二分类问题的类别标签 $y$ 通常可以设为 $\\big\\brace+1,-1\\big\\brace$ 或 $\\big\\brace0,1\\big\\brace$。\",\n    \"问题2\": \"在二分类问题中，什么是正例和负例？\",\n    \"回答2\": \"在二分类问题中，正例 (Positive Sample) 用来表示属于类别 +1 的样本，而负例 (Negative Sample) 用来表示属于类别 -1 的样本。\",\n    \"问题3\": \"什么是线性判别函数？它在二分类问题中有什么作用？\",\n    \"回答3\": \"线性判别函数是指 $f(\\boldsymbol{x} ; \\boldsymbol{w})=\\boldsymbol{w}^{\\top} \\boldsymbol{x}+b$，它在二分类问题中用于将特征空间划分成两个区域，并确定决策边界或决策平面，从而实现对样本的分类。\",\n    \"问题4\": \"决策边界或决策平面是如何定义的？\",\n    \"回答4\": \"特征空间 $\\boldsymbol{R}^{D}$ 中所有满足 $f(\\boldsymbol{x} ; \\boldsymbol{w})=0$ 的点组成一个分割超平面 (Hyperplane)，称为决策边界 (Decision Boundary) 或决策平面 (Decision Surface)。它将特征空间一分为二，划分成两个区域，每个区域对应一个类别。\",\n    \"问题5\": \"决策边界在不同维度的特征空间中呈现怎样的形态？\",\n    \"回答5\": \"在 $D$ 维空间中，决策边界为一个 $D-1$ 维的超平面。在二维空间中，决策边界为一条直线；在三维空间中，决策边界为一个平面；在高维空间中，决策边界为一个超平面。\",\n    \"问题6\": \"对于给定的训练集 $\\boldsymbol{D}$，线性模型试图学习到什么样的参数？\",\n    \"回答6\": \"对于给定的训练集 $\\boldsymbol{D}=\\big\\brace(\\boldsymbol{x}^{(n)}, y^{(n)})\\big\\brace_{n=1}^{N}$，线性模型试图学习到参数 $\\boldsymbol{w}^{*}$，使得对于每个样本 $\\big(\\boldsymbol{x}^{(n)}, y^{(n)}\\big)$ 尽量满足 $f\\big(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}^{*}\\big)>0$ 如果 $y^{(n)}=1$，且 $f\\big(\\boldsymbol{x}^{(n)} ; \\boldsymbol{w}^{*}\\big)<0$ 如果 $y^{(n)}=-1$。\",\n    \"问题7\": \"什么是两类线性可分？\",\n    \"回答7\": \"对于训练集 $\\boldsymbol{D}=\\big\\brace(\\boldsymbol{x}^{(n)}, y^{(n)})\\big\\brace_{n=1}^{N}$，如果存在权重向量 $\\boldsymbol{w}^{*}$，对所有样本都满足 $y f\\big(\\boldsymbol{x} ; \\boldsymbol{w}^{*}\\big)>0$，那么训练集 $\\boldsymbol{D}$ 是线性可分的。\",\n    \"问题8\": \"为什么不能直接使用 0-1 损失函数进行优化？\",\n    \"回答8\": \"0-1 损失函数的数学性质不好，其关于 $\\boldsymbol{w}$ 的导数为 0，从而导致无法优化 $\\boldsymbol{w}$。因此，需要定义其他合适的损失函数以及优化方法来学习参数 $\\boldsymbol{w}$。\",\n    \"问题9\": \"在二分类问题中，最直接的损失函数是什么？\",\n    \"回答9\": \"在二分类问题中，最直接的损失函数为 0-1 损失函数，即 $\\text{L}_{01}(y, f(\\boldsymbol{x} ; \\boldsymbol{w}))=I(y f(\\boldsymbol{x} ; \\boldsymbol{w})<0)$，其中 $I(\\bullet)$ 为指示函数。\",\n    \"问题10\": \"参数学习过程中需要考虑哪些因素？\",\n    \"回答10\": \"在参数学习过程中需要考虑定义合适的损失函数以及优化方法。损失函数用于衡量模型预测值与真实标签之间的差异，而优化方法则用于调整模型参数以最小化损失函数。这两个因素共同影响着模型参数的学习过程。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710744158,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1313,
+            "prompt_tokens": 4016,
+            "total_tokens": 5329
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

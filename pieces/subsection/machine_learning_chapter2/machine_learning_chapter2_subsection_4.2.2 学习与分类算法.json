@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter2",
+        "title": "4.2.2 学习与分类算法",
+        "content_length": 3070,
+        "content": "Title: 4.2.2 学习与分类算法\nContent:\n下面给出朴素贝叶斯法的学习与分类算法。\n\n\\section*{算法 4.1 (朴素贝叶斯算法 (naïve Bayes algorithm))}\n输入: 训练数据集 $T=\\left\\{\\left(x_{1}, y_{1}\\right),\\left(x_{2}, y_{2}\\right), \\cdots,\\left(x_{N}, y_{N}\\right)\\right\\}$, 其中 $x_{i}=\\left(x_{i}^{(1)}, x_{i}^{(2)}, \\cdots\\right.$, $\\left.x_{i}^{(n)}\\right)^{\\mathrm{T}}, x_{i}^{(j)}$ 是第 $i$ 个样本的第 $j$ 个特征, $x_{i}^{(j)} \\in\\left\\{a_{j 1}, a_{j 2}, \\cdots, a_{j S_{j}}\\right\\}, a_{j l}$ 是第 $j$ 个特征可能取的第 $l$ 个值, $j=1,2, \\cdots, n, l=1,2, \\cdots, S_{j}, y_{i} \\in\\left\\{c_{1}, c_{2}, \\cdots, c_{K}\\right\\}$; 实例 $x$ 。\n\n输出: 实例 $x$ 的分类。\n\n(1) 计算先验概率及条件概率\n\n$$\n\\begin{gathered}\nP\\left(Y=c_{k}\\right)=\\frac{\\sum_{i=1}^{N} I\\left(y_{i}=c_{k}\\right)}{N}, \\quad k=1,2, \\cdots, K \\\\\nP\\left(X^{(j)}=a_{j l} \\mid Y=c_{k}\\right)=\\frac{\\sum_{i=1}^{N} I\\left(x_{i}^{(j)}=a_{j l}, y_{i}=c_{k}\\right)}{\\sum_{i=1}^{N} I\\left(y_{i}=c_{k}\\right)}, \\\\\nj=1,2, \\cdots, n, \\quad l=1,2, \\cdots, S_{j}, \\quad k=1,2, \\cdots, K\n\\end{gathered}\n$$\n\n(2) 对于给定的实例 $x=\\left(x^{(1)}, x^{(2)}, \\cdots, x^{(n)}\\right)^{\\mathrm{T}}$, 计算\n\n$$\nP\\left(Y=c_{k}\\right) \\prod_{j=1}^{n} P\\left(X^{(j)}=x^{(j)} \\mid Y=c_{k}\\right), \\quad k=1,2, \\cdots, K\n$$\n\n(3) 确定实例 $x$ 的类\n\n$$\ny=\\arg \\max _{c_{k}} P\\left(Y=c_{k}\\right) \\prod_{j=1}^{n} P\\left(X^{(j)}=x^{(j)} \\mid Y=c_{k}\\right)\n$$\n\n例 4.1 试由表 4.1 的训练数据学习一个朴素贝叶斯分类器并确定 $x=(2, S)^{\\mathrm{T}}$ 的类标记 $y$ 。表中 $X^{(1)}, X^{(2)}$ 为特征, 取值的集合分别为 $A_{1}=\\{1,2,3\\}, A_{2}=\\{S, M, L\\}, Y$ 为类标记, $Y \\in C=\\{1,-1\\}$ 。\n\n表 4.1 训练数据\n\n\\begin{center}\n\\begin{tabular}{lrrrrrrrrrrrrrrr}\n\\hline\n & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\\\\n\\hline\n$X^{(1)}$ & 1 & 1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 3 & 3 & 3 & 3 & 3 \\\\\n$X^{(2)}$ & $S$ & $M$ & $M$ & $S$ & $S$ & $S$ & $M$ & $M$ & $L$ & $L$ & $L$ & $M$ & $M$ & $L$ & $L$ \\\\\n$Y$ & -1 & -1 & 1 & 1 & -1 & -1 & -1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & -1 \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n解 根据算法 4.1, 由表 4.1 容易计算下列概率:\n\n$$\nP(Y=1)=\\frac{9}{15}, \\quad P(Y=-1)=\\frac{6}{15}\n$$\n\n$$\n\\begin{aligned}\n& P\\left(X^{(1)}=1 \\mid Y=1\\right)=\\frac{2}{9}, \\quad P\\left(X^{(1)}=2 \\mid Y=1\\right)=\\frac{3}{9}, \\quad P\\left(X^{(1)}=3 \\mid Y=1\\right)=\\frac{4}{9} \\\\\n& P\\left(X^{(2)}=S \\mid Y=1\\right)=\\frac{1}{9}, \\quad P\\left(X^{(2)}=M \\mid Y=1\\right)=\\frac{4}{9}, \\quad P\\left(X^{(2)}=L \\mid Y=1\\right)=\\frac{4}{9} \\\\\n& P\\left(X^{(1)}=1 \\mid Y=-1\\right)=\\frac{3}{6}, \\quad P\\left(X^{(1)}=2 \\mid Y=-1\\right)=\\frac{2}{6}, \\quad P\\left(X^{(1)}=3 \\mid Y=-1\\right)=\\frac{1}{6} \\\\\n& P\\left(X^{(2)}=S \\mid Y=-1\\right)=\\frac{3}{6}, \\quad P\\left(X^{(2)}=M \\mid Y=-1\\right)=\\frac{2}{6}, \\quad P\\left(X^{(2)}=L \\mid Y=-1\\right)=\\frac{1}{6}\n\\end{aligned}\n$$\n\n对于给定的 $x=(2, S)^{\\mathrm{T}}$, 计算\n\n$$\n\\begin{aligned}\n& P(Y=1) P\\left(X^{(1)}=2 \\mid Y=1\\right) P\\left(X^{(2)}=S \\mid Y=1\\right)=\\frac{9}{15} \\cdot \\frac{3}{9} \\cdot \\frac{1}{9}=\\frac{1}{45} \\\\\n& P(Y=-1) P\\left(X^{(1)}=2 \\mid Y=-1\\right) P\\left(X^{(2)}=S \\mid Y=-1\\right)=\\frac{6}{15} \\cdot \\frac{2}{6} \\cdot \\frac{3}{6}=\\frac{1}{15}\n\\end{aligned}\n$$\n\n由于 $P(Y=-1) P\\left(X^{(1)}=2 \\mid Y=-1\\right) P\\left(X^{(2)}=S \\mid Y=-1\\right)$ 最大, 所以 $y=-1$ 。"
+    },
+    {
+        "id": "chatcmpl-9408aA9awklgjWgm5i8XcrAqX5emH",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"朴素贝叶斯算法中的先验概率和条件概率是如何计算的？\",\n    \"回答1\": \"朴素贝叶斯算法中，先验概率 $P\\big(Y=c_{k}\\big)$ 的计算公式为 $P\\big(Y=c_{k}\\big)=\\frac{\\text{样本中类别为 } c_{k} \\text{ 的样本数}}{\\text{总样本数}}$，而条件概率 $P\\big(X^{(j)}=a_{j l} \\big| Y=c_{k}\\big)$ 的计算公式为 $P\\big(X^{(j)}=a_{j l} \\big| Y=c_{k}\\big)=\\frac{\\text{同时满足特征 } x_{i}^{(j)}=a_{j l} \\text{ 和类别 } y_{i}=c_{k} \\text{ 的样本数}}{\\text{满足类别 } y_{i}=c_{k} \\text{ 的样本数}}$。\",\n    \"问题2\": \"朴素贝叶斯算法中的分类过程是如何进行的？\",\n    \"回答2\": \"对于给定的实例 $x=\\big(x^{(1)}, x^{(2)}, \\text{...}, x^{(n)}\\big)^{\\top}$，朴素贝叶斯算法首先计算 $P\\big(Y=c_{k}\\big) \\times \\bigg(\\text{特征条件概率的连乘积}\\bigg)$，然后确定实例 $x$ 的类标记 $y$ 为使上述概率最大的类别 $c_{k}$。\",\n    \"问题3\": \"朴素贝叶斯算法中的条件概率是如何定义的？\",\n    \"回答3\": \"在朴素贝叶斯算法中，条件概率 $P\\big(X^{(j)}=a_{j l} \\big| Y=c_{k}\\big)$ 表示在已知类别 $Y=c_{k}$ 的情况下，特征 $X^{(j)}$ 取值为 $a_{j l}$ 的概率。它是通过统计满足特定条件下的样本数量来进行估计。\",\n    \"问题4\": \"朴素贝叶斯算法中的先验概率有什么作用？\",\n    \"回答4\": \"朴素贝叶斯算法中的先验概率 $P\\big(Y=c_{k}\\big)$ 反映了在未观测到任何特征信息时，各个类别出现的概率。它在分类过程中起到了对不同类别的基础偏好和影响分类结果的作用。\",\n    \"问题5\": \"朴素贝叶斯算法如何确定实例的类别？\",\n    \"回答5\": \"朴素贝叶斯算法通过计算每个类别的后验概率，并选择具有最大后验概率的类别作为实例的分类结果。这一过程涉及先验概率和条件概率的计算，并最终确定实例所属的类别。\",\n    \"问题6\": \"朴素贝叶斯算法适用于哪些类型的数据？\",\n    \"回答6\": \"朴素贝叶斯算法适用于离散型数据和符合独立同分布假设的数据。它通常用于文本分类、垃圾邮件过滤等领域，对于高维度、离散型特征数据有较好的分类效果。\",\n    \"问题7\": \"朴素贝叶斯算法中的朴素（naïve）体现在哪里？\",\n    \"回答7\": \"朴素贝叶斯算法中的“朴素”体现在对特征之间条件独立性的假设上。即假设每个特征在给定类别下都是相互独立的，这一假设简化了条件概率的计算，并降低了模型复杂度。\",\n    \"问题8\": \"朴素贝叶斯算法如何处理连续型特征？\",\n    \"回答8\": \"对于连续型特征，通常采用概率密度函数估计方法来将其转换为离散型特征。常见的方法包括高斯分布、多项式分布等，通过对连续型特征进行离散化处理，使其适应于朴素贝叶斯算法。\",\n    \"问题9\": \"朴素贝叶斯算法在实际应用中有哪些局限性？\",\n    \"回答9\": \"朴素贝叶斯算法在实际应用中可能面临特征之间相关性较强时表现不佳，因为它假设特征之间相互独立。此外，在数据较少或者类别不平衡时，朴素贝叶斯算法也可能出现较大偏差。\",\n    \"问题10\": \"朴素贝叶斯算法与其他分类算法相比有什么优势？\",\n    \"回答10\": \"相比其他分类算法，朴素贝叶斯算法具有模型简单、易于实现、对缺失数据不敏感等优势。它在处理大规模数据集时表现出较高的速度和效率，并且适用于多分类任务。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710740868,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1479,
+            "prompt_tokens": 4336,
+            "total_tokens": 5815
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

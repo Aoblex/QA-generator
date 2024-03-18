@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter8",
+        "title": "参数估计",
+        "content_length": 3394,
+        "content": "Title: 参数估计\nContent:\n在检验结果为显著时,我们可进一步求出总均值 $\\mu$、各主效应 $a_i$ 和误差方差 $\\sigma^2$ 的估计.\n\n\\subsubsection{点估计}\n\n由模型~\\eqref{eq:8.1.8} 知诸 $y_{ij}$ 相互独立,且 $y_{ij}\\sim N(\\mu+a_i,\\sigma^2)$,因此,可使用最大似然方法求出一般平均 $\\mu$、各主效应 $a_i$；和误差方差 $\\sigma^2$ 的估计.\n\n首先,写出似然函数\n\n\\begin{equation*}\n  L\\left(\\mu, a_{1}, \\cdots, a_{r}, \\sigma^{2}\\right) \\prod_{i=1}^{r} \\prod_{j=1}^{m}\\left\\{\\frac{1}{\\sqrt{2 \\pi \\sigma^{2}}} \\exp \\left\\{-\\frac{\\left(y_{i j}-\\mu-a_{i}\\right)^{2}}{2 \\sigma^{2}}\\right\\}\\right\\}\n\\end{equation*}\n其对数似然函数为\n\\begin{equation*}\n  l\\left(\\mu, a_{1}, \\cdots, a_{r}, \\sigma^{2}\\right)=-\\frac{n}{2} \\ln \\left(2 \\pi \\sigma^{2}\\right)-\\frac{1}{2 \\sigma^{2}} \\sum_{i=1}^{n} \\sum_{i=1}^{m}\\left(y_{i j}-\\mu-a_{i}\\right)^{2}\n\\end{equation*}\n\n求偏导,得似然方程为\n\\begin{equation*}\n  \\begin{cases}\n    \\frac{\\partial l}{\\partial \\mu} =\\frac{1}{2 \\sigma^{2}} \\sum_{i=1}^{r} \\sum_{j=1}^{m}\\left(y_{i j}-\\mu-a_{i}\\right)=0 \\\\\n    \\frac{\\partial l}{\\partial a_{i}} =\\frac{1}{2 \\sigma^{2}} \\sum_{j=1}^{m}\\left(y_{i j}-\\mu-a_{i}\\right)=0, \\quad i=1, \\cdots, r\\\\\n    \\frac{\\partial l}{\\partial \\sigma^{2}} =-\\frac{n}{2 \\sigma^{2}}+\\frac{1}{2 \\sum^{4}} \\sum_{i=1}^{m} \\sum_{j=1}^{m}\\left(y_{i j}-\\mu-a_{i}\\right)^{2}=0\n  \\end{cases}\n\\end{equation*}\n考虑到约束条件~\\eqref{eq:8.1.8},可求出前述各参数的最大似然估计为\n\\begin{equation}\n  \\label{eq:8.1.20}\n  \\begin{split}\n    \\hat{\\mu} &= \\bar{y}\\\\\n    \\hat{a}_{i} & =\\bar{y}_{i},-\\bar{y}, i=1, \\cdots, r \\\\\n    \\hat{\\sigma}_{M}^{2} &= \\frac{1}{n} \\sum_{i=1}^{r} \\sum_{j=1}^{m}\\left(y_{i j}-\\bar{y}\\right)^{2}=\\frac{S_{e}}{n}\n  \\end{split}\n\\end{equation}\n由最大似然估计的不变性,各水平均值 $\\mu_i$ 的最大似然估计为\n\\begin{equation}\n  \\label{eq:8.1.21}\n  \\hat{\\mu}_{i}=\\bar{y}_{i}\n\\end{equation}\n由于 $\\hat{\\sigma}_{M}^{2}$ 不是 $\\sigma^2$ 的无偏估计,实用中通常采用如下误差方差的无偏估计\n\\begin{equation}\n  \\label{eq:8.1.22}\n  \\hat{\\sigma}_{M}^{2} = M S_{e}\n\\end{equation}\n\n\\subsubsection{置信区间}\n\n以下讨论各水平均值 $\\mu_i$ 的置信区间. 由定理~\\ref{thm:8.1.2} 知 $\\bar{y}_{i\\cdot} \\sim N (\\mu_{i}, \\sigma^{2}/m)$,且两者独立,故 $S_e/\\sigma^2 \\sim \\chi^2(f_e)$, 且两者独立,故\n\\begin{equation*}\n  \\frac{\\sqrt{m}\\left(\\bar{y}_{i\\cdot}-\\mu_{i}\\right)}{\\sqrt{\\mathrm{S}_{0} / f_{0}}} \\sim t\\left(f_{e}\\right)\n\\end{equation*}\n\n由此给出 $A_i$ 的水平均值 $\\mu_i$ 的 $1-\\alpha$ 的置信区间为\n\\begin{equation}\\label{eq:8.1.23}\n  \\left[\\bar{y}_{i\\cdot}-\\hat{\\sigma} \\cdot t_{1-\\alpha / 2}(f_{e}) / \\sqrt{m}, \\bar{y}_{i\\cdot}+\\hat{\\sigma} \\cdot t_{1-\\alpha / 2}(f_{e}) / \\sqrt{m}\\right]\n\\end{equation}\n其中 $\\tilde{\\sigma}^2$ 由~\\eqref{eq:8.1.22} 给出.\n\n\\begin{example}\n我们在~\\ref{exam:8.1.2} 中已经指出饲料因子是显著的,此处我们给出诸水平均值的估计.因子 $A$ 的三个水平均值的估计分别为\n  \\begin{gather*} \\hat{\\mu}_{1} =1000+\\frac{194}{8}=1024.25 \\\\\n    \\hat{\\mu}_{2} =1000+\\frac{585}{8}=1073.13 \\\\\n    \\hat{\\mu}_{3} =1000+\\frac{354}{8}=1044.25\n  \\end{gather*}\n从点估计来看,水平 $A_2$(以槐树粉为主的饲料)是最优的.误差方差的无偏估计为\n\\begin{equation*}\n  \\hat{\\sigma}^{2}=M S_{e}=1343.62\n\\end{equation*}\n进一步,利用~\\ref{eq:8.1.23} 可以给出诸水平均值的置信区间. 此处,$\\sigma^2=\\sqrt{1343.62}=\n36.66$,若取 $a=0.05$,则 $t_{1-\\alpha/2} (f_e)=t_{0.975}(21)=2.0796$, $\\hat{\\sigma} t_{0.975}(21)/\\sqrt{8}=26.95$, 于是三个水平均值的 $0.95$ 置信区间分别为\n\\begin{gather*}\n  \\mu_{1} : 1024.25 \\mp 26.95 = [997.30, 1051.21],\\\\\n  \\mu_{2} : 1073.13 \\mp 26.95=[1046.18,1100.08],\\\\\n  \\mu_{3} : 1044.25 \\mp 26.95=[1017.30,1071.21]\n\\end{gather*}\n至此,我们可以看到：在单因子试验的数据分析中可得到如下三个结果：\n\\begin{itemize}\n  \\item 因子 $A$ 是否显著：\n  \\item 试验的误差方差 $\\sigma^2$ 的估计；\n  \\item 诸水平均值 $\\mu_i$ 的点估计与区间估计.\n\\end{itemize}\n\n在因子 $A$ 显著时,通常只需对较优的水平均值作参数估计,在因子 $A$ 不显著场合,参数估计无需进行.\n\\end{example}"
+    },
+    {
+        "id": "chatcmpl-9492ritx0OD8OQ9hGgmHuo47ECi7o",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"参数估计中的点估计是如何进行的？\",\n    \"回答1\": \"参数估计中的点估计通过最大似然方法求出总均值 $\\bar{y}$、各主效应 $\\bar{y}_{i}$ 和误差方差 $\\tilde{\\text{S}}_{M}^{2}$ 的估计。其中，总均值的点估计为 $\\bar{y}$，各主效应的点估计为 $\\bar{y}_{i}$，误差方差的点估计为 $\\tilde{\\text{S}}_{M}^{2}$。\",\n    \"问题2\": \"参数估计中的置信区间是如何计算的？\",\n    \"回答2\": \"参数估计中的置信区间是通过对各水平均值 $\\bar{y}_{i}$ 进行置信区间估计。根据给定的公式和统计量，可以计算出各水平均值的 $1-\\text{α}$ 的置信区间。\",\n    \"问题3\": \"在参数估计中，为什么通常只需对较优的水平均值进行参数估计？\",\n    \"回答3\": \"在因子显著时，通常只需对较优的水平均值进行参数估计。这是因为较优的水平对实际问题具有更重要的意义，而其他水平对结果影响较小。因此，在因子显著时，可以只对较优水平进行参数估计。\",\n    \"问题4\": \"在参数估计中，误差方差的无偏估计是如何得到的？\",\n    \"回答4\": \"在参数估计中，误差方差的无偏估计通常采用实用中通常采用误差方差的无偏估计 $\\tilde{\\text{S}}_{M}^{2} = M S_{e}$。这个无偏估计相比最大似然估计更加准确和可靠。\",\n    \"问题5\": \"在给定例子中，因子 $A$ 的三个水平均值的点估计分别是多少？\",\n    \"回答5\": \"在给定例子中，因子 $A$ 的三个水平均值的点估计分别为 $\\bar{y}_{1} = 1024.25$、$\\bar{y}_{2} = 1073.13$ 和 $\\bar{y}_{3} = 1044.25$。\",\n    \"问题6\": \"在给定例子中，试验的误差方差 $\\tilde{\\text{S}}_{M}^{2}$ 的估计是多少？\",\n    \"回答6\": \"在给定例子中，试验的误差方差 $\\tilde{\\text{S}}_{M}^{2}$ 的无偏估计为 $\\tilde{\\text{S}}_{M}^{2}=1343.62$。\",\n    \"问题7\": \"在给定例子中，诸水平均值 $\\bar{y}_{i}$ 的置信区间是如何得到的？\",\n    \"回答7\": \"在给定例子中，诸水平均值 $\\bar{y}_{i}$ 的置信区间是通过利用给定公式和统计量进行计算得到的。根据所给条件和公式，可以得到各水平均值的置信区间。\",\n    \"问题8\": \"在给定例子中，如果取 $a=0.05$，则诸水平均值的 $0.95$ 置信区间分别是多少？\",\n    \"回答8\": \"在给定例子中，如果取 $a=0.05$，则诸水平均值的 $0.95$ 置信区间分别为：$\\bar{y}_{1}: [997.30, 1051.21]$、$\\bar{y}_{2}: [1046.18,1100.08]$ 和 $\\bar{y}_{3}: [1017.30,1071.21]$。\",\n    \"问题9\": \"在给定例子中，因子 $A$ 是否显著？\",\n    \"回答9\": \"在给定例子中，在~\\ref{exam:8.1.2} 中已经指出饲料因子是显著的。因此，在该例子中因子 $A$ 是显著的。\",\n    \"问题10\": \"在参数估计中，为什么通常只需对较优的水平均值作参数估计？\",\n    \"回答10\": \"在因子显著时,通常只需对较优的水平均值作参数估计,在因子不显著场合,参数估计无需进行。这是因为较优的水平对实际问题具有更重要的意义，而其他水平对结果影响较小。因此，在因子显著时，可以只对较优水平进行参数估计。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710775109,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1305,
+            "prompt_tokens": 4555,
+            "total_tokens": 5860
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

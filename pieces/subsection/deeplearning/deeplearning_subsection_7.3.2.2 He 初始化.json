@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "7.3.2.2 He 初始化",
+        "content_length": 999,
+        "content": "Title: 7.3.2.2 He 初始化\nContent:\n当第 $l$ 层神经元使用 ReLU 激活函数时, 通常有一半的神经元输出为 0 , 因此其分布的方差也近似为使用恒等函数时的一半. 这样, 只考虑前向传播时, 参数 $w_{i}^{(l)}$ 的理想方差为\n\n\n\\begin{equation*}\n\\operatorname{var}\\left(w_{i}^{(l)}\\right)=\\frac{2}{M_{l-1}} \\tag{7.45}\n\\end{equation*}\n\n\n其中 $M_{l-1}$ 是第 $l-1$ 层神经元个数.\n\n因此当使用 ReLU 激活函数时, 若采用高斯分布来初始化参数 $w_{i}^{(l)}$, 其方差为 $\\frac{2}{M_{l-1}}$; 若采用区间为 $[-r, r]$ 的均匀分布来初始化参数 $w_{i}^{(l)}$, 则 $r=\\sqrt{\\frac{6}{M_{l-1}}}$. 这种初始化方法称为 He 初始化[He et al., 2015].\n\n表7.2给出了 Xavier初始化和 He 初始化的具体设置情况.\n\n表 7.2 Xavier初始化和 He初始化的具体设置情况\n\n\\begin{center}\n\\begin{tabular}{c|c|c|l}\n\\hline\n初始化方法 & 激活函数 & 均匀分布 $[-r, r]$ & 高斯分布 $\\mathcal{N}\\left(0, \\sigma^{2}\\right)$ \\\\\n\\hline\nXavier 初始化 & Logistic & $r=4 \\sqrt{\\frac{6}{M_{l-1}+M_{l}}}$ & $\\sigma^{2}=16 \\times \\frac{2}{M_{l-1}+M_{l}}$ \\\\\n\\hline\nXavier 初始化 & Tanh & $r=\\sqrt{\\frac{6}{M_{l-1}+M_{l}}}$ & $\\sigma^{2}=\\frac{2}{M_{l-1}+M_{l}}$ \\\\\n\\hline\nHe初始化 & ReLU & $r=\\sqrt{\\frac{6}{M_{l-1}}}$ & $\\sigma^{2}=\\frac{2}{M_{l-1}}$ \\\\\n\\hline\n\\end{tabular}\n\\end{center}"
+    },
+    {
+        "id": "chatcmpl-943oCAZrhZTwiEvRVDP4dfgIoyiGx",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"当神经元使用 ReLU 激活函数时，参数 $w_{i}^{(l)}$ 的理想方差是多少？\",\n    \"回答1\": \"当神经元使用 ReLU 激活函数时，参数 $w_{i}^{(l)}$ 的理想方差为 $\\frac{2}{M_{l-1}}$。\",\n    \"问题2\": \"He 初始化是针对哪种激活函数提出的？\",\n    \"回答2\": \"He 初始化是针对 ReLU 激活函数提出的。\",\n    \"问题3\": \"He 初始化中，如果采用高斯分布来初始化参数 $w_{i}^{(l)}$，其方差是多少？\",\n    \"回答3\": \"在 He 初始化中，如果采用高斯分布来初始化参数 $w_{i}^{(l)}$，其方差为 $\\frac{2}{M_{l-1}}$。\",\n    \"问题4\": \"He 初始化中，如果采用均匀分布 $[-r, r]$ 来初始化参数 $w_{i}^{(l)}$，$r$ 的取值是多少？\",\n    \"回答4\": \"在 He 初始化中，如果采用均匀分布 $[-r, r]$ 来初始化参数 $w_{i}^{(l)}$，则 $r=\\text{sqrt}\\big(\\frac{6}{M_{l-1}}\\big)$。\",\n    \"问题5\": \"Xavier 初始化和 He 初始化的具体设置情况分别适用于哪些激活函数？\",\n    \"回答5\": \"Xavier 初始化适用于 Logistic 和 Tanh 激活函数，而 He 初始化适用于 ReLU 激活函数。\",\n    \"问题6\": \"Xavier 初始化和 He 初始化中，对于高斯分布 $\\text{N}\\big(0, \\text{σ}^2\\big)$ 的具体设置情况有何不同？\",\n    \"回答6\": \"在 Xavier 初始化中，对于高斯分布 $\\text{N}\\big(0, \\text{σ}^2\\big)$ 的具体设置情况与 He 初始化不同。以 Logistic 和 Tanh 激活函数为例，Xavier 初始化的高斯分布方差为 $\\text{σ}^2=16 \\times \\frac{2}{M_{l-1}+M_{l}}$，而 He 初始化的高斯分布方差为 $\\text{σ}^2=\\frac{2}{M_{l-1}}$。\",\n    \"问题7\": \"Xavier 初始化和 He 初始化中，对于均匀分布 $[-r, r]$ 的具体设置情况有何不同？\",\n    \"回答7\": \"在 Xavier 初始化和 He 初始化中，对于均匀分布 $[-r, r]$ 的具体设置情况也有所不同。以 Logistic 和 Tanh 激活函数为例，Xavier 初始化的 $r=4 \\text{sqrt}\\big(\\frac{6}{M_{l-1}+M_{l}}\\big)$，而 He 初始化的 $r=\\text{sqrt}\\big(\\frac{6}{M_{l-1}}\\big)$。\",\n    \"问题8\": \"He 初始化相比于 Xavier 初始化有何特点？\",\n    \"回答8\": \"He 初始化相比于 Xavier 初始化更适用于 ReLU 激活函数，并且在参数初始化时能够更好地满足神经元输出稀疏性的特点。因此，在使用 ReLU 激活函数时，通常推荐使用 He 初始化来初始化参数。\",\n    \"问题9\": \"He 初始化中的参数初始化方法称为什么？\",\n    \"回答9\": \"He 初始化中的参数初始化方法称为高斯分布和均匀分布。\",\n    \"问题10\": \"He 初始化中的参数初始化方法与 Xavier 初始化有何异同之处？\",\n    \"回答10\": \"He 初始化中的参数初始化方法与 Xavier 初始化在具体设置上存在一些差异。例如，在高斯分布和均匀分布的具体设置上就有所不同。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710754980,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1026,
+            "prompt_tokens": 3148,
+            "total_tokens": 4174
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

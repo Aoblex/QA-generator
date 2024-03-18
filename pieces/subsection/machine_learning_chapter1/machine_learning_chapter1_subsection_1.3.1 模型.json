@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter1",
+        "title": "1.3.1 模型",
+        "content_length": 1073,
+        "content": "Title: 1.3.1 模型\nContent:\n机器学习首要考虑的问题是学习什么样的模型。在监督学习过程中, 模型就是所要学习的条件概率分布或决策函数。模型的假设空间 (hypothesis space) 包含所有可能的条件概率分布或决策函数。例如, 假设决策函数是输入变量的线性函数, 那么模型的假设空间就是所有这些线性函数构成的函数集合。假设空间中的模型一般有无穷多个。\\\\\n假设空间用 $\\mathcal{F}$ 表示, 可以定义为决策函数的集合:\n\n\n\\begin{equation*}\n\\mathcal{F}=\\{f \\mid Y=f(X)\\} \\tag{1.5}\n\\end{equation*}\n\n\n其中, $X$ 和 $Y$ 是定义在输入空间 $\\mathcal{X}$ 和输出空间 $\\mathcal{Y}$ 上的变量。这时 $\\mathcal{F}$ 通常是由一个参数向量决定的函数族:\n\n\n\\begin{equation*}\n\\mathcal{F}=\\left\\{f \\mid Y=f_{\\theta}(X), \\theta \\in \\boldsymbol{R}^{n}\\right\\} \\tag{1.6}\n\\end{equation*}\n\n\n参数向量 $\\theta$ 取值于 $n$ 维欧氏空间 $\\boldsymbol{R}^{n}$, 称为参数空间（parameter space）。\n\n假设空间也可以定义为条件概率的集合:\n\n\n\\begin{equation*}\n\\mathcal{F}=\\{P \\mid P(Y \\mid X)\\} \\tag{1.7}\n\\end{equation*}\n\n\n其中, $X$ 和 $Y$ 是定义在输入空间 $\\mathcal{X}$ 和输出空间 $\\mathcal{Y}$ 上的随机变量。这时 $\\mathcal{F}$ 通常是由一个参数向量决定的条件概率分布族:\n\n\n\\begin{equation*}\n\\mathcal{F}=\\left\\{P \\mid P_{\\theta}(Y \\mid X), \\theta \\in \\boldsymbol{R}^{n}\\right\\} \\tag{1.8}\n\\end{equation*}\n\n\n参数向量 $\\theta$ 取值于 $n$ 维欧氏空间 $\\boldsymbol{R}^{n}$ ，也称为参数空间。\n\n本书中称由决策函数表示的模型为非概率模型, 由条件概率表示的模型为概率模型。为了简便起见, 当论及模型时, 有时只用其中一种模型。"
+    },
+    {
+        "id": "chatcmpl-93zawsNsPpwb5PBxszb6KFRhG6Tav",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"在监督学习中，模型指的是什么？\",\n    \"回答1\": \"在监督学习过程中，模型指的是所要学习的条件概率分布或决策函数。模型的假设空间包含所有可能的条件概率分布或决策函数。\",\n    \"问题2\": \"模型的假设空间是什么？它包含哪些内容？\",\n    \"回答2\": \"模型的假设空间（hypothesis space）包含所有可能的条件概率分布或决策函数。例如，假设决策函数是输入变量的线性函数，那么模型的假设空间就是所有这些线性函数构成的函数集合。\",\n    \"问题3\": \"如何定义假设空间中的模型？\",\n    \"回答3\": \"假设空间中的模型一般由一个参数向量决定的函数族组成，即 $\\text{假设空间}=\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big{f \\text{ 使得 } Y=f_{\\theta}(X), \\theta \\text{ 在 } \\boldsymbol{R}^{n} \\text{ 中}}$。\",\n    \"问题4\": \"参数空间是如何定义的？\",\n    \"回答4\": \"参数空间指参数向量 $\\theta$ 取值于 $n$ 维欧氏空间 $\\boldsymbol{R}^{n}$ 的集合，也称为参数空间（parameter space）。\",\n    \"问题5\": \"什么是非概率模型？\",\n    \"回答5\": \"本书中称由决策函数表示的模型为非概率模型。非概率模型是指通过决策函数表示的模型，不直接涉及条件概率分布。\",\n    \"问题6\": \"什么是概率模型？\",\n    \"回答6\": \"本书中称由条件概率表示的模型为概率模型。概率模型是指通过条件概率表示的模型，涉及到输出在给定输入下的条件概率分布。\",\n    \"问题7\": \"为什么有时在论及模型时只用其中一种模型？\",\n    \"回答7\": \"为了简便起见，当论及模型时，有时只用其中一种模型，即非概率模型或概率模型。这样可以根据具体情况选择合适的模型进行讨论和应用。\",\n    \"问题8\": \"决策函数和条件概率分布在假设空间中有何区别？\",\n    \"回答8\": \"在假设空间中，决策函数表示非概率模型，而条件概率分布表示概率模型。决策函数直接给出输入变量到输出变量之间的映射关系，而条件概率分布描述了输出在给定输入下的概率分布情况。\",\n    \"问题9\": \"假设空间中的参数向量 $\\theta$ 有何作用？\",\n    \"回答9\": \"假设空间中的参数向量 $\\theta$ 在定义模型时起到了关键作用，它可以调节和确定模型的具体形式和特征，从而影响模型对数据的拟合和预测能力。\",\n    \"问题10\": \"输入空间和输出空间在定义假设空间时扮演着怎样的角色？\",\n    \"回答10\": \"输入空间和输出空间定义了假设空间中变量 $X$ 和 $Y$ 的取值范围和特性，它们对于确定假设空间中模型的具体形式和特征起着重要作用。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710738782,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1039,
+            "prompt_tokens": 3241,
+            "total_tokens": 4280
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

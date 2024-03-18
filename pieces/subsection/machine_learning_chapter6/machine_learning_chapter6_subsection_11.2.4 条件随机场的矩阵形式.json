@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter6",
+        "title": "11.2.4 条件随机场的矩阵形式",
+        "content_length": 3207,
+        "content": "Title: 11.2.4 条件随机场的矩阵形式\nContent:\n条件随机场还可以由矩阵表示。假设 $P_{w}(y \\mid x)$ 是由式 (11.15) 式 (11.16) 给出的线性链条件随机场, 表示对给定观测序列 $x$, 相应的标记序列 $y$ 的条件概率。对每个标记序列引进特殊的起点和终点状态标记 $y_{0}=\\operatorname{start}$ 和 $y_{n+1}=\\operatorname{stop}$, 这时标注序列的概率 $P_{w}(y \\mid x)$ 可以通过矩阵形式表示并有效计算。\n\n对观测序列 $x$ 的每一个位置 $i=1,2, \\cdots, n+1$, 由于 $y_{i-1}$ 和 $y_{i}$ 在 $m$ 个标记中取值, 可以定义一个 $m$ 阶矩阵随机变量:\n\n\n\\begin{equation*}\nM_{i}(x)=\\left(M_{i}\\left(y_{i-1}, y_{i} \\mid x\\right)\\right) \\tag{11.21}\n\\end{equation*}\n\n\n矩阵随机变量的元素为\n\n\n\\begin{equation*}\nM_{i}\\left(y_{i-1}, y_{i} \\mid x\\right)=\\exp \\left(W_{i}\\left(y_{i-1}, y_{i} \\mid x\\right)\\right) \\tag{11.22}\n\\end{equation*}\n\n\n\n\\begin{equation*}\nW_{i}\\left(y_{i-1}, y_{i} \\mid x\\right)=\\sum_{k=1}^{K} w_{k} f_{k}\\left(y_{i-1}, y_{i}, x, i\\right) \\tag{11.23}\n\\end{equation*}\n\n\n这里 $w_{k}$ 和 $f_{k}$ 分别由式 (11.14) 和式 (11.12) 给出, $y_{i-1}$ 和 $y_{i}$ 是标记随机变量 $Y_{i-1}$ 和 $Y_{i}$ 的取值。\n\n这样, 给定观测序列 $x$, 相应标记序列 $y$ 的非规范化概率可以通过该序列 $n+1$ 个矩阵\n\n的适当元素的乘积 $\\prod_{i=1}^{n+1} M_{i}\\left(y_{i-1}, y_{i} \\mid x\\right)$ 表示。于是, 条件概率 $P_{w}(y \\mid x)$ 是\n\n\n\\begin{equation*}\nP_{w}(y \\mid x)=\\frac{1}{Z_{w}(x)} \\prod_{i=1}^{n+1} M_{i}\\left(y_{i-1}, y_{i} \\mid x\\right) \\tag{11.24}\n\\end{equation*}\n\n\n其中, $Z_{w}(x)$ 为规范化因子, 是 $n+1$ 个矩阵的乘积的 (start, stop) 元素, 即\n\n\n\\begin{equation*}\nZ_{w}(x)=\\left(M_{1}(x) M_{2}(x) \\cdots M_{n+1}(x)\\right)_{\\text {start,stop }} \\tag{11.25}\n\\end{equation*}\n\n\n注意, $y_{0}=$ start 与 $y_{n+1}=\\operatorname{stop}$ 表示开始状态与终止状态, 规范化因子 $Z_{w}(x)$ 是以 start 为起点、stop 为终点通过状态的所有路径 $y_{1} y_{2} \\cdots y_{n}$ 的非规范化概率 $\\prod_{i=1}^{n+1} M_{i}\\left(y_{i-1}, y_{i} \\mid x\\right)$ 之和。下面的例子说明了这一事实。\n\n例 11.2 给定一个由图 11.6 所示的线性链条件随机场, 观测序列 $x$, 状态序列 $y, i=$ $1,2,3, n=3$, 标记 $y_{i} \\in\\{1,2\\}$, 假设 $y_{0}=$ start $=1, y_{4}=$ stop $=1$, 各个位置的随机矩阵 $M_{1}(x), M_{2}(x), M_{3}(x), M_{4}(x)$ 分别是\n\n$$\n\\begin{array}{ll}\nM_{1}(x)=\\left[\\begin{array}{cc}\na_{01} & a_{02} \\\\\n0 & 0\n\\end{array}\\right], & M_{2}(x)=\\left[\\begin{array}{ll}\nb_{11} & b_{12} \\\\\nb_{21} & b_{22}\n\\end{array}\\right] \\\\\nM_{3}(x)=\\left[\\begin{array}{cc}\nc_{11} & c_{12} \\\\\nc_{21} & c_{22}\n\\end{array}\\right], & M_{4}(x)=\\left[\\begin{array}{ll}\n1 & 0 \\\\\n1 & 0\n\\end{array}\\right]\n\\end{array}\n$$\n\n试求状态序列 $y$ 以 start 为起点、 stop 为终点的所有路径的非规范化概率及规范化因子。\n\n解 首先计算图 11.6 中从 start 到 stop 对应于 $y=(1,1,1), y=(1,1,2), \\ldots, y=$ $(2,2,2)$ 各路径的非规范化概率分别是\n\n$$\n\\begin{array}{llll}\na_{01} b_{11} c_{11}, & a_{01} b_{11} c_{12}, & a_{01} b_{12} c_{21}, & a_{01} b_{12} c_{22} \\\\\na_{02} b_{21} c_{11}, & a_{02} b_{21} c_{12}, & a_{02} b_{22} c_{21}, & a_{02} b_{22} c_{22}\n\\end{array}\n$$\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_32592c58f22d1a77d634g-11}\n\\end{center}\n\n图 11.6 状态路径\\\\\n然后按式 (11.25) 求规范化因子。通过计算矩阵乘积 $M_{1}(x) M_{2}(x) M_{3}(x) M_{4}(x)$ 可知, 其第 1 行第 1 列的元素为\n\n$a_{01} b_{11} c_{11}+a_{02} b_{21} c_{11}+a_{01} b_{12} c_{21}+a_{02} b_{22} c_{22}+a_{01} b_{11} c_{12}+a_{02} b_{21} c_{12}+a_{01} b_{12} c_{22}+a_{02} b_{22} c_{21}$\n\n恰好等于从 start 到 stop 的所有路径的非规范化概率之和, 即规范化因子 $Z(x)$ 。\n\n\\section*{11.3 条件随机场的概率计算问题}\n条件随机场的概率计算问题是给定条件随机场 $P(Y \\mid X)$ 、输入序列 $x$ 和输出序列 $y$, 计算条件概率 $P\\left(Y_{i}=y_{i} \\mid x\\right), P\\left(Y_{i-1}=y_{i-1}, Y_{i}=y_{i} \\mid x\\right)$ 以及相应的数学期望的问题。为了方便起见, 像隐马尔可夫模型那样, 引进前向-后向向量, 递归地计算以上概率及期望值。这样的算法也称为前向一后向算法。"
+    },
+    {
+        "id": "chatcmpl-947AjcUqk9duP1RmCxzVkQDJd2NOH",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"条件随机场的矩阵形式是如何表示的？\",\n    \"回答1\": \"条件随机场的矩阵形式是通过引入特殊的起点和终点状态标记 $y_{0}=\\text{start}$ 和 $y_{n+1}=\\text{stop}$，并定义矩阵随机变量 $M_{i}(x)$，其中元素由公式 $M_{i}\\big(y_{i-1}, y_{i} \\big| x\\big)=\\text{exp}\\big(W_{i}\\big(y_{i-1}, y_{i} \\big| x\\big)\\big)$ 给出。\",\n    \"问题2\": \"条件随机场中的规范化因子 $Z_{w}(x)$ 是如何计算的？\",\n    \"回答2\": \"规范化因子 $Z_{w}(x)$ 是通过 $n+1$ 个矩阵的乘积的 (start, stop) 元素计算得到，即 $Z_{w}(x)=\\big(M_{1}(x) M_{2}(x) \\text{...} M_{n+1}(x)\\big)_{\\text{start,stop}}$。\",\n    \"问题3\": \"条件随机场中的非规范化概率如何表示？\",\n    \"回答3\": \"给定观测序列 $x$，相应标记序列 $y$ 的非规范化概率可以通过该序列 $n+1$ 个矩阵的适当元素的乘积 $\\text{exp}\\big(W_{i}\\big(y_{i-1}, y_{i} \\big| x\\big)\\big)$ 表示。\",\n    \"问题4\": \"条件随机场中的条件概率 $P_{w}(y \\big| x)$ 如何计算？\",\n    \"回答4\": \"条件概率 $P_{w}(y \\big| x)$ 是通过非规范化概率除以规范化因子得到的，即 $P_{w}(y \\big| x)=\\frac{1}{Z_{w}(x)} \\text{exp}\\big(W_{i}\\big(y_{i-1}, y_{i} \\big| x\\big)\\big)$。\",\n    \"问题5\": \"什么是前向-后向算法？\",\n    \"回答5\": \"前向-后向算法是用于计算条件随机场的概率及期望值的一种递归算法。它类似于隐马尔可夫模型中的前向算法和后向算法，通过引入前向-后向向量，递归地计算条件概率和相应的数学期望值。\",\n    \"问题6\": \"为什么需要引入特殊的起点和终点状态标记？\",\n    \"回答6\": \"引入特殊的起点和终点状态标记是为了表示标记序列的概率，并有效计算条件随机场中给定观测序列 $x$ 的每一个位置 $i=1,2, \\text{...}, n+1$ 的情况。\",\n    \"问题7\": \"条件随机场中的矩阵随机变量 $M_i(x)$ 的元素是如何定义的？\",\n    \"回答7\": \"矩阵随机变量 $M_i(x)$ 的元素由公式 $M_{i}\\big(y_{i-1}, y_{i} \\big| x\\big)=\\text{exp}\\big(W_{i}\\big(y_{i-1}, y_{i} \\big| x\\big)\\big)$ 给出，其中 $W_i\\big(y_{i-1}, y_{i} \\big| x\\big)=\\text{exp}\\big(\\textstyle\\frac{\\textstyle\\text{∑}_{k=1}^{K} w_k f_k\\big(y_{i-1}, y_i, x, i\\big)}{\\textstyle}\\big)$。\",\n    \"问题8\": \"如何计算状态序列以 start 为起点、stop 为终点的所有路径的非规范化概率及规范化因子？\",\n    \"回答8\": \"首先计算状态序列以 start 为起点、stop 为终点的所有路径的非规范化概率，然后通过计算矩阵乘积得到规范化因子。最终规范化因子等于从 start 到 stop 的所有路径的非规范化概率之和。\",\n    \"问题9\": \"条件随机场中的矩阵形式如何帮助表示对给定观测序列 $x$, 相应的标记序列 $y$ 的条件概率？\",\n    \"回答9\": \"条件随机场中的矩阵形式帮助表示对给定观测序列 $x$, 相应的标记序列 $y$ 的条件概率，使得可以通过矩阵形式表示并有效计算标注序列的概率。这有助于更高效地进行条件概率计算和模型推断。\",\n    \"问题10\": \"在条件随机场中，什么是规范化因子 $Z_w(x)$ 的作用？\",\n    \"回答10\": \"在条件随机场中，规范化因子 $Z_w(x)$ 的作用是用于归一化非规范化概率，即将非规范化概率除以规范化因子得到条件概率。它表示了从 start 到 stop 的所有路径的非规范化概率之和。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710767909,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1434,
+            "prompt_tokens": 4579,
+            "total_tokens": 6013
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

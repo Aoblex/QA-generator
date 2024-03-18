@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "5.4.2 AlexNet",
+        "content_length": 2060,
+        "content": "Title: 5.4.2 AlexNet\nContent:\nAlexNet[Krizhevsky et al., 2012] 是第一个现代深度卷积网络模型, 其首次使用了很多现代深度卷积网络的技术方法, 比如使用 GPU 进行并行训练, 采用了 ReLU 作为非线性激活函数, 使用 Dropout防止过拟合, 使用数据增强来提高模型准确率等. AlexNet 赢得了 2012 年 ImageNet 图像分类竞赛的冠军.\n\nAlexNet 的结构如图 5.12所示, 包括 5 个卷积层、3 个汇聚层和 3 个全连接层 (其中最后一层是使用 Softmax 函数的输出层). 因为网络规模超出了当时的单个 GPU 的内存限制, AlexNet 将网络拆为两半, 分别放在两个 GPU 上, GPU 间只在某些层 ( 比如第 3 层 ) 进行通信.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n\n\n图 5.12 AlexNet 网络结构 ${ }^{1}$\n\nAlexNet 的输入为 $224 \\times 224 \\times 3$ 的图像, 输出为 1000 个类别的条件概率, 具体结构如下:\n\n（1）第一个卷积层, 使用两个大小为 $11 \\times 11 \\times 3 \\times 48$ 的卷积核, 步长 $S=4$,零填充 $P=3$, 得到两个大小为 $55 \\times 55 \\times 48$ 的特征映射组.\n\n(2) 第一个汇聚层, 使用大小为 $3 \\times 3$ 的最大汇聚操作, 步长 $S=2$, 得到两个 $27 \\times 27 \\times 48$ 的特征映射组.\n\n（3）第二个卷积层, 使用两个大小为 $5 \\times 5 \\times 48 \\times 128$ 的卷积核, 步长 $S=1$,零填充 $P=2$, 得到两个大小为 $27 \\times 27 \\times 128$ 的特征映射组.\n\n(4) 第二个汇聚层, 使用大小为 $3 \\times 3$ 的最大汇聚操作,步长 $S=2$, 得到两个大小为 $13 \\times 13 \\times 128$ 的特征映射组.\n\n（5）第三个卷积层为两个路径的融合, 使用一个大小为 $3 \\times 3 \\times 256 \\times 384$的卷积核, 步长 $S=1$, 零填充 $P=1$, 得到两个大小为 $13 \\times 13 \\times 192$ 的特征映射组.\n\n（6）第四个卷积层, 使用两个大小为 $3 \\times 3 \\times 192 \\times 192$ 的卷积核, 步长 $S=1$,零填充 $P=1$, 得到两个大小为 $13 \\times 13 \\times 192$ 的特征映射组.\n\n（7）第五个卷积层, 使用两个大小为 $3 \\times 3 \\times 192 \\times 128$ 的卷积核, 步长 $S=1$, 零填充 $P=1$, 得到两个大小为 $13 \\times 13 \\times 128$ 的特征映射组.\n\n( 8 ) 第三个汇聚层, 使用大小为 $3 \\times 3$ 的最大汇聚操作, 步长 $S=2$, 得到两个大小为 $6 \\times 6 \\times 128$ 的特征映射组.\n\n(9) 三个全连接层, 神经元数量分别为 $4096 、 4096$ 和 1000 .\n\n此外, AlexNet 还在前两个汇聚层之后进行了局部响应归一化 ( Local Response Normalization,LRN ) 以增强模型的泛化能力.\n\n1 图片来源: \\href{https://medium.com/coinmonks/paper-review-of-alexnet-caffenet-winner-in-ilsvrc2012-image-classification-b93598314160}{https://medium.com/coinmonks/paper-review-of-alexnet-caffenet-winner-in-ilsvrc2012-image-classification-b93598314160}\n\n\\href{https://nndl.github.io/%E8%BF%99%E9%87%8C%E7%9A%84%E5%8D%B7%E7%A7%AF%E6%A0%B8%E4%BD%BF%E7%94%A8%E5%9B%9B%E7%BB%B4%E5%BC%A0%E9%87%8F%E6%9D%A5%E6%8F%8F%E8%BF%B0}{https://nndl.github.io/这里的卷积核使用四维张量来描述}.\n\n这里的汇聚操作是有重叠的, 以提取更多的特征.局部响应归一化参见第7.5.4节。"
+    },
+    {
+        "id": "chatcmpl-941rIAmgcrSzVDRWtIRAJiB6DmrMB",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"AlexNet 相较于传统卷积网络模型有哪些创新之处？\",\n    \"回答1\": \"AlexNet 是第一个现代深度卷积网络模型，其引入了许多现代深度卷积网络的技术方法，如使用 GPU 进行并行训练、采用 ReLU 作为非线性激活函数、使用 Dropout 防止过拟合、以及使用数据增强来提高模型准确率等。这些创新使得 AlexNet 在当时的 ImageNet 图像分类竞赛中获得了巨大成功。\",\n    \"问题2\": \"AlexNet 的网络结构包括哪些主要组成部分？\",\n    \"回答2\": \"AlexNet 的网络结构包括 5 个卷积层、3 个汇聚层和 3 个全连接层，其中最后一层是使用 Softmax 函数的输出层。这些组成部分共同构成了 AlexNet 的深度卷积神经网络结构。\",\n    \"问题3\": \"AlexNet 的输入和输出分别是什么？\",\n    \"回答3\": \"AlexNet 的输入为 $224 \\times 224 \\times 3$ 的图像，输出为 1000 个类别的条件概率。这意味着 AlexNet 能够接受 $224 \\times 224$ 像素大小的彩色图像，并输出对应于 1000 个类别的分类概率。\",\n    \"问题4\": \"描述 AlexNet 中第一个卷积层和汇聚层的操作步骤。\",\n    \"回答4\": \"第一个卷积层使用两个大小为 $11 \\times 11 \\times 3 \\times 48$ 的卷积核，步长 $S=4$，零填充 $P=3$，得到两个大小为 $55 \\times 55 \\times 48$ 的特征映射组。而第一个汇聚层则使用大小为 $3 \\times 3$ 的最大汇聚操作，步长 $S=2$，得到两个 $27 \\times 27 \\times 48$ 的特征映射组。\",\n    \"问题5\": \"在 AlexNet 中，局部响应归一化 (LRN) 的作用是什么？\",\n    \"回答5\": \"在 AlexNet 中，局部响应归一化 (LRN) 被用于增强模型的泛化能力。它可以帮助抑制神经元的响应，并增强不同特征图之间的竞争关系，从而提高模型对输入数据的泛化能力。\",\n    \"问题6\": \"为什么 AlexNet 将网络拆分到两个 GPU 上进行训练？\",\n    \"回答6\": \"因为 AlexNet 的规模超出了当时单个 GPU 的内存限制，所以它将网络拆分为两半，分别放在两个 GPU 上进行训练。GPU 间只在某些层（比如第 3 层）进行通信，以充分利用多个 GPU 的计算能力来加速训练过程。\",\n    \"问题7\": \"AlexNet 中采用的非线性激活函数是什么？\",\n    \"回答7\": \"AlexNet 中采用了 ReLU（Rectified Linear Unit）作为非线性激活函数。相比传统的 Sigmoid 函数或 tanh 函数，ReLU 能够更好地缓解梯度消失问题，并加速模型的收敛速度。\",\n    \"问题8\": \"AlexNet 中全连接层的神经元数量分别是多少？\",\n    \"回答8\": \"AlexNet 中的三个全连接层的神经元数量分别为 $4096$、$4096$ 和 $1000$。这些全连接层负责将卷积层和汇聚层提取到的特征进行整合和映射，最终输出对应于 1000 个类别的条件概率。\",\n    \"问题9\": \"AlexNet 中采用了哪些方法来防止过拟合？\",\n    \"回答9\": \"AlexNet 采用了 Dropout 方法来防止过拟合。Dropout 是一种随机丢弃部分神经元的方法，通过减少神经元之间的依赖性来降低过拟合风险。\",\n    \"问题10\": \"AlexNet 在何方面取得了突破性进展？\",\n    \"回答10\": \"AlexNet 在深度卷积神经网络模型的设计和训练上取得了突破性进展。它首次引入了诸多现代深度卷积网络的技术方法，并在当时的 ImageNet 图像分类竞赛中取得了巨大成功，标志着深度学习在计算机视觉领域迈出了重要一步。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710747484,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1339,
+            "prompt_tokens": 3908,
+            "total_tokens": 5247
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

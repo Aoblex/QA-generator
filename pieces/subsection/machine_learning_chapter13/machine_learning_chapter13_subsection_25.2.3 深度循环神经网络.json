@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter13",
+        "title": "25.2.3 深度循环神经网络",
+        "content_length": 921,
+        "content": "Title: 25.2.3 深度循环神经网络\nContent:\n简单循环神经网络只有一个隐层或中间层。可以扩展到有多个隐层的神经网络, 称为深度循环神经网络。多个隐层的状态之间存在层次化关系, 模型具有更强的表示能力。拥有 $l$ 个隐层的深度循环神经网络在第 $t$ 个位置的定义如下。\n\n第 1 个隐层是\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}^{(1)}=\\tanh \\left(\\boldsymbol{U}^{(1)} \\cdot \\boldsymbol{h}_{t-1}^{(1)}+\\boldsymbol{W}^{(1)} \\cdot \\boldsymbol{x}_{t}+\\boldsymbol{b}^{(1)}\\right) \\tag{25.32}\n\\end{equation*}\n\n\n第 $l$ 个隐层是\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}^{(l)}=\\tanh \\left(\\boldsymbol{U}^{(l)} \\cdot \\boldsymbol{h}_{t-1}^{(l)}+\\boldsymbol{W}^{(l)} \\cdot \\boldsymbol{h}_{t}^{(l-1)}+\\boldsymbol{b}^{(l)}\\right) \\tag{25.33}\n\\end{equation*}\n\n\n输出层是\n\n\n\\begin{equation*}\n\\boldsymbol{p}_{t}=\\operatorname{softmax}\\left(\\boldsymbol{V} \\cdot \\boldsymbol{h}_{t}^{(l)}+\\boldsymbol{c}\\right) \\tag{25.34}\n\\end{equation*}\n\n\n图 25.9 是深度循环神经网络的架构图。\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_5ec6446031f017adfacbg-02}\n\\end{center}\n\n图 25.9 深度循环神经网络的架构图"
+    },
+    {
+        "id": "chatcmpl-93w8OTwMnnmd1ULlHGJcgCW2hovrd",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"简单循环神经网络和深度循环神经网络有何区别？\",\n    \"回答1\": \"简单循环神经网络只有一个隐层或中间层，而深度循环神经网络可以扩展到有多个隐层。多个隐层的状态之间存在层次化关系，使得深度循环神经网络具有更强的表示能力。\",\n    \"问题2\": \"深度循环神经网络在第 $t$ 个位置的定义是怎样的？\",\n    \"回答2\": \"拥有 $l$ 个隐层的深度循环神经网络在第 $t$ 个位置的定义如下：第 1 个隐层的状态由 $\\boldsymbol{h}_{t}^{(1)}=\\tanh \\big(\\boldsymbol{U}^{(1)} \\boldsymbol{h}_{t-1}^{(1)}+\\boldsymbol{W}^{(1)} \\boldsymbol{x}_{t}+\\boldsymbol{b}^{(1)}\\big)$ 给出，第 $l$ 个隐层的状态由 $\\boldsymbol{h}_{t}^{(l)}=\\tanh \\big(\\boldsymbol{U}^{(l)} \\boldsymbol{h}_{t-1}^{(l)}+\\boldsymbol{W}^{(l)} \\boldsymbol{h}_{t}^{(l-1)}+\\boldsymbol{b}^{(l)}\\big)$ 给出，输出层由 $\\boldsymbol{p}_{t}=\\text{softmax}\\big(\\boldsymbol{V} \\boldsymbol{h}_{t}^{(l)}+\\boldsymbol{c}\\big)$ 给出。\",\n    \"问题3\": \"深度循环神经网络的输出层是如何定义的？\",\n    \"回答3\": \"深度循环神经网络的输出层由 $\\boldsymbol{p}_{t}=\\text{softmax}\\big(\\boldsymbol{V} \\boldsymbol{h}_{t}^{(l)}+\\boldsymbol{c}\\big)$ 给出，其中 $\\boldsymbol{p}_{t}$ 是在第 $t$ 个位置的输出。\",\n    \"问题4\": \"深度循环神经网络相比简单循环神经网络有什么优势？\",\n    \"回答4\": \"深度循环神经网络具有更强的表示能力，因为多个隐层的状态之间存在层次化关系。这使得深度循环神经网络能够更好地捕捉时间序列数据中的复杂模式和特征，从而提高了其学习能力和表达能力。\",\n    \"问题5\": \"深度循环神经网络的架构图有何特点？\",\n    \"回答5\": \"深度循环神经网络的架构图展示了网络中各个隐层和输出层之间的连接关系。通过架构图可以清晰地看出每个隐层之间的信息传递和转换关系，帮助理解网络内部结构和信息流动。\",\n    \"问题6\": \"什么是深度学习中的前馈神经网络？\",\n    \"回答6\": \"在深度学习中，前馈神经网络是一种基本的神经网络结构，它的信息传递是单向的，没有形成闭环。每一层的输出作为下一层的输入，没有反馈连接。这种结构适用于许多非时序数据处理任务。\",\n    \"问题7\": \"深度学习中常用的卷积神经网络是用来处理什么类型的数据？\",\n    \"回答7\": \"深度学习中常用的卷积神经网络主要用来处理具有空间结构信息的数据，例如图像、视频等。卷积神经网络通过卷积操作能够有效地捕捉数据中的局部特征和空间关系，因此在处理视觉任务时表现出色。\",\n    \"问题8\": \"为什么深度学习中需要使用循环神经网络？\",\n    \"回答8\": \"在深度学习中，循环神经网络能够有效处理时序数据和具有时间依赖关系的数据。其内部状态可以根据先前的输入动态地变化，适用于语言模型、时间序列预测等需要考虑上下文信息和时间顺序关系的任务。\",\n    \"问题9\": \"深度学习中常用的激活函数有哪些？\",\n    \"回答9\": \"深度学习中常用的激活函数包括 Sigmoid 函数、ReLU 函数、Tanh 函数等。这些激活函数能够引入非线性，帮助神经网络模型更好地学习和表示复杂的数据特征。\",\n    \"问题10\": \"在深度学习中，为什么需要使用 softmax 函数？\",\n    \"回答10\": \"在深度学习中，softmax 函数通常用于多分类任务中，能够将神经网络输出转化为各类别的概率分布。通过对输出进行归一化处理，softmax 函数使得模型输出更符合实际情况，并且便于进行分类决策。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710725480,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1421,
+            "prompt_tokens": 3064,
+            "total_tokens": 4485
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

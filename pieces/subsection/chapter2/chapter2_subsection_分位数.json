@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter2",
+        "title": "分位数",
+        "content_length": 3116,
+        "content": "Title: 分位数\nContent:\n\\begin{definition}{}{2.7.1}\n  设连续随机变量$X$的分布函数为$F(x)$，密度函数为$p(x)$. 对任意$p\\in(0,1)$，称满足条件\n  \\begin{equation}\\label{eq2.7.4}\n    F(x_p) = \\int_{-\\infty}^{x_p}p(x)\\dd x = p\n  \\end{equation}\n  的$x_p$为此分布的\\textbf{$p$分位数}，\\index{S!数字特征!分位数}又称\\textbf{下侧$p$分位数}.\n\\end{definition}\n\n分位数$x_p$是把密度函数下的而积分为两块，左侧面积恰好为$p$（见图 \\ref{fig2.7.1}(a)）.\n\n同理我们称满足条件\n\\begin{equation}\n  1 - F(x_p') = \\int_{x_p'}^{+\\infty} p(x)\\ dd x = p\n\\end{equation}\n的$x_p'$为此分布的\\textbf{上侧$p$分位数}.\n\n上侧分位数$x_p'$也是把密度函数下的面积分为两块，但右侧面积恰好为$p$（见图 \\ref{fig2.7.1}(b)）.\n\n\\begin{figure}[!ht]\n  \\centering\n  \\subfloat[（下侧）分位数]{\n    \\begin{tikzpicture}[thick]\n  \\draw[-Stealth] (0,0) -- (5,0) node [below] {$x$};\n  \\fill[pattern = north west lines] (0,0) .. controls (0.5,0.6) .. (1,2.2) -- (1,0) -- cycle;\n  \\draw (0,0).. controls (0.5,0.6) .. (1,2.2) [bend left = 38] to(1.5,2.6) [bend left = 30] to (2.2,2) [bend right = 30] to (4.9,0.1);\n  \\draw [densely dashed] (1,0) node[below]{$x_p$} -- (1,2.2);\n\n  \\node[inner sep=0pt, circle ,fill = white] at (0.7,0.4){$p$};\n  \\draw[-Stealth] (4,1.5) node[above] {$p(x)$} -- ++ (-135:1.1);\n\\end{tikzpicture}\n  }\\qquad\n  \\subfloat[上侧分位数]{\n  \\begin{tikzpicture}[thick]\n  \\draw[-Stealth] (0,0) -- (5,0) node [below] {$x$};\n  \\fill[pattern = north east lines] (2.2,2) [bend right = 30] to (4.9,0.1) -- (4.9,0) -- (2.2,0) node[below]{$x_p'$} -- cycle;\n  \\draw (0,0).. controls (0.5,0.6) .. (1,2.2) [bend left = 38] to(1.5,2.6) [bend left = 30] to (2.2,2) [bend right = 30] to (4.9,0.1);\n  \\draw [densely dashed] (2.2,0) -- (2.2,2);\n  \\node[inner sep=0pt, circle ,fill = white] at (3,0.4){$p$};\n  \\draw[-Stealth] (4,1.5) node[above] {$p(x)$} -- ++ (-135:1.1);\n\\end{tikzpicture}\n  }\n  \\caption{分位数与上侧分位数的区别\\label{fig2.7.1}}\n\\end{figure}\n\n要善于区分分位数与上侧分位数的差别，本书指定用分位数表，而有一些书使用的是上侧分位数表，无论用什么表，书中都有说明.\n\n分位数与上侧分位数是可以相互转换的，其转换公式如下.\n\\begin{equation}\n  x_p' = x_{1-p};\\quad x_p = x_{1-p}'.\n\\end{equation}\n\n\\begin{example}\n  标准正态分布$N(0,1)$的$p$分位数记为$u_P$，它是方程\n  \\[\n    \\varPhi(u_p) = p\n  \\]\n  的唯一解，其解为$u_p=\\varPhi^{-1}(p)$，其中$\\varPhi^{-1}(\\cdot)$是标准正态分布函数的反函数. 利用标准正态分布函数表（见附表2），我们可由$p$查得$u_p$. 譬如$u_{0.95}=1.96$. 由于标准正态分布的密度函数是偶函数，故其分位数有如下性质：\n\n  \\begin{itemize}\n    \\item 当$p<0.5$时，$u_p<0$.\n\n    \\item 当$p>0.5$时，$u_p>0$.\n\n    \\item 当$p=0.5$时，$u_{0.5}=0$.\n\n    \\item 当$p_1<p_2$时，$u_{p_1}<u_{p_2}$.\n  \\end{itemize}\n\n  又由定理 \\ref{thm:2.5.1} 可知：一般正态分布$N(\\mu,\\sigma^2)$的$p$分位数$x_p$是方程\n  \\[\n    \\varPhi\\left( \\frac{x_p-\\mu}\\sigma \\right) = p\n  \\]\n  的解，所以由\n  \\[\n    \\frac{x_p-\\mu}\\sigma = u_p\n  \\]\n  可得$x_p$与$u_p$的关系式\n  \\begin{equation}\\label{eq2.7.7}\n    x_p = \\mu + \\sigma u_p.\n  \\end{equation}\n  譬如正态分布$N(10,2^2)$的0.95分位数为\n  \\[\n    x_{0.95} = 10 + 2u_{0.95} = 10 + 2\\times 1.96 = 13.92.\n  \\]\n\\end{example}\n\n分位数在统计中经常被使用，特别对统计中常用的三大分布：$\\chi^2$分布、$t$分布和$F$分布，都特地编制了它们的分位数表.以后分别以$\\chi^2_\\alpha(n).t_\\alpha(n),F_\\alpha(n,m)$记这些分布的$\\alpha$分位数. 例如$\\alpha=0.05,n=10,m=15$时，查附表3、附表4、附表5，可得\n\\[\n  \\chi^2{1-\\alpha}(n) = 18.307;\\quad t_{1-\\alpha} = 1.8125;\\quad F_{1-\\alpha} (n,m) = 2.54.\n\\]\n\n譬如，记某种轴承的寿命为$T,t_p$为此寿命分布的$p$分位数，则$t_{0.1}=1000$（h），表明此种轴承中约有90\\%寿命超过1000小时. 若记另一种轴承的寿命为$Z,p$分位数为$z_p$.则当$z_{0.1}=1500$（h）时，从0.1的分位数上说明后者的质量比前者更高一些."
+    },
+    {
+        "id": "chatcmpl-940Sr1OckRiX9H3El0TC7Q8SUmaWS",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"分位数和上侧分位数有什么区别？\",\n    \"回答1\": \"分位数是指密度函数下的积分面积恰好为$p$的$x_p$值，而上侧分位数是指密度函数下的右侧面积恰好为$p$的$x_p'$值。两者在计算方式和代表的含义上有所不同。\",\n    \"问题2\": \"分位数和上侧分位数的转换公式是什么？\",\n    \"回答2\": \"分位数和上侧分位数可以相互转换，其转换公式为 $x_p' = x_{1-p};\\text{ 且 } x_p = x_{1-p}'$。这意味着两者之间存在着简单的对称关系。\",\n    \"问题3\": \"标准正态分布的$p$分位数是如何计算得到的？\",\n    \"回答3\": \"标准正态分布$N(0,1)$的$p$分位数记为$u_P$，它是方程 $\\text{Φ}(u_p) = p$ 的唯一解，其中 $\\text{Φ}^{-1}(\\bullet)$ 是标准正态分布函数的反函数。利用标准正态分布函数表，可以由给定的 $p$ 查得 $u_p$。\",\n    \"问题4\": \"一般正态分布的$p$分位数与标准正态分布的$p$分位数有何关系？\",\n    \"回答4\": \"一般正态分布$N(\\text{μ},\\text{σ}^2)$的$p$分位数 $x_p$ 与标准正态分布的$p$分位数 $u_p$ 存在关系式 $x_p = \\text{μ} + \\text{σ} u_p$。这意味着一般正态分布的 $p$ 分位数可以通过标准正态分布的 $p$ 分位数进行线性变换得到。\",\n    \"问题5\": \"为什么在统计中经常使用分位数？\",\n    \"回答5\": \"在统计中经常使用分位数，特别对统计中常用的三大分布：$\\text{χ}^2$ 分布、$t$ 分布和 $F$ 分布，都特地编制了它们的分位数表。通过查找相应的分位数表，可以方便地获取特定概率下的临界值，从而进行统计推断和假设检验。\",\n    \"问题6\": \"如何利用某种轴承寿命的$p$分位数进行质量比较？\",\n    \"回答6\": \"若记某种轴承的寿命为 $T$，$t_p$ 为此寿命分布的 $p$ 分位数，则当 $t_{0.1}=1000\\text{h}$ 时，表明此种轴承中约有90%寿命超过1000小时。若记另一种轴承的寿命为 $Z$，$p$ 分位数为 $z_p$，则当 $z_{0.1}=1500\\text{h}$ 时，从0.1的分位数上说明后者的质量比前者更高一些。\",\n    \"问题7\": \"在统计中，为什么要区分使用分位数表和上侧分位数表？\",\n    \"回答7\": \"要善于区分使用分位数表和上侧分位数表是因为两者代表了不同含义的临界值。对于不同类型的统计推断和假设检验，需要根据具体情况选择合适的临界值表以进行正确的推断和判断。\",\n    \"问题8\": \"在例子中提到了标准正态分布函数表（附表2），这个表格有什么作用？\",\n    \"回答8\": \"标准正态分布函数表（附表2）用于通过给定概率 $p$ 查得标准正态分布的 $p$ 分位数 $u_p$。通过查表可以方便地获取标准正态分布下不同概率对应的临界值。\",\n    \"问题9\": \"在例子中提到了一般正态分布的0.95分位数计算方法，这个计算方法有什么特点？\",\n    \"回答9\": \"一般正态分布的0.95分位数计算方法通过线性变换得到，具体公式为 $x_{0.95} = \\text{μ} + \\text{σ} u_{0.95}$。这种线性变换方法使得可以通过标准正态分布下相应概率对应的临界值来快速计算一般正态分布下相应概率对应的临界值。\",\n    \"问题10\": \"在统计中，为什么需要特地编制各种分布的分位数表？\",\n    \"回答10\": \"特地编制各种分布的分位数表是为了方便统计工作者能够快速获取特定概率下对应的临界值。通过这些表格，可以方便地进行统计推断、假设检验等工作，并且提高工作效率。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710742125,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1394,
+            "prompt_tokens": 4478,
+            "total_tokens": 5872
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter5",
+        "title": "$F$分布\\label{ssec:5.4.2",
+        "content_length": 3433,
+        "content": "Title: $F$分布\\label{ssec:5.4.2\nContent:\n}\n\\begin{definition}{}{}\n设$X_1\\sim\\chi^2(m),X_2\\sim\\chi^2(n),X_1$与$X_2$独立,则称$F+\\frac{X_1/m}{X_2/n}$的分布是自由度为$m$与$n$的$F$分布\\index{F!$F$分布},记为$F\\sim F(m,n)$,其中$m$称为分子自由度, $n$称为分母自由度.\n\\end{definition}\n下面分两步来导出$F$分布的密度函数.\n\n首先我们导出$Z=\\frac{X_1}{X_2}$的密度函数,若记$p_1(x)$和$p_2(x)$分别为$\\chi^2(m)$和$\\chi^2(n)$的密度函数,根据独立随机变量商的分布的密度函数公式~\\eqref{eq:3.3.22}. $Z$的密度函数为\n\\begin{align*}\np_Z(z)&=\\int_0^{=\\infty}x_2p_1(zx_2)p_2(x_2)\\dd x_2\\\\\n&=\\frac{z^{\\frac{m}{2}-1}}{\\Gamma \\left( \\frac{m}{2} \\right) \\Gamma \\left( \\frac{n}{2} \\right) 2^{\\frac{m+n}{2}}}\\int_0^{+\\infty}x_2^{\\frac{m+n}2-1}\\ee^{-\\frac{x_2}2(1+z)}\\dd x_2.\n\\end{align*}\n运用变换$u=\\frac{x_2}2(1+z)$,可得\n\\[p_Z(z)=\\frac{z^{\\frac{m}{2}-1}\\left( 1+z \\right) ^{\\frac{m+n}{2}}}{\\Gamma \\left( \\frac{m}{2} \\right) \\Gamma \\left( \\frac{n}{2} \\right)}\\int_0^{+\\infty}u^{\\frac{m+n}2-1}\\ee^{-u}\\dd u.\\]\n最后的定积分为伽马函数$\\Gamma\\left(\\frac{m+n}2\\right)$,从而\n\\[\np_Z\\left( z \\right) =\\frac{\\Gamma \\left( \\frac{m+n}{2} \\right)}{\\Gamma \\left( \\frac{m}{2} \\right) \\Gamma \\left( \\frac{n}{2} \\right)}z^{\\frac{m}{2}-1}\\left( 1+z \\right) ^{-\\frac{m+n}{2}},\\quad z>0.\n\\]\n第二步,我们导出$F=\\frac nm Z$的密度函数,对$y>0$,有\n\\begin{align*}\np_F\\left( y \\right) &=p_Z\\left( \\frac{m}{n}y \\right) \\cdot \\frac{m}{n}\\\\\n&=\\frac{\\Gamma \\left( \\frac{m+n}{2} \\right)}{\\Gamma \\left( \\frac{m}{2} \\right) \\Gamma \\left( \\frac{n}{2} \\right)}\\left( \\frac{m}{n}y \\right) ^{\\frac{m}{2}-1}\\left( 1+\\frac{m}{n}y \\right) ^{-\\frac{m+n}{2}}\\cdot \\frac{m}{n}\\\\\n&=\\frac{\\Gamma \\left( \\frac{m+n}{2} \\right) \\left( \\frac{m}{n} \\right) ^{\\frac{m}{2}}}{\\Gamma \\left( \\frac{m}{2} \\right) \\Gamma \\left( \\frac{n}{2} \\right)}y^{\\frac{m}{2}-1}\\left( 1+\\frac{m}{n}y \\right) ^{-\\frac{m+n}{2}}.\n\\end{align*}\n这就是自由度为$m$与$n$的$F$分布的密度函数.该密度函数的图像是一个只取非负值的偏态分布(见图~\\ref{fig:5.4.2} )\n\\begin{figure}\n  \\centering\n\\begin{tikzpicture}[xscale=1.5,yscale=5,>=Stealth,domain=0:4,samples=500]\n\\draw[->](0,0)node[below left]{$O$}--(4.5,0);\\draw[->](0,0)--(0,0.9);\n\\foreach \\x in{0.5,1,...,4}\\draw(\\x,0.01)--(\\x,0)node[below]{$\\x$};\n\\foreach \\x in{0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8}\\draw(0.05,\\x)--(0,\\x)node[left]{$\\x$};\n\\draw[dashed]plot (\\x,{12*(\\x)/(1+4*(\\x))^(5/2)});\n\\draw plot (\\x,{6*(\\x)/(1+\\x)^4});\n\\draw[thick,dashed]plot (\\x,{4.8*(\\x)/(1+0.4*(\\x))^7});\n\\draw[thick,domain=0.05:4]plot (\\x,{4*(\\x)/(1+0.04*\\x)^52+0.02});\n\\draw[thick](2.5,.8)--(2.8,.8)node[right=-2pt]{$F(4,4000)$};\n\\draw[thick,dashed](2.5,.72)--(2.8,.72)node[right=-2pt]{$F(4,10)$};\n\\draw(2.5,.64)--(2.8,.64)node[right=-2pt]{$F(4,4)$};\n\\draw[dashed](2.5,.56)--(2.8,.56)node[right=-2pt]{$F(4,1)$};\n\\end{tikzpicture}\n  \\caption{$F$分布的密度函数}\\label{fig:5.4.2}\n\\end{figure}\n\n当随机变量$F\\sim F(n,m)$时,对给定$\\alpha(0<\\alpha<1)$,称满足$P(F\\leq F_{1-\\alpha}(m,n))=1-\\alpha$的$F_{1-\\alpha}(m,n)$是自由度为$m$与$n$的$F$分布的$1-\\alpha$分位数.\n\n由$F$分布的构造知,若$F\\sim F(m,n)$,则有$1/F\\sim F(n,m)$,故对给定$\\alpha(0<\\alpha<1)$,\n\\[\n\\alpha =P\\left( \\frac{1}{F}<F_{\\alpha}\\left( n,m \\right) \\right) =P\\left( F\\geq \\frac{1}{F_{\\alpha}\\left( n,m \\right)} \\right).\n\\]\n从而\n\\[\nP\\left( F\\leq \\frac{1}{F_{\\alpha}\\left( n,m \\right)} \\right) =1-\\alpha,\n\\]\n这说明\n\\begin{equation}\\label{eq:5.4.1}\nF_\\alpha(n,m)=\\frac1{F_{1-\\alpha}(m,n)}.\n\\end{equation}\n对小的$\\alpha$,分位数$F_{1-\\alpha}(m,n)$可以从附表5中查到,而分位数$F_\\alpha(m,n)$则可通过 \\eqref{eq:5.4.1} 得到.\n\\begin{example}\\label{exam:5.4.1}\n若取$m=10,n=5,\\alpha=0.05$,那么从附表4上查得\n\\[F_{1-0.05}(10,5)=F_{0.95}(10,5)=4.74,\\]\n利用~\\eqref{eq:5.4.1} 可得到\n\\[F_{0.05}(10,5)=\\frac1{F_{0.95}(5,10)}=\\frac1{3.33}=0.3.\\]\n\\end{example}"
+    },
+    {
+        "id": "chatcmpl-93znyDzmEZAjlJI09lVhNPPMIxrwS",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是自由度为$m$与$n$的$F$分布？\",\n    \"回答1\": \"自由度为$m$与$n$的$F$分布是指当两个独立的卡方分布$X_1\\text{ 和 }X_2$分别自由度为$m\\text{ 和 }n$时，定义了一个新的随机变量$F=\\frac{X_1/m}{X_2/n}$，其分布称为自由度为$m\\text{ 和 }n$的$F$分布，记为$F\\text{ 且 }F\\thicksim F(m,n)$。\",\n    \"问题2\": \"如何导出$F=\\frac nm Z$的密度函数？\",\n    \"回答2\": \"首先导出了随机变量$Z=\\frac{X_1}{X_2}$的密度函数$p_Z(z)$，然后根据随机变量商的分布的密度函数公式，得到了$F=\\frac nm Z$的密度函数$p_F(y)$。\",\n    \"问题3\": \"请给出自由度为$m$与$n$的$F$分布的密度函数表达式。\",\n    \"回答3\": \"自由度为$m\\text{ 和 }n$的$F$分布的密度函数表达式为$p_F(y)=\\frac{\\text{Gamma}\\big(\\frac{m+n}{2}\\big)\\big(\\frac{m}{n}\\big)^{\\frac{m}{2}}}{\\text{Gamma}\\big(\\frac{m}{2}\\big)\\text{Gamma}\\big(\\frac{n}{2}\\big)}y^{\\frac{m}{2}-1}\\big(1+\\frac{m}{n}y\\big)^{-\\frac{m+n}{2}}$。\",\n    \"问题4\": \"描述自由度为$m$与$n$的$F$分布的密度函数图像特点。\",\n    \"回答4\": \"自由度为$m\\text{ 和 }n$的$F$分布的密度函数图像是一个只取非负值的偏态分布，具有特定的形状和偏斜特点。\",\n    \"问题5\": \"如何计算自由度为$m$与$n$的$F$分布的$1-\\beta$分位数？\",\n    \"回答5\": \"对于给定$\\beta(0<\\beta<1)$，满足$P(F\\thicksim F_{1-\\beta}(m,n))=1-\\beta$的$F_{1-\\beta}(m,n)$是自由度为$m\\text{ 和 }n$的$F$分布的$1-\\beta$分位数。可以通过计算得到该分位数。\",\n    \"问题6\": \"根据构造知识，当随机变量$F\\thicksim F(n,m)$时，如何计算给定$\\beta(0<\\beta<1)$时的分位数？\",\n    \"回答6\": \"根据构造知识，当随机变量$F\\thicksim F(m,n)$时，对给定$\\beta(0<\\beta<1)$，有$\\beta =P\\big(\\frac{1}{F}<F_{\\beta}(n,m)\\big)=P\\big(F\\thicksim \\frac{1}{F_{\\beta}(n,m)}\\big)$. 从而可以通过这一关系计算得到给定$\\beta(0<\\beta<1)$时的分位数。\",\n    \"问题7\": \"如何利用已知分位数计算另一个分位数？\",\n    \"回答7\": \"利用已知分位数可以通过公式 $F_\\beta(n,m)=\\frac1{F_{1-\\beta}(m,n)}$ 来计算另一个分位数。这一关系可以帮助我们在已知一个分位数的情况下计算另一个分位数。\",\n    \"问题8\": \"举例说明如何计算自由度为10和5的$F$分布的特定分位数。\",\n    \"回答8\": \"举例，若取$m=10,n=5,\\beta=0.05$,那么可以通过已知表格或计算得到 $F_{1-0.05}(10,5)=F_{0.95}(10,5)=4.74$, 利用公式 $F_{0.05}(10,5)=\\frac1{F_{0.95}(5,10)}=\\frac1{3.33}=0.3$, 可以得到特定分位数。\",\n    \"问题9\": \"如何理解自由度为$m\\text{ 和 }n$的$F$分布密度函数图像中的偏斜特点？\",\n    \"回答9\": \"自由度为$m\\text{ 和 }n$的$F$分布密度函数图像中的偏斜特点表明该分布在形状上呈现出一定程度的不对称性，具有特定方向上的偏斜倾向。\",\n    \"问题10\": \"在计算自由度为$m\\text{ 和 }n$的$F$分布特定分位数时，有何实际应用价值？\",\n    \"回答10\": \"在实际应用中，计算自由度为$m\\text{ 和 }n$的$F$分布特定分位数可以帮助我们进行统计推断和假设检验等工作。这些特定分位数在统计学和实验设计中具有重要意义，能够帮助我们进行数据分析和结论推断。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710739590,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1388,
+            "prompt_tokens": 4502,
+            "total_tokens": 5890
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

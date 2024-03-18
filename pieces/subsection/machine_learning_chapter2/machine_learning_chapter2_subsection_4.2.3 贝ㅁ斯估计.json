@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter2",
+        "title": "4.2.3 贝ㅁ斯估计",
+        "content_length": 4170,
+        "content": "Title: 4.2.3 贝ㅁ斯估计\nContent:\n用极大似然估计可能会出现所要估计的概率值为 0 的情况。这时会影响后验概率的计算结果, 使分类产生偏差。解决这一问题的方法是采用贝叶斯估计。具体地, 条件概率的贝叶斯估计是\n\n\n\\begin{equation*}\nP_{\\lambda}\\left(X^{(j)}=a_{j l} \\mid Y=c_{k}\\right)=\\frac{\\sum_{i=1}^{N} I\\left(x_{i}^{(j)}=a_{j l}, y_{i}=c_{k}\\right)+\\lambda}{\\sum_{i=1}^{N} I\\left(y_{i}=c_{k}\\right)+S_{j} \\lambda} \\tag{4.10}\n\\end{equation*}\n\n\n式中 $\\lambda \\geqslant 0$, 等价于在随机变量各个取值的频数上赋予一个正数 $\\lambda>0$ 。当 $\\lambda=0$ 时就是极大似然估计。常取 $\\lambda=1$, 这时称为拉普拉斯平滑（Laplacian smoothing）。显然, 对任何 $l=1,2, \\cdots, S_{j}, k=1,2, \\cdots, K$, 有\n\n$$\n\\begin{aligned}\n& P_{\\lambda}\\left(X^{(j)}=a_{j l} \\mid Y=c_{k}\\right)>0 \\\\\n& \\sum_{l=1}^{S_{j}} P_{\\lambda}\\left(X^{(j)}=a_{j l} \\mid Y=c_{k}\\right)=1\n\\end{aligned}\n$$\n\n表明式 (4.10) 确为一种概率分布。同样, 先验概率的贝叶斯估计是\n\n\n\\begin{equation*}\nP_{\\lambda}\\left(Y=c_{k}\\right)=\\frac{\\sum_{i=1}^{N} I\\left(y_{i}=c_{k}\\right)+\\lambda}{N+K \\lambda} \\tag{4.11}\n\\end{equation*}\n\n\n例 4.2 问题同例 4.1, 按照拉普拉斯平滑估计概率, 即取 $\\lambda=1$ 。\n\n解 $A_{1}=\\{1,2,3\\}, A_{2}=\\{S, M, L\\}, C=\\{1,-1\\}$ 。按照式 (4.10) 和式 (4.11) 计算下列\\\\\n概率:\n\n$$\n\\begin{aligned}\n& P(Y=1)=\\frac{10}{17}, \\quad P(Y=-1)=\\frac{7}{17} \\\\\n& P\\left(X^{(1)}=1 \\mid Y=1\\right)=\\frac{3}{12}, \\quad P\\left(X^{(1)}=2 \\mid Y=1\\right)=\\frac{4}{12}, \\quad P\\left(X^{(1)}=3 \\mid Y=1\\right)=\\frac{5}{12} \\\\\n& P\\left(X^{(2)}=S \\mid Y=1\\right)=\\frac{2}{12}, \\quad P\\left(X^{(2)}=M \\mid Y=1\\right)=\\frac{5}{12}, \\quad P\\left(X^{(2)}=L \\mid Y=1\\right)=\\frac{5}{12} \\\\\n& P\\left(X^{(1)}=1 \\mid Y=-1\\right)=\\frac{4}{9}, \\quad P\\left(X^{(1)}=2 \\mid Y=-1\\right)=\\frac{3}{9}, \\quad P\\left(X^{(1)}=3 \\mid Y=-1\\right)=\\frac{2}{9} \\\\\n& P\\left(X^{(2)}=S \\mid Y=-1\\right)=\\frac{4}{9}, \\quad P\\left(X^{(2)}=M \\mid Y=-1\\right)=\\frac{3}{9}, \\quad P\\left(X^{(2)}=L \\mid Y=-1\\right)=\\frac{2}{9}\n\\end{aligned}\n$$\n\n对于给定的 $x=(2, S)^{\\mathrm{T}}$, 计算\n\n$$\n\\begin{aligned}\n& P(Y=1) P\\left(X^{(1)}=2 \\mid Y=1\\right) P\\left(X^{(2)}=S \\mid Y=1\\right)=\\frac{10}{17} \\cdot \\frac{4}{12} \\cdot \\frac{2}{12}=\\frac{5}{153}=0.0327 \\\\\n& P(Y=-1) P\\left(X^{(1)}=2 \\mid Y=-1\\right) P\\left(X^{(2)}=S \\mid Y=-1\\right)=\\frac{7}{17} \\cdot \\frac{3}{9} \\cdot \\frac{4}{9}=\\frac{28}{459}=0.0610\n\\end{aligned}\n$$\n\n由于 $P(Y=-1) P\\left(X^{(1)}=2 \\mid Y=-1\\right) P\\left(X^{(2)}=S \\mid Y=-1\\right)$ 最大, 所以 $y=-1$ 。\n\n\\section*{本章概要}\n\\begin{enumerate}\n  \\item 朴素贝叶斯法是典型的生成学习方法。生成方法由训练数据学习联合概率分布 $P(X, Y)$, 然后求得后验概率分布 $P(Y \\mid X)$ 。具体来说, 利用训练数据学习 $P(X \\mid Y)$ 和 $P(Y)$的估计, 得到联合概率分布:\n\\end{enumerate}\n\n$$\nP(X, Y)=P(Y) P(X \\mid Y)\n$$\n\n概率估计方法可以是极大似然估计或贝叶斯估计。\n\n\\begin{enumerate}\n  \\setcounter{enumi}{1}\n  \\item 朴素贝叶斯法的基本假设是条件独立性:\n\\end{enumerate}\n\n$$\n\\begin{aligned}\nP\\left(X=x \\mid Y=c_{k}\\right) & =P\\left(X^{(1)}=x^{(1)}, \\cdots, X^{(n)}=x^{(n)} \\mid Y=c_{k}\\right) \\\\\n& =\\prod_{j=1}^{n} P\\left(X^{(j)}=x^{(j)} \\mid Y=c_{k}\\right)\n\\end{aligned}\n$$\n\n这是一个较强的假设。由于这一假设, 模型包含的条件概率的数量大为减少, 朴素贝叶斯法的学习与预测大为简化。因而朴素贝叶斯法高效且易于实现, 其缺点是分类的性能不一定很高。\n\n\\begin{enumerate}\n  \\setcounter{enumi}{2}\n  \\item 朴素贝叶斯法利用贝叶斯定理与学到的联合概率模型进行分类预测。\n\\end{enumerate}\n\n$$\nP(Y \\mid X)=\\frac{P(X, Y)}{P(X)}=\\frac{P(Y) P(X \\mid Y)}{\\sum_{Y} P(Y) P(X \\mid Y)}\n$$\n\n将输入 $x$ 分到后验概率最大的类 $y$ 。\n\n$$\ny=\\arg \\max _{c_{k}} P\\left(Y=c_{k}\\right) \\prod_{j=1}^{n} P\\left(X_{j}=x^{(j)} \\mid Y=c_{k}\\right)\n$$\n\n后验概率最大等价于 0-1 损失函数时的期望风险最小化。\n\n\\section*{继续阅读}\n朴素贝叶斯法的介绍可见文献 [1] 和文献 [2]。朴素贝叶斯法中假设输入变量都是条件独立的, 如果假设它们之间存在概率依存关系, 模型就变成了贝叶斯网络, 参见文献 [3]。\n\n\\section*{习 题}\n4.1 用极大似然估计法推出朴素贝叶斯法中的概率估计公式 (4.8) 及公式 (4.9)。\n\n4.2 用贝叶斯估计法推出朴素贝叶斯法中的概率估计公式 (4.10) 及公式 (4.11)。\n\n\\section*{参考文献}\n[1] MITCHELL T M. Machine Learning[M]. Engineering, 2005.\n\n[2] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 迫红英, 等译. Springer, 2001.\n\n[3] BISHOP C. Pattern recognition and machine learning[M]. Springer, 2006.\n\n\\section*{第 5 章 决 策 树}\n决策树（decision tree）是一种基本的分类与回归方法。本章主要讨论用于分类的决策树。决策树模型呈树形结构, 在分类问题中, 表示基于特征对实例进行分类的过程。它可以认为是 if-then 规则的集合，也可以认为是定义在特征空间与类空间上的条件概率分布。其主要优点是模型具有可读性, 分类速度快。学习时, 利用训练数据, 根据损失函数最小化的原则建立决策树模型。预测时, 对新的数据利用决策树模型进行分类。决策树学习通常包括 3 个步骤: 特征选择、决策树的生成和决策树的修剪。这些决策树学习的思想主要来源于由 Quinlan 在 1986 年提出的 ID3 算法和 1993 年提出的 C4.5 算法, 以及由 Breiman 等人在 1984 年提出的 CART 算法。\n\n本章首先介绍决策树的基本概念, 然后通过 ID3 算法和 C4.5 算法介绍特征的选择、决策树的生成以及决策树的修剪, 最后介绍 CART 算法。\n\n\\section*{5.1 决策树模型与学习}"
+    },
+    {
+        "id": "chatcmpl-9408tAGMwLuo8RTd0P9DpEvEGczwM",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"极大似然估计和贝叶斯估计在概率值为 0 的情况下会有什么不同？\",\n    \"回答1\": \"极大似然估计可能会出现所要估计的概率值为 0 的情况，这会影响后验概率的计算结果，使分类产生偏差。而贝叶斯估计通过在随机变量各个取值的频数上赋予一个正数 $\\text{λ} > 0$，解决了这一问题，常取 $\\text{λ}=1$ 进行拉普拉斯平滑估计。\",\n    \"问题2\": \"贝叶斯估计中的条件概率的计算公式是什么？\",\n    \"回答2\": \"贝叶斯估计中条件概率的计算公式为 $P_{\\text{λ}}\\big(X^{(j)}=a_{jl} \\big| Y=c_k\\big)=\\frac{\\text{∑}_{i=1}^{N} I\\big(x_i^{(j)}=a_{jl}, y_i=c_k\\big)+\\text{λ}}{\\text{∑}_{i=1}^{N} I\\big(y_i=c_k\\big)+S_j \\text{λ}}$，其中 $\\text{λ} \\text{≥ 0$。\",\n    \"问题3\": \"贝叶斯估计中的先验概率的计算公式是什么？\",\n    \"回答3\": \"贝叶斯估计中先验概率的计算公式为 $P_{\\text{λ}}\\big(Y=c_k\\big)=\\frac{\\text{∑}_{i=1}^{N} I\\big(y_i=c_k\\big)+\\text{λ}}{N+K \\text{λ}}$。\",\n    \"问题4\": \"朴素贝叶斯法中的基本假设是什么？\",\n    \"回答4\": \"朴素贝叶斯法的基本假设是条件独立性，即 $P\\big(X=x \\big| Y=c_k\\big)=\\text{∏}_{j=1}^{n} P\\big(X^{(j)}=x^{(j)} \\big| Y=c_k\\big)$。这一假设使得模型包含的条件概率的数量大为减少，简化了朴素贝叶斯法的学习与预测。\",\n    \"问题5\": \"朴素贝叶斯法如何进行分类预测？\",\n    \"回答5\": \"朴素贝叶斯法利用贝叶斯定理与学到的联合概率模型进行分类预测。具体地，将输入 $x$ 分到后验概率最大的类 $y$，即 $y=\\text{arg max}_{c_k} P\\big(Y=c_k\\big) \\text{∏}_{j=1}^{n} P\\big(X_j=x^{(j)} \\big| Y=c_k\\big)$。\",\n    \"问题6\": \"决策树模型具有哪些优点？\",\n    \"回答6\": \"决策树模型具有可读性高、分类速度快等优点。它可以认为是 if-then 规则的集合，也可以认为是定义在特征空间与类空间上的条件概率分布。\",\n    \"问题7\": \"决策树学习的三个主要步骤是什么？\",\n    \"回答7\": \"决策树学习通常包括特征选择、决策树的生成和决策树的修剪三个步骤。这些决策树学习的思想主要来源于 ID3 算法、C4.5 算法和 CART 算法。\",\n    \"问题8\": \"朴素贝叶斯法中如何利用训练数据进行学习？\",\n    \"回答8\": \"朴素贝叶斯法通过利用训练数据学习 $P(X \\big| Y)$ 和 $P(Y)$ 的估计，得到联合概率分布 $P(X, Y)=P(Y) P(X \\big| Y)$。学习方法可以是极大似然估计或贝叶斯估计。\",\n    \"问题9\": \"决策树模型是如何进行分类预测的？\",\n    \"回答9\": \"决策树模型在预测时，对新的数据利用决策树模型进行分类。具体地，将输入数据分到后验概率最大的类别。\",\n    \"问题10\": \"朴素贝叶斯法的缺点是什么？\",\n    \"回答10\": \"朴素贝叶斯法高效且易于实现，但其缺点是分类的性能不一定很高。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710740887,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1298,
+            "prompt_tokens": 5293,
+            "total_tokens": 6591
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

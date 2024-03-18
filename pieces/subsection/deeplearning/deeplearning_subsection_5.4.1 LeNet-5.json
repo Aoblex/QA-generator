@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "5.4.1 LeNet-5",
+        "content_length": 3425,
+        "content": "Title: 5.4.1 LeNet-5\nContent:\nLeNet-5[LeCun et al., 1998] 虽然提出的时间比较早, 但它是一个非常成功的神经网络模型. 基于 LeNet- 5 的手写数字识别系统在 20 世纪 90 年代被美国很多银行使用, 用来识别支票上面的手写数字. LeNet-5 的网络结构如图 5.10所示.\\\\\n\n\n\n\n\n\n$$\n\\text { C5:卷积层 }\n$$\n\n\n\n图 5.10 LeNet-5 网络结构 (图片根据 [LeCun et al., 1998] 绘制)\n\nLeNet- 5 共有 7 层, 接受输入图像大小为 $32 \\times 32=1024$, 输出对应 10 个类别的得分. LeNet-5 中的每一层结构如下:\n\n(1) $\\mathrm{C} 1$ 层是卷积层, 使用 6 个 $5 \\times 5$ 的卷积核, 得到 6 组大小为 $28 \\times 28=784$的特征映射. 因此, $\\mathrm{C} 1$ 层的神经元数量为 $6 \\times 784=4704$, 可训练参数数量为 $6 \\times 25+6=156$, 连接数为 $156 \\times 784=122304$ (包括偏置在内, 下同 ).\n\n（2） S2 层为汇聚层, 采样窗口为 $2 \\times 2$, 使用平均汇聚, 并使用一个如公式 (5.27) 的非线性函数. 神经元个数为 $6 \\times 14 \\times 14=1176$, 可训练参数数量为 $6 \\times(1+1)=12$, 连接数为 $6 \\times 196 \\times(4+1)=5880$.\n\n（3） C3 层为卷积层. LeNet-5 中用一个连接表来定义输入和输出特征映射之间的依赖关系，如图5.11所示，共使用 60 个 $5 \\times 5$ 的卷积核，得到 16 组大小为 $10 \\times 10$ 的特征映射. 神经元数量为 $16 \\times 100=1600$, 可训练参数数量为 $(60 \\times 25)+16=1516$, 连接数为 $100 \\times 1516=151600$.\n\n(4) S4 层是一个汇聚层, 采样窗口为 $2 \\times 2$, 得到 16 个 $5 \\times 5$ 大小的特征映射, 可训练参数数量为 $16 \\times 2=32$, 连接数为 $16 \\times 25 \\times(4+1)=2000$.\n\n（5） C5 层是一个卷积层, 使用 $120 \\times 16=1920$ 个 $5 \\times 5$ 的卷积核, 得到 120 组大小为 $1 \\times 1$ 的特征映射. $\\mathrm{C} 5$ 层的神经元数量为 120 , 可训练参数数量为 $1920 \\times 25+120=48120$, 连接数为 $120 \\times(16 \\times 25+1)=48120$.\n\n( 6 ) F6 层是一个全连接层, 有 84 个神经元, 可训练参数数量为 $84 \\times(120+$ $1)=10164$. 连接数和可训练参数个数相同, 为 10164 .\n\n( 7 ) 输出层:输出层由 10 个径向基函数 ( Radial Basis Function, $\\mathrm{RBF}$ ) 组成. 这里不再详述.\\\\\n连接表 从公式 (5.23) 可以看出, 卷积层的每一个输出特征映射都依赖于所有输入特征映射, 相当于卷积层的输入和输出特征映射之间是全连接的关系. 实际上, 这种全连接关系不是必须的. 我们可以让每一个输出特征映射都依赖于少数几个输入特征映射. 定义一个连接表 (Link Table) $T$ 来描述输入和输出特征映射之间的连接关系. 在 LeNet-5 中, 连接表的基本设定如图 5.11所示. C3 层的第 0-5 个特征映射依赖于 $S 2$ 层的特征映射组的每 3 个连续子集,第 6-11 个特征映射依赖于 $S 2$ 层的特征映射组的每 4 个连续子集, 第 12-14 个特征映射依赖于 $S 2$ 层的特征映射的每 4 个不连续子集, 第 15 个特征映射依赖于 $S 2$ 层的所有特征映射.\n\n\\begin{center}\n\\begin{tabular}{l|lllllllllllllllll}\n & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\\\\n\\hline\n0 & $\\mathrm{X}$ &  &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  & $\\mathrm{X}$ & $\\mathrm{X}$ \\\\\n1 & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  & $\\mathrm{X}$ \\\\\n2 & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ \\\\\n3 &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ &  & $\\mathrm{X}$ & $\\mathrm{X}$ \\\\\n4 &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  & $\\mathrm{X}$ & $\\mathrm{X}$ &  & $\\mathrm{X}$ \\\\\n5 &  &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ &  & $\\mathrm{X}$ & $\\mathrm{X}$ & $\\mathrm{X}$ \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n图 5.11 LeNet-5 中C3 层的连接表 (图片来源: [LeCun et al., 1998])\n\n如果第 $p$ 个输出特征映射依赖于第 $d$ 个输入特征映射, 则 $T_{p, d}=1$, 否则为 0. $\\boldsymbol{Y}^{p}$ 为\n\n\n\\begin{equation*}\n\\boldsymbol{Y}^{p}=f\\left(\\sum_{\\substack{d, T_{p, d}=1}} \\boldsymbol{W}^{p, d} \\otimes \\boldsymbol{X}^{d}+b^{p}\\right) \\tag{5.40}\n\\end{equation*}\n\n\n其中 $T$ 为 $P \\times D$ 大小的连接表. 假设连接表 $T$ 的非零个数为 $K$, 每个卷积核的大小为 $U \\times V$, 那么共需要 $K \\times U \\times V+P$ 参数."
+    },
+    {
+        "id": "chatcmpl-941r2XoDb6a7pmBoup4mL0tzXpsvh",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"LeNet-5 的输入图像大小是多少？\",\n    \"回答1\": \"LeNet-5 接受输入图像大小为 $32 \\times 32=1024$。\",\n    \"问题2\": \"LeNet-5 中的汇聚层 S2 层采用了什么样的汇聚方式？\",\n    \"回答2\": \"LeNet-5 中的汇聚层 S2 层采用了平均汇聚，并使用一个非线性函数。\",\n    \"问题3\": \"LeNet-5 中的卷积层 C3 层使用了多少个 $5 \\times 5$ 的卷积核？\",\n    \"回答3\": \"LeNet-5 中的卷积层 C3 层使用了 60 个 $5 \\times 5$ 的卷积核。\",\n    \"问题4\": \"LeNet-5 中的全连接层 F6 层有多少个神经元？\",\n    \"回答4\": \"LeNet-5 中的全连接层 F6 层有 84 个神经元。\",\n    \"问题5\": \"LeNet-5 中的输出层由什么组成？\",\n    \"回答5\": \"LeNet-5 中的输出层由 10 个径向基函数（Radial Basis Function, RBF）组成。\",\n    \"问题6\": \"LeNet-5 中的连接表是用来描述什么之间的关系？\",\n    \"回答6\": \"LeNet-5 中的连接表是用来描述输入和输出特征映射之间的连接关系。\",\n    \"问题7\": \"在 LeNet-5 中，如果第 $p$ 个输出特征映射依赖于第 $d$ 个输入特征映射，那么连接表 $T_{p, d}$ 的取值是什么？\",\n    \"回答7\": \"在 LeNet-5 中，如果第 $p$ 个输出特征映射依赖于第 $d$ 个输入特征映射，则连接表 $T_{p, d}$ 的取值为1，否则为0。\",\n    \"问题8\": \"LeNet-5 中卷积层的每一个输出特征映射都依赖于哪些输入特征映射？\",\n    \"回答8\": \"LeNet-5 中卷积层的每一个输出特征映射都依赖于所有输入特征映射，相当于卷积层的输入和输出特征映射之间是全连接的关系。\",\n    \"问题9\": \"LeNet-5 中连接表 $T$ 的参数数量与卷积核大小和非零元素个数有怎样的关系？\",\n    \"回答9\": \"LeNet-5 中连接表 $T$ 的参数数量与卷积核大小和非零元素个数有关系，共需要 $K \\times U \\times V+P$ 参数，其中 $K$ 是非零元素个数，$U \\times V$ 是卷积核的大小，$P$ 是输出特征映射的数量。\",\n    \"问题10\": \"LeNet-5 的网络结构中共有多少层？\",\n    \"回答10\": \"LeNet-5 的网络结构中共有7层。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710747468,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 858,
+            "prompt_tokens": 4728,
+            "total_tokens": 5586
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

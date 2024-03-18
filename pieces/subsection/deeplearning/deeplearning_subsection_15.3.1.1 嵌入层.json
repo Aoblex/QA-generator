@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "15.3.1.1 嵌入层",
+        "content_length": 837,
+        "content": "Title: 15.3.1.1 嵌入层\nContent:\n令 $\\tilde{h}_{t}=\\boldsymbol{x}_{1:(t-1)}$ 表示输入的历史信息, 一般为符号序列. 由于神经网络模型一般要求输入形式为实数向量, 因此为了使得神经网络模型能处理符号数据, 需要将这些符号转换为向量形式. 一种简单的转换方法是通过一个嵌入表 ( Embedding Lookup Table) 来将每个符号直接映射成向量表示. 嵌入表也称为嵌入矩阵或查询表. 图15.2 是嵌入矩阵的示例.\n\n\n\n参见习题15-2.\n\n这里的层泛指神经网络模块 (Module)，可以由一个或多个神经层组成。\n\n图 15.2 嵌入矩阵\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\n令 $M \\in \\mathbb{R}^{D_{x} \\times|\\mathcal{V}|}$ 为嵌入矩阵, 其中第 $k$ 列向量 $\\boldsymbol{m}_{k} \\in \\mathbb{R}^{D_{x}}$ 表示词表中第 $k$ 个词对应的向量表示. 假设词 $x_{t}$ 对应词表中的索引为 $k$, 则其 one-hot 向量表示为 $\\delta_{t} \\in\\{0,1\\}^{|\\mathcal{V}|}$, 即第 $k$ 维为 1 , 其余为 0 的 $|\\mathcal{V}|$ 维向量. 词 $x_{t}$ 对应的向量表示为\n\n\n\\begin{equation*}\n\\boldsymbol{e}_{t}=M \\delta_{t}=\\boldsymbol{m}_{k} \\tag{15.23}\n\\end{equation*}\n\n\n通过上面的映射可以得到序列 $x_{1:(t-1)}$ 对应的向量序列 $\\boldsymbol{e}_{1}, \\cdots, \\boldsymbol{e}_{t-1}$."
+    },
+    {
+        "id": "chatcmpl-946U6qZ66FQXNgDZdJtaZPKmprISH",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是嵌入层中的嵌入表（Embedding Lookup Table）？\",\n    \"回答1\": \"嵌入表是一种用于将符号数据转换为向量表示的方法，通常用于神经网络模型处理符号数据。它将每个符号直接映射成向量表示，也称为嵌入矩阵或查询表。\",\n    \"问题2\": \"嵌入矩阵中的每一列向量 $\\boldsymbol{m}_{k}$ 表示什么意义？\",\n    \"回答2\": \"嵌入矩阵 $M \\text{ 中的第 } k \\text{ 列向量 } \\boldsymbol{m}_{k} \\text{ 表示词表中第 } k \\text{ 个词对应的向量表示。这些向量表示用于将符号数据转换为实数向量形式，以便神经网络模型处理。}\",\n    \"问题3\": \"词 $x_{t}$ 对应的向量表示是如何计算得到的？\",\n    \"回答3\": \"假设词 $x_{t}$ 对应词表中的索引为 $k$，其 one-hot 向量表示为 $\\boldsymbol{\\text{δ}}_{t} \\text{，即第 } k \\text{ 维为 } 1 \\text{，其余为 } 0 \\text{ 的 } |\\boldsymbol{\\text{V}}| \\text{ 维向量}。词 } x_{t} \\text{ 对应的向量表示为 } \\boldsymbol{\\text{e}}_{t}=M \\boldsymbol{\\text{δ}}_{t}=\\boldsymbol{m}_{k}$。\",\n    \"问题4\": \"嵌入层的作用是什么？\",\n    \"回答4\": \"嵌入层的作用是将符号数据转换为实数向量形式，以便神经网络模型能够处理符号数据。通过嵌入层，可以将输入的历史信息序列转换为对应的向量序列，从而实现对符号数据的有效处理和学习。\",\n    \"问题5\": \"嵌入层与神经网络模块之间有何关联？\",\n    \"回答5\": \"嵌入层是神经网络模块（Module）中的一个组成部分。它负责将输入的符号序列转换为向量序列，以便后续神经网络模块能够对其进行进一步处理和学习。\",\n    \"问题6\": \"嵌入矩阵的维度 $M \\text{ 的维度 } D_{x} \\times|\\boldsymbol{\\text{V}}| \\text{ 中的参数有何含义？}\",\n    \"回答6\": \"$M \\text{ 的维度 } D_{x} \\times|\\boldsymbol{\\text{V}}| \\text{ 中的参数表示了嵌入矩阵的维度信息。其中，} D_{x} \\text{ 表示了每个词对应的向量维度，} |\\boldsymbol{\\text{V}}| \\text{ 表示了词表中词的数量。这些参数决定了嵌入矩阵的大小和表示能力。}\",\n    \"问题7\": \"什么是 one-hot 向量表示？\",\n    \"回答7\": \"one-hot 向量表示是一种用于表示离散变量的方法。在词表中，如果某个词对应的索引为 $k$，那么其 one-hot 向量表示是一个长度为 $|\\boldsymbol{\\text{V}}|$ 的向量，其中第 $k$ 维为 1，其余维为 0。\",\n    \"问题8\": \"如何通过嵌入表将符号数据转换为向量形式？\",\n    \"回答8\": \"通过嵌入表，可以将符号数据（如词）首先转换为对应的索引，然后利用索引构建对应的 one-hot 向量表示。最后，通过嵌入矩阵 $M$ 和 one-hot 向量的乘法运算，得到符号对应的向量表示。\",\n    \"问题9\": \"嵌入层如何实现序列 $x_{1:(t-1)}$ 对应的向量序列 $\\boldsymbol{\\text{e}}_{1}, \\text{...}, \\boldsymbol{\\text{e}}_{t-1}$ 的计算？\",\n    \"回答9\": \"通过嵌入层中的嵌入矩阵 $M$ 和输入序列 $x_{1:(t-1)}$ 对应的 one-hot 向量表示 $\\boldsymbol{\\text{δ}}_{1}, \\text{...}, \\boldsymbol{\\text{δ}}_{t-1}$ 的乘法运算，可以得到序列 $x_{1:(t-1)}$ 对应的向量序列 $\\boldsymbol{\\text{e}}_{1}, \\text{...}, \\boldsymbol{\\text{e}}_{t-1}$。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710765266,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1295,
+            "prompt_tokens": 3123,
+            "total_tokens": 4418
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

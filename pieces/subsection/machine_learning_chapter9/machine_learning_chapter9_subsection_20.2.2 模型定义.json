@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter9",
+        "title": "20.2.2 模型定义",
+        "content_length": 3697,
+        "content": "Title: 20.2.2 模型定义\nContent:\n本书采用常用 LDA 模型的定义, 与原始文献中提出的模型略有不同。\n\n\\section*{1. 模型要素}\n潜在狄利克雷分配 (LDA) 使用三个集合: 一是单词集合 $W=\\left\\{w_{1}, w_{2}, \\cdots, w_{v}, \\cdots, w_{V}\\right\\}$,其中 $w_{v}$ 是第 $v$ 个单词, $v=1,2, \\cdots, V, V$ 是单词的个数。二是文本集合 $D=\\left\\{w_{1}, w_{2}, \\cdots\\right.$, $\\left.w_{m}, \\cdots, w_{M}\\right\\}$, 其中 $w_{m}$ 是第 $m$ 个文本, $m=1,2, \\cdots, M, M$ 是文本的个数。文本 $w_{m}$是一个单词序列 $w_{m}=\\left(w_{m 1}, w_{m 2}, \\cdots, w_{m n}, \\cdots, w_{m N_{m}}\\right)$, 其中 $w_{m n}$ 是文本 $w_{m}$ 的第 $n$ 个单词, $n=1,2, \\cdots, N_{m}, N_{m}$ 是文本 $w_{m}$ 中单词的个数。三是话题集合 $Z=\\left\\{z_{1}, z_{2}, \\cdots\\right.$, $\\left.z_{k}, \\cdots, z_{K}\\right\\}$, 其中 $z_{k}$ 是第 $k$ 个话题, $k=1,2, \\cdots, K, K$ 是话题的个数。\n\n每一个话题 $z_{k}$ 由一个单词的条件概率分布 $p\\left(w \\mid z_{k}\\right)$ 决定, $w \\in W$ 。分布 $p\\left(w \\mid z_{k}\\right)$ 服从多项分布 (严格意义上类别分布), 其参数为 $\\varphi_{k}$ 。参数 $\\varphi_{k}$ 服从狄利克雷分布 (先验分布), 其超参数为 $\\beta$ 。参数 $\\varphi_{k}$ 是一个 $V$ 维向量 $\\varphi_{k}=\\left(\\varphi_{k 1}, \\varphi_{k 2}, \\cdots, \\varphi_{k V}\\right)$, 其中 $\\varphi_{k v}$ 表示话题 $z_{k}$ 生成单词 $w_{v}$ 的概率。所有话题的参数向量构成一个 $K \\times V$ 矩阵 $\\varphi=\\left\\{\\varphi_{k}\\right\\}_{k=1}^{K}$ 。超参数 $\\beta$ 也是一个 $V$ 维向量 $\\beta=\\left(\\beta_{1}, \\beta_{2}, \\cdots, \\beta_{V}\\right)$ 。\n\n每一个文本 $w_{m}$ 由一个话题的条件概率分布 $p\\left(z \\mid w_{m}\\right)$ 决定, $z \\in Z$ 。分布 $p\\left(z \\mid w_{m}\\right)$ 服从多项分布 (严格意义上类别分布), 其参数为 $\\theta_{m}$ 。参数 $\\theta_{m}$ 服从狄利克雷分布 (先验分布), 其超参数为 $\\alpha$ 。参数 $\\theta_{m}$ 是一个 $K$ 维向量 $\\theta_{m}=\\left(\\theta_{m 1}, \\theta_{m 2}, \\cdots, \\theta_{m K}\\right)$, 其中 $\\theta_{m k}$ 表示文本 $w_{m}$生成话题 $z_{k}$ 的概率。所有文本的参数向量构成一个 $M \\times K$ 矩阵 $\\theta=\\left\\{\\theta_{m}\\right\\}_{m=1}^{M}$ 。超参数 $\\alpha$ 也是一个 $K$ 维向量 $\\alpha=\\left(\\alpha_{1}, \\alpha_{2}, \\cdots, \\alpha_{K}\\right)$ 。\n\n每一个文本 $w_{m}$ 中的每一个单词 $w_{m n}$ 由该文本的话题分布 $p\\left(z \\mid w_{m}\\right)$ 以及所有话题的单词分布 $p\\left(w \\mid z_{k}\\right)$ 决定。\n\n\\section*{2. 生成过程}\n给定单词集合 $W$, 文本集合 $D$, 话题集合 $Z$, 狄利克雷分布的超参数 $\\alpha$ 和 $\\beta$, LDA 文本集合的生成过程如下:\n\n(1) 生成话题的单词分布\n\n随机生成 $K$ 个话题的单词分布。具体过程如下: 按照狄利克雷分布 $\\operatorname{Dir}(\\beta)$ 随机生成一个参数向量 $\\varphi_{k}, \\varphi_{k} \\sim \\operatorname{Dir}(\\beta)$, 作为话题 $z_{k}$ 的单词分布 $p\\left(w \\mid z_{k}\\right), w \\in W, k=1,2, \\cdots, K$ 。\n\n(2) 生成文本的话题分布\n\n随机生成 $M$ 个文本的话题分布。具体过程如下: 按照狄利克雷分布 $\\operatorname{Dir}(\\alpha)$ 随机生成一个参数向量 $\\theta_{m}, \\theta_{m} \\sim \\operatorname{Dir}(\\alpha)$, 作为文本 $w_{m}$ 的话题分布 $p\\left(z \\mid w_{m}\\right), m=1,2, \\cdots, M$ 。\n\n(3) 生成文本的单词序列\n\n随机生成 $M$ 个文本的 $N_{m}$ 个单词。文本 $w_{m}(m=1,2, \\cdots, M)$ 的单词 $w_{m n}(n=$ $\\left.1,2, \\cdots, N_{m}\\right)$ 的生成过程如下:\n\n(a) 首先按照多项分布 $\\operatorname{Mult}\\left(\\theta_{m}\\right)$ 随机生成一个话题 $z_{m n}, z_{m n} \\sim \\operatorname{Mult}\\left(\\theta_{m}\\right)$ 。\n\n(b) 然后按照多项分布 $\\operatorname{Mult}\\left(\\varphi_{z_{m n}}\\right)$ 随机生成一个单词 $w_{m n}, w_{m n} \\sim \\operatorname{Mult}\\left(\\varphi_{z_{m n}}\\right)$ 。文本 $w_{m}$ 本身是单词序列 $w_{m}=\\left(w_{m 1}, w_{m 2}, \\cdots, w_{m N_{m}}\\right)$, 对应着隐式的话题序列 $z_{m}=$ $\\left(z_{m 1}, z_{m 2}, \\cdots, z_{m N_{m}}\\right)$ 。\n\n总结 LDA 生成文本的算法如下。\n\n\\section*{算法 20.1 (LDA 的文本生成算法)}\n(1) 对于话题 $z_{k}(k=1,2, \\cdots, K)$ :\n\n生成多项分布参数 $\\varphi_{k} \\sim \\operatorname{Dir}(\\beta)$, 作为话题的单词分布 $p\\left(w \\mid z_{k}\\right)$;\n\n(2) 对于文本 $w_{m}(m=1,2, \\cdots, M)$ :\n\n生成多项分布参数 $\\theta_{m} \\sim \\operatorname{Dir}(\\alpha)$, 作为文本的话题分布 $p\\left(z \\mid w_{m}\\right)$;\n\n(3) 对于文本 $w_{m}$ 的单词 $w_{m n}\\left(m=1,2, \\cdots, M, n=1,2, \\cdots, N_{m}\\right)$ :\n\n(a) 生成话题 $z_{m n} \\sim \\operatorname{Mult}\\left(\\theta_{m}\\right)$, 作为单词对应的话题;\n\n(b) 生成单词 $w_{m n} \\sim \\operatorname{Mult}\\left(\\varphi_{z_{m n}}\\right)$ 。\n\nLDA 的文本生成过程中, 假定话题个数 $K$ 给定, 实际通常通过实验选定。狄利克雷分布的超参数 $\\alpha$ 和 $\\beta$ 通常也是事先给定的。在没有其他先验知识的情况下, 可以假设向量 $\\alpha$和 $\\beta$ 的所有分量均为 1 , 这时的文本的话题分布 $\\theta_{m}$ 是对称的, 话题的单词分布 $\\varphi_{k}$ 也是对称的。"
+    },
+    {
+        "id": "chatcmpl-948GmS8y8yWxvL9JH77eGdfGejiJm",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"潜在狄利克雷分配 (LDA) 模型中的三个集合分别是什么？\",\n    \"回答1\": \"潜在狄利克雷分配 (LDA) 模型中使用的三个集合分别是单词集合 $W$、文本集合 $D$ 和话题集合 $Z$。\",\n    \"问题2\": \"话题 $z_{k}$ 的单词分布 $p\\big(w \\big| z_{k}\\big)$ 是如何决定的？\",\n    \"回答2\": \"每一个话题 $z_{k}$ 由一个单词的条件概率分布 $p\\big(w \\big| z_{k}\\big)$ 决定，其中分布 $p\\big(w \\big| z_{k}\\big)$ 服从多项分布，其参数为 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\theta}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}$ 。\",\n    \"问题3\": \"文本 $w_{m}$ 的话题分布 $p\\big(z \\big| w_{m}\\big)$ 是如何决定的？\",\n    \"回答3\": \"每一个文本 $w_{m}$ 由一个话题的条件概率分布 $p\\big(z \\big| w_{m}\\big)$ 决定，其中分布 $p\\big(z \\big| w_{m}\\big)$ 服从多项分布，其参数为 $\\theta_{m}$ 。\",\n    \"问题4\": \"LDA 文本生成算法中的第一步是什么？\",\n    \"回答4\": \"LDA 文本生成算法中的第一步是对于每个话题 $z_{k}$，生成多项分布参数 $\\boldsymbol{\\beta}$, 作为话题的单词分布 $p\\big(w \\big| z_{k}\\big)$。\",\n    \"问题5\": \"LDA 文本生成算法中的第二步是什么？\",\n    \"回答5\": \"LDA 文本生成算法中的第二步是对于每个文本 $w_{m}$，生成多项分布参数 $\\theta_{m}$, 作为文本的话题分布 $p\\big(z \\big| w_{m}\\big)$。\",\n    \"问题6\": \"LDA 文本生成算法中的第三步是什么？\",\n    \"回答6\": \"LDA 文本生成算法中的第三步是对于每个文本 $w_{m}$ 的单词 $w_{m n}$，首先按照多项分布 $\\text{Mult}(\\theta_{m})$ 随机生成一个话题 $z_{m n}$，然后按照多项分布 $\\text{Mult}(\\boldsymbol{\\beta}_{z_{m n}})$ 随机生成一个单词 $w_{m n}$。\",\n    \"问题7\": \"LDA 模型中超参数 $\\beta$ 的作用是什么？\",\n    \"回答7\": \"LDA 模型中超参数 $\\beta$ 是用来确定话题的单词分布 $\\boldsymbol{\\beta}_{k}$ 的先验分布，它影响了话题生成单词的概率分布。\",\n    \"问题8\": \"LDA 模型中超参数 $\\theta$ 的作用是什么？\",\n    \"回答8\": \"LDA 模型中超参数 $\\theta$ 是用来确定文本的话题分布 $\\theta_{m}$ 的先验分布，它影响了文本生成话题的概率分布。\",\n    \"问题9\": \"LDA 模型中如何确定话题个数 $K$？\",\n    \"回答9\": \"在 LDA 模型中，通常通过实验选定话题个数 $K$。根据具体应用和实验结果，选择适合的话题个数以获得更好的模型效果。\",\n    \"问题10\": \"LDA 模型中如何确定狄利克雷分布的超参数 $\\beta$ 和 $\\theta$？\",\n    \"回答10\": \"在没有其他先验知识的情况下，可以假设向量 $\\beta$ 和 $\\theta$ 的所有分量均为 1。这时的文本的话题分布 $\\theta_{m}$ 是对称的，话题的单词分布 $\\boldsymbol{\\beta}_{k}$ 也是对称的。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710772128,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1182,
+            "prompt_tokens": 4802,
+            "total_tokens": 5984
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

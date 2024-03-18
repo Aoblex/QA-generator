@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter9",
+        "title": "19.2.3 连续状态马尔可夫链",
+        "content_length": 1086,
+        "content": "Title: 19.2.3 连续状态马尔可夫链\nContent:\n连续状态马尔可夫链 $X=\\left\\{X_{0}, X_{1}, \\cdots, X_{t}, \\cdots\\right\\}$, 随机变量 $X_{t}(t=0,1,2, \\cdots)$ 定义在连续状态空间 $\\mathcal{S}$, 转移概率分布由概率转移核或转移核 (transition kernel) 表示。\n\n设 $\\mathcal{S}$ 是连续状态空间, 对任意的 $x \\in \\mathcal{S}, A \\subset \\mathcal{S}$, 转移核 $P(x, A)$ 定义为\n\n\n\\begin{equation*}\nP(x, A)=\\int_{A} p(x, y) \\mathrm{d} y \\tag{19.19}\n\\end{equation*}\n\n\n其中, $p(x, \\cdot)$ 是概率密度函数, 满足 $p(x, \\cdot) \\geqslant 0 ; P(x, \\mathcal{S})=\\int_{\\mathcal{S}} p(x, y) \\mathrm{d} y=1$ 。转移核 $P(x, A)$ 表示从 $x \\sim A$ 的转移概率:\n\n\n\\begin{equation*}\nP\\left(X_{t}=A \\mid X_{t-1}=x\\right)=P(x, A) \\tag{19.20}\n\\end{equation*}\n\n\n有时也将概率密度函数 $p(x, \\cdot)$ 称为转移核。\n\n若马尔可夫链的状态空间 $\\mathcal{S}$ 上的概率分布 $\\pi(x)$ 满足条件\n\n\n\\begin{equation*}\n\\pi(y)=\\int p(x, y) \\pi(x) \\mathrm{d} x, \\quad \\forall y \\in \\mathcal{S} \\tag{19.21}\n\\end{equation*}\n\n\n(1) 当离散状态马尔可夫链有无穷个状态时, 有可能没有平稳分布。\\\\\n则称分布 $\\pi(x)$ 为该马尔可夫链的平稳分布。等价地,\n\n\n\\begin{equation*}\n\\pi(A)=\\int P(x, A) \\pi(x) \\mathrm{d} x, \\quad \\forall A \\subset \\mathcal{S} \\tag{19.22}\n\\end{equation*}\n\n\n或简写为\n\n\n\\begin{equation*}\n\\pi=P \\pi \\tag{19.23}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-947kYq7CIWEBkeMV4JxuB40SGRDeB",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"连续状态马尔可夫链中的转移概率分布是如何表示的？\",\n    \"回答1\": \"在连续状态马尔可夫链中，转移概率分布由概率转移核或转移核（transition kernel）表示。对于任意的 $x \\text{ 在 } \\text{S}, A \\text{ 是 } \\text{S} \\text{ 的子集}$，转移核 $P(x, A)$ 定义为 $P(x, A)=\\text{∫}_{A} p(x, y) \\text{d} y$，其中 $p(x, \\bullet)$ 是概率密度函数。\",\n    \"问题2\": \"连续状态马尔可夫链中的转移核 $P(x, A)$ 表示了什么？\",\n    \"回答2\": \"转移核 $P(x, A)$ 表示了从状态 $x$ 转移到子集 $A$ 的转移概率。即 $P\\big(X_{t}=A \\text{ 丨 } X_{t-1}=x\\big)=P(x, A)$。\",\n    \"问题3\": \"什么是马尔可夫链的平稳分布？\",\n    \"回答3\": \"马尔可夫链的平稳分布是指当离散状态马尔可夫链有无穷个状态时，可能没有平稳分布。平稳分布 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbo\",\n    \"问题4\": \"马尔可夫链的平稳分布满足什么条件？\",\n    \"回答4\": \"若马尔可夫链的状态空间 $\\text{S}$ 上的概率分布 $\\text{π}(x)$ 满足条件 $\\text{π}(y)=\\text{∫} p(x, y) \\text{π}(x) \\text{d} x, \\forall y \\text{ 在 } \\text{S}$，则称分布 $\\text{π}(x)$ 为该马尔可夫链的平稳分布。\",\n    \"问题5\": \"平稳分布 $\\text{π}(x)$ 的另一种表示形式是什么？\",\n    \"回答5\": \"平稳分布 $\\text{π}(x)$ 可以表示为 $\\text{π}(A)=\\text{∫} P(x, A) \\text{π}(x) \\text{d} x, \\forall A \\text{ 是 } \\text{S} \\text{ 的子集}$，或简写为 $\\text{π}=P\\text{π}$。\",\n    \"问题6\": \"连续状态马尔可夫链中的概率密度函数 $p(x, \\bullet)$ 有何含义？\",\n    \"回答6\": \"在连续状态马尔可夫链中，概率密度函数 $p(x, \\bullet)$ 表示了从状态 $x$ 出发，随机变量落在某个子集上的概率密度。它满足非负性和积分为1的条件。\",\n    \"问题7\": \"马尔可夫链的转移核 $P(x, A)$ 和概率密度函数 $p(x, y)$ 之间有何关系？\",\n    \"回答7\": \"马尔可夫链的转移核 $P(x, A)$ 可以通过概率密度函数 $p(x, y)$ 计算得到，具体表达为 $P(x, A)=\\text{∫}_{A} p(x, y) \\text{d} y$。\",\n    \"问题8\": \"连续状态空间 $\\text{S}$ 上的概率分布 $\\text{π}(x)$ 对于马尔可夫链有何重要性？\",\n    \"回答8\": \"连续状态空间 $\\text{S}$ 上的概率分布 $\\text{π}(x)$ 对于马尔可夫链非常重要，它描述了系统在不同状态下的概率分布情况，包括了系统在各个状态之间的转移概率和平稳分布情况。\",\n    \"问题9\": \"什么是离散状态马尔可夫链的平稳分布？\",\n    \"回答9\": \"离散状态马尔可夫链的平稳分布是指在系统经过足够长时间后，系统处于各个状态的概率趋于稳定的分布。这种平稳分布可以通过转移矩阵和初始分布计算得到。\",\n    \"问题10\": \"连续状态马尔可夫链中的转移概率核和传统离散状态马尔可夫链中的转移矩阵有何异同？\",\n    \"回答10\": \"连续状态马尔可夫链中的转移概率核和传统离散状态马尔可夫链中的转移矩阵都描述了系统在不同状态之间的转移概率。不同之处在于连续状态下采用积分来描述转移概率，而离散状态下采用矩阵来描述转移概率。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710770130,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1479,
+            "prompt_tokens": 3193,
+            "total_tokens": 4672
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

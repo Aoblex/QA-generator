@@ -11,11 +11,9 @@ text_filenames = os.listdir(PROCESSOR_INPUT_DIR)
 
 for text_filename in text_filenames:
     # if text_filename != "chapter1.tex": continue
-    if text_filename != "statistics.tex": continue
     text_text = Text(filename=text_filename)
     text_pieces = text_text.segment(strategy="subsection")
-    print(len(text_pieces))
-    for text_piece in text_pieces[50:55]:
+    for text_piece in text_pieces:
 
         context = text_piece.piece_info.get("content", None)
         response = {}
@@ -26,7 +24,13 @@ for text_filename in text_filenames:
             logging.error(f"Context length {len(context)} too short.")
         elif len(context) >= 6000:
             logging.error(f"Context length {len(context)} too long.")
+        elif text_piece.file_exists():
+            logging.info(f"'{text_piece.filename}' already exists.")
         else:
-            response = QAModel.generate(context=context, model_configs=MODEL_CONFIGS)
-
-        text_piece.append_to_file(element=response)
+            while True:
+                try: 
+                    response = QAModel.generate(context=context, model_configs=MODEL_CONFIGS)
+                    text_piece.append_to_file(element=response)
+                    break
+                except Exception as e:
+                    logging.error(f"Error in generating '{text_piece.filename}'.")

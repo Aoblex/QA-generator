@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "13.3.2.1 判别网络",
+        "content_length": 1682,
+        "content": "Title: 13.3.2.1 判别网络\nContent:\n判别网络 (Discriminator Network ) $D(\\boldsymbol{x} ; \\boldsymbol{\\phi})$ 的目标是区分出一个样本 $\\boldsymbol{x}$ 是来自于真实分布 $p_{r}(\\boldsymbol{x})$ 还是来自于生成模型 $p_{\\theta}(\\boldsymbol{x})$, 因此判别网络实际上是一个二分类的分类器. 用标签 $y=1$ 来表示样本来自真实分布, $y=0$ 表示样本来自生成模型, 判别网络 $D(\\boldsymbol{x} ; \\boldsymbol{\\phi})$ 的输出为 $\\boldsymbol{x}$ 属于真实数据分布的概率, 即\n\n\n\\begin{equation*}\np(y=1 \\mid \\boldsymbol{x})=D(\\boldsymbol{x} ; \\phi), \\tag{13.29}\n\\end{equation*}\n\n\n则样本来自生成模型的概率为 $p(y=0 \\mid \\boldsymbol{x})=1-D(\\boldsymbol{x} ; \\boldsymbol{\\phi})$.\n\n给定一个样本 $(\\boldsymbol{x}, y), y=\\{1,0\\}$ 表示其来自于 $p_{r}(\\boldsymbol{x})$ 还是 $p_{\\theta}(\\boldsymbol{x})$, 判别网络的目标函数为最小化交叉熵, 即\n\n\n\\begin{equation*}\n\\min _{\\phi}-\\left(\\mathbb{E}_{\\boldsymbol{x}}[y \\log p(y=1 \\mid \\boldsymbol{x})+(1-y) \\log p(y=0 \\mid \\boldsymbol{x})]\\right) . \\tag{13.30}\n\\end{equation*}\n\n\n假设分布 $p(\\boldsymbol{x})$ 是由分布 $p_{r}(\\boldsymbol{x})$ 和分布 $p_{\\theta}(\\boldsymbol{x})$ 等比例混合而成, 即 $p(\\boldsymbol{x})=$ $\\frac{1}{2}\\left(p_{r}(\\boldsymbol{x})+p_{\\theta}(\\boldsymbol{x})\\right)$, 则上式等价于\n\n\n\\begin{align*}\n& \\max _{\\boldsymbol{\\phi}} \\mathbb{E}_{\\boldsymbol{x} \\sim p_{r}(\\boldsymbol{x})}[\\log D(\\boldsymbol{x} ; \\boldsymbol{\\phi})]+\\mathbb{E}_{\\boldsymbol{x}^{\\prime} \\sim p_{\\theta}\\left(\\boldsymbol{x}^{\\prime}\\right)}\\left[\\log \\left(1-D\\left(\\boldsymbol{x}^{\\prime} ; \\boldsymbol{\\phi}\\right)\\right)\\right]  \\tag{13.31}\\\\\n= & \\max _{\\boldsymbol{\\phi}} \\mathbb{E}_{\\boldsymbol{x} \\sim p_{r}(\\boldsymbol{x})}[\\log D(\\boldsymbol{x} ; \\boldsymbol{\\phi})]+\\mathbb{E}_{\\boldsymbol{z} \\sim p(\\boldsymbol{z})}[\\log (1-D(G(\\boldsymbol{z} ; \\theta) ; \\boldsymbol{\\phi}))], \\tag{13.32}\n\\end{align*}\n\n\n其中 $\\theta$ 和 $\\phi$ 分别是生成网络和判别网络的参数."
+    },
+    {
+        "id": "chatcmpl-945YGRy6zDExLhujLyoiEcUEJSAPW",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"判别网络与生成模型之间的区别是什么？\",\n    \"回答1\": \"判别网络的目标是区分一个样本是来自真实分布还是来自生成模型，因此它实际上是一个二分类的分类器。而生成模型则是用来模拟和生成数据样本的模型，其目标是学习并生成与真实数据分布相似的数据样本。\",\n    \"问题2\": \"判别网络的输出表示什么意义？\",\n    \"回答2\": \"判别网络的输出表示给定样本属于真实数据分布的概率，即 $p(y=1 \\text{ 为 } \\boldsymbol{x})=D(\\boldsymbol{x} ; \\boldsymbol{\\theta})$。同时，样本来自生成模型的概率为 $p(y=0 \\text{ 为 } \\boldsymbol{x})=1-D(\\boldsymbol{x} ; \\boldsymbol{\\theta})$。\",\n    \"问题3\": \"判别网络的目标函数是什么？\",\n    \"回答3\": \"判别网络的目标函数是最小化交叉熵，即 $\\text{min}_{\\boldsymbol{\\theta}}-\\big(\\text{E}_{\\boldsymbol{x}}[y \\text{log} p(y=1 \\text{ 为 } \\boldsymbol{x})+(1-y) \\text{log} p(y=0 \\text{ 为 } \\boldsymbol{x})]\\big)$。\",\n    \"问题4\": \"判别网络如何表示混合分布的最大化问题？\",\n    \"回答4\": \"判别网络表示混合分布的最大化问题为 $\\text{max}_{\\boldsymbol{\\theta}} \\text{E}_{\\boldsymbol{x} \\text{ 从 } p_{r}(\\boldsymbol{x})}[\\text{log} D(\\boldsymbol{x} ; \\boldsymbol{\\theta})]+\\text{E}_{\\boldsymbol{x}^{\\text{'}} \\text{从} p_{\\theta}(\\boldsymbol{x}^{\\text{'}})}[\\text{log} (1-D(\\boldsymbol{x}^{\\text{'}} ; \\boldsymbol{\\theta}))]$。\",\n    \"问题5\": \"判别网络的参数 $\\theta$ 和生成网络的参数 $\\theta$ 分别代表什么？\",\n    \"回答5\": \"参数 $\\theta$ 表示生成网络的参数，用于生成模型 $p_{\\theta}(\\boldsymbol{x})$；参数 $\\theta$ 表示判别网络的参数，用于判别样本来自真实数据分布还是生成模型。\",\n    \"问题6\": \"判别网络和生成模型之间如何进行交互？\",\n    \"回答6\": \"在对抗生成网络中，判别网络和生成模型之间通过博弈过程进行交互。判别网络试图最大化区分真实样本和生成样本的能力，而生成模型则试图最小化这种区分能力，以不断提高生成样本的逼真程度。\",\n    \"问题7\": \"判别网络在对抗生成网络中扮演什么角色？\",\n    \"回答7\": \"在对抗生成网络中，判别网络扮演着对抗者的角色，其目标是尽可能准确地区分真实样本和生成样本。通过不断优化判别网络，可以促使生成模型不断提高生成样本的逼真程度。\",\n    \"问题8\": \"交叉熵在机器学习中有何作用？\",\n    \"回答8\": \"交叉熵常用于衡量两个概率分布之间的差异性，也常用作分类问题中的损失函数。在对抗生成网络中，判别网络的目标函数采用交叉熵来衡量真实样本和生成样本之间的差异，以指导优化过程。\",\n    \"问题9\": \"为什么需要使用混合分布来表示真实数据分布和生成模型？\",\n    \"回答9\": \"使用混合分布可以更好地整合真实数据分布和生成模型，从而更全面地描述整体数据分布。这有助于对抗生成网络中判别网络和生成模型之间的博弈过程，并提高对抗训练的效果。\",\n    \"问题10\": \"对抗生成网络中判别网络和生成模型之间的博弈过程有何意义？\",\n    \"回答10\": \"对抗生成网络中判别网络和生成模型之间的博弈过程有助于不断提高生成样本的逼真程度。通过竞争与合作，判别网络和生成模型相互促进，使得生成样本更加接近真实数据分布，从而提高了对抗生成网络的训练效果。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710761680,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1256,
+            "prompt_tokens": 3347,
+            "total_tokens": 4603
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

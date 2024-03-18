@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter9",
+        "title": "20.3.3 算法的后处理",
+        "content_length": 1651,
+        "content": "Title: 20.3.3 算法的后处理\nContent:\n通过吉布斯抽样得到的分布 $p(z \\mid w, \\alpha, \\beta)$ 的样本可以得到变量 $z$ 的分配值, 也可以估计变量 $\\theta$ 和 $\\varphi$ 。\n\n\\section*{1. 参数 $\\theta=\\left\\{\\theta_{m}\\right\\}$ 的估计}\n根据 LDA 模型的定义, 后验概率满足\n\n\n\\begin{equation*}\np\\left(\\theta_{m} \\mid z_{m}, \\alpha\\right)=\\frac{1}{Z_{\\theta_{m}}} \\prod_{n=1}^{N_{m}} p\\left(z_{m n} \\mid \\theta_{m}\\right) p\\left(\\theta_{m} \\mid \\alpha\\right)=\\operatorname{Dir}\\left(\\theta_{m} \\mid n_{m}+\\alpha\\right) \\tag{20.30}\n\\end{equation*}\n\n\n这里 $n_{m}=\\left\\{n_{m 1}, n_{m 2}, \\cdots, n_{m K}\\right\\}$ 是第 $m$ 个文本的话题的计数, $Z_{\\theta_{m}}$ 表示分布 $p\\left(\\theta_{m}, z_{m} \\mid \\alpha\\right)$对变量 $\\theta_{m}$ 的边缘化因子。于是得到参数 $\\theta=\\left\\{\\theta_{m}\\right\\}$ 的估计式:\n\n\n\\begin{equation*}\n\\theta_{m k}=\\frac{n_{m k}+\\alpha_{k}}{\\sum_{k=1}^{K}\\left(n_{m k}+\\alpha_{k}\\right)}, \\quad m=1,2, \\cdots, M, \\quad k=1,2, \\cdots, K \\tag{20.31}\n\\end{equation*}\n\n\n\\begin{enumerate}\n  \\setcounter{enumi}{1}\n  \\item 参数 $\\varphi=\\left\\{\\varphi_{k}\\right\\}$ 的估计\n\\end{enumerate}\n\n后验概率满足\n\n\n\\begin{equation*}\np\\left(\\varphi_{k} \\mid w, z, \\beta\\right)=\\frac{1}{Z_{\\varphi_{k}}} \\prod_{i=1}^{I} p\\left(w_{i} \\mid \\varphi_{k}\\right) p\\left(\\varphi_{k} \\mid \\beta\\right)=\\operatorname{Dir}\\left(\\varphi_{k} \\mid n_{k}+\\beta\\right) \\tag{20.32}\n\\end{equation*}\n\n\n这里 $n_{k}=\\left\\{n_{k 1}, n_{k 2}, \\cdots, n_{k V}\\right\\}$ 是第 $k$ 个话题的单词的计数, $Z_{\\varphi_{k}}$ 表示分布 $p\\left(\\varphi_{k}, w \\mid z, \\beta\\right)$ 对变量 $\\varphi_{k}$ 的边缘化因子, $I$ 是文本集合单词序列 $w$ 的单词总数。于是得到参数的估计式:\n\n\n\\begin{equation*}\n\\varphi_{k v}=\\frac{n_{k v}+\\beta_{v}}{\\sum_{v=1}^{V}\\left(n_{k v}+\\beta_{v}\\right)}, \\quad k=1,2, \\cdots, K, \\quad v=1,2, \\cdots, V \\tag{20.33}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-948Pak45cMZamFN1bIKA8LHJ6ySch",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"通过吉布斯抽样得到的分布 $p(z \\text{ 为 } w, \\text{ 为 } \\theta, \\text{ 为 } \\beta)$ 的样本可以得到哪些值？\",\n    \"回答1\": \"通过吉布斯抽样得到的分布 $p(z \\text{ 为 } w, \\text{ 为 } \\theta, \\text{ 为 } \\beta)$ 的样本可以得到变量 $z$ 的分配值，也可以估计变量 $\\theta$ 和 $\\text{varphi}$。\",\n    \"问题2\": \"如何根据 LDA 模型的定义估计参数 $\\theta=\\big\\theta_{m}\\big\\big\\big\\big$？\",\n    \"回答2\": \"根据 LDA 模型的定义，参数 $\\theta=\\big\\theta_{m}\\big\\big\\big\\big$ 的估计满足后验概率 $p\\big(\\theta_{m} \\text{ 为 } z_{m}, \\text{ 为 } \\textalpha\\big)=\\frac{1}{Z_{\\theta_{m}}} \\text{ 乘}_{n=1}^{N_{m}} p\\big(z_{m n} \\text{ 为 } \\theta_{m}\\big) p\\big(\\theta_{m} \\text{ 为 } \\textalpha\\big)=\\text{Dir}\\big(\\theta_{m} \\text{ 为 } n_{m}+\\textalpha\\big)$。\",\n    \"问题3\": \"参数 $\\theta=\\big\\theta_{m}\\big\\big\\big\\big$ 的估计式是什么？\",\n    \"回答3\": \"参数 $\\theta=\\big\\theta_{m}\\big\\big\\big\\big$ 的估计式为 $\\theta_{m k}=\\frac{n_{m k}+\\textalpha_{k}}{\\textsum_{k=1}^{K}\\big(n_{m k}+\\textalpha_{k}\\big)}, m=1,2, \\text{...}, M, k=1,2, \\text{...}, K$。\",\n    \"问题4\": \"如何根据 LDA 模型的定义估计参数 $\\textvarphi=\\big\\textvarphi_{k}\\big\\big\\big\\big$？\",\n    \"回答4\": \"根据 LDA 模型的定义，参数 $\\textvarphi=\\big\\textvarphi_{k}\\big\\big\\big\\big$ 的估计满足后验概率 $p\\big(\\textvarphi_{k} \\text{ 为 } w, z, \\textbeta\\big)=\\frac{1}{Z_{\\textvarphi_{k}}} \\text{乘}_{i=1}^{I} p\\big(w_{i} \\text{ 为 } \\textvarphi_{k}\\big) p\\big(\\textvarphi_{k} \\text{ 为 } \\textbeta\\big)=\\text{Dir}\\big(\\textvarphi_{k} \\text{ 为 } n_{k}+\\textbeta\\big)$。\",\n    \"问题5\": \"参数 $\\textvarphi=\\big\\textvarphi_{k}\\big\\big\\big\\big$ 的估计式是什么？\",\n    \"回答5\": \"参数 $\\textvarphi=\\big\\textvarphi_{k}\\big\\big\\big\\big$ 的估计式为 $\\textvarphi_{k v}=\\frac{n_{k v}+\\textbeta_{v}}{\\textsum_{v=1}^{V}\\big(n_{k v}+\\textbeta_{v}\\big)}, k=1,2, \\text{...}, K, v=1,2, \\text{...}, V$。\",\n    \"问题6\": \"什么是后处理算法？\",\n    \"回答6\": \"后处理算法是指对已经进行过一定处理或计算的数据再进行进一步的处理或优化的算法。它通常用于提取、调整或优化数据的特定特征或性质，以满足特定的需求或目标。\",\n    \"问题7\": \"在 LDA 模型中，什么是后验概率？\",\n    \"回答7\": \"在 LDA 模型中，后验概率是指在给定观测数据和先验概率的情况下，对未知参数的概率分布进行估计。它描述了在观测到数据之后对未知参数进行推断的过程。\",\n    \"问题8\": \"LDA 模型中的边缘化因子有什么作用？\",\n    \"回答8\": \"LDA 模型中的边缘化因子用于表示对联合分布进行边缘化时所需的归一化系数。它在计算后验概率或估计参数时起到重要作用，确保概率分布满足概率的性质。\",\n    \"问题9\": \"文本集合单词序列 $w$ 的单词总数 $I$ 在 LDA 模型中有何作用？\",\n    \"回答9\": \"文本集合单词序列 $w$ 的单词总数 $I$ 在 LDA 模型中用于表示文本集合中所有单词的总数量。它在估计参数时起到重要作用，影响着参数估计式中各项的权重和比例关系。\",\n    \"问题10\": \"LDA 模型中的参数估计式如何帮助理解主题模型中的话题分布和单词分布？\",\n    \"回答10\": \"LDA 模型中的参数估计式通过对话题分布和单词分布进行估计，帮助理解主题模型中不同话题下单词出现的概率分布。这有助于揭示文本数据中隐藏的话题结构和语义信息，从而更好地理解文本内容和主题之间的关联。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710772674,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1483,
+            "prompt_tokens": 3417,
+            "total_tokens": 4900
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

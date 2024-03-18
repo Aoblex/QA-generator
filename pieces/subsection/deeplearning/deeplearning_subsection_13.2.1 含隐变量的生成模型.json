@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "13.2.1 含隐变量的生成模型",
+        "content_length": 3648,
+        "content": "Title: 13.2.1 含隐变量的生成模型\nContent:\n假设一个生成模型 (如图13.3 所示) 中包含隐变量, 即有部分变量是不可观测的, 其中观测变量 $\\boldsymbol{X}$ 是一个高维空间 $\\mathcal{X}$ 中的随机向量, 隐变量 $\\boldsymbol{Z}$ 是一个相对低\n\n本章中, 我们假设 $\\boldsymbol{X}$ 和 $Z$ 都是连续随机向量.维的空间 $z$ 中的随机向量.\n\n\n\n图 13.3 变分自编码器\n\n这个生成模型的联合概率密度函数可以分解为\n\n\n\\begin{equation*}\np(\\boldsymbol{x}, \\boldsymbol{z} ; \\theta)=p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta) p(\\boldsymbol{z} ; \\theta) \\tag{13.2}\n\\end{equation*}\n\n\n其中 $p(\\boldsymbol{z} ; \\theta)$ 为隐变量 $\\boldsymbol{z}$ 先验分布的概率密度函数, $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$ 为已知 $\\boldsymbol{z}$ 时观测变量 $\\boldsymbol{x}$ 的条件概率密度函数, $\\theta$ 表示两个密度函数的参数. 一般情况下, 我们可以假设 $p(\\boldsymbol{z} ; \\theta)$ 和 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$ 为某种参数化的分布族, 比如正态分布. 这些分布的形式已知, 只是参数 $\\theta$ 未知, 可以通过最大化似然来进行估计.\n\n给定一个样本 $\\boldsymbol{x}$, 其对数边际似然 $\\log p(\\boldsymbol{x} ; \\theta)$ 可以分解为\n\n\n\\begin{equation*}\n\\log p(\\boldsymbol{x} ; \\theta)=E L B O(q, \\boldsymbol{x} ; \\theta, \\phi)+\\operatorname{KL}(q(\\boldsymbol{z} ; \\boldsymbol{\\phi}), p(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\theta)) \\tag{13.3}\n\\end{equation*}\n\n\n其中 $q(\\boldsymbol{z} ; \\phi)$ 是额外引入的变分密度函数, 其参数为 $\\phi, E L B O(q, \\boldsymbol{x} ; \\theta, \\phi)$ 为证据下界,\n\n\n\\begin{equation*}\n\\operatorname{ELBO}(q, \\boldsymbol{x} ; \\theta, \\boldsymbol{\\phi})=\\mathbb{E}_{\\boldsymbol{z} \\sim q(z ; \\phi)}\\left[\\log \\frac{p(\\boldsymbol{x}, \\boldsymbol{z} ; \\theta)}{q(\\boldsymbol{z} ; \\boldsymbol{\\phi})}\\right] \\tag{13.4}\n\\end{equation*}\n\n\n最大化对数边际似然 $\\log p(\\boldsymbol{x} ; \\theta)$ 可以用 $\\mathrm{EM}$ 算法来求解. 在 $\\mathrm{EM}$ 算法的每次迭代中,具体可以分为两步:\n\n(1) $\\mathrm{E}$ 步 : 固定 $\\theta$, 寻找一个密度函数 $q(\\boldsymbol{z} ; \\phi)$ 使其等于或接近于后验密度函数 $p(z \\mid x ; \\theta)$;\n\n(2) $\\mathrm{M}$ 步:固定 $q(\\boldsymbol{z} ; \\phi)$, 寻找 $\\theta$ 来最大化 $\\operatorname{ELBO}(q, \\boldsymbol{x} ; \\theta, \\phi)$.\n\n不断重复上述两步骤, 直到收玫.\n\n在 EM 算法的每次迭代中, 理论上最优的 $q(\\boldsymbol{z} ; \\phi)$ 为隐变量的后验概率密度函数 $p(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\theta)$, 即\n\n\n\\begin{equation*}\np(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\theta)=\\frac{p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta) p(\\boldsymbol{z} ; \\theta)}{\\int_{\\boldsymbol{z}} p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta) p(\\boldsymbol{z} ; \\theta) d \\boldsymbol{z}} . \\tag{13.5}\n\\end{equation*}\n\n\n后验概率密度函数 $p(z \\mid x ; \\theta)$ 的计算是一个统计推断问题, 涉及积分计算. 当隐变量 $\\boldsymbol{z}$ 是有限的一维离散变量时,计算起来比较容易. 但在一般情况下,这个后验概 \\href{https://nndl.github.io/%E5%AE%9E%E7%BA%BF%E8%A1%A8%E7%A4%BA%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B}{https://nndl.github.io/实线表示生成模型}, 虚线表示变分近似.\n\n参见公式(11.49).\n\nEM 算法参见第11.2.2.1节。\\\\\n率密度函数是很难计算的, 通常需要通过变分推断来近似估计. 在变分推断中,为了降低复杂度, 通常会选择一些比较简单的分布 $q(\\boldsymbol{z} ; \\phi)$ 来近似推断 $p(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\theta)$.\n\n变分推断参见第11.4节。当 $p(z \\mid x ; \\theta)$ 比较复杂时, 近似效果不佳. 此外, 概率密度函数 $p(x \\mid z ; \\theta)$ 一般也比较复杂, 很难直接用已知的分布族函数进行建模.\n\n变分自编码器 (Variational AutoEncoder,VAE ) [Kingma et al., 2014] 是一种深度生成模型, 其思想是利用神经网络来分别建模两个复杂的条件概率密度函数.\n\n(1) 用神经网络来估计变分分布 $q(z ; \\phi)$, 称为推断网络. 理论上 $q(\\boldsymbol{z} ; \\phi)$ 可以不依赖 $\\boldsymbol{x}$. 但由于 $q(\\boldsymbol{z} ; \\phi)$ 的目标是近似后验分布 $p(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\theta)$, 其和 $\\boldsymbol{x}$ 相关,因此变分密度函数一般写为 $q(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\phi)$. 推断网络的输入为 $\\boldsymbol{x}$, 输出为变分分布 $q(\\boldsymbol{z} \\mid \\boldsymbol{x} ; \\phi)$.\n\n(2) 用神经网络来估计概率分布 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$, 称为生成网络. 生成网络的输入为 $\\boldsymbol{z}$, 输出为概率分布 $p(\\boldsymbol{x} \\mid \\boldsymbol{z} ; \\theta)$.\n\n将推断网络和生成网络合并就得到了变分自编码器的整个网络结构, 如图13.4所示,其中实线表示网络计算操作,虚线表示采样操作.\n\n\n\n图 13.4 变分自编码器的网络结构\n\n变分自编码器的名称来自于其整个网络结构和自编码器比较类似. 我们可以把推断网络看作 “编码器”, 将可观测变量映射为隐变量; 把生成网络看作 “解自编码器参见第9.1.3节。码器”, 将隐变量映射为可观测变量. 然而, 变分自编码器背后的原理和自编码器完全不同. 变分自编码器中的编码器和解码器的输出为分布 (或分布的参数),而不是确定的编码."
+    },
+    {
+        "id": "chatcmpl-945TE2Q6CIB2l2EaeTaIfF3jEyr2N",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"生成模型中的隐变量和观测变量有何区别？\",\n    \"回答1\": \"生成模型中的观测变量 $\\boldsymbol{X}$ 是一个高维空间 $\\boldsymbol{X}$ 中的随机向量，而隐变量 $\\boldsymbol{Z}$ 是一个相对低维的空间 $\\boldsymbol{Z}$ 中的随机向量。观测变量是可观测的，而隐变量是不可观测的。\",\n    \"问题2\": \"生成模型的联合概率密度函数如何分解？\",\n    \"回答2\": \"生成模型的联合概率密度函数可以分解为 $p(\\boldsymbol{x}, \\boldsymbol{z} ; \\theta)=p(\\boldsymbol{x} \\text{ 从 } \\boldsymbol{z} ; \\theta) p(\\boldsymbol{z} ; \\theta)$，其中 $p(\\boldsymbol{z} ; \\theta)$ 为隐变量 $\\boldsymbol{z}$ 先验分布的概率密度函数，$p(\\boldsymbol{x} \\text{ 从 } \\boldsymbol{z} ; \\theta)$ 为已知 $\\boldsymbol{z}$ 时观测变量 $\\boldsymbol{x}$ 的条件概率密度函数。\",\n    \"问题3\": \"生成模型中的对数边际似然如何分解？\",\n    \"回答3\": \"给定一个样本 $\\boldsymbol{x}$，其对数边际似然 $\\text{log} p(\\boldsymbol{x} ; \\theta)$ 可以分解为 $E L B O(q, \\boldsymbol{x} ; \\theta, \\boldsymbol{\\theta})+\\text{KL}(q(\\boldsymbol{z} ; \\boldsymbol{\\theta}), p(\\boldsymbol{z} \\text{ 从 } \\boldsymbol{x} ; \\theta))$，其中 $E L B O(q, \\boldsymbol{x} ; \\theta, \\boldsymbol{\\theta})$ 为证据下界。\",\n    \"问题4\": \"EM 算法中的 E 步和 M 步分别是做什么的？\",\n    \"回答4\": \"在 EM 算法中，E 步是固定 $\\theta$，寻找一个密度函数 $q(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 使其等于或接近于后验密度函数 $p(z \\text{ 从 } x ; \\theta)$；M 步是固定 $q(\\boldsymbol{z} ; \\boldsymbol{\\theta})$，寻找 $\\theta$ 来最大化 $E L B O(q, \\boldsymbol{x} ; \\theta, \\boldsymbol{\\theta})$。\",\n    \"问题5\": \"什么是变分推断中的变分密度函数？\",\n    \"回答5\": \"在变分推断中，为了降低复杂度，通常会选择一些比较简单的分布 $q(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 来近似推断 $p(\\boldsymbol{z} \\text{ 从 } x ; \\theta)$。这个简单的分布就是变分密度函数。\",\n    \"问题6\": \"变分自编码器中的推断网络和生成网络分别起到什么作用？\",\n    \"回答6\": \"变分自编码器中的推断网络用于估计变分分布 $q(z ; \\boldsymbol{\\theta})$，即将可观测变量映射为隐变量；生成网络用于估计概率分布 $p(x \\text{ 从 } z ; \\theta)$，即将隐变量映射为可观测变量。\",\n    \"问题7\": \"为什么需要使用变分自编码器来建模复杂的条件概率密度函数？\",\n    \"回答7\": \"当复杂条件概率密度函数 $p(z \\text{ 从 } x ; \\theta)$ 难以直接建模时，需要使用变分自编码器来近似估计。通过引入推断网络和生成网络，并利用神经网络来建模复杂的条件概率密度函数，可以更好地处理复杂性。\",\n    \"问题8\": \"EM 算法中最优的 $q(z ; \\boldsymbol{\\theta})$ 是什么？\",\n    \"回答8\": \"在 EM 算法的每次迭代中，理论上最优的 $q(z ; \\boldsymbol{\\theta})$ 是隐变量的后验概率密度函数 $p(z \\text{ 从 } x ; \\theta)$。\",\n    \"问题9\": \"变分自编码器相比自编码器有何不同之处？\",\n    \"回答9\": \"变分自编码器中的编码器和解码器的输出为分布（或分布的参数），而不是确定的编码。这与自编码器完全不同，是变分自编码器与自编码器之间的主要区别。\",\n    \"问题10\": \"为什么需要使用神经网络来建模复杂的条件概率密度函数？\",\n    \"回答10\": \"当复杂条件概率密度函数难以直接建模时，可以利用神经网络来近似建模。神经网络具有强大的表达能力和灵活性，能够更好地适应复杂的数据分布和关系，因此适合用于建模复杂的条件概率密度函数。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710761368,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1400,
+            "prompt_tokens": 4701,
+            "total_tokens": 6101
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

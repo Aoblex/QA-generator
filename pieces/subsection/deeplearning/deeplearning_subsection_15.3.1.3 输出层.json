@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "15.3.1.3 输出层",
+        "content_length": 770,
+        "content": "Title: 15.3.1.3 输出层\nContent:\n输出层一般使用 Softmax 分类器, 接受历史信息的向量表示 $\\boldsymbol{h}_{t} \\in \\mathbb{R}^{D_{h}}$, 输出为词表中每个词的后验概率, 输出大小为 $|\\mathcal{V}|$.\n\n\n\\begin{align*}\n\\boldsymbol{o}_{t} & =\\operatorname{softmax}\\left(\\hat{\\boldsymbol{o}}_{t}\\right)  \\tag{15.29}\\\\\n& =\\operatorname{softmax}\\left(\\boldsymbol{W} \\boldsymbol{h}_{t}+\\boldsymbol{b}\\right) \\tag{15.30}\n\\end{align*}\n\n\n其中输出向量 $\\boldsymbol{o}_{t} \\in(0,1)^{|\\mathcal{V}|}$ 为预测的概率分布, 第 $k$ 维是词表中第 $k$ 个词出现的条件概率; $\\hat{\\boldsymbol{o}}_{t}$ 是未归一化的得分向量; $\\boldsymbol{W} \\in \\mathbb{R}^{|\\mathcal{V}| \\times D_{h}}$ 是最后一层隐藏层到输出层直接的权重矩阵, $\\boldsymbol{b} \\in \\mathbb{R}^{|\\mathcal{V}|}$ 为偏置.\n\n图15.3给出了两种不同的深度序列模型, 图15.3a为前馈神经网络模型 (虚线边为可选的跳层连接), 图 $15.3 \\mathrm{~b}$ 为循环神经网络模型.\n\n\n\n(a) 前馈神经网络模型\n\n\n\n(b) 循环神经网络模型\n\n图 15.3 深度序列模型"
+    },
+    {
+        "id": "chatcmpl-946UdjJP7Z3B82xukpiqh5A6utjdn",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"输出层一般使用什么类型的分类器？\",\n    \"回答1\": \"输出层一般使用 Softmax 分类器。\",\n    \"问题2\": \"输出层接受的是什么类型的向量表示？\",\n    \"回答2\": \"输出层接受历史信息的向量表示 $\\boldsymbol{h}_{t} \\text{，其中 } \\boldsymbol{h}_{t} \\text{ 是一个 } \\boldsymbol{R}^{D_{h}} \\text{ 的向量}$。\",\n    \"问题3\": \"输出层的输出是什么？\",\n    \"回答3\": \"输出层的输出为词表中每个词的后验概率，是一个大小为 $|\\text{V}|$ 的向量。\",\n    \"问题4\": \"Softmax 分类器的计算公式是什么？\",\n    \"回答4\": \"Softmax 分类器的计算公式为 $\\boldsymbol{o}_{t} =\\text{softmax}\\big(\\boldsymbol{W} \\boldsymbol{h}_{t}+\\boldsymbol{b}\\big)$。\",\n    \"问题5\": \"输出向量 $\\boldsymbol{o}_{t}$ 的含义是什么？\",\n    \"回答5\": \"输出向量 $\\boldsymbol{o}_{t}$ 是预测的概率分布，其中第 $k$ 维表示词表中第 $k$ 个词出现的条件概率。\",\n    \"问题6\": \"未归一化的得分向量 $\\boldsymbol{\\tilde{o}}_{t}$ 是如何计算得到的？\",\n    \"回答6\": \"未归一化的得分向量 $\\boldsymbol{\\tilde{o}}_{t}$ 是通过权重矩阵 $\\boldsymbol{W}$ 和隐藏层向量 $\\boldsymbol{h}_{t}$ 的线性变换得到的。\",\n    \"问题7\": \"最后一层隐藏层到输出层直接的权重矩阵 $\\boldsymbol{W}$ 的维度是多少？\",\n    \"回答7\": \"最后一层隐藏层到输出层直接的权重矩阵 $\\boldsymbol{W}$ 的维度是 $|\\text{V}| \\times D_{h}$。\",\n    \"问题8\": \"图15.3a展示了什么类型的深度序列模型？\",\n    \"回答8\": \"图15.3a展示了前馈神经网络模型。\",\n    \"问题9\": \"图15.3b展示了什么类型的深度序列模型？\",\n    \"回答9\": \"图15.3b展示了循环神经网络模型。\",\n    \"问题10\": \"图15.3中虚线边代表了前馈神经网络模型中的什么特性？\",\n    \"回答10\": \"图15.3中虚线边代表了可选的跳层连接，是前馈神经网络模型中的特性之一。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710765299,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 753,
+            "prompt_tokens": 3013,
+            "total_tokens": 3766
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

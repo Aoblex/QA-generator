@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter2",
+        "title": "超几何分布",
+        "content_length": 1507,
+        "content": "Title: 超几何分布\nContent:\n\\subsubsection{超几何分布}\n从一个有限总体中进行不放回抽样常会遇到超几何分布.\n\n设有$N$个产品，其中有$M$个不合格品.若从中不放回地随机抽取$n$个，则其中含有的不合格品的个数$X$服从超几何分布，记为$X\\sim h(n,N,M)$.超几何分布的概率分布列为（见第 \\ref{chap1} 章中例 \\ref{exam1.2.3}）\n\\begin{equation}\\label{eq2.4.6}\n  P(X = k) = \\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn},\\; k = 0,1,\\cdots,r,\n\\end{equation}\n其中$r=\\min\\{M,n\\}$，且$M\\le N,n\\le N,n,N,M$均为正整数.\n\n若要验证以上给出的确实为一个概率分布列，只须注意到有组合等式（见习题 \\ref{xiti1.2}）\n\\[\n   \\sum_{k=0}^r \\Binom Mk \\Binom{N-M}{n-k} = \\Binom Nn\n\\]\n即可.\n\n超几何分布是一种常用的离散分布，它在抽样理论中占有重要地位.\n\n\\subsubsection{超几何分布的数学期望和方差}\n若$X\\sim h(n,N,M)$，则$X$的数学期望为\n\\[\n  E(X) = \\sum_{k=0}^rk\\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn} = n\\frac MN \\sum_{k=1}^r \\frac{\\binom {M-1}{k-1} \\binom{N-M}{n-k}} {\\binom {N-1}{n-1}} = n\\frac MN.\n\\]\n又因为\n\\begin{align*}\n  E(X^2) & = \\sum_{k=1}^rk^2\\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn} =\n  \\sum_{k=2}^r k(k-1) \\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn} + n \\frac MN \\\\\n  & = \\frac{M(M-1)}{\\binom Nn} \\sum_{k=2}^rk(k-1) \\Binom{M-2}{k-2} \\Binom{N-M}{n-k} + n\\frac MN \\\\\n  & = \\frac{M(M-1)}{\\binom Nn} \\Binom{N-2}{n-2} + n \\frac MN = \\frac{M(M-1)n(n-1)}{N(N-1)} + n \\frac MN,\n\\end{align*}\n由此得$X$的方差为\n\\[\n  \\Var(X) = E(X^2) - [E(X)]^2 = \\frac{nM(N-M)(N-n)}{N^2(N-1)} .\n\\]\n\n\\subsubsection{超几何分布的二项近似}\n当$n\\ll N$时，即抽取个数$n$远小于产品总数$N$时，每次抽取后，总体中的不合格品率$p=M/N$改变甚徽，所以不放回抽样可近似地看成放回抽样，这时超几何分布可用二项分布近似：\n\\begin{equation}\\label{eq2.4.7}\n  \\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn}\n  \\cong \\Binom nkp^k(1-p)^{n-k},\\;\\text{其中}\\,p = \\frac MN.\n\\end{equation}"
+    },
+    {
+        "id": "chatcmpl-940OZwtonVEEdn6i4OxVS5kBBLTEe",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"超几何分布的概率分布列是如何定义的？\",\n    \"回答1\": \"超几何分布的概率分布列定义为 $P(X = k) = \\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn},\\text{其中} k = 0,1,\\text{...},r$，其中$r=\\text{min}\\big\\big\\brace{M,n\\big\\big\\brace}$，且$M\\text{≤}N,n\\text{≤}N,n,N,M$均为正整数。\",\n    \"问题2\": \"超几何分布的数学期望是如何计算的？\",\n    \"回答2\": \"若$X\\text{∼}h(n,N,M)$，则$X$的数学期望为 $E(X) = n\\frac MN$。\",\n    \"问题3\": \"超几何分布的方差是如何计算的？\",\n    \"回答3\": \"超几何分布的方差为 $\\text{Var}(X) = \\frac{nM(N-M)(N-n)}{N^2(N-1)}$。\",\n    \"问题4\": \"超几何分布在抽样理论中有什么重要地位？\",\n    \"回答4\": \"超几何分布在抽样理论中占有重要地位，它是一种常用的离散分布，用于描述从一个有限总体中进行不放回抽样时含有特定属性（如不合格品）的个数分布。\",\n    \"问题5\": \"超几何分布和二项分布之间有什么近似关系？\",\n    \"回答5\": \"当$n\\text{≪}N$时，即抽取个数$n$远小于产品总数$N$时，超几何分布可用二项分布近似，即 $\\frac{\\binom Mk \\binom{N-M}{n-k}} {\\binom Nn} \\text{≈} \\text{Binom}(n,k,p^k(1-p)^{n-k})$，其中$p = \\frac MN$。\",\n    \"问题6\": \"超几何分布适用于什么样的抽样情景？\",\n    \"回答6\": \"超几何分布适用于从一个有限总体中进行不放回抽样的情景。例如，从$N$个产品中不放回地随机抽取$n$个，其中含有的不合格品的个数$X$服从超几何分布。\",\n    \"问题7\": \"在超几何分布中，为什么需要验证给出的概率分布列是否满足概率分布的性质？\",\n    \"回答7\": \"需要验证给出的概率分布列是否满足概率分布的性质，以确保其满足概率分布的基本要求，如非负性和总和为1。这有助于确认所得到的概率分布列是一个有效的概率分布。\",\n    \"问题8\": \"在计算超几何分布的数学期望时，为什么会出现组合等式？\",\n    \"回答8\": \"在计算超几何分布的数学期望时出现组合等式是因为需要利用组合数学中的性质来对含有组合系数的表达式进行化简和计算。这有助于简化数学期望的计算过程。\",\n    \"问题9\": \"超几何分布和二项分布近似关系中的参数$p$代表什么意义？\",\n    \"回答9\": \"$p = \\frac MN$代表每次抽取后，总体中不合格品的比例。在二项近似中，当$n\\text{≪}N$时，这一比例改变甚微，因此可以将不放回抽样近似地看成放回抽样。\",\n    \"问题10\": \"超几何分布和二项分布在什么情况下可以进行近似转换？\",\n    \"回答10\": \"当$n\\text{≪}N$时，即抽取个数$n$远小于产品总数$N$时，每次抽取后，总体中的不合格品率$p=M/N$改变甚微，所以不放回抽样可近似地看成放回抽样。这时超几何分布可以用二项分布进行近似转换。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710741859,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1177,
+            "prompt_tokens": 3528,
+            "total_tokens": 4705
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

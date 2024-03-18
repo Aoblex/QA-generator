@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "9.2.1.2 多项分布",
+        "content_length": 1241,
+        "content": "Title: 9.2.1.2 多项分布\nContent:\n假设样本服从 $K$ 个状态的多项分布, 令 one-hot 向量 $\\boldsymbol{x} \\in\\{0,1\\}^{K}$ 来表示第 $k$个状态, 即 $x_{k}=1$, 其余 $x_{i, i \\neq k}=0$. 样本 $\\boldsymbol{x}$ 的概率密度函数为\n\n多项分布参见第D.2.2.1节.\n\n其中 $\\mu_{k}$ 为第 $k$ 个状态的概率, 并满足 $\\sum_{k=1}^{K} \\mu_{k}=1$.\n\n数据集 $\\mathcal{D}=\\left\\{\\boldsymbol{x}^{(n)}\\right\\}_{n=1}^{N}$ 的对数似然函数为这里没有多项式系数.\n\n\n\\begin{equation*}\n\\log p(\\mathcal{D} \\mid \\mu)=\\sum_{n=1}^{N} \\sum_{k=1}^{K} x_{k}^{(n)} \\log \\left(\\mu_{k}\\right) \\tag{9.34}\n\\end{equation*}\n\n\n多项分布的参数估计为约束优化问题. 引入拉格朗日乘子 $\\lambda$, 将原问题转换为无约束优化问题.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n\n\\begin{equation*}\n\\max _{\\mu, \\lambda} \\sum_{n=1}^{N} \\sum_{k=1}^{K} x_{k}^{(n)} \\log \\left(\\mu_{k}\\right)+\\lambda\\left(\\sum_{k=1}^{K} \\mu_{k}-1\\right) . \\tag{9.35}\n\\end{equation*}\n\n\n拉格朗日乘子参考参见第C.3节.\\\\\n分别求上式关于 $\\mu_{k}, \\lambda$ 的偏导数, 并令其等于 0 . 可得,\n\n\n\\begin{equation*}\n\\mu_{k}^{M L}=\\frac{m_{k}}{N}, \\quad 1 \\leq k \\leq K \\tag{9.36}\n\\end{equation*}\n\n\n其中 $m_{k}=\\sum_{n=1}^{N} x_{k}^{(n)}$ 为数据集中取值为第 $k$ 个状态的样本数量.\n\n在实际应用中,参数密度估计一般存在以下问题:\n\n(1) 模型选择问题: 即如何选择数据分布的密度函数. 实际数据的分布往往是非常复杂的,而不是简单的正态分布或多项分布.\n\n(2) 不可观测变量问题: 即我们用来训练的样本只包含部分的可观测变量, 还有一些非常关键的变量是无法观测的, 这导致我们很难准确估计数据的真实分布.\n\n(3) 维度灾难问题: 即高维数据的参数估计十分困难. 随着维度的增加, 估计参数所需要的样本数量指数增加. 在样本不足时会出现过拟合."
+    },
+    {
+        "id": "chatcmpl-944kHXXzcK3VTML4Suv6im064CPdE",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"多项分布中的 one-hot 向量 $\\boldsymbol{x}$ 是如何表示第 $k$ 个状态的？\",\n    \"回答1\": \"在多项分布中，one-hot 向量 $\\boldsymbol{x} \\text{ 为 } \\big\\boldsymbol{x} \\text{ 是 } \\big\\boldsymbol{x} \\text{ 的一个向量，其中第 } k \\text{ 个元素为 } 1\\big\\text{ 表示第 } k \\text{ 个状态，其余元素为 } 0$。这种表示方式能够清晰地表达出样本所处的状态。\",\n    \"问题2\": \"多项分布的概率密度函数是如何定义的？\",\n    \"回答2\": \"多项分布的概率密度函数定义为 $p(\\boldsymbol{x} \\text{ 是 } \\boldsymbol{x}^{(n)} \\text{ 的概率密度函数为 }\\boldsymbol{x}^{(n)} \\text{ 的对数似然函数为 }\\text{log} p(\\boldsymbol{x}^{(n)} \\text{ 是 } \\boldsymbol{x}^{(n)} \\text{ 的概率密度函数为 }\\boldsymbol{x}^{(n)} \\text{ 的对数似然函数为 }\\text{log} p(\\boldsymbol{x}^{(n)} \\text{ 是 } \\boldsymbol{x}^{(n)} \\text{ 的概率密度函数为 }\\boldsymbol{x}^{(n)} \\text{ 的对数似然函数为 }\\text{log} p(\\boldsymbol{x}^{(n)}|\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\boldsymbol{x}}|\\boldsymbol{\\bmu})=\\bsum_{n=1}^{N}\\bsum_{k=1}^{K} x_{k}^{(n)}\\blog (\\bmu_{k})$。\",\n    \"问题3\": \"多项分布的参数估计是怎样进行的？\",\n    \"回答3\": \"多项分布的参数估计是一个约束优化问题。通过引入拉格朗日乘子 $\\blambda$，将原问题转换为无约束优化问题，即求解 $\\bmax_{\\bmu, \\blambda} \\bsum_{n=1}^{N}\\bsum_{k=1}^{K} x_{k}^{(n)}\\blog (\\bmu_{k})+\\blambda\\bsum_{k=1}^{K}\\bmu_{k}-1$。通过求偏导并令其等于 0，可以得到参数的最大似然估计。\",\n    \"问题4\": \"多项分布参数估计中的拉格朗日乘子起到什么作用？\",\n    \"回答4\": \"在多项分布参数估计中，拉格朗日乘子起到引入约束条件的作用。通过引入拉格朗日乘子，将原问题转换为无约束优化问题，从而更方便地求解参数的最大似然估计。\",\n    \"问题5\": \"在实际应用中，参数密度估计一般存在哪些问题？\",\n    \"回答5\": \"在实际应用中，参数密度估计一般存在模型选择问题、不可观测变量问题和维度灾难问题。模型选择问题涉及如何选择数据分布的密度函数；不可观测变量问题指训练样本只包含部分可观测变量，导致难以准确估计数据真实分布；维度灾难问题指高维数据的参数估计困难，需要更多样本来避免过拟合。\",\n    \"问题6\": \"模型选择问题在参数密度估计中具体指什么？\",\n    \"回答6\": \"模型选择问题在参数密度估计中指如何选择数据分布的密度函数。实际数据的分布往往是非常复杂的，而不是简单的正态分布或多项分布。因此，在实际应用中需要根据具体情况选择合适的数据分布模型。\",\n    \"问题7\": \"不可观测变量问题对于参数密度估计有何影响？\",\n    \"回答7\": \"不可观测变量问题指训练样本只包含部分可观测变量，导致难以准确估计数据真实分布。这会影响参数密度估计的准确性和鲁棒性，使得模型对于未观测变量的预测能力受到限制。\",\n    \"问题8\": \"维度灾难问题在参数密度估计中是怎样表现的？\",\n    \"回答8\": \"维度灾难问题指高维数据的参数估计十分困难。随着维度的增加，估计参数所需要的样本数量指数增加，容易出现过拟合现象。因此，在高维数据场景下，需要特别注意样本数量与参数估计之间的平衡。\",\n    \"问题9\": \"多项分布中的 one-hot 向量有什么作用？\",\n    \"回答9\": \"在多项分布中，one-hot 向量 $\\blambda$ 能够清晰地表示出样本所处的状态。通过 one-hot 向量表示，可以直观地表达出每个样本所属状态的概率分布情况。\",\n    \"问题10\": \"多项分布参数估计中如何解决约束优化问题？\",\n    \"回答10\": \"在多项分布参数估计中，通过引入拉格朗日乘子 $\\blambda$，将原约束优化问题转换为无约束优化问题。然后通过求偏导并令其等于 0 的方式，可以得到参数的最大似然估计。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710758581,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1670,
+            "prompt_tokens": 3391,
+            "total_tokens": 5061
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

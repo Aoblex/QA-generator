@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter9",
+        "title": "19.2.1 基本定义",
+        "content_length": 1510,
+        "content": "Title: 19.2.1 基本定义\nContent:\n定义 19.1 (马尔可夫链) 考虑一个随机变量的序列 $X=\\left\\{X_{0}, X_{1}, \\cdots, X_{t}, \\cdots\\right\\}$, 这里 $X_{t}$ 表示时刻 $t$ 的随机变量, $t=0,1,2, \\cdots$ 。每个随机变量 $X_{t}(t=0,1,2, \\cdots)$ 的取值集合相\\\\\n同, 称为状态空间, 表示为 $\\mathcal{S}$ 。随机变量可以是离散的, 也可以是连续的。以上随机变量的序列构成随机过程 (stochastic process)。\n\n假设在时刻 0 的随机变量 $X_{0}$ 遵循概率分布 $P\\left(X_{0}\\right)=\\pi_{0}$, 称为初始状态分布。在某个时刻 $t \\geqslant 1$ 的随机变量 $X_{t}$ 与前一个时刻的随机变量 $X_{t-1}$ 之间有条件分布 $P\\left(X_{t} \\mid X_{t-1}\\right)$, 如果 $X_{t}$ 只依赖于 $X_{t-1}$, 而不依赖于过去的随机变量 $\\left\\{X_{0}, X_{1}, \\cdots, X_{t-2}\\right\\}$, 这一性质称为马尔可夫性, 即\n\n\n\\begin{equation*}\nP\\left(X_{t} \\mid X_{0}, X_{1}, \\cdots, X_{t-1}\\right)=P\\left(X_{t} \\mid X_{t-1}\\right), \\quad t=1,2, \\cdots \\tag{19.6}\n\\end{equation*}\n\n\n具有马尔可夫性的随机序列 $X=\\left\\{X_{0}, X_{1}, \\cdots, X_{t}, \\cdots\\right\\}$ 称为马尔可夫链（Markov chain）或马尔可夫过程 (Markov process)。条件概率分布 $P\\left(X_{t} \\mid X_{t-1}\\right)$ 称为马尔可夫链的转移概率分布。转移概率分布决定了马尔可夫链的特性。\n\n马尔可夫性的直观解释是 “未来只依赖于现在（假设现在已知）, 而与过去无关”。这个假设在许多应用中是合理的。\n\n若转移概率分布 $P\\left(X_{t} \\mid X_{t-1}\\right)$ 与 $t$ 无关, 即\n\n\n\\begin{equation*}\nP\\left(X_{t+s} \\mid X_{t-1+s}\\right)=P\\left(X_{t} \\mid X_{t-1}\\right), \\quad t=1,2, \\cdots, \\quad s=1,2, \\cdots \\tag{19.7}\n\\end{equation*}\n\n\n则称该马尔可夫链为时间齐次的马尔可夫链 (time homogenous Markov chain）。本书中提到的马尔可夫链都是时间齐次的。\n\n以上定义的是一阶马尔可夫链, 可以扩展到 $n$ 阶马尔可夫链, 满足 $n$ 阶马尔可夫性:\n\n\n\\begin{equation*}\nP\\left(X_{t} \\mid X_{0} X_{1} \\cdots X_{t-2} X_{t-1}\\right)=P\\left(X_{t} \\mid X_{t-n} \\cdots X_{t-2} X_{t-1}\\right) \\tag{19.8}\n\\end{equation*}\n\n\n本书主要考虑一阶马尔可夫链。容易验证 $n$ 阶马尔可夫链可以转换为一阶马尔可夫链。"
+    },
+    {
+        "id": "chatcmpl-947h9lSSzY1nvhXmX0xMy3kuegq0O",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"马尔可夫链中的状态空间是指什么？\",\n    \"回答1\": \"马尔可夫链中的状态空间是指每个随机变量 $X_{t}(t=0,1,2, \\text{...})$ 的取值集合，表示为 $\\boldsymbol{S}$。这个集合可以是离散的，也可以是连续的。\",\n    \"问题2\": \"马尔可夫链中的初始状态分布是如何定义的？\",\n    \"回答2\": \"在马尔可夫链中，假设在时刻 0 的随机变量 $X_{0}$ 遵循概率分布 $P\\big(X_{0}\\big)=\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{pi}_{0}}$，这个概率分布称为初始状态分布。\",\n    \"问题3\": \"马尔可夫链中的转移概率分布是指什么？\",\n    \"回答3\": \"在马尔可夫链中，某个时刻 $t \\text{ 为 } 1$ 的随机变量 $X_{t}$ 与前一个时刻的随机变量 $X_{t-1}$ 之间有条件分布 $P\\big(X_{t} \\big| X_{t-1}\\big)$。这个条件分布称为转移概率分布，它决定了马尔可夫链的特性。\",\n    \"问题4\": \"马尔可夫性在马尔可夫链中有什么含义？\",\n    \"回答4\": \"马尔可夫性在马尔可夫链中表示未来的随机变量 $X_{t}$ 只依赖于当前时刻的随机变量 $X_{t-1}$，而不依赖于过去的随机变量 $\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big{X}_{0}, X_{1}, \\text{...}, X_{t-2}\\right]$. 这一性质称为马尔可夫性。\",\n    \"问题5\": \"时间齐次的马尔可夫链是指什么？\",\n    \"回答5\": \"时间齐次的马尔可夫链是指转移概率分布 $P\\big(X_{t+s} \\big| X_{t-1+s}\\big)=P\\big(X_{t} \\big| X_{t-1}\\big), t=1,2, \\text{...}, s=1,2, \\text{...}$ 与时间 $t$ 无关的马尔可夫链。本书中提到的马尔可夫链都是时间齐次的。\",\n    \"问题6\": \"一阶马尔可夫链和 $n$ 阶马尔可夫链有何区别？\",\n    \"回答6\": \"一阶马尔可夫链和 $n$ 阶马尔可夫链的区别在于满足的马尔可夫性条件不同。一阶马尔可夫链满足一阶马尔可夫性，即 $P\\big(X_{t} \\big| X_{0} X_{1} \\text{...} X_{t-2} X_{t-1}\\right)=P\\big(X_{t} \\big| X_{t-n} \\text{...} X_{t-2} X_{t-1}\\right)$；而 $n$ 阶马尔可夫链满足 $n$ 阶马尔可夫性，即 $P\\big(X_{t} \\big| X_{0} X_{1} \\text{...} X_{t-2} X_{t-1}\\right)=P\\big(X_{t} \\text{ | } X_{t-n} \\text{...} X_{t-2} X_{t-1}\\right)$。\",\n    \"问题7\": \"什么是一阶马尔可夫链？\",\n    \"回答7\": \"一阶马尔可夫链是指满足一阶马尔可夫性条件的马尔可夫链，即满足条件 $P\\big(X_{t} \\text{ | } X_{0} X_{1} \\text{...} X_{t-2} X_{t-1}\\right)=P\\big(X_{t} \\text{ | } X_{t-1}\\right)$ 的随机序列。\",\n    \"问题8\": \"为什么主要考虑一阶马尔可夫链？\",\n    \"回答8\": \"主要考虑一阶马尔可夫链是因为容易验证 $n$ 阶马尔可夫链可以转换为一阶马尔可夫链。这样做可以简化问题，并且更容易进行建模和分析。\",\n    \"问题9\": \"转移概率分布对于马尔可夫链有何重要性？\",\n    \"回答9\": \"转移概率分布决定了马尔可夫链的特性和行为。它描述了随机变量在不同时刻之间的转移规律，对于理解和预测马尔可夫链的状态演化具有重要意义。\",\n    \"问题10\": \"在实际应用中，为什么未来只依赖于现在（假设现在已知），而与过去无关这一假设是合理的？\",\n    \"回答10\": \"在实际应用中，未来只依赖于现在而与过去无关这一假设是合理的是因为许多系统或过程具有一定的记忆衰减特性，过去的信息对当前和未来的影响逐渐减弱。因此，在某些情况下，假设未来只依赖于现在而与过去无关可以简化建模，并且符合实际情况。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710769919,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1706,
+            "prompt_tokens": 3614,
+            "total_tokens": 5320
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

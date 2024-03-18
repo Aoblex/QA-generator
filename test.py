@@ -1,0 +1,2 @@
+s = '\cdot'
+print(s)

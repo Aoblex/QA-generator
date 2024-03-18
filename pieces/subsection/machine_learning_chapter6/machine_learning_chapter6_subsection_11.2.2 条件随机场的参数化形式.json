@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter6",
+        "title": "11.2.2 条件随机场的参数化形式",
+        "content_length": 4150,
+        "content": "Title: 11.2.2 条件随机场的参数化形式\nContent:\n根据定理 11.1, 可以给出线性链条件随机场 $P(Y \\mid X)$ 的因子分解式, 各因子是定义在相邻两个结点（最大团）上的势函数。\n\n定理 11.2 (线性链条件随机场的参数化形式) 设 $P(Y \\mid X)$ 为线性链条件随机场, 则在随机变量 $X$ 取值为 $x$ 的条件下, 随机变量 $Y$ 取值为 $y$ 的条件概率具有如下形式:\n\n\n\\begin{equation*}\nP(y \\mid x)=\\frac{1}{Z(x)} \\exp \\left(\\sum_{i, k} \\lambda_{k} t_{k}\\left(y_{i-1}, y_{i}, x, i\\right)+\\sum_{i, l} \\mu_{l} s_{l}\\left(y_{i}, x, i\\right)\\right) \\tag{11.10}\n\\end{equation*}\n\n\n其中，\n\n\n\\begin{equation*}\nZ(x)=\\sum_{y} \\exp \\left(\\sum_{i, k} \\lambda_{k} t_{k}\\left(y_{i-1}, y_{i}, x, i\\right)+\\sum_{i, l} \\mu_{l} s_{l}\\left(y_{i}, x, i\\right)\\right) \\tag{11.11}\n\\end{equation*}\n\n\n式中, $t_{k}$ 和 $s_{l}$ 是特征函数, $\\lambda_{k}$ 和 $\\mu_{l}$ 是对应的权值, $Z(x)$ 是规范化因子, 求和是在所有可能的输出序列上进行的。\n\n式 (11.10) 和式 (11.11) 是线性链条件随机场模型的基本形式, 表示给定输入序列 $x$, 对输出序列 $y$ 预测的条件概率。在式 (11.10) 和式 (11.11) 中, $t_{k}$ 是定义在边上的特征函数, 称为转移特征, 依赖于当前和前一个位置; $s_{l}$ 是定义在结点上的特征函数, 称为状态特征, 依赖于当前位置。 $t_{k}$ 和 $s_{l}$ 都依赖于位置, 是局部特征函数。通常, 特征函数 $t_{k}$ 和 $s_{l}$ 取值为 1 或 0 ; 当满足特征条件时取值为 1 , 否则为 0 。条件随机场完全由特征函数 $t_{k}, s_{l}$ 和对应的权值 $\\lambda_{k}, \\mu_{l}$ 确定。\n\n线性链条件随机场也是对数线性模型 ( $\\log$ linear model)。\n\n下面看一个简单的例子。\n\n例 11.1 设有一标注问题: 输入观测序列为 $X=\\left(X_{1}, X_{2}, X_{3}\\right)$, 输出标记序列为 $Y=\\left(Y_{1}, Y_{2}, Y_{3}\\right), Y_{1}, Y_{2}, Y_{3}$ 取值于 $\\mathcal{Y}=\\{1,2\\}$ 。\\\\\n假设特征 $t_{k}, s_{l}$ 和对应的权值 $\\lambda_{k}, \\mu_{l}$ 如下:\n\n$$\nt_{1}=t_{1}\\left(y_{i-1}=1, y_{i}=2, x, i\\right), \\quad i=2,3, \\quad \\lambda_{1}=1\n$$\n\n这里只注明特征取值为 1 的条件, 取值为 0 的条件省略, 即\n\n$$\nt_{1}\\left(y_{i-1}, y_{i}, x, i\\right)= \\begin{cases}1, & y_{i-1}=1, y_{i}=2, x, i,(i=2,3) \\\\ 0, & \\text { 其他 }\\end{cases}\n$$\n\n下同。\n\n$$\n\\begin{aligned}\n& t_{2}=t_{2}\\left(y_{1}=1, y_{2}=1, x, 2\\right), \\quad \\lambda_{2}=0.6 \\\\\n& t_{3}=t_{3}\\left(y_{2}=2, y_{3}=1, x, 3\\right), \\quad \\lambda_{3}=1 \\\\\n& t_{4}=t_{4}\\left(y_{1}=2, y_{2}=1, x, 2\\right), \\quad \\lambda_{4}=1 \\\\\n& t_{5}=t_{5}\\left(y_{2}=2, y_{3}=2, x, 3\\right), \\quad \\lambda_{5}=0.2 \\\\\n& s_{1}=s_{1}\\left(y_{1}=1, x, 1\\right), \\quad \\mu_{1}=1 \\\\\n& s_{2}=s_{2}\\left(y_{i}=2, x, i\\right), i=1,2, \\quad \\mu_{2}=0.5 \\\\\n& s_{3}=s_{3}\\left(y_{i}=1, x, i\\right), i=2,3, \\quad \\mu_{3}=0.8 \\\\\n& s_{4}=s_{4}\\left(y_{3}=2, x, 3\\right), \\quad \\mu_{4}=0.5\n\\end{aligned}\n$$\n\n对给定的观测序列 $x$, 求标记序列为 $y=\\left(y_{1}, y_{2}, y_{3}\\right)=(1,2,2)$ 的非规范化条件概率 (即没有除以规范化因子的条件概率)。\n\n解 由式 (11.10), 线性链条件随机场模型为\n\n$$\nP(y \\mid x) \\propto \\exp \\left[\\sum_{k=1}^{5} \\lambda_{k} \\sum_{i=2}^{3} t_{k}\\left(y_{i-1}, y_{i}, x, i\\right)+\\sum_{k=1}^{4} \\mu_{k} \\sum_{i=1}^{3} s_{k}\\left(y_{i}, x, i\\right)\\right]\n$$\n\n对给定的观测序列 $x$, 标记序列 $y=(1,2,2)$ 的非规范化条件概率为\n\n$$\nP\\left(y_{1}=1, y_{2}=2, y_{3}=2 \\mid x\\right) \\propto \\exp (3.2)\n$$\n\n\\section*{11.2 .3 条件随机场的简化形式}\n条件随机场还可以由简化形式表示。注意到条件随机场 (式 (11.10)) 中同一特征在各个位置都有定义, 可以对同一个特征在各个位置求和, 将局部特征函数转化为一个全局特征函数, 这样就可以将条件随机场写成权值向量和特征向量的内积形式, 即条件随机场的简化形式。\n\n为简便起见, 首先将转移特征和状态特征及其权值用统一的符号表示。设有 $K_{1}$ 个转移特征, $K_{2}$ 个状态特征, $K=K_{1}+K_{2}$, 记\n\n\\[\nf_{k}\\left(y_{i-1}, y_{i}, x, i\\right)= \\begin{cases}t_{k}\\left(y_{i-1}, y_{i}, x, i\\right), & k=1,2, \\cdots, K_{1}  \\tag{11.12}\\\\ s_{l}\\left(y_{i}, x, i\\right), & k=K_{1}+l, \\quad l=1,2, \\cdots, K_{2}\\end{cases}\n\\]\n\n然后, 对转移特征与状态特征在各个位置 $i$ 求和, 记作\n\n\n\\begin{equation*}\nf_{k}(y, x)=\\sum_{i=1}^{n} f_{k}\\left(y_{i-1}, y_{i}, x, i\\right), \\quad k=1,2, \\cdots, K \\tag{11.13}\n\\end{equation*}\n\n\n用 $w_{k}$ 表示特征 $f_{k}(y, x)$ 的权值, 即\n\n\\[\nw_{k}= \\begin{cases}\\lambda_{k}, & k=1,2, \\cdots, K_{1}  \\tag{11.14}\\\\ \\mu_{l}, & k=K_{1}+l, \\quad l=1,2, \\cdots, K_{2}\\end{cases}\n\\]\n\n于是, 条件随机场 (式 (11.10) 式 (11.11)) 可表示为\n\n\n\\begin{align*}\nP(y \\mid x) & =\\frac{1}{Z(x)} \\exp \\sum_{k=1}^{K} w_{k} f_{k}(y, x)  \\tag{11.15}\\\\\nZ(x) & =\\sum_{y} \\exp \\sum_{k=1}^{K} w_{k} f_{k}(y, x) \\tag{11.16}\n\\end{align*}\n\n\n若以 $w$ 表示权值向量, 即\n\n\n\\begin{equation*}\nw=\\left(w_{1}, w_{2}, \\cdots, w_{K}\\right)^{\\mathrm{T}} \\tag{11.17}\n\\end{equation*}\n\n\n以 $F(y, x)$ 表示全局特征向量, 即\n\n\n\\begin{equation*}\nF(y, x)=\\left(f_{1}(y, x), f_{2}(y, x), \\cdots, f_{K}(y, x)\\right)^{\\mathrm{T}} \\tag{11.18}\n\\end{equation*}\n\n\n则条件随机场可以写成向量 $w$ 与 $F(y, x)$ 的内积的形式:\n\n\n\\begin{equation*}\nP_{w}(y \\mid x)=\\frac{\\exp (w \\cdot F(y, x))}{Z_{w}(x)} \\tag{11.19}\n\\end{equation*}\n\n\n其中,\n\n\n\\begin{equation*}\nZ_{w}(x)=\\sum_{y} \\exp (w \\cdot F(y, x)) \\tag{11.20}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-9478OsysB11ruyHOI0HvWRHUed7pl",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"线性链条件随机场的参数化形式中，条件概率的计算公式是怎样的？\",\n    \"回答1\": \"线性链条件随机场的参数化形式中，给定输入序列 $x$，对输出序列 $y$ 预测的条件概率具有如下形式：$P(y \\text{ ｜ } x)=\\frac{1}{Z(x)} \\text{exp} \\bigg(\\text{∑}_{i, k} \\text{λ}_{k} t_{k}\\big(y_{i-1}, y_{i}, x, i\\big)+\\text{∑}_{i, l} \\text{μ}_{l} s_{l}\\big(y_{i}, x, i\\big)\\bigg)$。\",\n    \"问题2\": \"线性链条件随机场的规范化因子 $Z(x)$ 的计算公式是什么？\",\n    \"回答2\": \"线性链条件随机场的规范化因子 $Z(x)$ 的计算公式为：$Z(x)=\\text{∑}_{y} \\text{exp} \\bigg(\\text{∑}_{i, k} \\text{λ}_{k} t_{k}\\big(y_{i-1}, y_{i}, x, i\\big)+\\text{∑}_{i, l} \\text{μ}_{l} s_{l}\\big(y_{i}, x, i\\big)\\bigg)$。\",\n    \"问题3\": \"线性链条件随机场模型的基本形式由哪两个公式组成？\",\n    \"回答3\": \"线性链条件随机场模型的基本形式由两个公式组成：$P(y \\text{ ｜ } x)=\\frac{1}{Z(x)} \\text{exp} \\bigg(\\text{∑}_{i, k} \\text{λ}_{k} t_{k}\\big(y_{i-1}, y_{i}, x, i\\big)+\\text{∑}_{i, l} \\text{μ}_{l} s_{l}\\big(y_{i}, x, i\\big)\\bigg)$ 和 $Z(x)=\\text{∑}_{y} \\text{exp} \\bigg(\\text{∑}_{i, k} \\text{λ}_{k} t_{k}\\big(y_{i-1}, y_{i}, x, i\\big)+\\text{∑}_{i, l} \\text{μ}_{l} s_{l}\\big(y_{i}, x, i\\big)\\bigg)$。\",\n    \"问题4\": \"线性链条件随机场中的特征函数 $t_k$ 和 $s_l$ 的取值是怎样的？\",\n    \"回答4\": \"在线性链条件随机场中，特征函数 $t_k$ 和 $s_l$ 的取值通常为 1 或 0。当满足特征条件时取值为 1，否则为 0。\",\n    \"问题5\": \"简化形式的条件随机场模型是如何表示的？\",\n    \"回答5\": \"简化形式的条件随机场模型可以表示为：$P(y \\text{ ｜ } x)=\\frac{1}{Z(x)} \\text{exp} \\text{∑}_{k=1}^{K} w_{k} f_{k}(y, x)$ 和 $Z(x)=\\text{∑}_{y} \\text{exp} \\text{∑}_{k=1}^{K} w_{k} f_{k}(y, x)$。\",\n    \"问题6\": \"简化形式中的全局特征向量 $F(y, x)$ 是如何定义的？\",\n    \"回答6\": \"在简化形式中，全局特征向量 $F(y, x)$ 被定义为：$F(y, x)=\\big(f_{1}(y, x), f_{2}(y, x), \\text{...}, f_{K}(y, x)\\big)^{\\top}$。\",\n    \"问题7\": \"简化形式中的权值向量 $w$ 是如何定义的？\",\n    \"回答7\": \"在简化形式中，权值向量 $w$ 被定义为：$w=\\big(w_{1}, w_{2}, \\text{...}, w_{K}\\big)^{\\top}$。\",\n    \"问题8\": \"简化形式中的条件概率 $P_w(y \\text{ ｜ } x)$ 是如何计算得到的？\",\n    \"回答8\": \"在简化形式中，条件概率 $P_w(y \\text{ ｜ } x)$ 可以通过向量 $w$ 与 $F(y, x)$ 的内积计算得到：$P_w(y \\text{ ｜ } x)=\\frac{\\text{exp}(w \\bullet F(y, x))}{Z_w(x)}$。\",\n    \"问题9\": \"简化形式中的规范化因子 $Z_w(x)$ 是如何计算得到的？\",\n    \"回答9\": \"在简化形式中，规范化因子 $Z_w(x)$ 可以通过对所有可能的输出序列进行求和得到：$Z_w(x)=\\text{∑}_{y} \\text{exp}(w \\bullet F(y, x))$。\",\n    \"问题10\": \"给定观测序列 $x$ 和标记序列 $y=(1,2,2)$，如何计算标记序列的非规范化条件概率？\",\n    \"回答10\": \"给定观测序列 $x$ 和标记序列 $y=(1,2,2)$，标记序列的非规范化条件概率可以通过对应特征函数和权值的加权求和得到：$P\\big(y_1=1, y_2=2, y_3=2 \\text{ ｜ } x\\big) ∝ \\text{exp}(3.2)$。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710767764,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1458,
+            "prompt_tokens": 5126,
+            "total_tokens": 6584
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "6.6.3 门控循环单元网络",
+        "content_length": 3409,
+        "content": "Title: 6.6.3 门控循环单元网络\nContent:\n门控循环单元 (Gated Recurrent Unit, GRU ) 网络 [Cho et al., 2014; Chung et al., 2014] 是一种比 LSTM 网络更加简单的循环神经网络.\n\nGRU 网络引入门控机制来控制信息更新的方式. 和 LSTM 不同, GRU 不引入额外的记忆单元, GRU 网络也是在公式 (6.50)的基础上引入一个更新门 ( Update Gate ) 来控制当前状态需要从历史状态中保留多少信息 (不经过非线性变换 ), 以及需要从候选状态中接受多少新信息,即\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}=\\boldsymbol{z}_{t} \\odot \\boldsymbol{h}_{t-1}+\\left(1-\\boldsymbol{z}_{t}\\right) \\odot g\\left(\\boldsymbol{x}_{t}, \\boldsymbol{h}_{t-1} ; \\theta\\right) \\tag{6.65}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{z}_{t} \\in[0,1]^{D}$ 为更新门:\n\n\n\\begin{equation*}\n\\boldsymbol{z}_{t}=\\sigma\\left(\\boldsymbol{W}_{z} \\boldsymbol{x}_{t}+\\boldsymbol{U}_{z} \\boldsymbol{h}_{t-1}+\\boldsymbol{b}_{z}\\right) . \\tag{6.66}\n\\end{equation*}\n\n\n在 LSTM 网络中, 输入门和遗忘门是互补关系, 具有一定的壳余性. GRU 网络直接使用一个门来控制输入和遗忘之间的平衡. 当 $\\boldsymbol{z}_{t}=\\mathbf{0}$ 时, 当前状态 $\\boldsymbol{h}_{t}$ 和前一时刻的状态 $\\boldsymbol{h}_{t-1}$ 之间为非线性函数关系; 当 $\\boldsymbol{z}_{t}=1$ 时, $\\boldsymbol{h}_{t}$ 和 $\\boldsymbol{h}_{t-1}$ 之间为线性函数关系.\n\n在 GRU 网络中, 函数 $g\\left(\\boldsymbol{x}_{t}, \\boldsymbol{h}_{t-1} ; \\theta\\right)$ 的定义为\n\n\n\\begin{equation*}\n\\tilde{\\boldsymbol{h}}_{t}=\\tanh \\left(\\boldsymbol{W}_{h} \\boldsymbol{x}_{t}+\\boldsymbol{U}_{h}\\left(\\boldsymbol{r}_{t} \\odot \\boldsymbol{h}_{t-1}\\right)+\\boldsymbol{b}_{h}\\right), \\tag{6.67}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n公式(6.66) 公式(6.68)中的 $\\boldsymbol{W}_{*}, \\boldsymbol{U}_{*}, \\boldsymbol{b}_{*}$ 为可学习的网络参数, 其中 $* \\in\\{b, r, z\\}$.\n\n这里使用 Tanh函数是由于其导数有比较大的值域, 能够缓解梯度消失问题.\\\\\n其中 $\\tilde{\\boldsymbol{h}}_{t}$ 表示当前时刻的候选状态, $\\boldsymbol{r}_{t} \\in[0,1]^{D}$ 为重置门 ( Reset Gate )\n\n\n\\begin{equation*}\n\\boldsymbol{r}_{t}=\\sigma\\left(\\boldsymbol{W}_{r} \\boldsymbol{x}_{t}+\\boldsymbol{U}_{r} \\boldsymbol{h}_{t-1}+\\boldsymbol{b}_{r}\\right), \\tag{6.68}\n\\end{equation*}\n\n\n用来控制候选状态 $\\tilde{\\boldsymbol{h}}_{t}$ 的计算是否依赖上一时刻的状态 $\\boldsymbol{h}_{t-1}$.\n\n当 $\\boldsymbol{r}_{t}=\\mathbf{0}$ 时, 候选状态 $\\tilde{\\boldsymbol{h}}_{t}=\\tanh \\left(\\boldsymbol{W}_{c} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right)$ 只和当前输入 $\\boldsymbol{x}_{t}$ 相关, 和历史状态无关. 当 $\\boldsymbol{r}_{t}=\\mathbf{1}$ 时, 候选状态 $\\tilde{\\boldsymbol{h}}_{t}=\\tanh \\left(\\boldsymbol{W}_{h} \\boldsymbol{x}_{t}+\\boldsymbol{U}_{h} \\boldsymbol{h}_{t-1}+\\boldsymbol{b}_{h}\\right)$ 和当前输入 $\\boldsymbol{x}_{t}$ 以及历史状态 $\\boldsymbol{h}_{t-1}$ 相关, 和简单循环网络一致.\n\n综上, GRU 网络的状态更新方式为\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}=\\boldsymbol{z}_{t} \\odot \\boldsymbol{h}_{t-1}+\\left(1-\\boldsymbol{z}_{t}\\right) \\odot \\tilde{\\boldsymbol{h}}_{t} . \\tag{6.69}\n\\end{equation*}\n\n\n可以看出, 当 $z_{t}=0, r=1$ 时, GRU 网络退化为简单循环网络; 若 $z_{t}=0, r=0$时, 当前状态 $\\boldsymbol{h}_{t}$ 只和当前输入 $\\boldsymbol{x}_{t}$ 相关, 和历史状态 $\\boldsymbol{h}_{t-1}$ 无关. 当 $\\boldsymbol{z}_{t}=\\mathbf{1}$ 时, 当前状态 $\\boldsymbol{h}_{t}=\\boldsymbol{h}_{t-1}$ 等于上一时刻状态 $\\boldsymbol{h}_{t-1}$, 和当前输入 $\\boldsymbol{x}_{t}$ 无关.\n\n图6.8给出了 GRU 网络的循环单元结构.\n\n\n\n图 $6.8 \\mathrm{GRU}$ 网络的循环单元结构\n\n\\section*{6.7 深层循环神经网络}\n如果将深度定义为网络中信息传递路径长度的话, 循环神经网络可以看作既“深”又 “浅” 的网络.一方面来说, 如果我们把循环网络按时间展开, 长时间间隔的状态之间的路径很长, 循环网络可以看作一个非常深的网络. 从另一方面来说, 如果同一时刻网络输入到输出之间的路径 $\\boldsymbol{x}_{t} \\rightarrow \\boldsymbol{y}_{t}$, 这个网络是非常浅的.\n\n因此, 我们可以增加循环神经网络的深度从而增强循环神经网络的能力. 增加循环神经网络的深度主要是增加同一时刻网络输入到输出之间的路径 $\\boldsymbol{x}_{t} \\rightarrow$ $y_{t}$, 比如增加隐状态到输出 $\\boldsymbol{h}_{t} \\rightarrow \\boldsymbol{y}_{t}$, 以及输入到隐状态 $\\boldsymbol{x}_{t} \\rightarrow \\boldsymbol{h}_{t}$ 之间的路径的深度.\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}"
+    },
+    {
+        "id": "chatcmpl-94268OPtKW3hQG9eRinz2h524N5WH",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"GRU 网络相比 LSTM 网络有哪些简化之处？\",\n    \"回答1\": \"GRU 网络相比 LSTM 网络更加简单，不引入额外的记忆单元。它引入一个更新门来控制当前状态需要从历史状态中保留多少信息，以及需要从候选状态中接受多少新信息。相比之下，LSTM 网络引入了输入门和遗忘门，具有更多的记忆单元和控制机制。\",\n    \"问题2\": \"GRU 网络中的更新门 $\\boldsymbol{z}_{t}$ 是如何计算得到的？\",\n    \"回答2\": \"在 GRU 网络中，更新门 $\\boldsymbol{z}_{t}$ 的计算公式为 $\\boldsymbol{z}_{t}=\\text{sigmoid}\\big(\\boldsymbol{W}_{z} \\boldsymbol{x}_{t}+\\boldsymbol{U}_{z} \\boldsymbol{h}_{t-1}+\\boldsymbol{b}_{z}\\big)$，其中 $\\boldsymbol{W}_{z}, \\boldsymbol{U}_{z}, \\boldsymbol{b}_{z}$ 为可学习的网络参数。\",\n    \"问题3\": \"GRU 网络中的重置门 $\\boldsymbol{r}_{t}$ 的作用是什么？\",\n    \"回答3\": \"在 GRU 网络中，重置门 $\\boldsymbol{r}_{t}$ 用来控制候选状态 $\\tilde{\\boldsymbol{h}}_{t}$ 的计算是否依赖上一时刻的状态 $\\boldsymbol{h}_{t-1}$。当 $\\boldsymbol{r}_{t}=0$ 时，候选状态 $\\tilde{\\boldsymbol{h}}_{t}$ 只和当前输入 $\\boldsymbol{x}_{t}$ 相关，和历史状态无关；当 $\\boldsymbol{r}_{t}=1$ 时，候选状态 $\\tilde{\\boldsymbol{h}}_{t}$ 和当前输入以及历史状态相关。\",\n    \"问题4\": \"GRU 网络的状态更新方式是怎样的？\",\n    \"回答4\": \"GRU 网络的状态更新方式为 $\\boldsymbol{h}_{t}=\\boldsymbol{z}_{t} \\bigodot \\boldsymbol{h}_{t-1}+\\big(1-\\boldsymbol{z}_{t}\\big) \\bigodot \\tilde{\\boldsymbol{h}}_{t}$。其中，$\\tilde{\\boldsymbol{h}}_{t}$ 表示当前时刻的候选状态，$\\boldsymbol{z}_{t}$ 为更新门。\",\n    \"问题5\": \"为什么可以通过增加循环神经网络的深度来增强其能力？\",\n    \"回答5\": \"增加循环神经网络的深度可以增强其能力，因为可以增加同一时刻网络输入到输出之间的路径深度，比如增加隐状态到输出以及输入到隐状态之间的路径的深度。这样可以更好地捕捉输入和输出之间的复杂关系，提高网络的表达能力和学习能力。\",\n    \"问题6\": \"循环神经网络相对于深度定义而言既“深”又“浅”的原因是什么？\",\n    \"回答6\": \"循环神经网络相对于深度定义而言既“深”又“浅”的原因在于其在不同时间尺度上具有不同的深度。当按时间展开时，长时间间隔的状态之间的路径很长，循环网络可以看作一个非常深的网络；而在同一时刻网络输入到输出之间的路径上，这个网络是非常浅的。\",\n    \"问题7\": \"如何理解 GRU 网络退化为简单循环网络？\",\n    \"回答7\": \"当 $z_{t}=0, r=1$ 时，GRU 网络退化为简单循环网络；若 $z_{t}=0, r=0$时，当前状态 $\\boldsymbol{h}_{t}$ 只和当前输入 $\\boldsymbol{x}_{t}$ 相关，和历史状态 $\\boldsymbol{h}_{t-1}$ 无关。这意味着在特定条件下，GRU 网络可以退化为简单循环网络，从而具有更简单的结构和计算方式。\",\n    \"问题8\": \"Tanh 函数在 GRU 网络中起到了什么作用？\",\n    \"回答8\": \"Tanh 函数在 GRU 网络中起到了缓解梯度消失问题的作用。由于其导数有比较大的值域，能够缓解梯度消失问题，从而更好地支持网络的训练和学习过程。\",\n    \"问题9\": \"GRU 网络相对于 LSTM 网络有何优势？\",\n    \"回答9\": \"GRU 网络相对于 LSTM 网络更加简单，并且不引入额外的记忆单元。它直接使用一个门来控制输入和遗忘之间的平衡，并且在特定条件下可以退化为简单循环网络。这使得 GRU 在一定程度上具有更简单、更灵活的结构和计算方式。\",\n    \"问题10\": \"如何理解循环神经网络可以看作是一个非常深的网络？\",\n    \"回答10\": \"循环神经网络可以看作是一个非常深的网络是因为当按时间展开时，长时间间隔的状态之间的路径很长。这意味着信息可以在不同时间步之间进行传递和交互，形成了一个非常深层次的信息传递路径。\" \n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710748404,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1520,
+            "prompt_tokens": 4412,
+            "total_tokens": 5932
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

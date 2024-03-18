@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter6",
+        "title": "14.1.1 相似度或距离",
+        "content_length": 2307,
+        "content": "Title: 14.1.1 相似度或距离\nContent:\n聚类的对象是观测数据或样本集合。假设有 $n$ 个样本, 每个样本由 $m$ 个属性的特征向量组成。样本集合可以用矩阵 $X$ 表示:\n\n\\[\nX=\\left[x_{i j}\\right]_{m \\times n}=\\left[\\begin{array}{cccc}\nx_{11} & x_{12} & \\cdots & x_{1 n}  \\tag{14.1}\\\\\nx_{21} & x_{22} & \\cdots & x_{2 n} \\\\\n\\vdots & \\vdots & & \\vdots \\\\\nx_{m 1} & x_{m 2} & \\cdots & x_{m n}\n\\end{array}\\right]\n\\]\n\n矩阵的第 $j$ 列表示第 $j$ 个样本, $j=1,2, \\cdots, n$; 第 $i$ 行表示第 $i$ 个属性, $i=1,2, \\cdots, m$; 矩阵元素 $x_{i j}$ 表示第 $j$ 个样本的第 $i$ 个属性值, $i=1,2, \\cdots, m, j=1,2, \\cdots, n$ 。\n\n聚类的核心概念是相似度 (similarity) 或距离 (distance), 有多种相似度或距离的定义。因为相似度直接影响聚类的结果, 所以其选择是聚类的根本问题。具体哪种相似度更合适取决于应用问题的特性。\n\n\\section*{1. 闵可夫斯基距离 (1)}\n在聚类中, 可以将样本集合看作是向量空间中点的集合, 以该空间的距离表示样本之间的相似度。常用的距离有闵可夫斯基距离, 特别是欧氏距离。闵可夫斯基距离越大, 相似度越小; 距离越小, 相似度越大。\n\n定义 14.1 给定样本集合 $X, X$ 是 $m$ 维实数向量空间 $\\boldsymbol{R}^{m}$ 中点的集合, 其中 $x_{i}, x_{j} \\in$ $X, x_{i}=\\left(x_{1 i}, x_{2 i}, \\cdots, x_{m i}\\right)^{\\mathrm{T}}, x_{j}=\\left(x_{1 j}, x_{2 j}, \\cdots, x_{m j}\\right)^{\\mathrm{T}}$, 样本 $x_{i}$ 与样本 $x_{j}$ 的闵可夫斯基距离 (Minkowski distance) 定义为\n\n\n\\begin{equation*}\nd_{i j}=\\left(\\sum_{k=1}^{m}\\left|x_{k i}-x_{k j}\\right|^{p}\\right)^{\\frac{1}{p}} \\tag{14.2}\n\\end{equation*}\n\n\n这里 $p \\geqslant 1$ 。当 $p=2$ 时称为欧氏距离 (Euclidean distance), 即\n\n\n\\begin{equation*}\nd_{i j}=\\left(\\sum_{k=1}^{m}\\left|x_{k i}-x_{k j}\\right|^{2}\\right)^{\\frac{1}{2}} \\tag{14.3}\n\\end{equation*}\n\n\n当 $p=1$ 时称为曼哈顿距离（Manhattan distance）, 即\n\n\n\\begin{equation*}\nd_{i j}=\\sum_{k=1}^{m}\\left|x_{k i}-x_{k j}\\right| \\tag{14.4}\n\\end{equation*}\n\n\n当 $p=\\infty$ 时称为切比雪夫距离 (Chebyshev distance), 取各个坐标数值差的绝对值的最大值, 即\n\n\n\\begin{equation*}\nd_{i j}=\\max _{k}\\left|x_{k i}-x_{k j}\\right| \\tag{14.5}\n\\end{equation*}\n\n\n\\section*{2. 马哈拉诺比斯距离}\n马哈拉诺比斯距离 (Mahalanobis distance) 简称马氏距离, 也是另一种常用的相似度,考虑各个分量 (特征) 之间的相关性并与各个分量的尺度无关。马哈拉诺比斯距离越大, 相似度越小; 距离越小, 相似度越大。\n\n定义 14.2 给定一个样本集合 $X, X=\\left[x_{i j}\\right]_{m \\times n}$, 其协方差矩阵记作 $S$ 。样本 $x_{i}$ 与样本 $x_{j}$ 之间的马哈拉诺比斯距离 $d_{i j}$ 定义为\n\n\n\\begin{equation*}\nd_{i j}=\\left[\\left(x_{i}-x_{j}\\right)^{\\mathrm{T}} S^{-1}\\left(x_{i}-x_{j}\\right)\\right]^{\\frac{1}{2}} \\tag{14.6}\n\\end{equation*}\n\n\n其中，\n\n\n\\begin{equation*}\nx_{i}=\\left(x_{1 i}, x_{2 i}, \\cdots, x_{m i}\\right)^{\\mathrm{T}}, \\quad x_{j}=\\left(x_{1 j}, x_{2 j}, \\cdots, x_{m j}\\right)^{\\mathrm{T}} \\tag{14.7}\n\\end{equation*}\n\n\n(1) 在第 3 章叙述了闵可夫斯基距离, 现重述, 符号有所改变。\n\n\n\\end{CJK*}\n\\end{document}"
+    },
+    {
+        "id": "chatcmpl-947FW4QwaxHCrQVJBJjqUySE7qM5Y",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"聚类中的样本集合如何用矩阵表示？\",\n    \"回答1\": \"样本集合可以用矩阵 $X$ 表示，其中矩阵的第 $j$ 列表示第 $j$ 个样本，第 $i$ 行表示第 $i$ 个属性。矩阵元素 $x_{i j}$ 表示第 $j$ 个样本的第 $i$ 个属性值。\",\n    \"问题2\": \"聚类中的核心概念是什么？\",\n    \"回答2\": \"聚类的核心概念是相似度（similarity）或距离（distance），而相似度或距离的选择直接影响着聚类的结果，因此是聚类的根本问题。\",\n    \"问题3\": \"闵可夫斯基距离是如何定义的？\",\n    \"回答3\": \"给定样本集合 $X, X$ 是 $m$ 维实数向量空间 $\\boldsymbol{R}^{m}$ 中点的集合，其中 $x_{i}, x_{j} \\text{ 在 } X, x_{i}=\\big(x_{1 i}, x_{2 i}, \\text{...}, x_{m i}\\big)^{\\top}, x_{j}=\\big(x_{1 j}, x_{2 j}, \\text{...}, x_{m j}\\big)^{\\top}$，样本 $x_{i}$ 与样本 $x_{j}$ 的闵可夫斯基距离定义为 $d_{i j}=\\big(\\text{...}\\big)^{\\frac{1}{p}}$，其中 $p \\text{ 为 } 1 \\text{ 或 } 2 \\text{ 或 } \\text{...} \\text{ 或 } \\text{无穷}$。\",\n    \"问题4\": \"欧氏距离和曼哈顿距离分别是闵可夫斯基距离的哪种特殊情况？\",\n    \"回答4\": \"当 $p=2$ 时称为欧氏距离，即 $d_{i j}=\\big(\\text{...}\\big)^{\\frac{1}{2}}$；当 $p=1$ 时称为曼哈顿距离，即 $d_{i j}=\\text{...}$。\",\n    \"问题5\": \"切比雪夫距离是闵可夫斯基距离的哪种特殊情况？\",\n    \"回答5\": \"当 $p=\\text{无穷}$ 时称为切比雪夫距离，取各个坐标数值差的绝对值的最大值，即 $d_{i j}=\\text{max}_{k}\\big|x_{k i}-x_{k j}\\big|$。\",\n    \"问题6\": \"马哈拉诺比斯距离考虑了样本之间的什么特性？\",\n    \"回答6\": \"马哈拉诺比斯距离考虑了各个分量（特征）之间的相关性并与各个分量的尺度无关。因此，它在衡量样本之间相似度时能够更全面地考虑各个属性之间的关系。\",\n    \"问题7\": \"马哈拉诺比斯距离与闵可夫斯基距离有何区别？\",\n    \"回答7\": \"马哈拉诺比斯距离考虑了各个分量之间的相关性并与各个分量的尺度无关，而闵可夫斯基距离则根据不同的 $p$ 值（1、2 或无穷）来衡量样本之间的相似度。因此，在考虑样本相似度时，两者有不同的侧重点和计算方式。\",\n    \"问题8\": \"相似度或距离的选择对聚类有什么影响？\",\n    \"回答8\": \"相似度或距离的选择直接影响着聚类的结果。不同的相似度或距离定义会导致不同的聚类结果，因此其选择是聚类过程中需要认真考虑和确定的关键问题。\",\n    \"问题9\": \"为什么相似度或距离的选择是聚类的根本问题？\",\n    \"回答9\": \"因为相似度或距离直接影响着聚类的结果。不同的相似度或距离定义会导致不同的聚类结果，因此其选择对于聚类过程至关重要。\",\n    \"问题10\": \"在聚类中，为什么需要考虑多种相似度或距离的定义？\",\n    \"回答10\": \"具体哪种相似度更合适取决于应用问题的特性。不同的数据特点和应用场景可能需要采用不同类型的相似度或距离来更准确地描述样本之间的相似性。因此，在实际应用中需要考虑多种相似度或距禂定义以适应不同情况。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710768206,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1386,
+            "prompt_tokens": 4092,
+            "total_tokens": 5478
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

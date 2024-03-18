@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "8.2.1.2 键值对注意力",
+        "content_length": 834,
+        "content": "Title: 8.2.1.2 键值对注意力\nContent:\n更一般地, 我们可以用键值对 ( key-value pair) 格式来表示输入信息, 其中 “键”用来计算注意力分布 $\\alpha_{n}$, “值”用来计算聚合信息.\n\n用 $(\\boldsymbol{K}, \\boldsymbol{V})=\\left[\\left(\\boldsymbol{k}_{1}, \\boldsymbol{v}_{1}\\right), \\cdots,\\left(\\boldsymbol{k}_{N}, \\boldsymbol{v}_{N}\\right)\\right]$ 表示 $N$ 组输入信息, 给定任务相关的查询向量 $\\boldsymbol{q}$ 时, 注意力函数为\n\n\n\\begin{align*}\n\\operatorname{att}((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q}) & =\\sum_{n=1}^{N} \\alpha_{n} \\boldsymbol{v}_{n},  \\tag{8.9}\\\\\n& =\\sum_{n=1}^{N} \\frac{\\exp \\left(s\\left(\\boldsymbol{k}_{n}, \\boldsymbol{q}\\right)\\right)}{\\sum_{j} \\exp \\left(s\\left(\\boldsymbol{k}_{j}, \\boldsymbol{q}\\right)\\right)} \\boldsymbol{v}_{n}, \\tag{8.10}\n\\end{align*}\n\n\n其中 $s\\left(\\boldsymbol{k}_{n}, \\boldsymbol{q}\\right)$ 为打分函数.\n\n图8.1b给出键值对注意力机制的示例. 当 $\\boldsymbol{K}=\\boldsymbol{V}$ 时, 键值对模式就等价于普通的注意力机制."
+    },
+    {
+        "id": "chatcmpl-944VhA6qsqmRFWRiJqHyblbdklMtD",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"键值对注意力中的“键”和“值”分别用来做什么？\",\n    \"回答1\": \"在键值对注意力中，'键'用来计算注意力分布 $\\boldsymbol{\\text{α}}_{n}$，而'值'用来计算聚合信息。通过对输入信息的'键'进行注意力计算，可以得到不同输入信息对应的权重，然后利用这些权重对'值'进行加权求和，从而得到最终的聚合信息。\",\n    \"问题2\": \"如何表示键值对注意力中的输入信息？\",\n    \"回答2\": \"键值对注意力中的输入信息可以用 $(\\boldsymbol{K}, \\boldsymbol{V})=\\big[(\\boldsymbol{k}_{1}, \\boldsymbol{v}_{1}), \\text{...},(\\boldsymbol{k}_{N}, \\boldsymbol{v}_{N})\\big]$ 来表示，其中 $N$ 组输入信息分别由'键'和'值'组成。这种表示方式能够清晰地展示每组输入信息的对应关系。\",\n    \"问题3\": \"给定任务相关的查询向量 $\\boldsymbol{q}$ 时，注意力函数是如何计算的？\",\n    \"回答3\": \"给定任务相关的查询向量 $\\boldsymbol{q}$ 时，注意力函数 $\\text{att}((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q})$ 可以通过公式 $\\text{att}((\\boldsymbol{K}, \\boldsymbol{V}), \\boldsymbol{q}) =\\text{∑}_{n=1}^{N} \\boldsymbol{\\text{α}}_{n} \\boldsymbol{v}_{n}$ 进行计算。其中 $\\boldsymbol{\\text{α}}_{n}$ 是通过打分函数 $s(\\boldsymbol{k}_{n}, \\boldsymbol{q})$ 计算得到的注意力权重。\",\n    \"问题4\": \"键值对注意力机制中的打分函数 $s(\\boldsymbol{k}_{n}, \\boldsymbol{q})$ 的作用是什么？\",\n    \"回答4\": \"在键值对注意力机制中，打分函数 $s(\\boldsymbol{k}_{n}, \\boldsymbol{q})$ 的作用是计算每个输入信息'键'与查询向量之间的相关性得分。这些得分将被用于计算注意力权重，进而影响最终的聚合信息结果。\",\n    \"问题5\": \"键值对注意力机制中的注意力权重 $\\boldsymbol{\\text{α}}_{n}$ 是如何计算得到的？\",\n    \"回答5\": \"在键值对注意力机制中，注意力权重 $\\boldsymbol{\\text{α}}_{n}$ 可以通过公式 $\\boldsymbol{\\text{α}}_{n} = \\frac{\\text{exp}(s(\\boldsymbol{k}_{n}, \\boldsymbol{q}))}{\\text{∑}_{j} \\text{exp}(s(\\boldsymbol{k}_{j}, \\boldsymbol{q}))}$ 计算得到。这意味着每个输入信息的'键'与查询向量之间的相关性得分经过 softmax 归一化后即可得到相应的注意力权重。\",\n    \"问题6\": \"图8.1b中展示了什么类型的注意力机制？\",\n    \"回答6\": \"图8.1b展示了键值对注意力机制的示例。当输入信息的'键'和'值'相同时，即 $\\boldsymbol{K}=\\boldsymbol{V}$ 时，键值对模式就等价于普通的注意力机制。这种示例有助于理解和展示键值对注意力机制的工作原理。\",\n    \"问题7\": \"在什么情况下，键值对模式等价于普通的注意力机制？\",\n    \"回答7\": \"当输入信息的'键'和'值'相同时，即 $\\boldsymbol{K}=\\boldsymbol{V}$ 时，键值对模式等价于普通的注意力机制。这意味着在某些情况下，键值对模式可以简化为更常见和基础的注意力机制形式。\",\n    \"问题8\": \"为什么需要使用键值对格式来表示输入信息？\",\n    \"回答8\": \"使用键值对格式能够更清晰地表达每组输入信息之间的对应关系，并且能够更灵活地进行注意力计算和聚合信息。这种格式能够有效地处理复杂的输入信息结构，并提高模型在处理多源信息时的表达能力。\",\n    \"问题9\": \"在注意力机制中，聚合信息是如何得到的？\",\n    \"回答9\": \"在注意力机制中，聚合信息是通过将每个输入信息的'值'根据其对应的注意力权重加权求和得到的。具体地，通过将每个输入信息的'值'与其对应的注意力权重相乘并求和，即可得到最终的聚合信息。\",\n    \"问题10\": \"键值对注意力机制相比传统注意力机制有哪些优势？\",\n    \"回答10\": \"相比传统注意力机制，键值对注意力机制能够更灵活地处理复杂的输入信息结构，并且能够更好地捕捉不同输入信息之间的关联性。通过引入'键'和'值'的概念，可以更好地适应多源信息处理任务，并提高模型在处理多源信息时的表达能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710757677,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1436,
+            "prompt_tokens": 2956,
+            "total_tokens": 4392
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

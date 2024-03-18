@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "6.2.1.1 循环神经网络的通用近似定理",
+        "content_length": 3686,
+        "content": "Title: 6.2.1.1 循环神经网络的通用近似定理\nContent:\n循环神经网络的拟合能力也十分强大. 一个完全连接的循环网络是任何非线性动力系统的近似器.\n\n定理 6.1-循环神经网络的通用近似定理 [Haykin, 2009]：如果一个完全连接的循环神经网络有足够数量的 sigmoid 型隐藏神经元, 它可以以任意的准确率去近似任何一个非线性动力系统\n\n\n\\begin{align*}\n& \\boldsymbol{s}_{t}=g\\left(\\boldsymbol{s}_{t-1}, \\boldsymbol{x}_{t}\\right),  \\tag{6.10}\\\\\n& \\boldsymbol{y}_{t}=o\\left(\\boldsymbol{s}_{t}\\right), \\tag{6.11}\n\\end{align*}\n\n\n其中 $\\boldsymbol{s}_{t}$ 为每个时刻的隐状态, $\\boldsymbol{x}_{t}$ 是外部输入, $g(\\cdot)$ 是可测的状态转换函数, $O(\\cdot)$ 是连续输出函数,并且对状态空间的紧致性没有限制.\\\\\n证明. (1) 根据通用近似定理, 两层的前馈神经网络可以近似任意有界闭集上的任意连续函数. 因此, 动力系统的两个函数可以用两层的全连接前馈网络近似.\n\n首先, 非线性动力系统的状态转换函数 $\\boldsymbol{s}_{t}=g\\left(\\boldsymbol{s}_{t-1}, \\boldsymbol{x}_{t}\\right)$ 可以由一个两层的神经网络 $\\boldsymbol{s}_{t}=\\boldsymbol{C} f\\left(\\boldsymbol{A} \\boldsymbol{s}_{t-1}+\\boldsymbol{B} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right)$ 来近似, 可以分解为\n\n\n\\begin{align*}\n\\boldsymbol{s}_{t}^{\\prime} & =f\\left(\\boldsymbol{A} \\boldsymbol{s}_{t-1}+\\boldsymbol{B} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right)  \\tag{6.12}\\\\\n& =f\\left(\\boldsymbol{A C} \\boldsymbol{s}_{t-1}^{\\prime}+\\boldsymbol{B} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right)  \\tag{6.13}\\\\\n\\boldsymbol{s}_{t} & =\\boldsymbol{C} \\boldsymbol{s}_{t}^{\\prime} \\tag{6.14}\n\\end{align*}\n\n\n其中 $\\boldsymbol{A}, \\boldsymbol{B}, \\boldsymbol{C}$ 为权重矩阵, $\\boldsymbol{b}$ 为偏置向量.\n\n同理, 非线性动力系统的输出函数 $\\boldsymbol{y}_{t}=o\\left(\\boldsymbol{s}_{t}\\right)=o\\left(g\\left(\\boldsymbol{s}_{t-1}, \\boldsymbol{x}_{t}\\right)\\right)$ 也可以用一个两层的前馈神经网络近似.\n\n\n\\begin{align*}\n\\boldsymbol{y}_{t}^{\\prime} & =f\\left(\\boldsymbol{A}^{\\prime} \\boldsymbol{s}_{t-1}+\\boldsymbol{B}^{\\prime} \\boldsymbol{x}_{t}+\\boldsymbol{b}^{\\prime}\\right)  \\tag{6.15}\\\\\n& =f\\left(\\boldsymbol{A}^{\\prime} \\boldsymbol{C} \\boldsymbol{s}_{t-1}^{\\prime}+\\boldsymbol{B}^{\\prime} \\boldsymbol{x}_{t}+\\boldsymbol{b}^{\\prime}\\right)  \\tag{6.16}\\\\\n\\boldsymbol{y}_{t} & =\\boldsymbol{D} \\boldsymbol{y}_{t}^{\\prime} \\tag{6.17}\n\\end{align*}\n\n\n其中 $A^{\\prime}, B^{\\prime}, D$ 为权重矩阵, $\\boldsymbol{b}^{\\prime}$ 为偏置向量.\n\n(2) 公式 (6.13)和公式 (6.16)可以合并为\n\n\\[\n\\left[\\begin{array}{l}\n\\boldsymbol{s}_{t}^{\\prime}  \\tag{6.18}\\\\\n\\boldsymbol{y}_{t}^{\\prime}\n\\end{array}\\right]=f\\left(\\left[\\begin{array}{cc}\n\\boldsymbol{A C} & 0 \\\\\n\\boldsymbol{A}^{\\prime} \\boldsymbol{C} & 0\n\\end{array}\\right]\\left[\\begin{array}{l}\n\\boldsymbol{s}_{t-1}^{\\prime} \\\\\n\\boldsymbol{y}_{t-1}^{\\prime}\n\\end{array}\\right]+\\left[\\begin{array}{l}\n\\boldsymbol{B} \\\\\n\\boldsymbol{B}^{\\prime}\n\\end{array}\\right] \\boldsymbol{x}_{t}+\\left[\\begin{array}{l}\n\\boldsymbol{b} \\\\\n\\boldsymbol{b}^{\\prime}\n\\end{array}\\right]\\right) .\n\\]\n\n公式(6.17) 可以改写为\n\n\\[\n\\boldsymbol{y}_{t}=\\left[\\begin{array}{ll}\n0 & \\mathbf{D}\n\\end{array}\\right]\\left[\\begin{array}{c}\n\\boldsymbol{s}_{t}^{\\prime}  \\tag{6.19}\\\\\n\\boldsymbol{y}_{t}^{\\prime}\n\\end{array}\\right]\n\\]\n\n令 $\\boldsymbol{h}_{t}=\\left[\\boldsymbol{s}_{t}^{\\prime} ; \\boldsymbol{y}_{t}^{\\prime}\\right]$, 则非线性动力系统可以由下面的全连接循环神经网络来近似.\n\n\n\\begin{align*}\n& \\boldsymbol{h}_{t}=f\\left(\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right),  \\tag{6.20}\\\\\n& \\boldsymbol{y}_{t}=\\boldsymbol{V} \\boldsymbol{h}_{t}, \\tag{6.21}\n\\end{align*}\n\n\n其中 $\\boldsymbol{U}=\\left[\\begin{array}{cc}A C & 0 \\\\ A^{\\prime} \\boldsymbol{C} & 0\\end{array}\\right], \\boldsymbol{W}=\\left[\\begin{array}{l}\\boldsymbol{B} \\\\ \\boldsymbol{B}^{\\prime}\\end{array}\\right], \\boldsymbol{b}=\\left[\\begin{array}{l}\\boldsymbol{b} \\\\ \\boldsymbol{b}^{\\prime}\\end{array}\\right], \\boldsymbol{V}=\\left[\\begin{array}{ll}0 & \\boldsymbol{D}\\end{array}\\right]$.\n\n\\href{https://nndl.github.io/%E9%80%9A%E7%94%A8%E8%BF%91%E4%BC%BC%E5%AE%9A%E7%90%86%E5%8F%82%E8%A7%81%E7%AC%AC4.3.1%E8%8A%82%E3%80%82}{https://nndl.github.io/通用近似定理参见第4.3.1节。}\n\n本证明参考文献 [Schäfer et al., 2006]."
+    },
+    {
+        "id": "chatcmpl-9420fStgPg8f8bQpNabzeDGVKxlNS",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"循环神经网络的通用近似定理是什么？\",\n    \"回答1\": \"循环神经网络的通用近似定理指出，如果一个完全连接的循环神经网络有足够数量的 sigmoid 型隐藏神经元，它可以以任意的准确率去近似任何一个非线性动力系统。\",\n    \"问题2\": \"循环神经网络中的状态转换函数和输出函数分别是如何定义的？\",\n    \"回答2\": \"循环神经网络中的状态转换函数为 $\\boldsymbol{s}_{t}=g\\big(\\boldsymbol{s}_{t-1}, \\boldsymbol{x}_{t}\\big)$，其中 $\\boldsymbol{s}_{t}$ 为每个时刻的隐状态，$\\boldsymbol{x}_{t}$ 是外部输入，$g(\\boldsymbol{s}_{t-1}, \\boldsymbol{x}_{t})$ 是可测的状态转换函数。而输出函数为 $\\boldsymbol{y}_{t}=o\\big(\\boldsymbol{s}_{t}\\big)$，其中 $o(\\boldsymbol{s}_{t})$ 是连续输出函数。\",\n    \"问题3\": \"根据通用近似定理，为什么可以用两层的前馈神经网络来近似非线性动力系统的状态转换函数和输出函数？\",\n    \"回答3\": \"根据通用近似定理，两层的前馈神经网络可以近似任意有界闭集上的任意连续函数。因此，动力系统的状态转换函数和输出函数可以分别用两层的全连接前馈网络来近似。\",\n    \"问题4\": \"非线性动力系统的状态转换函数和输出函数分别可以用怎样的神经网络来近似？\",\n    \"回答4\": \"非线性动力系统的状态转换函数 $\\boldsymbol{s}_{t}=g\\big(\\boldsymbol{s}_{t-1}, \\boldsymbol{x}_{t}\\big)$ 可以由一个两层的神经网络 $\\boldsymbol{s}_{t}=\\boldsymbol{C} f\\big(\\boldsymbol{A} \\boldsymbol{s}_{t-1}+\\boldsymbol{B} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\big)$ 来近似。而输出函数 $\\boldsymbol{y}_{t}=o\\big(\\boldsymbol{s}_{t}\\big)$ 也可以用一个两层的前馈神经网络来近似。\",\n    \"问题5\": \"公式 (6.18) 和公式 (6.19) 分别表示了什么？\",\n    \"回答5\": \"公式 (6.18) 表示了状态转换函数和输出函数在神经网络中的合并形式，即 $\\begin{bmatrix}\\boldsymbol{s}_{t}^{\\text{prime}} \\\\ \\boldsymbol{y}_{t}^{\\text{prime}}\\big]\\big]=f\\big(\\begin{bmatrix}\\begin{array}{cc}\\boldsymbol{A C} & 0 \\\\ \\boldsymbol{A}^{\\text{prime}} \\boldsymbol{C} & 0\\big]\\big]\\begin{bmatrix}\\begin{array}{l}\\boldsymbol{s}_{t-1}^{\\text{prime}} \\\\ \\boldsymbol{y}_{t-1}^{\\text{prime}}\\big]\\big]+\\begin{bmatrix}\\begin{array}{l}\\boldsymbol{B} \\\\ \\boldsymbol{B}^{\\text{prime}}\\big]\\big] \\boldsymbol{x}_{t}+\\begin{bmatrix}\\begin{array}{l}\\boldsymbol{b} \\\\ \\boldsymbol{b}^{\\text{prime}}\\big]\\big]\\big]$。而公式 (6.19) 则表示了输出函数在神经网络中的形式，即 $\\boldsymbol{y}_{t}=\\begin{bmatrix}\\begin{array}{ll}0 & \\boldsymbol{D}\\big]\\big]\\begin{bmatrix}\\begin{array}{c}\\boldsymbol{s}_{t}^{\\text{prime}} \\\\ \\boldsymbol{y}_{t}^{\\text{prime}}\\big]\\big]$。\",\n    \"问题6\": \"什么是全连接循环神经网络？\",\n    \"回答6\": \"全连接循环神经网络是一种能够近似非线性动力系统的神经网络结构。它通过状态转换函数和输出函数的组合来实现对非线性动力系统的近似表示。全连接循环神经网络具有较强的灵活性和适应能力，能够应对复杂的非线性关系。\",\n    \"问题7\": \"在全连接循环神经网络中，$\\boldsymbol{s}_{t}$ 和 $\\boldsymbol{y}_{t}$ 的计算分别依赖于哪些参数？\",\n    \"回答7\": \"在全连接循环神经网络中，$\\boldsymbol{s}_{t}$ 和 $\\boldsymbol{y}_{t}$ 的计算分别依赖于权重矩阵 $\\boldsymbol{U}, \\boldsymbol{W}, \\boldsymbol{V}$ 以及偏置向量 $\\boldsymbol{b}$。\",\n    \"问题8\": \"全连接循环神经网络与其他类型的神经网络相比具有什么优势？\",\n    \"回答8\": \"全连接循环神经网络具有较强的表达能力和适应能力，能够灵活地适应复杂的非线性动力系统。相比其他类型的神经网络，全连接循环神经网络在处理时间序列数据和动态系统建模方面具有更好的效果。\",\n    \"问题9\": \"通用近似定理对于循环神经网络模型有何启示？\",\n    \"回答9\": \"通用近似定理表明，循环神经网络具有强大的拟合能力，能够以任意准确率去近似任何一个非线性动力系统。这为循环神经网络模型提供了理论支持，并启示我们在实际应用中可以充分利用其灵活性和表达能力。\",\n    \"问题10\": \"通用近似定理是如何证明循环神经网络具有强大的拟合能力？\",\n    \"回答10\": \"通用近似定理通过将非线性动力系统的状态转换函数和输出函数分别用两层全连接前馈网络来近似，并将其合并为全连接循环神经网络的形式，从而证明了循环神经网络具有强大的拟合能力。这一证明过程充分展示了循环神经网络在拟合复杂非线性关系方面的优越性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710748065,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1721,
+            "prompt_tokens": 4369,
+            "total_tokens": 6090
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

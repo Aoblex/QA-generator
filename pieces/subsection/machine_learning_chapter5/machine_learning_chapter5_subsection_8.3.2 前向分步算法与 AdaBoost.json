@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter5",
+        "title": "8.3.2 前向分步算法与 AdaBoost",
+        "content_length": 3240,
+        "content": "Title: 8.3.2 前向分步算法与 AdaBoost\nContent:\n由前向分步算法可以推导出 AdaBoost, 用定理叙述这一关系。\n\n定理 8.3 AdaBoost 算法是前向分步加法算法的特例。这时, 模型是由基本分类器组成的加法模型, 损失函数是指数函数。\n\n证明 前向分步算法学习的是加法模型, 当基函数为基本分类器时, 该加法模型等价于 AdaBoost 的最终分类器:\n\n\n\\begin{equation*}\nf(x)=\\sum_{m=1}^{M} \\alpha_{m} G_{m}(x) \\tag{8.19}\n\\end{equation*}\n\n\n由基本分类器 $G_{m}(x)$ 及其系数 $\\alpha_{m}$ 组成, $m=1,2, \\cdots, M$ 。前向分步算法逐一学习基函数,这一过程与 AdaBoost 算法逐一学习基本分类器的过程一致。下面证明前向分步算法的损失函数是指数损失函数 (exponential loss function)\n\n$$\nL(y, f(x))=\\exp (-y f(x))\n$$\n\n时, 其学习的具体操作等价于 AdaBoost 算法学习的具体操作。\\\\\n假设经过 $m-1$ 轮迭代前向分步算法已经得到 $f_{m-1}(x)$ :\n\n$$\n\\begin{aligned}\nf_{m-1}(x) & =f_{m-2}(x)+\\alpha_{m-1} G_{m-1}(x) \\\\\n& =\\alpha_{1} G_{1}(x)+\\cdots+\\alpha_{m-1} G_{m-1}(x)\n\\end{aligned}\n$$\n\n在第 $m$ 轮迭代得到 $\\alpha_{m}, G_{m}(x)$ 和 $f_{m}(x)$ 。\n\n$$\nf_{m}(x)=f_{m-1}(x)+\\alpha_{m} G_{m}(x)\n$$\n\n目标是使前向分步算法得到的 $\\alpha_{m}$ 和 $G_{m}(x)$ 使 $f_{m}(x)$ 在训练数据集 $T$ 上的指数损失最小, 即\n\n\n\\begin{equation*}\n\\left(\\alpha_{m}, G_{m}(x)\\right)=\\arg \\min _{\\alpha, G} \\sum_{i=1}^{N} \\exp \\left[-y_{i}\\left(f_{m-1}\\left(x_{i}\\right)+\\alpha G\\left(x_{i}\\right)\\right)\\right] \\tag{8.20}\n\\end{equation*}\n\n\n式 (8.20) 可以表示为\n\n\n\\begin{equation*}\n\\left(\\alpha_{m}, G_{m}(x)\\right)=\\arg \\min _{\\alpha, G} \\sum_{i=1}^{N} \\bar{w}_{m i} \\exp \\left(-y_{i} \\alpha G\\left(x_{i}\\right)\\right) \\tag{8.21}\n\\end{equation*}\n\n\n其中, $\\bar{w}_{m i}=\\exp \\left(-y_{i} f_{m-1}\\left(x_{i}\\right)\\right)$ 。因为 $\\bar{w}_{m i}$ 既不依赖 $\\alpha$ 也不依赖于 $G$, 所以与最小化无关。但 $\\bar{w}_{m i}$ 依赖于 $f_{m-1}(x)$, 随着每一轮迭代而发生改变。\n\n现证明使式 (8.21) 达到最小的 $\\alpha_{m}^{*}$ 和 $G_{m}^{*}(x)$ 就是 AdaBoost 算法所得到的 $\\alpha_{m}$ 和 $G_{m}(x)$ 。求解式 (8.21) 可分两步:\n\n首先, 求 $G_{m}^{*}(x)$ 。对任意 $\\alpha>0$, 使式 (8.21) 最小的 $G(x)$ 由下式得到:\n\n$$\nG_{m}^{*}(x)=\\arg \\min _{G} \\sum_{i=1}^{N} \\bar{w}_{m i} I\\left(y_{i} \\neq G\\left(x_{i}\\right)\\right)\n$$\n\n其中, $\\bar{w}_{m i}=\\exp \\left(-y_{i} f_{m-1}\\left(x_{i}\\right)\\right)$ 。\n\n此分类器 $G_{m}^{*}(x)$ 即为 AdaBoost 算法的基本分类器 $G_{m}(x)$, 因为它是使第 $m$ 轮加权训练数据分类误差率最小的基本分类器。\n\n然后, 求 $\\alpha_{m}^{*}$ 。参照式 (8.11), 式 (8.21) 中\n\n\n\\begin{align*}\n\\sum_{i=1}^{N} \\bar{w}_{m i} \\exp \\left(-y_{i} \\alpha G\\left(x_{i}\\right)\\right) & =\\sum_{y_{i}=G_{m}\\left(x_{i}\\right)} \\bar{w}_{m i} \\mathrm{e}^{-\\alpha}+\\sum_{y_{i} \\neq G_{m}\\left(x_{i}\\right)} \\bar{w}_{m i} \\mathrm{e}^{\\alpha} \\\\\n& =\\left(\\mathrm{e}^{\\alpha}-\\mathrm{e}^{-\\alpha}\\right) \\sum_{i=1}^{N} \\bar{w}_{m i} I\\left(y_{i} \\neq G\\left(x_{i}\\right)\\right)+\\mathrm{e}^{-\\alpha} \\sum_{i=1}^{N} \\bar{w}_{m i} \\tag{8.22}\n\\end{align*}\n\n\n将已求得的 $G_{m}^{*}(x)$ 代入式 (8.22), 对 $\\alpha$ 求导并使导数为 0 , 即得到使式 (8.21)最小的 $\\alpha$ :\n\n$$\n\\alpha_{m}^{*}=\\frac{1}{2} \\log \\frac{1-e_{m}}{e_{m}}\n$$\n\n其中, $e_{m}$ 是分类误差率:\n\n\n\\begin{align*}\ne_{m} & =\\frac{\\sum_{i=1}^{N} \\bar{w}_{m i} I\\left(y_{i} \\neq G_{m}\\left(x_{i}\\right)\\right)}{\\sum_{i=1}^{N} \\bar{w}_{m i}} \\\\\n& =\\sum_{i=1}^{N} w_{m i} I\\left(y_{i} \\neq G_{m}\\left(x_{i}\\right)\\right) \\tag{8.23}\n\\end{align*}\n\n\n这里的 $\\alpha_{m}^{*}$ 与 AdaBoost 算法第 2(c) 步的 $\\alpha_{m}$ 完全一致。\n\n最后来看每一轮样本权值的更新。由\n\n$$\nf_{m}(x)=f_{m-1}(x)+\\alpha_{m} G_{m}(x)\n$$\n\n以及 $\\bar{w}_{m i}=\\exp \\left(-y_{i} f_{m-1}\\left(x_{i}\\right)\\right)$, 可得:\n\n$$\n\\bar{w}_{m+1, i}=\\bar{w}_{m, i} \\exp \\left(-y_{i} \\alpha_{m} G_{m}(x)\\right)\n$$\n\n这与 AdaBoost 算法第 2(d) 步的样本权值的更新只相差规范化因子, 因而等价。\n\n\\section*{8.4 提 升 树}\n提升树是以分类树或回归树为基本分类器的 Boosting。提升树被认为是机器学习中性能最好的方法之一。"
+    },
+    {
+        "id": "chatcmpl-948QIQTHfz0ZsSh8nmjRU1Q67x7S0",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"前向分步算法与 AdaBoost 之间的关系是什么？\",\n    \"回答1\": \"AdaBoost 算法是前向分步加法算法的特例。具体来说，当模型由基本分类器组成的加法模型，损失函数为指数函数时，前向分步算法学习的具体操作等价于 AdaBoost 算法学习的具体操作。\",\n    \"问题2\": \"前向分步算法学习的是什么类型的模型？\",\n    \"回答2\": \"前向分步算法学习的是加法模型，其中模型由基本分类器组成的加法模型。\",\n    \"问题3\": \"在前向分步算法中，如何选择使指数损失最小的 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}$ 和 $G_m(x)$？\",\n    \"回答3\": \"在前向分步算法中，选择使指数损失最小的 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{G_m(x)}}}}}$ 需要最小化损失函数 $\\text{L}(y, f(x))=\\text{exp}(-yf(x))$。而选择 $\\boldsymbol{\\boldsymbol{G_m(x)}}$ 的过程与 AdaBoost 算法中选择基本分类器的过程一致。\",\n    \"问题4\": \"在前向分步算法中，如何选择使指数损失最小的 $\\boldsymbol{\\boldsymbol{G_m(x)}}$？\",\n    \"回答4\": \"在前向分步算法中，选择使指数损失最小的 $\\text{G}_m(x)$ 需要最小化损失函数 $\\text{L}(y, f(x))=\\text{exp}(-yf(x))$。这意味着需要找到 $\\text{G}_m(x)$，使得在训练数据集上的指数损失最小。\",\n    \"问题5\": \"提升树是什么类型的 Boosting 方法？\",\n    \"回答5\": \"提升树是以分类树或回归树为基本分类器的 Boosting 方法。它被认为是机器学习中性能最好的方法之一。\",\n    \"问题6\": \"提升树被认为是机器学习中性能最好的方法之一的原因是什么？\",\n    \"回答6\": \"提升树被认为是机器学习中性能最好的方法之一，这是因为它能够通过组合多个基本分类器来提高整体模型的表达能力和泛化能力，从而在实际应用中取得较好的性能。\",\n    \"问题7\": \"在提升树中，如何进行样本权值的更新？\",\n    \"回答7\": \"在提升树中，样本权值的更新遵循迭代更新规则，通过当前模型对样本的预测结果来调整样本权值。这个过程与 AdaBoost 算法中样本权值更新的过程相似。\",\n    \"问题8\": \"提升树与 AdaBoost 之间有何联系？\",\n    \"回答8\": \"提升树与 AdaBoost 之间的联系在于，AdaBoost 算法可以被看作是前向分步加法算法的特例。具体来说，当模型由基本分类器组成的加法模型，损失函数为指数函数时，前向分步算法学习的具体操作等价于 AdaBoost 算法学习的具体操作。\",\n    \"问题9\": \"在前向分步算法中，如何选择使指数损失最小的 $\\text{alpha}_m$？\",\n    \"回答9\": \"在前向分步算法中，选择使指数损失最小的 $\\text{alpha}_m$ 需要通过对损失函数进行求导，并使导数为 0 来求解。这个过程与 AdaBoost 算法中选择 $\\text{alpha}_m$ 的过程相似。\",\n    \"问题10\": \"在前向分步算法和 AdaBoost 中，如何选择使指数损失最小的 $\\text{alpha}_m$？\",\n    \"回答10\": \"在前向分步算法和 AdaBoost 中，选择使指数损失最小的 $\\text{alpha}_m$ 都需要通过对损失函数进行求导，并使导数为 0 来求解。这个过程在两种算法中都是相似的。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710772718,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1278,
+            "prompt_tokens": 4506,
+            "total_tokens": 5784
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

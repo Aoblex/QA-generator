@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "14.1.5.2 状态-动作值函数",
+        "content_length": 1112,
+        "content": "Title: 14.1.5.2 状态-动作值函数\nContent:\n公式(14.18) 中的第二个期望是指初始状态为 $s$ 并进行动作 $a$, 然后执行策略 $\\pi$ 得到的期望总回报, 称为状态-动作值函数 (State-Action Value Function ):\n\n\n\\begin{equation*}\nQ^{\\pi}(s, a)=\\mathbb{E}_{s^{\\prime} \\sim p\\left(s^{\\prime} \\mid s, a\\right)}\\left[r\\left(s, a, s^{\\prime}\\right)+\\gamma V^{\\pi}\\left(s^{\\prime}\\right)\\right], \\tag{14.19}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\n\n贝尔曼方程因其提出者、美国国家科学院院士、动态规划创始人理查德$\\cdot$贝尔曼 ( Richard Bellman, 1920 1984 )而得名，也叫作 “动态规划方程”.\\\\\n状态-动作值函数也经常称为 $\\mathrm{Q}$ 函数 ( $\\mathrm{Q}$-Function ).\n\n状态值函数 $V^{\\pi}(s)$ 是 $\\mathrm{Q}$ 函数 $Q^{\\pi}(s, a)$ 关于动作 $a$ 的期望, 即\n\n\n\\begin{equation*}\nV^{\\pi}(s)=\\mathbb{E}_{a \\sim \\pi(a \\mid s)}\\left[Q^{\\pi}(s, a)\\right] . \\tag{14.20}\n\\end{equation*}\n\n\n结合公式(14.19)和公式(14.20), Q函数可以写为\n\n\n\\begin{equation*}\nQ^{\\pi}(s, a)=\\mathbb{E}_{s^{\\prime} \\sim p\\left(s^{\\prime} \\mid s, a\\right)}\\left[r\\left(s, a, s^{\\prime}\\right)+\\gamma \\mathbb{E}_{a^{\\prime} \\sim \\pi\\left(a^{\\prime} \\mid s^{\\prime}\\right)}\\left[Q^{\\pi}\\left(s^{\\prime}, a^{\\prime}\\right)\\right]\\right] \\tag{14.21}\n\\end{equation*}\n\n\n这是关于 $\\mathrm{Q}$ 函数的贝尔曼方程."
+    },
+    {
+        "id": "chatcmpl-945piZzAR9g5Zkkoxe4iL9hRJBuCY",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"状态-动作值函数中的第二个期望是如何定义的？\",\n    \"回答1\": \"公式(14.18) 中的第二个期望是指初始状态为 $s$ 并进行动作 $a$，然后执行策略 $\\boldsymbol{\\text{π}}$ 得到的期望总回报，称为状态-动作值函数 $Q^{\\boldsymbol{\\text{π}}}(s, a)$。\",\n    \"问题2\": \"状态-动作值函数 $Q^{\\boldsymbol{\\text{π}}}(s, a)$ 的计算公式是什么？\",\n    \"回答2\": \"状态-动作值函数 $Q^{\\boldsymbol{\\text{π}}}(s, a)$ 的计算公式为 $Q^{\\boldsymbol{\\text{π}}}(s, a)=\\boldsymbol{\\text{E}}_{s^{\\boldsymbol{\\text{'}}} \\boldsymbol{\\text{∼}} p\\big(s^{\\boldsymbol{\\text{'}}} \\boldsymbol{\\text{∣}} s, a\\big)}\\big[r\\big(s, a, s^{\\boldsymbol{\\text{'}}}\\big)+\\boldsymbol{\\text{γ}} V^{\\boldsymbol{\\text{π}}}\\big(s^{\\boldsymbol{\\text{'}}}\\big)\\big]$。\",\n    \"问题3\": \"状态值函数 $V^{\\boldsymbol{\\text{π}}}(s)$ 是如何定义的？\",\n    \"回答3\": \"状态值函数 $V^{\\boldsymbol{\\text{π}}}(s)$ 是 $\\boldsymbol{\\text{Q}}$ 函数 $Q^{\\boldsymbol{\\text{π}}}(s, a)$ 关于动作 $a$ 的期望，即 $V^{\\boldsymbol{\\text{π}}}(s)=\\boldsymbol{\\text{E}}_{a \\boldsymbol{\\text{∼}} \\boldsymbol{\\text{π}}(a \\boldsymbol{\\text{∣}} s)}\\big[Q^{\\boldsymbol{\\text{π}}}(s, a)\\big]$。\",\n    \"问题4\": \"结合公式(14.19)和公式(14.20)，如何表示 Q 函数？\",\n    \"回答4\": \"结合公式(14.19)和公式(14.20)，Q 函数可以写为 $Q^{\\boldsymbol{\\text{π}}}(s, a)=\\boldsymbol{\\text{E}}_{s^{\\boldsymbol{\\text{'}}} \\boldsymbol{\\text{∼}} p\\big(s^{\\boldsymbol{\\text{'}}} \\boldsymbol{\\text{∣}} s, a\\big)}\\big[r\\big(s, a, s^{\\boldsymbol{\\text{'}}}\\big)+\\boldsymbol{\\text{γ}} \\boldsymbol{\\text{E}}_{a^{\\boldsymbol{\\text{'}}} \\boldsymbol{\\text{∼}} \\boldsymbol{\\text{π}}\\big(a^{\\boldsymbol{\\text{'}}} \\boldsymbol{\\text{∣}} s^{\\boldsymbol{\\text{'}}}\\big)}\\big[Q^{\\boldsymbol{\\text{π}}}\\big(s^{\\boldsymbol{\\text{'}}}, a^{\\boldsymbol{\\text{'}}}\\big)\\big]\\big]$。\",\n    \"问题5\": \"贝尔曼方程是关于什么的方程？\",\n    \"回答5\": \"贝尔曼方程因其提出者、美国国家科学院院士、动态规划创始人理查德$\\bullet$贝尔曼而得名，也叫作 “动态规划方程”。它是关于状态值函数和状态-动作值函数之间的方程。\",\n    \"问题6\": \"状态-动作值函数还有什么常用的称呼？\",\n    \"回答6\": \"状态-动作值函数也经常称为 $\\boldsymbol{Q}$ 函数（$\\boldsymbol{Q}$-Function）。\",\n    \"问题7\": \"在状态-动作值函数中，$\\boldsymbol{Q}$ 函数与状态值函数之间的关系是怎样的？\",\n    \"回答7\": \"在状态-动作值函数中，状态值函数 $V^{\\boldsymbol{π}}(s)$ 是 $\\boldsymbol{Q}$ 函数 $Q^{\\boldsymbol{π}}(s, a)$ 关于动作 $a$ 的期望。换句话说，$V^{\\boldsymbol{π}}(s)$ 可以通过对 $Q^{\\boldsymbol{π}}(s, a)$ 关于动作 $a$ 进行期望计算得到。\",\n    \"问题8\": \"贝尔曼方程描述了什么内容？\",\n    \"回答8\": \"贝尔曼方程描述了状态-动作值函数（$\\boldsymbol{Q}$ 函数）之间的关系，通过描述当前状态下采取某一动作所能获得的期望总回报与下一状态的状态值函数之间的关系。\",\n    \"问题9\": \"在公式(14.21)中，$\\boldsymbol{Q}$ 函数的贝尔曼方程是如何表示的？\",\n    \"回答9\": \"在公式(14.21)中，$\\boldsymbol{Q}$ 函数的贝尔曼方程表示为$Q^{\\boldsymbol{π}}(s, a)=\\boldsymbol{E}_{s^{'},a^{'} \\thicksim p(s^{'} \\thicksim s, a)}[r(s, a, s^{'})+\\boldsymbol{γ} \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace \\thickspace  E_{a^{'} \\thicksim π(a^{'}|s^{'})}[Q^{π}(s^{'}, a^{'})]]$。\",\n    \"问题10\": \"$\\boldsymbol{Q}$ 函数在强化学习中具有怎样的重要性？\",\n    \"回答10\": \"$\\boldsymbol{Q}$ 函数在强化学习中扮演着至关重要的角色，它描述了在特定状态下采取某一动作所能获得的期望总回报。通过对 $\\boldsymbol{Q}$ 函数的学习和优化，智能体能够制定最优策略来实现长期累积奖励最大化的目标。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710762762,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1590,
+            "prompt_tokens": 3138,
+            "total_tokens": 4728
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

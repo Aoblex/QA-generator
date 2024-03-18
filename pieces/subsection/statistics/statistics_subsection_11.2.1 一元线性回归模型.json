@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "11.2.1 一元线性回归模型",
+        "content_length": 3228,
+        "content": "Title: 11.2.1 一元线性回归模型\nContent:\n\\section*{1. 回归模型}\n进行回归分析时, 首先需要确定哪个变量是因变量, 哪个变量是自变量。在回归分析\\\\\n中, 被预测或被解释的变量称为因变量 (dependent variable), 用 $y$ 表示。用来预测或解释因变量的一个或多个变量称为自变量 (independent variable), 用 $x$ 表示。例如, 在分析贷款余额对不良贷款的影响时, 目的是要预测一定的贷款余额条件下不良贷款是多少, 因此, 不良贷款是被预测的变量, 称为因变量, 而用来预测不良贷款的贷款余额就是自变量。\n\n当回归中只涉及一个自变量时, 称为一元回归, 若因变量 $y$ 与自变量 $x$ 之间为线性关系, 则称为一元线性回归。在回归分析中, 假定自变量 $x$ 是可控制的, 而因变量 $y$ 是随机的, 但很多情况下并非如此。本章所讨论的回归方法对于自变量是预先固定的和自变量是随机的情况都适用, 但固定自变量的情况比较容易描述, 因此下面主要讲述固定自变量的回归问题。\n\n对于具有线性关系的两个变量, 可以用一个线性方程来表示它们之间的关系。描述因变量 $y$ 如何依赖于自变量 $x$ 和误差项 $\\varepsilon$ 的方程称为回归模型 (regression model)。只涉及一个自变量的一元线性回归模型可表示为:\n\n\n\\begin{equation*}\ny=\\beta_{0}+\\beta_{1} x+\\varepsilon \\tag{11.3}\n\\end{equation*}\n\n\n在一元线性回归模型中, $y$ 是 $x$ 的线性函数 $\\beta_{0}+\\beta_{1} x$ 加上误差项 $\\varepsilon_{0} \\beta_{0}+\\beta_{1} x$ 反映了由于 $x$ 的变化而引起的 $y$ 的线性变化; $\\varepsilon$ 是被称为误差项的随机变量, 反映了除 $x$ 和 $y$ 之间的线性关系之外的随机因素对 $y$ 的影响, 是不能由 $x$ 和 $y$ 之间的线性关系所解释的变异性。式中的 $\\beta_{0}$ 和 $\\beta_{1}$ 称为模型的参数。\n\n式 (11.3) 称为理论回归模型, 对这一模型, 有以下几个主要假定:\n\n(1) 因变量 $y$ 与自变量 $x$ 之间具有线性关系。\n\n（2）在重复抽样中, 自变量 $x$ 的取值是固定的, 即假定 $x$ 是非随机的。\n\n在上述两个假定下, 对于任何一个给定的 $x$ 值, $y$ 的取值都对应着一个分布, 因此, $E(y)=\\beta_{0}+\\beta_{1} x$ 代表一条直线。但由于单个数据点是从 $y$ 的分布中抽出来的, 可能不在这条直线上, 因此, 必须包含一个误差项 $\\varepsilon$ 来描述模型的数据点。\n\n(3) 误差项 $\\varepsilon$ 是一个期望值为 0 的随机变量, 即 $E(\\varepsilon)=0$ 。这意味着在式 (11.3) 中,由于 $\\beta_{0}$ 和 $\\beta_{1}$ 都是常数, 有 $E\\left(\\beta_{0}\\right)=\\beta_{0}, E\\left(\\beta_{1}\\right)=\\beta_{1}$ 。因此对于一个给定的 $x$ 值, $y$ 的期望值为 $E(y)=\\beta_{0}+\\beta_{1} x$ 。这实际上等于假定模型的图示为一条直线。\n\n(4) 对于所有的 $x$ 值, $\\varepsilon$ 的方差 $\\sigma^{2}$ 都相同。这意味着对于一个特定的 $x$ 值, $y$ 的方差都等于 $\\sigma^{2}$ 。\n\n（5）误差项 $\\varepsilon$ 是一个服从正态分布的随机变量且独立，即 $\\varepsilon \\sim N\\left(0, \\sigma^{2}\\right)$ 。独立性意味着一个特定的 $x$ 值所对应的 $\\varepsilon$ 与其他 $x$ 值所对应的 $\\varepsilon$ 不相关。因此, 一个特定的 $x$ 值所对应的 $y$ 值与其他 $x$ 值所对应的 $y$ 值也不相关。这表明, 在 $x$ 取某个确定值的情况下, $y$ 的变化由误差项 $\\varepsilon$ 的方差 $\\sigma^{2}$ 来决定。当 $\\sigma^{2}$ 较小时, $y$ 的观测值将非常靠近直线; 当 $\\sigma^{2}$ 较大时, $y$ 的观测值将偏离直线。由于 $\\sigma^{2}$ 是常数, 所以 $y$ 的取值不受 $x$ 取值的影响。由于自变量 $x$ 在数据收集前假设是固定的, 因此, 对于任何一个给定的 $x$ 值, $y$ 都服从期望值为 $\\beta_{0}+\\beta_{1} x$ 、方差为 $\\sigma^{2}$ 的正态分布, 且对于不同的 $x$ 具有相同的方差。关于回归模型的假定,\\\\\n如图 11-6 所示。\n\n\\begin{center}\n\\end{center}\n\n图 11-6 对应不同 $x$ 的 $y$ 和 $\\varepsilon$ 的分布\n\n从图 11-6 可以看出, $E(y)$ 的值随着 $x$ 的不同而变化, 但无论 $x$ 怎样变化, $\\varepsilon$ 和 $y$的概率分布都是正态分布，并且具有相同的方差。\n\n\\section*{2. 回归方程}\n根据回归模型中的假定, $\\varepsilon$ 的期望值等于 0 , 因此 $y$ 的期望值 $E(y)=\\beta_{0}+\\beta_{1} x$, 也就是说, $y$ 的期望值是 $x$ 的线性函数。描述因变量 $y$ 的期望值如何依赖于自变量 $x$ 的方程称为回归方程 (regression equation)。一元线性回归方程的形式为:\n\n\n\\begin{equation*}\nE(y)=\\beta_{0}+\\beta_{1} x \\tag{11.4}\n\\end{equation*}\n\n\n一元线性回归方程的图示是一条直线, 因此也称为直线回归方程。其中 $\\beta_{0}$ 是回归直线在 $y$ 轴上的截距, 是当 $x=0$ 时 $y$ 的期望值; $\\beta_{1}$ 是直线的斜率, 它表示 $x$ 每变动一个单位, $y$ 的平均变动值。\n\n\\section*{3. 估计的回归方程}\n如果回归方程中的参数 $\\beta_{0}$ 和 $\\beta_{1}$ 已知, 对于一个给定的 $x$ 值, 利用式 (11.4) 就能计算出 $y$ 的期望值。但总体回归参数 $\\beta_{0}$ 和 $\\beta_{1}$ 是未知的, 必须利用样本数据去估计它们。用样本统计量 $\\hat{\\beta}_{0}$ 和 $\\hat{\\beta}_{1}$ 代替回归方程中的未知参数 $\\beta_{0}$ 和 $\\beta_{1}$, 这时就得到了估计的回归方程 (estimated regression equation)。它是根据样本数据求出的回归方程的估计。\n\n对于一元线性回归, 估计的回归方程形式为:\n\n\n\\begin{equation*}\n\\hat{y}=\\hat{\\beta}_{0}+\\hat{\\beta}_{1} x \\tag{11.5}\n\\end{equation*}\n\n\n式中, $\\hat{\\beta}_{0}$ 是估计的回归直线在 $y$ 轴上的截距; $\\hat{\\beta}_{1}$ 是直线的斜率, 表示 $x$ 每变动一个单位, $y$ 的平均变动值。"
+    },
+    {
+        "id": "chatcmpl-93y76MOUNpCsvbSDc2mQaETnsATuJ",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"在一元线性回归模型中，因变量和自变量的表示方式有何区别？\",\n    \"回答1\": \"在一元线性回归模型中，被预测或被解释的变量称为因变量，用 $y$ 表示；用来预测或解释因变量的一个或多个变量称为自变量，用 $x$ 表示。因此，因变量 $y$ 是被预测或被解释的变量，而自变量 $x$ 是用来预测或解释因变量的变量。\",\n    \"问题2\": \"一元线性回归模型中的回归方程是如何定义的？\",\n    \"回答2\": \"一元线性回归模型的回归方程定义为 $y=\\beta_{0}+\\beta_{1} x+\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}$\",\n    \"问题3\": \"一元线性回归模型中的误差项 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{varepsilon}}}}}}}}}$ 代表什么意义？\",\n    \"回答3\": \"误差项 $\\boldsymbol{varepsilon}$ 反映了除自变量 $x$ 和因变量 $y$ 之间的线性关系之外的随机因素对 $y$ 的影响，是不能由 $x$ 和 $y$ 之间的线性关系所解释的变异性。它是一个期望值为 0 的随机变量，代表了模型无法解释的随机波动。\",\n    \"问题4\": \"一元线性回归方程中的参数 $\\beta_{0}$ 和 $\\beta_{1}$ 分别代表什么意义？\",\n    \"回答4\": \"在一元线性回归方程中，$\\beta_{0}$ 是回归直线在 $y$ 轴上的截距，表示当 $x=0$ 时 $y$ 的期望值；$\\beta_{1}$ 是直线的斜率，表示 $x$ 每变动一个单位，$y$ 的平均变动值。\",\n    \"问题5\": \"一元线性回归方程中的估计的回归方程是如何得到的？\",\n    \"回答5\": \"对于一元线性回归，估计的回归方程是根据样本数据求出的回归方程的估计。通过用样本统计量 $\\text{hat}{\\beta}_{0}$ 和 $\\text{hat}{\\beta}_{1}$ 代替回归方程中的未知参数 $\\beta_{0}$ 和 $\\beta_{1}$，得到了估计的回归方程。\",\n    \"问题6\": \"一元线性回归方程中的斜率 $\\beta_{1}$ 表示什么意义？\",\n    \"回答6\": \"$\\beta_{1}$ 是直线的斜率，在一元线性回归中表示 $x$ 每变动一个单位，$y$ 的平均变动值。它反映了自变量 $x$ 对因变量 $y$ 的影响程度和方向。\",\n    \"问题7\": \"一元线性回归模型中对误差项 $\\boldsymbol{varepsilon}$ 的假定有哪些？\",\n    \"回答7\": \"对于一元线性回归模型中对误差项 $\\text{hat}{\\beta}_{0}$ 和 $\\text{hat}{\\beta}_{1}$ 的假定包括：(1) 因变量 $y$ 与自变量 $x$ 之间具有线性关系；(2) 在重复抽样中，自变量 $x$ 的取值是固定的；(3) 误差项 $\\text{hat}{\\beta}_{0}$ 是一个期望值为 0 的随机变量；(4) 对于所有的 $x$ 值，$\\text{hat}{\\beta}_{0}$ 的方差 $\\text{sigma}^{2}$ 都相同；(5) 误差项 $\\text{hat}{\\beta}_{0}$ 是一个服从正态分布的随机变量且独立。\",\n    \"问题8\": \"一元线性回归方程中截距 $\\beta_{0}$ 表示什么意义？\",\n    \"回答8\": \"$\\beta_{0}$ 是回归直线在 $y$ 轴上的截距，表示当 $x=0$ 时 $y$ 的期望值。它反映了在自变量不起作用时，因变量 $y$ 的基准值。\",\n    \"问题9\": \"一元线性回归方程和估计的回归方程有何区别？\",\n    \"回答9\": \"一元线性回归方程是理论上描述因变量 $y$ 如何依赖于自变量 $x$ 和误差项 $\\text{hat}{\\beta}_{0}$ 的方程；而估计的回归方程是根据样本数据求出的对未知参数进行估计后得到的实际应用方程。\",\n    \"问题10\": \"一元线性回归模型中误差项 $\\text{hat}{\\beta}_{0}$ 的期望值等于 0 代表什么意义？\",\n    \"回答10\": \"$\\text{hat}{\\beta}_{0}$ 的期望值等于 0 表明在给定自变量 $x$ 值下，预测值与真实值之间没有系统性偏差。这意味着模型在平均水平上是准确预测因变量 $y$ 的。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710733088,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1610,
+            "prompt_tokens": 4983,
+            "total_tokens": 6593
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

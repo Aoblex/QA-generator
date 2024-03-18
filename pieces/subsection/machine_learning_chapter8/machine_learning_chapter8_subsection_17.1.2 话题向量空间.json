@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter8",
+        "title": "17.1.2 话题向量空间",
+        "content_length": 4523,
+        "content": "Title: 17.1.2 话题向量空间\nContent:\n两个文本的语义相似度可以体现在两者的话题相似度上。所谓话题（topic）, 并没有严格的定义, 就是指文本所讨论的内容或主题。一个文本一般含有若干个话题。如果两个文本的话题相似, 那么两者的语义应该也相似。话题可以由若干个语义相关的单词表示, 同义\\\\\n词 (如 “airplane” 与 “aircraft”) 可以表示同一个话题, 而多义词 (如 “apple”) 可以表示不同的话题。这样, 基于话题的模型就可以解决上述基于单词的模型存在的问题。\n\n可以设想定义一种话题向量空间模型（topic vector space model）。给定一个文本, 用话题空间的一个向量表示该文本, 该向量的每一分量对应一个话题, 其数值为该话题在该文本中出现的权值。用两个向量的内积或标准化内积表示对应的两个文本的语义相似度。注意话题的个数通常远远小于单词的个数, 话题向量空间模型更加抽象。事实上潜在语义分析正是构建话题向量空间的方法 (即话题分析的方法), 单词向量空间模型与话题向量空间模型可以互为补充，现实中，两者可以同时使用。\n\n\\section*{1. 话题向量空间}\n给定一个文本集合 $\\boldsymbol{D}=\\left\\{d_{1}, d_{2}, \\cdots, d_{n}\\right\\}$ 和一个相应的单词集合 $\\boldsymbol{W}=\\left\\{w_{1}, w_{2}, \\cdots, w_{m}\\right\\}$,可以获得其单词-文本矩阵 $\\boldsymbol{X}, \\boldsymbol{X}$ 构成原始的单词向量空间, 每一列是一个文本在单词向量空间中的表示。\n\n\\[\n\\boldsymbol{X}=\\left[\\begin{array}{cccc}\nx_{11} & x_{12} & \\cdots & x_{1 n}  \\tag{17.5}\\\\\nx_{21} & x_{22} & \\cdots & x_{2 n} \\\\\n\\vdots & \\vdots & & \\vdots \\\\\nx_{m 1} & x_{m 2} & \\cdots & x_{m n}\n\\end{array}\\right]\n\\]\n\n矩阵 $\\boldsymbol{X}$ 也可以写作 $\\boldsymbol{X}=\\left[\\begin{array}{llll}\\boldsymbol{x}_{1} & \\boldsymbol{x}_{2} & \\cdots & \\boldsymbol{x}_{n}\\end{array}\\right]$ 。\n\n假设所有文本共含有 $k$ 个话题, 每个话题由一个定义在单词集合 $W$ 上的 $m$ 维向量表示, 称为话题向量, 即\n\n\\[\n\\boldsymbol{t}_{l}=\\left[\\begin{array}{c}\nt_{1 l}  \\tag{17.6}\\\\\nt_{2 l} \\\\\n\\vdots \\\\\nt_{m l}\n\\end{array}\\right], \\quad l=1,2, \\cdots, k\n\\]\n\n其中, $t_{i l}$ 是单词 $w_{i}$ 在话题 $t_{l}$ 的权值, $i=1,2, \\cdots, m$, 权值越大, 该单词在该话题中的重要度就越高。这 $k$ 个话题向量 $\\boldsymbol{t}_{1}, \\boldsymbol{t}_{2}, \\cdots, \\boldsymbol{t}_{k}$ 张成一个话题向量空间 (topic vector space), 维数为 $k$ 。注意话题向量空间 $\\boldsymbol{T}$ 是单词向量空问 $\\boldsymbol{X}$ 的一个子空间。\n\n话题向量空间 $\\boldsymbol{T}$ 也可以表示为一个矩阵, 称为单词-话题矩阵 (word-topic matrix), 记作\n\n\\[\n\\boldsymbol{T}=\\left[\\begin{array}{cccc}\nt_{11} & t_{12} & \\cdots & t_{1 k}  \\tag{17.7}\\\\\nt_{21} & t_{22} & \\cdots & t_{2 k} \\\\\n\\vdots & \\vdots & & \\vdots \\\\\nt_{m 1} & t_{m 2} & \\cdots & t_{m k}\n\\end{array}\\right]\n\\]\n\n矩阵 $\\boldsymbol{T}$ 也可以写作 $\\boldsymbol{T}=\\left[\\begin{array}{llll}\\boldsymbol{t}_{1} & \\boldsymbol{t}_{2} & \\cdots & \\boldsymbol{t}_{k}\\end{array}\\right]$ 。\n\n\\section*{2. 文本在话题向量空间的表示}\n现在考虑文本集合 $\\boldsymbol{D}$ 的文本 $d_{j}$, 在单词向量空间中由一个向量 $\\boldsymbol{x}_{j}$ 表示, 将 $\\boldsymbol{x}_{j}$ 投影到\\\\\n话题向量空间 $\\boldsymbol{T}$ 中, 得到在话题向量空间的一个向量 $\\boldsymbol{y}_{j}, \\boldsymbol{y}_{j}$ 是一个 $k$ 维向量, 其表达式为\n\n\\[\n\\boldsymbol{y}_{j}=\\left[\\begin{array}{c}\ny_{1 j}  \\tag{17.8}\\\\\ny_{2 j} \\\\\n\\vdots \\\\\ny_{k j}\n\\end{array}\\right], \\quad j=1,2, \\cdots, n\n\\]\n\n其中, $y_{l j}$ 是文本 $d_{j}$ 在话题 $\\boldsymbol{t}_{l}$ 的权值, $l=1,2, \\cdots, k$, 权值越大, 该话题在该文本中的重要度就越高。\n\n矩阵 $\\boldsymbol{Y}$ 表示话题在文本中出现的情况, 称为话题-文本矩阵（topic-document matrix）,记作\n\n\\[\n\\boldsymbol{Y}=\\left[\\begin{array}{cccc}\ny_{11} & y_{12} & \\cdots & y_{1 n}  \\tag{17.9}\\\\\ny_{21} & y_{22} & \\cdots & y_{2 n} \\\\\n\\vdots & \\vdots & & \\vdots \\\\\ny_{k 1} & y_{k 2} & \\cdots & y_{k n}\n\\end{array}\\right]\n\\]\n\n矩阵 $\\boldsymbol{Y}$ 也可以写作 $\\boldsymbol{Y}=\\left[\\begin{array}{llll}\\boldsymbol{y}_{1} & \\boldsymbol{y}_{2} & \\cdots & \\boldsymbol{y}_{n}\\end{array}\\right]$ 。\n\n\\section*{3. 从单词向量空间到话题向量空间的线性变换}\n这样一来, 在单词向量空间的文本向量 $\\boldsymbol{x}_{j}$ 可以通过它在话题空间中的向量 $\\boldsymbol{y}_{j}$ 近似表示, 具体地, 由 $k$ 个话题向量以 $\\boldsymbol{y}_{j}$ 为系数的线性组合近似表示。\n\n\n\\begin{equation*}\n\\boldsymbol{x}_{j} \\approx y_{1 j} \\boldsymbol{t}_{1}+y_{2 j} \\boldsymbol{t}_{2}+\\cdots+y_{k j} \\boldsymbol{t}_{k}, \\quad j=1,2, \\cdots, n \\tag{17.10}\n\\end{equation*}\n\n\n所以, 单词-文本矩阵 $\\boldsymbol{X}$ 可以近似地表示为单词-话题矩阵 $\\boldsymbol{T}$ 与话题-文本矩阵 $\\boldsymbol{Y}$ 的乘积形式。这就是潜在语义分析。\n\n\n\\begin{equation*}\nX \\approx T Y \\tag{17.11}\n\\end{equation*}\n\n\n直观上潜在语义分析是将文本在单词向量空间的表示通过线性变换转换为在话题向量空间中的表示, 如图 17.2 所示。这个线性变换由矩阵因子分解式 (17.11) 的形式体现。图 17.3 示意性地表示实现潜在语义分析的矩阵因子分解。\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_60436489efc55078c367g-18(1)}\n\\end{center}\n\n单词向量空间\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_60436489efc55078c367g-18}\n\\end{center}\n\n话题向量空间\n\n图 17.2 将文本在单词向量空间的表示通过线性变换转换为话题空间的表示\\\\\n\\includegraphics[max width=\\textwidth, center]{2024_03_13_60436489efc55078c367g-19}\n\n图 17.3 潜在语义分析通过矩阵因子分解实现, 单词-文本矩阵 $\\boldsymbol{X}$ 可以近似地表示为单词-话题矩阵 $\\boldsymbol{T}$ 与话题-文本矩阵 $\\boldsymbol{Y}$ 的乘积形式\n\n在原始的单词向量空间中, 两个文本 $d_{i}$ 与 $d_{j}$ 的相似度可以由对应的向量的内积表示,即 $\\boldsymbol{x}_{i} \\cdot \\boldsymbol{x}_{j}$ 。经过潜在语义分析之后, 在话题向量空间中, 两个文本 $d_{i}$ 与 $d_{j}$ 的相似度可以由对应的向量的内积即 $\\boldsymbol{y}_{i} \\cdot \\boldsymbol{y}_{j}$ 表示。\n\n要进行潜在语义分析, 需要同时决定两部分的内容, 一是话题向量空间 $T$, 二是文本在话题空间的表示 $\\boldsymbol{Y}$, 使两者的乘积是原始矩阵数据的近似, 而这一结果完全从话题-文本矩阵的信息中获得。\n\n\\section*{17.2 潜在语义分析算法}\n潜在语义分析利用矩阵奇异值分解, 具体地, 对单词-文本矩阵进行奇异值分解, 将其左矩阵作为话题向量空间, 将其对角矩阵与右矩阵的乘积作为文本在话题向量空间的表示。"
+    },
+    {
+        "id": "chatcmpl-947IwC9K1Ym5Sjktxg4xO6CDAXuQI",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"话题向量空间模型相对于单词向量空间模型有何优势？\",\n    \"回答1\": \"话题向量空间模型更加抽象，因为话题的个数通常远远小于单词的个数。它可以更好地解决基于单词的模型存在的问题，并且可以通过内积或标准化内积表示对应的两个文本的语义相似度。\",\n    \"问题2\": \"话题向量空间中的话题是如何表示的？\",\n    \"回答2\": \"假设所有文本共含有 $k$ 个话题，每个话题由一个定义在单词集合 $W$ 上的 $m$ 维向量表示，称为话题向量。每个话题向量 $\\boldsymbol{t}_{l}$ 是一个 $m$ 维向量，其中 $t_{i l}$ 是单词 $w_{i}$ 在话题 $t_{l}$ 的权值。\",\n    \"问题3\": \"如何将文本在单词向量空间的表示转换为在话题向量空间的表示？\",\n    \"回答3\": \"文本在单词向量空间的表示可以通过线性变换转换为在话题向量空间的表示。具体地，文本向量 $\\boldsymbol{x}_{j}$ 可以通过它在话题空间中的向量 $\\boldsymbol{y}_{j}$ 近似表示，由 $k$ 个话题向量以 $\\boldsymbol{y}_{j}$ 为系数的线性组合近似表示。\",\n    \"问题4\": \"什么是潜在语义分析？\",\n    \"回答4\": \"潜在语义分析是将文本在单词向量空间的表示通过线性变换转换为在话题向量空间中的表示。它通过矩阵因子分解将单词-文本矩阵近似地表示为单词-话题矩阵与话题-文本矩阵的乘积形式。\",\n    \"问题5\": \"潜在语义分析中如何计算两个文本在话题向量空间中的相似度？\",\n    \"回答5\": \"在潜在语义分析中，两个文本 $d_{i}$ 与 $d_{j}$ 的相似度可以由对应的向量的内积即 $\\boldsymbol{y}_{i} \\boldsymbol{y}_{j}$ 表示。这代表了两个文本在话题向量空间中的相似度。\",\n    \"问题6\": \"潜在语义分析算法是如何实现的？\",\n    \"回答6\": \"潜在语义分析利用矩阵奇异值分解，对单词-文本矩阵进行奇异值分解，将其左矩阵作为话题向量空间，将其对角矩阵与右矩阵的乘积作为文本在话题向量空间的表示。\",\n    \"问题7\": \"什么是话题（topic）在自然语言处理中的含义？\",\n    \"回答7\": \"所谓话题（topic）指文本所讨论的内容或主题。一个文本一般含有若干个话题。话题可以由若干个语义相关的单词表示，同义词可以表示同一个话题，而多义词可以表示不同的话题。\",\n    \"问题8\": \"为什么需要使用话题向量空间模型来解决自然语言处理中的问题？\",\n    \"回答8\": \"使用话题向量空间模型能更好地捕捉文本之间的语义相似度，因为它更加抽象且能够解决基于单词的模型存在的问题。同时，它可以通过内积或标准化内积表示对应的两个文本的语义相似度。\",\n    \"问题9\": \"潜在语义分析如何帮助理解和处理大规模文本数据？\",\n    \"回答9\": \"潜在语义分析通过将文本在单词向量空间的表示转换为在话题向量空间中的表示，能够帮助理解和处理大规模文本数据。它能够更好地捕捉文本之间的语义相似度，并且能够通过计算两个文本在话题向量空间中的相似度来实现文本数据的处理和分析。\",\n    \"问题10\": \"话题向量空间模型和单词向量空间模型之间有何关联和区别？\",\n    \"回答10\": \"话题向量空间模型和单词向量空间模型可以互为补充，并且可以同时使用。单词-文本矩阵可以近似地表示为单词-话题矩阵与话题-文本矩阵的乘积形式，这就是潜在语义分析。因此，两者之间存在着紧密关联，并且各自具有不同的抽象程度和表达能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710768418,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1379,
+            "prompt_tokens": 5395,
+            "total_tokens": 6774
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter9",
+        "title": "20.2.4 随机变量序列的可交换性",
+        "content_length": 3517,
+        "content": "Title: 20.2.4 随机变量序列的可交换性\nContent:\n一个有限的随机变量序列是可交换的 (exchangeable), 是指随机变量的联合概率分布对随机变量的排列不变。\n\n\n\\begin{equation*}\nP\\left(x_{1}, x_{2}, \\cdots, x_{N}\\right)=P\\left(x_{\\pi(1)}, x_{\\pi(2)}, \\cdots, x_{\\pi(N)}\\right) \\tag{20.13}\n\\end{equation*}\n\n\n这里 $\\pi(1), \\pi(2), \\cdots, \\pi(N)$ 代表自然数 $1,2, \\cdots, N$ 的任意一个排列。一个无限的随机变量序列是无限可交换 (infinitely exchangeable) 的, 是指它的任意一个有限子序列都是可交换的。\n\n如果一个随机变量序列 $X_{1}, X_{2}, \\cdots, X_{N}, \\cdots$ 是独立同分布的, 那么它们是无限可交换的。反之不然。\n\n随机变量序列可交换的假设在贝叶斯学习中经常使用。根据 De Finetti 定理, 任意一个无限可交换的随机变量序列对一个随机参数是条件独立同分布的。即任意一个无限可交换的随机变量序列 $X_{1}, X_{2}, \\cdots, X_{i}, \\cdots$ 的基于一个随机参数 $Y$ 的条件概率等于基于这个随机参数 $Y$ 的各个随机变量 $X_{1}, X_{2}, \\cdots, X_{i}, \\cdots$ 的条件概率的乘积。\n\n\n\\begin{equation*}\nP\\left(X_{1}, X_{2}, \\cdots, X_{i}, \\cdots \\mid Y\\right)=P\\left(X_{1} \\mid Y\\right) P\\left(X_{2} \\mid Y\\right) \\cdots P\\left(X_{i} \\mid Y\\right) \\cdots \\tag{20.14}\n\\end{equation*}\n\n\nLDA 假设文本由无限可交换的话题序列组成。由 De Finetti 定理知, 实际是假设文本中的话题对一个随机参数是条件独立同分布的。所以在参数给定的条件下, 文本中话题的顺序可以忽略。作为对比, 概率潜在语义模型假设文本中的话题是独立同分布的, 文本中的话题的顺序也可以忽略。\n\n\\section*{20.2 .5 概率公式}\nLDA 模型整体是由观测变量和隐变量组成的联合概率分布, 可以表示为\n\n\n\\begin{equation*}\np(w, z, \\theta, \\varphi \\mid \\alpha, \\beta)=\\prod_{k=1}^{K} p\\left(\\varphi_{k} \\mid \\beta\\right) \\prod_{m=1}^{M} p\\left(\\theta_{m} \\mid \\alpha\\right) \\prod_{n=1}^{N_{m}} p\\left(z_{m n} \\mid \\theta_{m}\\right) p\\left(w_{m n} \\mid z_{m n}, \\varphi\\right) \\tag{20.15}\n\\end{equation*}\n\n\n其中, 观测变量 $w$ 表示所有文本中的单词序列, 隐变量 $z$ 表示所有文本中的话题序列, 隐变量 $\\theta$ 表示所有文本的话题分布的参数, 隐变量 $\\varphi$ 表示所有话题的单词分布的参数, $\\alpha$ 和 $\\beta$ 是超参数。式中 $p\\left(\\varphi_{k} \\mid \\beta\\right)$ 表示超参数 $\\beta$ 给定条件下第 $k$ 个话题的单词分布的参数 $\\varphi_{k}$ 的生成概率, $p\\left(\\theta_{m} \\mid \\alpha\\right)$ 表示超参数 $\\alpha$ 给定条件下第 $m$ 个文本的话题分布的参数 $\\theta_{m}$ 的生成概率, $p\\left(z_{m n} \\mid \\theta_{m}\\right)$ 表示第 $m$ 个文本的话题分布 $\\theta_{m}$ 给定条件下文本的第 $n$ 个位置的话题 $z_{m n}$ 的生成概率, $p\\left(w_{m n} \\mid z_{m n}, \\varphi\\right)$ 表示在第 $m$ 个文本的第 $n$ 个位置的话题 $z_{m n}$ 及所有话题的单词分布的参数 $\\varphi$ 给定条件下第 $m$ 个文本的第 $n$ 个位置的单词 $w_{m n}$ 的生成概率。参见图 20.5。\n\n第 $m$ 个文本的联合概率分布可以表示为\n\n\n\\begin{equation*}\np\\left(w_{m}, z_{m}, \\theta_{m}, \\varphi \\mid \\alpha, \\beta\\right)=\\prod_{k=1}^{K} p\\left(\\varphi_{k} \\mid \\beta\\right) p\\left(\\theta_{m} \\mid \\alpha\\right) \\prod_{n=1}^{N_{m}} p\\left(z_{m n} \\mid \\theta_{m}\\right) p\\left(w_{m n} \\mid z_{m n}, \\varphi\\right) \\tag{20.16}\n\\end{equation*}\n\n\n其中, $w_{m}$ 表示该文本中的单词序列, $z_{m}$ 表示该文本的话题序列, $\\theta_{m}$ 表示该文本的话题分布参数。\n\nLDA 模型的联合分布含有隐变量, 对隐变量进行积分得到边缘分布。\n\n参数 $\\theta_{m}$ 和 $\\varphi$ 给定条件下第 $m$ 个文本的生成概率是\n\n\n\\begin{equation*}\np\\left(w_{m} \\mid \\theta_{m}, \\varphi\\right)=\\prod_{n=1}^{N_{m}}\\left[\\sum_{k=1}^{K} p\\left(z_{m n}=k \\mid \\theta_{m}\\right) p\\left(w_{m n} \\mid \\varphi_{k}\\right)\\right] \\tag{20.17}\n\\end{equation*}\n\n\n超参数 $\\alpha$ 和 $\\beta$ 给定条件下第 $m$ 个文本的生成概率是\n\n\n\\begin{equation*}\np\\left(w_{m} \\mid \\alpha, \\beta\\right)=\\prod_{k=1}^{K} \\int p\\left(\\varphi_{k} \\mid \\beta\\right)\\left\\{\\int p\\left(\\theta_{m} \\mid \\alpha\\right) \\prod_{n=1}^{N_{m}}\\left[\\sum_{l=1}^{K} p\\left(z_{m n}=l \\mid \\theta_{m}\\right) p\\left(w_{m n} \\mid \\varphi_{l}\\right)\\right] \\mathrm{d} \\theta_{m}\\right\\} \\mathrm{d} \\varphi_{k} \\tag{20.18}\n\\end{equation*}\n\n\n超参数 $\\alpha$ 和 $\\beta$ 给定条件下所有文本的生成概率是\n\n\n\\begin{equation*}\np(w \\mid \\alpha, \\beta)=\\prod_{k=1}^{K} \\int p\\left(\\varphi_{k} \\mid \\beta\\right)\\left\\{\\prod_{m=1}^{M} \\int p\\left(\\theta_{m} \\mid \\alpha\\right) \\prod_{n=1}^{N_{m}}\\left[\\sum_{l=1}^{K} p\\left(z_{m n}=l \\mid \\theta_{m}\\right) p\\left(w_{m n} \\mid \\varphi_{l}\\right)\\right] \\mathrm{d} \\theta_{m}\\right\\} \\mathrm{d} \\varphi_{k} \\tag{20.19}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-948IIjLgpoUlxCQXhpmOdnTiprSdY",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是可交换的随机变量序列？\",\n    \"回答1\": \"一个有限的随机变量序列是可交换的，是指随机变量的联合概率分布对随机变量的排列不变。换句话说，对于任意排列 $\\boldsymbol{\\text{π}}(1), \\boldsymbol{\\text{π}}(2), \\text{...}, \\boldsymbol{\\text{π}}(N)$，随机变量序列的联合概率分布保持不变。\",\n    \"问题2\": \"无限可交换的随机变量序列具有什么特点？\",\n    \"回答2\": \"无限可交换的随机变量序列是指它的任意一个有限子序列都是可交换的。换句话说，无限可交换的随机变量序列在任意长度的子序列上都满足可交换性。\",\n    \"问题3\": \"独立同分布的随机变量序列是否一定是无限可交换的？\",\n    \"回答3\": \"是的，如果一个随机变量序列 $X_{1}, X_{2}, \\text{...}, X_{N}, \\text{...}$ 是独立同分布的，那么它们是无限可交换的。反之则不成立。\",\n    \"问题4\": \"在贝叶斯学习中，为什么常常使用随机变量序列可交换的假设？\",\n    \"回答4\": \"在贝叶斯学习中，常常使用随机变量序列可交换的假设是因为根据 De Finetti 定理，任意一个无限可交换的随机变量序列对一个随机参数是条件独立同分布的。这使得在贝叶斯学习中能够更好地建立模型和进行推断。\",\n    \"问题5\": \"LDA 模型中的话题序列具有什么特点？\",\n    \"回答5\": \"LDA 模型假设文本由无限可交换的话题序列组成。根据 De Finetti 定理，实际是假设文本中的话题对一个随机参数是条件独立同分布的。因此，在参数给定的条件下，文本中话题的顺序可以忽略。\",\n    \"问题6\": \"概率潜在语义模型中对文本中话题顺序的假设是什么？\",\n    \"回答6\": \"概率潜在语义模型假设文本中的话题是独立同分布的，即文本中话题的顺序也可以忽略。这与 LDA 模型中对话题顺序的假设有所不同。\",\n    \"问题7\": \"LDA 模型整体联合概率分布的表示公式是什么？\",\n    \"回答7\": \"LDA 模型整体联合概率分布可以表示为 $p(w, z, \\theta, \\boldsymbol{\\text{φ}} \\text{ 且 } \\boldsymbol{\\text{α}}, \\boldsymbol{\\text{β}})=\\bigg(\\bigg[\\bigg(\\bigg[\\bigg(p\\big(\\boldsymbol{\\text{φ}}_{k} \\text{ 且 } \\boldsymbol{\\text{β}}\\bigg) \\bigg] \\bigg) \\bigg] \\bigg) \\bigg) \\tag{20.15}$。\",\n    \"问题8\": \"LDA 模型中如何表示第 m 个文本的联合概率分布？\",\n    \"回答8\": \"第 m 个文本的联合概率分布可以表示为 $p\\big(w_{m}, z_{m}, \\theta_{m}, \\boldsymbol{\\text{φ}} \\text{ 且 } \\boldsymbol{\\text{α}}, \\boldsymbol{\\text{β}}\\big)=\\bigg(\\bigg[\\bigg(p\\big(\\boldsymbol{\\text{φ}}_{k} \\text{ 且 } \\boldsymbol{\\text{β}}\\bigg) p\\big(\\theta_{m} \\text{ 且 } \\boldsymbol{\\text{α}}\\bigg) \\bigg] \\bigg) \\bigg) \\tag{20.16}$。\",\n    \"问题9\": \"LDA 模型中如何表示第 m 个文本的生成概率？\",\n    \"回答9\": \"参数 $θ_m$ 和 $\\boldsymbol{\\text{φ}}$ 给定条件下第 m 个文本的生成概率可以表示为 $p\\big(w_{m} \\text{ 且 } θ_m, \\boldsymbol{\\text{φ}}\\big)=\\bigg(\\bigg[\\bigg(\\bigg[\\bigg(p\\big(z_{m n}=k \\text{ 且 } θ_m\\big) p\\big(w_{m n} \\text{ 且 } \\boldsymbol{\\text{φ}}_k\\big)\\bigg) \\bigg] \\bigg)\\bigg) \\tag{20.17}$。\",\n    \"问题10\": \"LDA 模型中超参数给定条件下所有文本的生成概率如何表示？\",\n    \"回答10\": \"超参数 $\\boldsymbol{\\text{α}}$ 和 $\\boldsymbol{\\text{β}}$ 给定条件下所有文本的生成概率可以表示为 $p(w \\text{ 且 } θ_m, \\boldsymbol{\\text{φ}})=\\bigg(\\bigg[\\bigg(\\bigg[\\bigg(p\\big(\\boldsymbol{\\text{φ}}_k \\text{ 且 } Β\\big) p\\big(θ_m \\text{ 且 } α\\big) p\\big(z_{m n}=l \\text{ 且 } θ_m\\big) p\\big(w_{m n} \\text{ 且 } Φ_l\\big)\\bigg) \\bigg] \\bigg)\\bigg) \\tag{20.19}$。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710772222,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1530,
+            "prompt_tokens": 4637,
+            "total_tokens": 6167
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

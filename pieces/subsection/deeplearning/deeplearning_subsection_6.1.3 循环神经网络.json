@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "6.1.3 循环神经网络",
+        "content_length": 2187,
+        "content": "Title: 6.1.3 循环神经网络\nContent:\n循环神经网络 (Recurrent Neural Network, RNN) 通过使用带自反馈的神经元, 能够处理任意长度的时序数据.\n\n给定一个输入序列 $x_{1: T}=\\left(x_{1}, x_{2}, \\ldots, x_{t}, \\ldots, x_{T}\\right)$, 循环神经网络通过下面公式更新带反馈边的隐藏层的活性值 $\\boldsymbol{h}_{t}:$\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}=f\\left(\\boldsymbol{h}_{t-1}, \\boldsymbol{x}_{t}\\right), \\tag{6.4}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{h}_{0}=0, f(\\cdot)$ 为一个非线性函数, 可以是一个前馈网络.\n\n图6.1给出了循环神经网络的示例, 其中 “延时器” 为一个虚拟单元, 记录神经元的最近一次 ( 或几次 ) 活性值.\n\n\n\n图 6.1 循环神经网络\n\n从数学上讲, 公式 (6.4) 可以看成一个动力系统. 因此, 隐藏层的活性值 $\\boldsymbol{h}_{t}$ 在很多文献上也称为状态 (State) 或隐状态 (Hidden State ).\n\n由于循环神经网络具有短期记忆能力, 相当于存储装置, 因此其计算能力十分强大. 理论上, 循环神经网络可以近似任意的非线性动力系统 (参见第6.2.1节). 前馈神经网络可以模拟任何连续函数, 而循环神经网络可以模拟任何程序.\n\n\\section*{6.2 简单循环网络}\n简单循环网络 (Simple Recurrent Network, SRN ) [Elman, 1990] 是一个非常简单的循环神经网络, 只有一个隐藏层的神经网络. 在一个两层的前馈神经网络中, 连接存在相邻的层与层之间, 隐藏层的节点之间是无连接的. 而简单循环网络增加了从隐藏层到隐藏层的反馈连接.\n\n令向量 $\\boldsymbol{x}_{t} \\in \\mathbb{R}^{M}$ 表示在时刻 $t$ 时网络的输入, $\\boldsymbol{h}_{t} \\in \\mathbb{R}^{D}$ 表示隐藏层状态 (即隐藏层神经元活性值), 则 $\\boldsymbol{h}_{t}$ 不仅和当前时刻的输入 $\\boldsymbol{x}_{t}$ 相关, 也和上一个时刻的隐藏层状态 $\\boldsymbol{h}_{t-1}$ 相关. 简单循环网络在时刻 $t$ 的更新公式为\n\n\n\\begin{equation*}\n\\boldsymbol{z}_{t}=\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t}+\\boldsymbol{b} \\tag{6.5}\n\\end{equation*}\n\n\n\\href{https://nndl.github.io/}{https://nndl.github.io/}\\\\\nRNN 也经常被翻译为递归神经网络. 这里为了区别与另外一种递归神经网络 (Recursive Neural Network, RecNN ), 我们称为循环神经网络.动力系统 (Dynamical System) 是一个数学上的概念, 指系统状态按照一定的规律随时间变化的系统. 具体地讲,动力系统是使用一个函数来描述一个给定空间（如某个物理系统的状态空间) 中所有点随时间的变化情况.生活中很多现象 (比如钟摆晃动、台球轨迹等) 都可以动力系统来描述.\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}=f\\left(\\boldsymbol{z}_{t}\\right) \\tag{6.6}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{z}_{t}$ 为隐藏层的净输入, $\\boldsymbol{U} \\in \\mathbb{R}^{D \\times D}$ 为状态-状态权重矩阵, $\\boldsymbol{W} \\in \\mathbb{R}^{D \\times M}$ 为状态-输入权重矩阵, $\\boldsymbol{b} \\in \\mathbb{R}^{D}$ 为偏置向量, $f(\\cdot)$ 是非线性激活函数, 通常为 Logistic 函数或 Tanh 函数. 公式(6.5) 和公式 (6.6) 也经常直接写为\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}=f\\left(\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right) \\tag{6.7}\n\\end{equation*}\n\n\n如果我们把每个时刻的状态都看作前馈神经网络的一层, 循环神经网络可以看作在时间维度上权值共享的神经网络. 图6.2 给出了按时间展开的循环神经网络.\n\n\n\n图 6.2 按时间展开的循环神经网络"
+    },
+    {
+        "id": "chatcmpl-94201KSfPLVDBDTlySsqa2Ur3uibo",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"循环神经网络相比于前馈神经网络有什么特点？\",\n    \"回答1\": \"循环神经网络通过使用带自反馈的神经元，能够处理任意长度的时序数据。相比之下，前馈神经网络是一种单向传播的结构，无法直接处理时序数据。\",\n    \"问题2\": \"循环神经网络中隐藏层的活性值是如何更新的？\",\n    \"回答2\": \"循环神经网络中隐藏层的活性值 $\\boldsymbol{h}_{t}$ 通过公式 $\\boldsymbol{h}_{t}=f\\big(\\boldsymbol{h}_{t-1}, \\boldsymbol{x}_{t}\\big)$ 进行更新，其中 $\\boldsymbol{h}_{0}=0$，$f(\\boldsymbol{h}_{t-1}, \\boldsymbol{x}_{t})$ 是一个非线性函数。\",\n    \"问题3\": \"简单循环网络相对于两层的前馈神经网络有何不同之处？\",\n    \"回答3\": \"简单循环网络是一个非常简单的循环神经网络，只有一个隐藏层的神经网络。与两层的前馈神经网络相比，简单循环网络增加了从隐藏层到隐藏层的反馈连接，使得隐藏层状态不仅与当前时刻的输入相关，也与上一个时刻的隐藏层状态相关。\",\n    \"问题4\": \"简单循环网络在时刻 $t$ 的更新公式是什么？\",\n    \"回答4\": \"简单循环网络在时刻 $t$ 的更新公式为 $\\boldsymbol{z}_{t}=\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t}+\\boldsymbol{b}$，其中 $\\boldsymbol{x}_{t} \\text{ 表示在时刻 } t \\text{ 时网络的输入}$，$\\boldsymbol{h}_{t} \\text{ 表示隐藏层状态}$。\",\n    \"问题5\": \"循环神经网络具有什么计算能力？\",\n    \"回答5\": \"由于循环神经网络具有短期记忆能力，相当于存储装置，因此其计算能力十分强大。理论上，循环神经网络可以近似任意的非线性动力系统。前馈神经网络可以模拟任何连续函数，而循环神经网络可以模拟任何程序。\",\n    \"问题6\": \"循环神经网络中隐藏层的活性值在数学上还有什么称呼？\",\n    \"回答6\": \"从数学上讲，隐藏层的活性值 $\\boldsymbol{h}_{t}$ 在很多文献上也称为状态（State）或隐状态（Hidden State）。\",\n    \"问题7\": \"循环神经网络中的动力系统是指什么？\",\n    \"回答7\": \"动力系统是一个数学上的概念，指系统状态按照一定的规律随时间变化的系统。具体地讲，动力系统是使用一个函数来描述一个给定空间中所有点随时间的变化情况。\",\n    \"问题8\": \"循环神经网络中隐藏层的净输入 $\\boldsymbol{z}_{t}$ 是如何计算得到的？\",\n    \"回答8\": \"隐藏层的净输入 $\\boldsymbol{z}_{t}$ 通过公式 $\\boldsymbol{z}_{t}=\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t}+\\boldsymbol{b}$ 计算得到，其中 $\\boldsymbol{U} \\text{ 为状态-状态权重矩阵}$，$\\boldsymbol{W} \\text{ 为状态-输入权重矩阵}$，$\\boldsymbol{b} \\text{ 为偏置向量}$。\",\n    \"问题9\": \"循环神经网络中隐藏层的更新公式可以简化为什么形式？\",\n    \"回答9\": \"隐藏层的更新公式可以简化为 $\\boldsymbol{h}_{t}=f\\big(\\boldsymbol{U} \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\boldsymbol{x}_{t}+\\boldsymbol{b}\\big)$ 的形式。这种形式将隐藏层状态的更新视作非线性激活函数作用于净输入得到输出。\",\n    \"问题10\": \"循环神经网络在时间维度上可以被看作什么类型的神经网络？\",\n    \"回答10\": \"如果我们把每个时刻的状态都看作前馈神经网络的一层，循环神经网络可以看作在时间维度上权值共享的神经网络。这种视角下，循环神经网络可以被看作一种在时间维度上权值共享的前馈神经网络。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710748025,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1310,
+            "prompt_tokens": 3977,
+            "total_tokens": 5287
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "7.2. 3 总体方差的区间估计",
+        "content_length": 1734,
+        "content": "Title: 7.2. 3 总体方差的区间估计\nContent:\n这里只讨论正态总体方差的估计问题。根据样本方差的抽样分布可知, 样本方差服从自由度为 $n-1$ 的 $\\chi^{2}$ 分布。因此, 用 $\\chi^{2}$ 分布构造总体方差的置信区间。\n\n若给定一个显著性水平 $\\alpha$, 用 $\\chi^{2}$ 分布构造的总体方差 $\\sigma^{2}$ 的置信区间可用图 7-8 表示。\n\n\\begin{center}\n\\end{center}\n\n图 7-8 自由度为 $n-1$ 的 $\\chi^{2}$ 分布\n\n由图 7-8 可以看出, 建立总体方差 $\\sigma^{2}$ 的置信区间, 也就是要找到一个 $\\chi^{2}$ 值, 使其满足\n\n\n\\begin{equation*}\n\\chi_{1-a / 2}^{2} \\leqslant \\chi^{2} \\leqslant \\chi_{a / 2}^{2} \\tag{7.9}\n\\end{equation*}\n\n\n由于 $\\frac{(n-1) s^{2}}{\\sigma^{2}} \\sim \\chi^{2}(n-1)$, 可用它来代替 $\\chi^{2}$, 于是有\n\n\n\\begin{equation*}\n\\chi_{1-\\alpha / 2}^{2} \\leqslant \\frac{(n-1) s^{2}}{\\sigma^{2}} \\leqslant \\chi_{\\alpha / 2}^{2} \\tag{7.10}\n\\end{equation*}\n\n\n根据式 (7.10) 可推导出总体方差 $\\sigma^{2}$ 在 $1-\\alpha$ 置信水平下的置信区间为:\n\n\n\\begin{equation*}\n\\frac{(n-1) s^{2}}{\\chi_{\\alpha / 2}^{2}} \\leqslant \\sigma^{2} \\leqslant \\frac{(n-1) s^{2}}{\\chi_{1-\\alpha / 2}^{2}} \\tag{7.11}\n\\end{equation*}\n\n\n\\section*{例 7.5}\n沿用例 7.1 的数据, 以 $95 \\%$ 的置信水平建立食品总体重量标准差的置信区间。\n\n$$\ns^{2}=\\frac{\\sum_{i=1}^{n}\\left(x_{i}-\\bar{x}\\right)^{2}}{n-1}=\\frac{2237.02}{25-1}=93.21\n$$\n\n根据显著性水平 $\\alpha=0.05$ 和自由度 $n-1=25-1=24$, 查 $\\chi^{2}$ 分布表得:\n\n$$\n\\begin{aligned}\n& \\chi_{\\alpha / 2}^{2}(n-1)=\\chi_{0.025}^{2}(25-1)=39.3641 \\\\\n& \\chi_{1-\\alpha / 2}^{2}(n-1)=\\chi_{0.975}^{2}(25-1)=12.4011\n\\end{aligned}\n$$\n\n所以，总体方差 $\\sigma^{2}$ 的置信区间为:\n\n$$\n\\frac{(25-1) \\times 93.21}{39.3641} \\leqslant \\sigma^{2} \\leqslant \\frac{(25-1) \\times 93.21}{12.4011}\n$$\n\n即 $56.83 \\leqslant \\sigma^{2} \\leqslant 180.39$ 。相应地, 总体标准差的置信区间则为 $7.54 \\leqslant \\sigma \\leqslant 13.43$ 。该企业生产的食品总体重量标准差的 $95 \\%$ 的置信区间为 $7.54 \\sim 13.43$ 克。\n\n\\section*{7.3 两个总体参数的区间估计}\n对于两个总体, 所关心的参数主要有两个总体的均值之差 $\\mu_{1}-\\mu_{2}$ 、两个总体的比例之差 $\\pi_{1}-\\pi_{2}$ 、两个总体的方差比 $\\sigma_{1}^{2} / \\sigma_{2}^{2}$ 等。"
+    },
+    {
+        "id": "chatcmpl-93wz6664240FauiIk2IPDUI67dekn",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"样本方差的抽样分布是什么？\",\n    \"回答1\": \"根据样本方差的抽样分布可知，样本方差服从自由度为 $n-1$ 的 $\\text{chi}^2$ 分布。\",\n    \"问题2\": \"如何用 $\\text{chi}^2$ 分布构造总体方差的置信区间？\",\n    \"回答2\": \"用 $\\text{chi}^2$ 分布构造总体方差 $\\boldsymbol{\\theta}$ 的置信区间，需要找到一个 $\\text{chi}^2$ 值，使其满足不等式 $\\text{chi}_{1-\\frac{\\boldsymbol{\\theta}}{2}}^2 \\text{ 且 } \\text{chi}_{\\frac{\\boldsymbol{\\theta}}{2}}^2$。\",\n    \"问题3\": \"总体方差 $\\boldsymbol{\\theta}$ 在 $1-\\boldsymbol{\\beta}$ 置信水平下的置信区间是如何计算的？\",\n    \"回答3\": \"根据给定的显著性水平 $\\boldsymbol{\\beta}$ 和自由度 $n-1$，可以计算总体方差 $\\boldsymbol{\\theta}$ 在 $1-\\boldsymbol{\\beta}$ 置信水平下的置信区间为 $\\frac{(n-1) s^{2}}{\\text{chi}_{\\frac{\\boldsymbol{\\beta}}{2}}^2} \\text{ 且 } \\frac{(n-1) s^{2}}{\\text{chi}_{1-\\frac{\\boldsymbol{\\beta}}{2}}^2}$。\",\n    \"问题4\": \"如何根据显著性水平和自由度查找 $\\text{chi}^2$ 分布表中的值？\",\n    \"回答4\": \"根据给定的显著性水平 $\\boldsymbol{\\beta}$ 和自由度 $n-1$，可以查找 $\\text{chi}^2$ 分布表得到对应的值，例如 $\\text{chi}_{\\frac{\\boldsymbol{\\beta}}{2}}^2(n-1)$ 和 $\\text{chi}_{1-\\frac{\\boldsymbol{\\beta}}{2}}^2(n-1)$。\",\n    \"问题5\": \"如何计算总体标准差的置信区间？\",\n    \"回答5\": \"根据计算得到的总体方差的置信区间，可以通过对每个端点取平方根得到总体标准差的置信区间。\",\n    \"问题6\": \"在例 7.5 中，如何建立食品总体重量标准差的置信区间？\",\n    \"回答6\": \"在例 7.5 中，通过给定的显著性水平和自由度，计算得到了食品总体重量标准差的置信区间为 $7.54 \\text{ 且 } 13.43$ 克。\",\n    \"问题7\": \"对于两个总体，主要关心哪些参数的区间估计？\",\n    \"回答7\": \"对于两个总体，主要关心的参数包括两个总体的均值之差 $\\boldsymbol{\\theta}_1-\\boldsymbol{\\theta}_2$、两个总体的比例之差 $\\boldsymbol{\\theta}_1-\\boldsymbol{\\theta}_2$、两个总体的方差比 $\\frac{\\boldsymbol{\\theta}_1^2}{\\boldsymbol{\\theta}_2^2}$ 等。\",\n    \"问题8\": \"在两个总体参数的区间估计中，如何计算两个总体均值之差的置信区间？\",\n    \"回答8\": \"在两个总体参数的区间估计中，可以利用样本均值和样本标准差来计算两个总体均值之差的置信区间。通常使用 t 分布来构造置信区间。\",\n    \"问题9\": \"在两个总体参数的区间估计中，如何计算两个总体比例之差的置信区间？\",\n    \"回答9\": \"在两个总体参数的区间估计中，可以利用两个总体比例之差的抽样分布来构造置信区间。通常使用正态分布或近似正态分布来进行估计。\",\n    \"问题10\": \"在两个总体参数的区间估计中，如何计算两个总体方差比的置信区间？\",\n    \"回答10\": \"在两个总体参数的区间估计中，可以利用两个总体方差比的抽样分布来构造置信区间。通常使用 F 分布来进行估计。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710728748,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1208,
+            "prompt_tokens": 3646,
+            "total_tokens": 4854
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -5,7 +5,7 @@ from openai.types.chat import ChatCompletion
 
 class QAModel():
 
-    api_key="sk-egkbiFTEc8E2FDN2Ec1470B3AdDc4d25B6417d8d75E9BaE7"
+    api_key="sk-n4wVb574XCbb0p3SFbF7547e4a484b3d82640c8dCe553e20"
     base_url = "https://api.132999.xyz/v1"
     client = OpenAI(api_key=api_key, base_url=base_url)
 

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "statistics",
+        "title": "7.2.2 总体比例的区间估计",
+        "content_length": 1436,
+        "content": "Title: 7.2.2 总体比例的区间估计\nContent:\n这里只讨论大样本情况下总体比例的估计问题。(1) 由样本比例 $p$ 的抽样分布可知, 当样本量足够大时, 比例 $p$ 的抽样分布可用正态分布近似。 $p$ 的数学期望为 $E(p)=\\pi ; p$ 的方差为 $\\sigma_{p}^{2}=\\frac{\\pi(1-\\pi)}{n}$ 。样本比例经标准化后的随机变量服从标准正态分布, 即\n\n\n\\begin{equation*}\nz=\\frac{p-\\pi}{\\sqrt{\\pi(1-\\pi) / n}} \\sim N(0,1) \\tag{7.6}\n\\end{equation*}\n\n\n与总体均值的区间估计类似, 在样本比例 $p$ 的基础上加减估计误差 $z_{\\alpha / 2} \\sigma_{p}$, 即得总体比例 $\\pi$ 在 $1-\\alpha$ 置信水平下的置信区间为:\n\n\n\\begin{equation*}\np \\pm z_{\\alpha / 2} \\sqrt{\\frac{\\pi(1-\\pi)}{n}} \\tag{7.7}\n\\end{equation*}\n\n\n用式 (7.7) 计算总体比例 $\\pi$ 的置信区间时, $\\pi$ 值应该是已知的。但实际情况不然, $\\pi$ 值恰好是要估计的, 所以, 需要用样本比例 $p$ 来代替 $\\pi$ 。这时, 总体比例的置信区间可表示为:\n\n\n\\begin{equation*}\np \\pm z_{\\alpha / 2} \\sqrt{\\frac{p(1-p)}{n}} \\tag{7.8}\n\\end{equation*}\n\n\n式中, $\\alpha$ 是显著性水平; $z_{\\alpha / 2}$ 是标准正态分布右侧面积为 $\\alpha / 2$ 时的 $z$ 值; $z_{\\alpha / 2} \\sqrt{\\frac{p(1-p)}{n}}$ 是估计总体比例时的估计误差。这就是说, 总体比例的置信区间由两部分组成：点估计值和描述估计量精度的土值, 这个土值称为估计误差。\n\n\\section*{例 7.4}\n某城市想要估计下岗职工中女性所占的比例, 随机抽取了 100 个下岗职工, 其中 65\n\n(1) 对于总体比例的估计, 确定样本量是否足够大的一般经验规则是: 区间 $p \\pm 2 \\sqrt{p(1-p) / 2}$ 中不包含 0 或 1 ,或者要求 $n p \\geqslant 5$ 和 $n(1-p) \\geqslant 5$ 。\\\\\n人为女职工。试以 $95 \\%$ 的置信水平估计该城市下岗职工中女性比例的置信区间。\n\n——解 已知 $n=100, z_{\\alpha / 2}=1.96$ 。根据抽样结果计算的样本比例为：\n\n$$\np=\\frac{65}{100}=65 \\%\n$$\n\n根据式(7.8) 得:\n\n$$\np \\pm z_{\\alpha / 2} \\sqrt{\\frac{p(1-p)}{n}}=65 \\% \\pm 1.96 \\times \\sqrt{\\frac{65 \\% \\times(1-65 \\%)}{100}}\n$$\n\n即 $65 \\% \\pm 9.35 \\%=(55.65 \\%, 74.35 \\%)$, 该城市下岗职工中女性比例的 $95 \\%$ 的置信区间为 $55.65 \\% \\sim 74.35 \\%$ 。"
+    },
+    {
+        "id": "chatcmpl-93wsvukZr42zscDk1hwKjarTP19ta",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"在大样本情况下，总体比例的抽样分布可以用什么分布来近似？\",\n    \"回答1\": \"在大样本情况下，总体比例 $p$ 的抽样分布可以用正态分布来近似。\",\n    \"问题2\": \"总体比例的数学期望和方差分别是多少？\",\n    \"回答2\": \"总体比例 $p$ 的数学期望为 $E(p)=\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{π}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ; p$ 的方差为 $\\text{σ}_p^2=\\frac{π(1-π)}{n}$。\",\n    \"问题3\": \"描述总体比例在 $1-\\text{α}$ 置信水平下的置信区间的公式是什么？\",\n    \"回答3\": \"总体比例 $\\text{π}$ 在 $1-\\text{α}$ 置信水平下的置信区间为 $p \\text{±} z_{\\text{α}/2} \\text{√}\\frac{π(1-π)}{n}$。\",\n    \"问题4\": \"在实际情况中，为什么需要用样本比例 $p$ 来代替总体比例 $\\text{π}$ 进行置信区间估计？\",\n    \"回答4\": \"在实际情况中，$\\text{π}$ 值通常是未知的，需要用样本比例 $p$ 来代替 $\\text{π}$ 进行置信区间估计。\",\n    \"问题5\": \"如何计算某城市下岗职工中女性比例的 $95\\text{%}$ 置信区间？\",\n    \"回答5\": \"根据抽样结果计算的样本比例为 $p=\\frac{65}{100}=65\\text{%}$。根据公式 $p \\text{±} z_{\\text{α}/2} \\text{√}\\frac{p(1-p)}{n}$，代入 $n=100, z_{\\text{α}/2}=1.96$ 和 $p=65\\text{%}$，即可计算得到置信区间为 $(55.65\\text{%}, 74.35\\text{%})$。\",\n    \"问题6\": \"在统计学中，估计误差是指什么？\",\n    \"回答6\": \"在统计学中，估计误差是指描述估计量精度的值，用于衡量估计值与真实值之间的偏差。\",\n    \"问题7\": \"如何确定样本量是否足够大进行总体比例的估计？\",\n    \"回答7\": \"确定样本量是否足够大进行总体比例的估计的一般经验规则是：区间 $p \\text{±} 2 \\text{√}\\frac{p(1-p)}{2}$ 中不包含 0 或 1，或者要求 $n p \\text{≥} 5$ 和 $n(1-p) \\text{≥} 5$。\",\n    \"问题8\": \"在统计学中，置信水平表示什么意义？\",\n    \"回答8\": \"在统计学中，置信水平表示对参数估计结果的可信程度。例如，$95\\text{%}$ 的置信水平意味着有 $95\\text{%}$ 的把握认为真实参数值落在估计区间内。\",\n    \"问题9\": \"标准正态分布右侧面积为 $\\text{α/2}$ 时的 $z$ 值有什么作用？\",\n    \"回答9\": \"标准正态分布右侧面积为 $\\text{α/2}$ 时的 $z$ 值用于确定置信水平下的临界值，帮助构建参数估计的置信区间。\",\n    \"问题10\": \"如何理解总体比例的置信区间由点估计值和估计误差组成？\",\n    \"回答10\": \"总体比例的置信区间由点估计值和描述估计量精度的值（即估计误差）组成。点估计值提供了对参数的单一估计，而估计误差则衡量了这一点估计值的精度和可靠性。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710728365,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1275,
+            "prompt_tokens": 3589,
+            "total_tokens": 4864
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

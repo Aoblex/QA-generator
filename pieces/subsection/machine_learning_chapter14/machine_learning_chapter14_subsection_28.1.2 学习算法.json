@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter14",
+        "title": "28.1.2 学习算法",
+        "content_length": 2167,
+        "content": "Title: 28.1.2 学习算法\nContent:\n对 GAN 的目标函数 (式 (28.3)) 进行优化, 迭代地学习判别网络和生成网络的参数, 就是 GAN 的学习算法。\n\n\\section*{算法 28.1 (GAN 学习算法)}\n输入: 训练数据集 $\\mathcal{D}$ 。\n\n输出: 生成网络 $G(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 。\n\n超参数: 训练数据集, 对抗训练次数 $T$, 判别网络训练次数 $S$, 小批量样本数量 $M$, 学习率 $\\eta$ 。\n\n\\begin{enumerate}\n  \\item 随机初始化参数 $\\boldsymbol{\\theta}, \\boldsymbol{\\varphi}$\n\n  \\item for $(t=1,2, \\cdots, T)\\{$\n\n\\end{enumerate}\n\n\\# 训练判别网络 $D(\\boldsymbol{x} ; \\boldsymbol{\\varphi})$\n\nfor $(s=1,2, \\cdots, S)\\{$\n\n从训练数据中随机采样 $M$ 个样本 $\\left\\{\\boldsymbol{x}^{(m)}\\right\\}, 1 \\leqslant m \\leqslant M$\n\n根据分布 $P_{\\text {seed }}(\\boldsymbol{z})$ 随机采样 $M$ 个样本 $\\left\\{\\boldsymbol{z}^{(m)}\\right\\}, 1 \\leqslant m \\leqslant M$\n\n计算以下梯度, 使用梯度上升法更新参数 $\\varphi$\n\n$$\n\\begin{gathered}\n\\nabla_{\\boldsymbol{\\varphi}}\\left[\\frac{1}{M} \\sum_{m=1}^{M} \\log D\\left(\\boldsymbol{x}^{(m)} ; \\boldsymbol{\\varphi}\\right)+\\log \\left(1-D\\left(G\\left(\\boldsymbol{z}^{(m)} ; \\boldsymbol{\\theta}\\right) ; \\boldsymbol{\\varphi}\\right)\\right)\\right] \\\\\n\\boldsymbol{\\varphi}+\\eta \\nabla_{\\boldsymbol{\\varphi}}\n\\end{gathered}\n$$\n\n\\}\n\n\\# 训练生成网络 $G(\\boldsymbol{z} ; \\boldsymbol{\\theta})$\n\n根据分布 $P_{\\text {seed }}(\\boldsymbol{z})$ 随机采样 $M$ 个样本 $\\left\\{\\boldsymbol{z}^{(m)}\\right\\}, 1 \\leqslant m \\leqslant M$\n\n计算以下梯度, 使用梯度上升法更新参数 $\\theta$\n\n$$\n\\begin{gathered}\n\\nabla_{\\boldsymbol{\\theta}}\\left[\\frac{1}{M} \\sum_{m=1}^{M} \\log \\left(D\\left(G\\left(\\boldsymbol{z}^{(m)} ; \\boldsymbol{\\theta}\\right) ; \\boldsymbol{\\varphi}\\right)\\right)\\right] \\\\\n\\boldsymbol{\\theta} \\leftarrow \\boldsymbol{\\theta}+\\eta \\nabla_{\\boldsymbol{\\theta}}\n\\end{gathered}\n$$\n\n\\}\n\n\\begin{enumerate}\n  \\setcounter{enumi}{2}\n  \\item 输出生成网络 $G(\\boldsymbol{z} ; \\boldsymbol{\\theta})$ 。\n\\end{enumerate}\n\n这里不进行 $\\log (1-D(G(\\boldsymbol{z} ; \\boldsymbol{\\theta}) ; \\boldsymbol{\\varphi}))$ 的最小化, 而是进行 $\\log (D(G(\\boldsymbol{z} ; \\boldsymbol{\\theta}) ; \\boldsymbol{\\varphi})$ 的最大化。这是因为在学习的初始阶段, 生成网络较弱, 判别网络很容易区分训练数据和生成数据, 最小化 $\\log (1-D(G(\\boldsymbol{z} ; \\boldsymbol{\\theta}) ; \\boldsymbol{\\phi}))$ 会使学习很难进行下去。因此, 判别网络和生成网络的学习都使用梯度上升法。\n\n判别网络训练时从训练数据和生成数据中同采样 $M$ 个样本, 也就是各以 0.5 的概率选取训练数据和生成数据。判别网络学习迭代 $S$ 次后, 生成网络学习迭代 1 次。这样可以保证训练判别网络有足够能力时再训练生成网络。 $M$ 和 $S$ 是超参数, 要在具体应用中调节。"
+    },
+    {
+        "id": "chatcmpl-940FyV6yNAPhzwQXqBEHRUS77LEYV",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"GAN 的学习算法中，判别网络和生成网络的参数是如何学习的？\",\n    \"回答1\": \"对 GAN 的目标函数进行优化, 迭代地学习判别网络和生成网络的参数。具体来说，通过随机初始化参数 $\\boldsymbol{\\theta}, \\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\theta}, \\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\theta}, \\boldsymbol{\\theta})$，然后分别使用梯度上升法更新判别网络和生成网络的参数。\",\n    \"问题2\": \"GAN 学习算法中的超参数有哪些？\",\n    \"回答2\": \"GAN 学习算法中的超参数包括训练数据集, 对抗训练次数 $T$, 判别网络训练次数 $S$, 小批量样本数量 $M$, 以及学习率 $\\text{eta}$。\",\n    \"问题3\": \"在 GAN 学习算法中，判别网络的训练过程是怎样的？\",\n    \"回答3\": \"判别网络的训练过程包括从训练数据中随机采样 $M$ 个样本和根据分布 $P_{\\text {seed }}(\\boldsymbol{z})$ 随机采样 $M$ 个样本 $\\big\\bracevert\\boldsymbol{z}^{(m)}\\big\\bracevert, 1 \\text{ 为 } m \\text{ 为 } M$，然后计算梯度并使用梯度上升法更新参数 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\nabla}_{\\boldsymbol{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{\\nabla}_{{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}{}$。\",\n    \"问题4\": \"在 GAN 学习算法中，生成网络的训练过程是怎样的？\",\n    \"回答4\": \"生成网络的训练过程包括根据分布 $P_{\\text {seed }}(\\boldsymbol{z})$ 随机采样 $M$ 个样本 $\\big\\bracevert\\boldsymbol{z}^{(m)}\\big\\bracevert, 1 \\text{ 为 } m \\text{ 为 } M$，然后计算梯度并使用梯度上升法更新参数 $\\theta$。\",\n    \"问题5\": \"GAN 学习算法中为什么不进行 $\\text{log}(1-D(G(\\boldsymbol{z} ; \\theta) ; \\text{varphi}))$ 的最小化？\",\n    \"回答5\": \"在学习的初始阶段, 生成网络较弱, 判别网络很容易区分训练数据和生成数据，因此最小化 $\\text{log}(1-D(G(\\boldsymbol{z} ; \\theta) ; \\text{varphi}))$ 会使学习很难进行下去。因此，在 GAN 学习算法中，判别网络和生成网络的学习都使用梯度上升法。\",\n    \"问题6\": \"判别网络训练时如何从训练数据和生成数据中采样样本？\",\n    \"回答6\": \"判别网络训练时从训练数据和生成数据中同采样 $M$ 个样本，也就是各以 0.5 的概率选取训练数据和生成数据。\",\n    \"问题7\": \"在 GAN 学习算法中，为什么判别网络学习迭代 $S$ 次后，才训练生成网络？\",\n    \"回答7\": \"这样可以保证训练判别网络有足够能力时再训练生成网络。这种顺序安排能够提高整个 GAN 模型的稳定性和效果。\",\n    \"问题8\": \"GAN 学习算法中的超参数 $M$ 和 $S$ 分别表示什么意义？\",\n    \"回答8\": \"$M$ 表示小批量样本数量，即每次迭代中从训练数据和生成数据中采样的样本数量。$S$ 表示判别网络训练次数，即判别网络学习迭代的次数。\",\n    \"问题9\": \"GAN 学习算法中的输出是什么？\",\n    \"回答9\": \"GAN 学习算法的输出是生成网络 $G(\\boldsymbol{z} ; \\theta)$，即经过迭代学习后得到的生成模型。\",\n    \"问题10\": \"GAN 学习算法中如何调节超参数 $M$ 和 $S$？\",\n    \"回答10\": \"$M$ 和 $S$ 是超参数，需要根据具体应用中的实际情况进行调节。通常可以通过实验和验证集的性能来调节这两个超参数，以获得最佳的模型效果。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710741326,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1507,
+            "prompt_tokens": 3707,
+            "total_tokens": 5214
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter8",
+        "title": "17.2.2 例子",
+        "content_length": 3308,
+        "content": "Title: 17.2.2 例子\nContent:\n下面介绍潜在语义分析的一个例子 (1)。假设有 9 个文本、11 个单词, 单词-文本矩阵 $\\boldsymbol{X}$\n\n\\begin{center}\n\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}\n\\hline\n\\multirow{2}{*}{单词} & \\multicolumn{9}{|c|}{文本} \\\\\n\\hline\n & $\\mathrm{T} 1$ & $\\mathrm{~T} 2$ & T3 & $\\mathrm{T} 4$ & $\\mathrm{~T} 5$ & T6 & T7 & $\\mathrm{T} 8$ & T9 \\\\\n\\hline\nbook &  &  & 1 & 1 &  &  &  &  &  \\\\\n\\hline\ndads &  &  &  &  &  & 1 &  &  & 1 \\\\\n\\hline\ndummies &  & 1 &  &  &  &  &  & 1 &  \\\\\n\\hline\nestate &  &  &  &  &  &  & 1 &  & 1 \\\\\n\\hline\nguide & 1 &  &  &  &  & 1 &  &  &  \\\\\n\\hline\ninvesting & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\\\\n\\hline\nmarket & 1 &  & 1 &  &  &  &  &  &  \\\\\n\\hline\nreal &  &  &  &  &  &  & 1 &  & 1 \\\\\n\\hline\nrich &  &  &  &  &  & 2 &  &  & 1 \\\\\n\\hline\nstock & 1 &  & 1 &  &  &  &  & 1 &  \\\\\n\\hline\nvalue &  &  &  & 1 & 1 &  &  &  &  \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n为 $11 \\times 9$ 矩阵, 矩阵的元素是单词在文本中出现的频数, 表示如下:\n\n然后进行潜在语义分析。实施对矩阵的截断奇异值分解, 假设话题的个数是 3 , 矩阵的截断奇异值分解结果为\n\n\\begin{center}\n\\begin{tabular}{|l|r|r|r|}\n\\hline\nbook & 0.15 & -0.27 & 0.04 \\\\\n\\hline\ndads & 0.24 & 0.38 & -0.09 \\\\\n\\hline\ndummies & 0.13 & -0.17 & 0.07 \\\\\n\\hline\nestate & 0.18 & 0.19 & 0.45 \\\\\n\\hline\nguide & 0.22 & 0.09 & -0.46 \\\\\n\\hline\ninvesting & 0.74 & -0.21 & 0.21 \\\\\n\\hline\nmarket & 0.18 & -0.30 & -0.28 \\\\\n\\hline\nreal & 0.18 & 0.19 & 0.45 \\\\\n\\hline\nrich & 0.36 & 0.59 & -0.34 \\\\\n\\hline\nstock & 0.25 & -0.42 & -0.28 \\\\\n\\hline\nvalue & 0.12 & -0.14 & 0.23 \\\\\n\\hline\n0 & 0 & 0 &  \\\\\n\\hline\n0 & 0 & 2.00 &  \\\\\n\\hline\n\\end{tabular}\n\\end{center}$* *$\n\n\\begin{center}\n\\begin{tabular}{|c|r|r|r|r|r|c|r|c|}\n\\hline\nT1 & \\multicolumn{1}{|c|}{T2} & \\multicolumn{1}{c|}{T3} & \\multicolumn{1}{c|}{T4} & T5 & T6 & T7 & T8 & T9 \\\\\n\\hline\n0.35 & 0.22 & 0.34 & 0.26 & 0.22 & 0.49 & 0.28 & 0.29 & 0.44 \\\\\n\\hline\n-0.32 & -0.15 & -0.46 & -0.24 & -0.14 & 0.55 & 0.07 & -0.31 & 0.44 \\\\\n\\hline\n-0.41 & 0.14 & -0.16 & 0.25 & 0.22 & -0.51 & 0.55 & 0.00 & 0.34 \\\\\n\\hline\n\\end{tabular}\n\\end{center}\n\n(1) \\href{http://www.puffinwarellc.com/index.php/news-and-articles/articles/33-latent-semantic-anal-ysistutorial.html?showall=1%E3%80%82}{http://www.puffinwarellc.com/index.php/news-and-articles/articles/33-latent-semantic-anal-ysistutorial.html?showall=1。}\\\\\n可以看出, 左矩阵 $\\boldsymbol{U}_{3}$ 有 3 个列向量 (左奇异向量)。第 1 列向量 $\\boldsymbol{u}_{1}$ 的值均为正, 第 2 列向量 $\\boldsymbol{u}_{2}$ 和第 3 列向量 $\\boldsymbol{u}_{3}$ 的值有正有负。中间的对角矩阵 $\\boldsymbol{\\Sigma}_{3}$ 的元素是 3 个由大到小的奇异值（正值）。右矩阵是 $\\boldsymbol{V}_{3}^{\\mathrm{T}}$ ，其转置矩阵 $\\boldsymbol{V}_{3}$ 也有 3 个列向量（右奇异向量）。第 1 列向量 $\\boldsymbol{v}_{1}$的值也都为正, 第 2 列向量 $\\boldsymbol{v}_{2}$ 和第 3 列向量 $\\boldsymbol{v}_{3}$ 的值有正有负。\n\n现在, 将 $\\boldsymbol{\\Sigma}_{3}$ 与 $\\boldsymbol{V}_{3}^{\\mathrm{T}}$ 相乘, 整体变成两个矩阵乘积的形式:\n\n$$\n\\begin{aligned}\n& \\boldsymbol{X} \\approx \\boldsymbol{U}_{3}\\left(\\boldsymbol{\\Sigma}_{3} \\boldsymbol{V}_{3}^{\\mathrm{T}}\\right)\n\\end{aligned}\n$$\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_60436489efc55078c367g-22}\n\\end{center}\n\n矩阵 $\\boldsymbol{U}_{3}$ 有 3 个列向量, 表示 3 个话题, 矩阵 $\\boldsymbol{U}_{3}$ 表示话题向量空间。矩阵 $\\left(\\boldsymbol{\\Sigma}_{3} \\boldsymbol{V}_{3}^{\\mathrm{T}}\\right)$ 有 9 个列向量, 表示 9 个文本, 矩阵 $\\left(\\boldsymbol{\\Sigma}_{3} \\boldsymbol{V}_{3}^{\\mathrm{T}}\\right)$ 是文本集合在话题向量空间的表示。\n\n\\section*{17.3 非负矩阵分解算法}\n非负矩阵分解也可以用于话题分析。对单词-文本矩阵进行非负矩阵分解, 将其左矩阵作为话题向量空间, 将其右矩阵作为文本在话题向量空间的表示。注意通常单词-文本矩阵是非负的。"
+    },
+    {
+        "id": "chatcmpl-947LqGEJbK5ZBF58BVWp3qYiMwnba",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"潜在语义分析中的单词-文本矩阵 $\\boldsymbol{X}$ 的元素代表什么？\",\n    \"回答1\": \"单词-文本矩阵 $\\boldsymbol{X}$ 的元素是单词在文本中出现的频数。这个矩阵的维度为 $11 \\times 9$，表示了 11 个单词在 9 个文本中的出现频数。\",\n    \"问题2\": \"潜在语义分析中的截断奇异值分解是如何实施的？\",\n    \"回答2\": \"在潜在语义分析中，对单词-文本矩阵进行截断奇异值分解时，假设话题的个数为 3。这意味着对矩阵进行奇异值分解后，只保留其中最大的 3 个奇异值及其对应的奇异向量，从而实现对矩阵的截断奇异值分解。\",\n    \"问题3\": \"潜在语义分析中的左矩阵 $\\boldsymbol{U}_{3}$ 和右矩阵 $\\boldsymbol{V}_{3}^{\\text{T}}$ 分别代表什么？\",\n    \"回答3\": \"潜在语义分析中，左矩阵 $\\boldsymbol{U}_{3}$ 有 3 个列向量，表示 3 个话题，即话题向量空间；右矩阵 $\\boldsymbol{V}_{3}^{\\text{T}}$ 也有 3 个列向量，表示文本集合在话题向量空间的表示。\",\n    \"问题4\": \"潜在语义分析中的矩阵乘积 $\\boldsymbol{U}_{3}\\big(\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{Sigma}}_{3} \\boldsymbol{V}_{3}^{\\text{T}}}\\big)$ 的含义是什么？\",\n    \"回答4\": \"矩阵乘积 $\\boldsymbol{U}_{3}\\big(\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{Sigma}}_{3} \\boldsymbol{V}_{3}^{\\text{T}}}\\big)$ 表示了原始单词-文本矩阵 $\\boldsymbol{X}$ 在话题向量空间的近似表示。这一步骤将原始数据映射到了一个更低维度的空间，从而实现了对数据的降维和潜在语义的提取。\",\n    \"问题5\": \"非负矩阵分解算法在话题分析中有何作用？\",\n    \"回答5\": \"非负矩阵分解算法可以用于话题分析。通过对单词-文本矩阵进行非负矩阵分解，可以得到左矩阵作为话题向量空间，以及右矩阵作为文本在话题向量空间的表示。这样的分解能够帮助提取数据中的潜在话题信息，并实现对文本内容的有效表示和分析。\",\n    \"问题6\": \"通常情况下，单词-文本矩阵为什么是非负的？\",\n    \"回答6\": \"通常情况下，单词-文本矩阵是非负的，因为它表示了单词在文本中出现的频数。由于频数不可能为负值，因此单词-文本矩阵中的元素通常是非负的。\",\n    \"问题7\": \"截断奇异值分解和非负矩阵分解算法有何异同之处？\",\n    \"回答7\": \"截断奇异值分解和非负矩阵分解算法都是用于降维和潜在语义提取的方法。截断奇异值分解是基于奇异值分解，在保留部分奇异值和对应奇异向量的基础上实现对原始数据的近似表示；而非负矩阵分解则是将原始数据分解为非负的因子矩阵，能够更好地适用于非负数据和特征的提取。\",\n    \"问题8\": \"潜在语义分析中如何确定话题的个数？\",\n    \"回答8\": \"在潜在语义分析中，确定话题的个数通常需要结合领域知识和实际需求来进行。一般来说，可以通过尝试不同数量的话题个数，并通过模型评估指标（如主题一致性、困惑度等）来选择最合适的话题个数。\",\n    \"问题9\": \"潜在语义分析中如何利用话题向量空间进行文本表示？\",\n    \"回答9\": \"在潜在语义分析中，可以利用话题向量空间将文本表示为一个低维度的向量。通过将文本映射到话题向量空间，可以更好地捕捉文本之间的语义相似性和话题关联性，从而实现对文本内容更加有效和准确的表示。\",\n    \"问题10\": \"潜在语义分析与主题模型有何联系和区别？\",\n    \"回答10\": \"潜在语义分析和主题模型都是用于从文本数据中提取潜在话题信息的方法。它们之间联系紧密，都能够实现对文本内容进行话题建模和表示。区别在于潜在语义分析更侧重于利用线性代数方法进行降维和潜在语义提取，而主题模型则更注重对文档-主题和主题-词汇生成过程进行建模。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710768598,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1679,
+            "prompt_tokens": 4484,
+            "total_tokens": 6163
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

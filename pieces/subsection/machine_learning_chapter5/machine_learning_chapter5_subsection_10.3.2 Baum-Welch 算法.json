@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter5",
+        "title": "10.3.2 Baum-Welch 算法",
+        "content_length": 3845,
+        "content": "Title: 10.3.2 Baum-Welch 算法\nContent:\n假设给定训练数据只包含 $S$ 个长度为 $T$ 的观测序列 $\\left\\{O_{1}, O_{2}, \\cdots, O_{S}\\right\\}$ 而没有对应的状态序列, 目标是学习隐马尔可夫模型 $\\lambda=(A, B, \\pi)$ 的参数。我们将观测序列数据看作观测数据 $O$, 状态序列数据看作不可观测的隐数据 $I$, 那么隐马尔可夫模型事实上是一个含有隐变量的概率模型:\n\n\n\\begin{equation*}\nP(O \\mid \\lambda)=\\sum_{I} P(O \\mid I, \\lambda) P(I \\mid \\lambda) \\tag{10.32}\n\\end{equation*}\n\n\n它的参数学习可以由 EM 算法实现。\n\n\\section*{1. 确定完全数据的对数似然函数}\n所有观测数据写成 $O=\\left(o_{1}, o_{2}, \\cdots, o_{T}\\right)$, 所有隐数据写成 $I=\\left(i_{1}, i_{2}, \\cdots, i_{T}\\right)$, 完全数据是 $(O, I)=\\left(o_{1}, o_{2}, \\cdots, o_{T}, i_{1}, i_{2}, \\cdots, i_{T}\\right)$ 。完全数据的对数似然函数是 $\\log P(O, I \\mid \\lambda)$ 。\n\n\\begin{enumerate}\n  \\setcounter{enumi}{1}\n  \\item EM 算法的 $\\mathrm{E}$ 步: 求 $Q$ 函数 $Q(\\lambda, \\bar{\\lambda})^{(1)}$\n\\end{enumerate}\n\n\n\\begin{equation*}\nQ(\\lambda, \\bar{\\lambda})=\\sum_{I} \\log P(O, I \\mid \\lambda) P(O, I \\mid \\bar{\\lambda}) \\tag{10.33}\n\\end{equation*}\n\n\n其中, $\\bar{\\lambda}$ 是隐马尔可夫模型参数的当前估计值, $\\lambda$ 是要极大化的隐马尔可夫模型参数。\n\n$$\nP(O, I \\mid \\lambda)=\\pi_{i_{1}} b_{i_{1}}\\left(o_{1}\\right) a_{i_{1} i_{2}} b_{i_{2}}\\left(o_{2}\\right) \\cdots a_{i_{T-1} i_{T}} b_{i_{T}}\\left(o_{T}\\right)\n$$\n\n于是函数 $Q(\\lambda, \\bar{\\lambda})$ 可以写成\n\n\n\\begin{align*}\nQ(\\lambda, \\bar{\\lambda})= & \\sum_{I} \\log \\pi_{i_{1}} P(O, I \\mid \\bar{\\lambda})+\\sum_{I}\\left(\\sum_{t=1}^{T-1} \\log a_{i_{t} i_{t+1}}\\right) P(O, I \\mid \\bar{\\lambda})+ \\\\\n& \\sum_{I}\\left(\\sum_{t=1}^{T} \\log b_{i_{t}}\\left(o_{t}\\right)\\right) P(O, I \\mid \\bar{\\lambda}) \\tag{10.34}\n\\end{align*}\n\n\n式中求和都是对所有数据的序列总长度 $T$ 进行的。\n\n\\begin{enumerate}\n  \\setcounter{enumi}{2}\n  \\item EM 算法的 $\\mathrm{M}$ 步: 极大化 $Q$ 函数 $Q(\\lambda, \\bar{\\lambda})$ 求模型参数 $A, B, \\pi$\n\\end{enumerate}\n\n由于要极大化的参数在式 (10.34) 中单独地出现在 3 个项中, 所以只需对各项分别极大化。\n\n(1) 式 (10.34) 的第 1 项可以写成\n\n$$\n\\sum_{I} \\log \\pi_{i_{1}} P(O, I \\mid \\bar{\\lambda})=\\sum_{i=1}^{N} \\log \\pi_{i} P\\left(O, i_{1}=i \\mid \\bar{\\lambda}\\right)\n$$\n\n注意到 $\\pi_{i}$ 满足约束条件 $\\sum_{i=1}^{N} \\pi_{i}=1$, 利用拉格朗日乘子法, 写出拉格朗日函数:\n\n$$\n\\sum_{i=1}^{N} \\log \\pi_{i} P\\left(O, i_{1}=i \\mid \\bar{\\lambda}\\right)+\\gamma\\left(\\sum_{i=1}^{N} \\pi_{i}-1\\right)\n$$\n\n对其求偏导数并令结果为 0 :\n\n\n\\begin{equation*}\n\\frac{\\partial}{\\partial \\pi_{i}}\\left[\\sum_{i=1}^{N} \\log \\pi_{i} P\\left(O, i_{1}=i \\mid \\bar{\\lambda}\\right)+\\gamma\\left(\\sum_{i=1}^{N} \\pi_{i}-1\\right)\\right]=0 \\tag{10.35}\n\\end{equation*}\n\n\n得:\n\n$$\nP\\left(O, i_{1}=i \\mid \\bar{\\lambda}\\right)+\\gamma \\pi_{i}=0\n$$\n\n(1) 按照 $Q$ 函数的定义\n\n$$\nQ(\\lambda, \\bar{\\lambda})=E_{I}[\\log P(O, I \\mid \\lambda) \\mid O, \\bar{\\lambda}]\n$$\n\n式 (10.33) 略去了对 $\\lambda$ 而言的常数因子 $1 / P(O \\mid \\bar{\\lambda})$ 。\\\\\n对 $i$ 求和得到 $\\gamma$ :\n\n$$\n\\gamma=-P(O \\mid \\bar{\\lambda})\n$$\n\n代入式 (10.35) 即得:\n\n\n\\begin{equation*}\n\\pi_{i}=\\frac{P\\left(O, i_{1}=i \\mid \\bar{\\lambda}\\right)}{P(O \\mid \\bar{\\lambda})} \\tag{10.36}\n\\end{equation*}\n\n\n(2) 式 (10.34) 的第 2 项可以写成\n\n$$\n\\sum_{I}\\left(\\sum_{t=1}^{T-1} \\log a_{i_{t} i_{t+1}}\\right) P(O, I \\mid \\bar{\\lambda})=\\sum_{i=1}^{N} \\sum_{j=1}^{N} \\sum_{t=1}^{T-1} \\log a_{i j} P\\left(O, i_{t}=i, i_{t+1}=j \\mid \\bar{\\lambda}\\right)\n$$\n\n类似第 1 项, 应用具有约束条件 $\\sum_{j=1}^{N} a_{i j}=1$ 的拉格朗日乘子法可以求出:\n\n\n\\begin{equation*}\na_{i j}=\\frac{\\sum_{t=1}^{T-1} P\\left(O, i_{t}=i, i_{t+1}=j \\mid \\bar{\\lambda}\\right)}{\\sum_{t=1}^{T-1} P\\left(O, i_{t}=i \\mid \\bar{\\lambda}\\right)} \\tag{10.37}\n\\end{equation*}\n\n\n(3) 式 (10.34) 的第 3 项为\n\n$$\n\\sum_{I}\\left(\\sum_{t=1}^{T} \\log b_{i_{t}}\\left(o_{t}\\right)\\right) P(O, I \\mid \\bar{\\lambda})=\\sum_{j=1}^{N} \\sum_{t=1}^{T} \\log b_{j}\\left(o_{t}\\right) P\\left(O, i_{t}=j \\mid \\bar{\\lambda}\\right)\n$$\n\n同样用拉格朗日乘子法, 约束条件是 $\\sum_{k=1}^{M} b_{j}(k)=1$ 。注意, 只有在 $o_{t}=v_{k}$ 时 $b_{j}\\left(o_{t}\\right)$ 对 $b_{j}(k)$的偏导数才不为 0 , 以 $I\\left(o_{t}=v_{k}\\right)$ 表示。求得:\n\n\n\\begin{equation*}\nb_{j}(k)=\\frac{\\sum_{t=1}^{T} P\\left(O, i_{t}=j \\mid \\bar{\\lambda}\\right) I\\left(o_{t}=v_{k}\\right)}{\\sum_{t=1}^{T} P\\left(O, i_{t}=j \\mid \\bar{\\lambda}\\right)} \\tag{10.38}\n\\end{equation*}"
+    },
+    {
+        "id": "chatcmpl-948hXwIUiwUrBGxaJG4FioJlDGGdy",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"隐马尔可夫模型的参数学习目标是什么？\",\n    \"回答1\": \"隐马尔可夫模型的参数学习目标是学习隐马尔可夫模型 $\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{λ}}=(\\boldsymbol{A}, \\boldsymbol{B}, \\boldsymbol{\\boldsymbol{\\boldsymbol{\\boldsymbol{π}}})$ 的参数。这意味着通过给定的观测序列数据，学习模型的转移概率矩阵 $\\boldsymbol{A}$、发射概率矩阵 $\\boldsymbol{B}$ 和初始状态概率向量 $\\boldsymbol{\\boldsymbol{π}}$。\",\n    \"问题2\": \"什么是完全数据的对数似然函数？\",\n    \"回答2\": \"完全数据的对数似然函数是指给定观测数据和对应的隐数据后，关于模型参数的对数似然函数。在隐马尔可夫模型中，完全数据由观测数据和隐状态数据组成，其对数似然函数记为 $\\text{log} P(O, I \\text{ 为 } \\boldsymbol{\\boldsymbol{λ}})$。\",\n    \"问题3\": \"EM 算法的 $\\text{E}$ 步是如何求 $Q$ 函数的？\",\n    \"回答3\": \"EM 算法的 $\\text{E}$ 步是通过求解 $Q$ 函数 $Q(\\boldsymbol{\\boldsymbol{λ}}, \\bar{\\boldsymbol{\\boldsymbol{λ}}})^{(1)}$ 来更新模型参数。其中 $Q$ 函数定义为 $Q(\\boldsymbol{\\boldsymbol{λ}}, \\bar{\\boldsymbol{\\boldsymbol{λ}}})=\\text{Σ}_{I} \\text{log} P(O, I \\text{ 为 } \\bar{\\boldsymbol{\\boldsymbol{λ}}})$。\",\n    \"问题4\": \"EM 算法的 $\\text{M}$ 步是如何求模型参数 $A, B, \\boldsymbol{π}$ 的？\",\n    \"回答4\": \"EM 算法的 $\\text{M}$ 步是通过极大化 $Q$ 函数 $Q(\\boldsymbol{\\boldsymbol{λ}}, \\bar{\\boldsymbol{\\boldsymbol{λ}}})$ 来求解模型参数 $A, B, \\boldsymbol{π}$。具体地，分别对转移概率矩阵 $\\boldsymbol{A}$、发射概率矩阵 $\\boldsymbol{B}$ 和初始状态概率向量 $\\boldsymbol{π}$ 进行极大化。\",\n    \"问题5\": \"在 EM 算法中，如何更新初始状态概率向量 $\\boldsymbol{π}$ 的值？\",\n    \"回答5\": \"在 EM 算法中，更新初始状态概率向量 $\\boldsymbol{π}$ 的值需要通过拉格朗日乘子法，并利用约束条件 $\\text{Σ}_{i=1}^{N} \\boldsymbol{π}_{i}=1$ 来求解。具体地，根据拉格朗日函数对 $\\bar{i}$ 求偏导并令结果为 0，得到初始状态概率向量 $\\boldsymbol{π}$ 的更新公式。\",\n    \"问题6\": \"在 EM 算法中，如何更新转移概率矩阵 $A$ 的值？\",\n    \"回答6\": \"在 EM 算法中，更新转移概率矩阵 $A$ 的值需要通过拉格朗日乘子法，并利用约束条件 $\\text{Σ}_{j=1}^{N} A_{i j}=1$ 来求解。类似地，根据拉格朗日函数对 $i, j$ 求偏导并令结果为 0，得到转移概率矩阵 $A$ 的更新公式。\",\n    \"问题7\": \"在 EM 算法中，如何更新发射概率矩阵 $B$ 的值？\",\n    \"回答7\": \"在 EM 算法中，更新发射概率矩阵 $B$ 的值需要通过拉格朗日乘子法，并利用约束条件 $\\text{Σ}_{k=1}^{M} B_{j}(k)=1$ 来求解。类似地，根据拉格朗日函数对 $j, k$ 求偏导并令结果为 0，得到发射概率矩阵 $B$ 的更新公式。\",\n    \"问题8\": \"隐马尔可夫模型参数学习中的完全数据是指什么？\",\n    \"回答8\": \"隐马尔可夫模型参数学习中的完全数据是指包括观测数据和对应的隐状态数据组成的数据集。在参数学习过程中，利用完全数据可以更准确地估计模型的参数。\",\n    \"问题9\": \"隐马尔可夫模型参数学习中的不完全数据是指什么？\",\n    \"回答9\": \"隐马尔可夫模型参数学习中的不完全数据是指只包含观测序列而没有对应的隐状态序列的训练数据。在这种情况下，需要通过EM算法来估计模型的参数。\",\n    \"问题10\": \"隐马尔可夫模型参数学习中的目标函数是什么？\",\n    \"回答10\": \"隐马尔可夫模型参数学习中的目标函数是完全数据的对数似然函数。通过最大化完全数据的对数似然函数来估计模型的参数，以使得模型能够更好地拟合观测数据和隐状态数据。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710773787,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1567,
+            "prompt_tokens": 4675,
+            "total_tokens": 6242
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

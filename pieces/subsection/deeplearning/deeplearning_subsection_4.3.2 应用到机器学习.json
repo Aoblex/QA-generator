@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "4.3.2 应用到机器学习",
+        "content_length": 1709,
+        "content": "Title: 4.3.2 应用到机器学习\nContent:\n根据通用近似定理, 神经网络在某种程度上可以作为一个 “万能” 函数来使用,可以用来进行复杂的特征转换,或逼近一个复杂的条件分布.\n\n在机器学习中, 输入样本的特征对分类器的影响很大. 以监督学习为例, 好的特征可以极大提高分类器的性能. 因此, 要取得好的分类效果, 需要将样本的原始特征向量 $\\boldsymbol{x}$ 转换到更有效的特征向量 $\\phi(\\boldsymbol{x})$, 这个过程叫作特征抽取.\n\n多层前馈神经网络可以看作一个非线性复合函数 $\\phi: \\mathbb{R}^{D} \\rightarrow \\mathbb{R}^{D^{\\prime}}$, 将输入 $\\boldsymbol{x} \\in \\mathbb{R}^{D}$ 映射到输出 $\\phi(\\boldsymbol{x}) \\in \\mathbb{R}^{D^{\\prime}}$. 因此, 多层前馈神经网络也可以看成是一种特征转换方法, 其输出 $\\phi(\\boldsymbol{x})$ 作为分类器的输入进行分类.\n\n给定一个训练样本 $(\\boldsymbol{x}, y)$, 先利用多层前馈神经网络将 $\\boldsymbol{x}$ 映射到 $\\phi(\\boldsymbol{x})$, 然后再将 $\\phi(\\boldsymbol{x})$ 输入到分类器 $g(\\cdot)$, 即\n\n\n\\begin{equation*}\n\\hat{y}=g(\\phi(\\boldsymbol{x}) ; \\theta), \\tag{4.39}\n\\end{equation*}\n\n\n其中 $g(\\cdot)$ 为线性或非线性的分类器, $\\theta$ 为分类器 $g(\\cdot)$ 的参数, $\\hat{y}$ 为分类器的输出.\n\n特别地, 如果分类器 $g(\\cdot)$ 为 Logistic 回归分类器或 Softmax 回归分类器, 那么 $\\mathrm{g}(\\cdot)$ 也可以看成是网络的最后一层, 即神经网络直接输出不同类别的条件概率 $p(y \\mid \\boldsymbol{x})$.\n\n对于二分类问题 $y \\in\\{0,1\\}$, 并采用 Logistic 回归, 那么 Logistic 回归分类器可以看成神经网络的最后一层. 也就是说, 网络的最后一层只用一个神经元, 并且其激活函数为 Logistic 函数. 网络的输出可以直接作为类别 $y=1$ 的条件概率,\n\n\n\\begin{equation*}\np(y=1 \\mid \\boldsymbol{x})=a^{(L)}, \\tag{4.40}\n\\end{equation*}\n\n\n其中 $a^{(L)} \\in \\mathbb{R}$ 为第 $L$ 层神经元的活性值.\n\n对于多分类问题 $y \\in\\{1, \\cdots, C\\}$, 如果使用 Softmax 回归分类器, 相当于网络最后一层设置 $C$ 个神经元, 其激活函数为 Softmax 函数. 网络最后一层 (第 $L$ 层)的输出可以作为每个类的条件概率, 即\n\n\n\\begin{equation*}\n\\hat{\\boldsymbol{y}}=\\operatorname{softmax}\\left(\\boldsymbol{z}^{(L)}\\right) \\tag{4.41}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{z}^{(L)} \\in \\mathbb{R}^{C}$ 为第 $L$ 层神经元的净输入; $\\hat{\\boldsymbol{y}} \\in \\mathbb{R}^{C}$ 为第 $L$ 层神经元的活性值, 每一维分别表示不同类别标签的预测条件概率.参见第2.6.1.2节。\n\n反之, Logistic 回归或 Softmax 回归也可以看作只有一层的神经网络.\n\nLogistic 回归参见第3.2节\n\nSoftmax 回归参见第3.3节"
+    },
+    {
+        "id": "chatcmpl-941UMKdXCvrTYSLzZ3BUuLfh0Viz1",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"神经网络在机器学习中的作用是什么？\",\n    \"回答1\": \"神经网络在机器学习中可以用来进行复杂的特征转换，或逼近一个复杂的条件分布。它能够将输入样本的原始特征向量转换到更有效的特征向量，从而提高分类器的性能。\",\n    \"问题2\": \"多层前馈神经网络可以被看作什么类型的函数？\",\n    \"回答2\": \"多层前馈神经网络可以被看作一个非线性复合函数 $\\boldsymbol{\\text{phi}}: \\boldsymbol{\\text{R}}^{D} \\rightarrow \\boldsymbol{\\text{R}}^{D^{\\boldsymbol{\\text{'}}}}$，它将输入 $\\boldsymbol{x} \\boldsymbol{\\text{in}} \\boldsymbol{\\text{R}}^{D}$ 映射到输出 $\\boldsymbol{\\text{phi}}(\\boldsymbol{x}) \\boldsymbol{\\text{in}} \\boldsymbol{\\text{R}}^{D^{\\boldsymbol{\\text{'}}}}$。\",\n    \"问题3\": \"什么是特征抽取？\",\n    \"回答3\": \"特征抽取是将样本的原始特征向量 $\\boldsymbol{x}$ 转换到更有效的特征向量 $\\boldsymbol{\\text{phi}}(\\boldsymbol{x})$ 的过程。在机器学习中，好的特征可以极大提高分类器的性能，因此特征抽取是非常重要的。\",\n    \"问题4\": \"在神经网络中，如何进行分类器的输出预测？\",\n    \"回答4\": \"给定一个训练样本 $(\\boldsymbol{x}, y)$，先利用多层前馈神经网络将 $\\boldsymbol{x}$ 映射到 $\\boldsymbol{\\text{phi}}(\\boldsymbol{x})$，然后再将 $\\boldsymbol{\\text{phi}}(\\boldsymbol{x})$ 输入到分类器 $g(\\boldsymbol{\\text{cdot}})$进行分类。即 $\\boldsymbol{\\text{hat{y}}} = g(\\boldsymbol{\\text{phi}}(\\boldsymbol{x}); \\theta)$，其中 $g(\\boldsymbol{\\text{cdot}})$ 为线性或非线性的分类器，$\\theta$ 为分类器 $g(\\boldsymbol{\\text{cdot}})$ 的参数。\",\n    \"问题5\": \"Logistic 回归分类器或 Softmax 回归分类器在神经网络中扮演什么角色？\",\n    \"回答5\": \"Logistic 回归分类器或 Softmax 回归分类器可以看成是神经网络的最后一层。对于二分类问题，Logistic 回归分类器可以看成神经网络的最后一层，并且其输出可以直接作为类别 $y=1$ 的条件概率。对于多分类问题，Softmax 回归分类器相当于网络最后一层设置 $C$ 个神经元，其输出可以作为每个类的条件概率。\",\n    \"问题6\": \"Logistic 回归或 Softmax 回归也可以看作什么？\",\n    \"回答6\": \"Logistic 回归或 Softmax 回归也可以看作只有一层的神经网络。它们在神经网络中扮演着重要的角色，并且具有类似于神经网络的功能和作用。\",\n    \"问题7\": \"在神经网络中，如何表示二分类问题中类别 $y=1$ 的条件概率？\",\n    \"回答7\": \"对于二分类问题 $y \\boldsymbol{\\text{in}}\\big\\brace{0,1}$，并采用 Logistic 回归，那么 Logistic 回归分类器可以看成神经网络的最后一层。网络的输出可以直接作为类别 $y=1$ 的条件概率，即 $p(y=1 \\boldsymbol{\\text{mid}} \\boldsymbol{x})=a^{(L)}$，其中 $a^{(L)} \\boldsymbol{\\text{in}} \\boldsymbol{\\text{R}}$ 为第 $L$ 层神经元的活性值。\",\n    \"问题8\": \"在神经网络中，如何表示多分类问题中每个类别的条件概率？\",\n    \"回答8\": \"对于多分类问题 $y \\boldsymbol{\\text{in}}\\big\\brace{1, \\text{...}, C}$，如果使用 Softmax 回归分类器，则相当于网络最后一层设置 $C$ 个神经元，其输出可以作为每个类的条件概率。即 $\\boldsymbol{\\text{hat{y}}}=\\boldsymbol{\\text{softmax}}\\big(\\boldsymbol{z}^{(L)}\\big)$，其中 $\\boldsymbol{z}^{(L)} \\boldsymbol{\\text{in}} \\boldsymbol{\\text{R}}^{C}$ 为第 $L$ 层神经元的净输入；$\\boldsymbol{\\text{hat{y}}} \\boldsymbol{\\text{in}} \\boldsymbol{\\text{R}}^{C}$ 为第 $L$ 层神经元的活性值，每一维分别表示不同类别标签的预测条件概率。\",\n    \"问题9\": \"为什么要进行特征转换和抽取在机器学习中？\",\n    \"回答9\": \"在机器学习中，输入样本的特征对分类器的影响很大。好的特征可以极大提高分类器的性能。因此，需要将样本的原始特征向量转换到更有效的特征向量，这个过程叫作特征抽取。通过特征转换和抽取，可以提高模型对数据特征的表达能力和泛化能力。\",\n    \"问题10\": \"神经网络在机器学习中有哪些优势？\",\n    \"回答10\": \"神经网络在机器学习中具有以下优势：能够进行复杂的特征转换和逼近复杂的条件分布；提高模型对数据特征的表达能力和泛化能力；能够灵活地处理不同类型的任务和数据特征；具有较强的非线性建模能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710746062,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1635,
+            "prompt_tokens": 3659,
+            "total_tokens": 5294
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter12",
+        "title": "25.2.1 长短期记忆网络",
+        "content_length": 4519,
+        "content": "Title: 25.2.1 长短期记忆网络\nContent:\n\\section*{1. 模型定义}\nS-RNN 的每一个位置的状态以递归方式计算:\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{t}=\\tanh \\left(\\boldsymbol{U} \\cdot \\boldsymbol{h}_{t-1}+\\boldsymbol{W} \\cdot \\boldsymbol{x}_{t}+\\boldsymbol{b}\\right), \\quad t=1,2, \\cdots, T \\tag{25.19}\n\\end{equation*}\n\n\n状态表示序列数据中的短距离和长距离依存关系。S-RNN 对短距离依存关系可以有效地表示和学习, 而对长距离依存关系的处理能力有限, 因为长距离依存关系在模型中会被逐渐\n\n“遗忘”。为了解决这个问题, 长短期记忆 (long short-term memory, LSTM) 被提出。LSTM 也能解决学习中的梯度消失和梯度爆炸问题。\n\nLSTM 的基本想法是记录并使用之前所有位置的状态, 以便更好地描述短距离和长距离依存关系。为此导入两个机制, 一个是记忆元 (memory cell), 另一个是门控 (gated control)。记忆元用于记录之前位置的状态信息。门控是指用门函数来控制状态信息的使用，有三个门, 包括遗忘门 (forget gate)、输入门 (input gate)、输出门 (output gate)。之所以称其为长 (的) 短期记忆, 是因为状态的表示包括对远距离的状态的 “记忆”。\n\nLSTM 和 GRU 又被称为门控循环神经网络 (gate controlled RNN)。这里门是一个向量, 每一维取值在 0 和 1 之间, 与其他向量进行逐元素积计算, 起到 “软的” 逻辑门电路的作用。当某一维取值是 1 的时候, 门是开放的; 取值是 0 的时候, 门是关闭的。门依赖于所在位置, 由所在位置的输入和之前位置的状态决定。\n\n在循环神经网络的每一个位置上, 有以当前位置的输入和之前位置的状态为输入、以当前位置的状态为输出的函数, 称为单元 (unit), 是核心处理模块。S-RNN 的单元就是由式 (25.19) 表示的函数。\n\n定义 25.2 (长短期记忆网络) 以下的循环神经网络称为长短期记忆网络。在循环网络的每一个位置上有状态和记忆元, 以及输入门、遗忘门、输出门, 构成一个单元。第 $t$ 个位置上 $(t=1,2, \\cdots, T)$ 的单元是以当前位置的输入 $x_{t}$ 、之前位置的记忆元 $c_{t-1}$ 、之前位置的状态 $h_{t-1}$ 为输入, 以当前位置的状态 $h_{t}$ 和当前位置的记忆元 $c_{t}$ 为输出的函数, 由以下方式计算。\n\n\n\\begin{gather*}\n\\boldsymbol{i}_{t}=\\sigma\\left(\\boldsymbol{U}_{i} \\cdot \\boldsymbol{h}_{t-1}+\\boldsymbol{W}_{\\boldsymbol{i}} \\cdot \\boldsymbol{x}_{t}+\\boldsymbol{b}_{i}\\right)  \\tag{25.20}\\\\\n\\boldsymbol{f}_{t}=\\sigma\\left(\\boldsymbol{U}_{f} \\cdot \\boldsymbol{h}_{t-1}+\\boldsymbol{W}_{f} \\cdot \\boldsymbol{x}_{t}+\\boldsymbol{b}_{f}\\right)  \\tag{25.21}\\\\\n\\boldsymbol{o}_{t}=\\sigma\\left(\\boldsymbol{U}_{o} \\cdot \\boldsymbol{h}_{t-1}+\\boldsymbol{W}_{o} \\cdot \\boldsymbol{x}_{t}+\\boldsymbol{b}_{o}\\right)  \\tag{25.22}\\\\\n\\tilde{\\boldsymbol{c}}_{t}=\\tanh \\left(\\boldsymbol{U}_{c} \\cdot \\boldsymbol{h}_{t-1}+\\boldsymbol{W}_{c} \\cdot \\boldsymbol{x}_{t}+\\boldsymbol{b}_{c}\\right)  \\tag{25.23}\\\\\n\\boldsymbol{c}_{t}=\\boldsymbol{i}_{t} \\odot \\tilde{\\boldsymbol{c}}_{t}+\\boldsymbol{f}_{t} \\odot \\boldsymbol{c}_{t-1}  \\tag{25.24}\\\\\n\\boldsymbol{h}_{t}=\\boldsymbol{o}_{t} \\odot \\tanh \\left(\\boldsymbol{c}_{t}\\right) \\tag{25.25}\n\\end{gather*}\n\n\n这里 $i_{t}$ 是输入门, $f_{t}$ 是遗忘门, $o_{t}$ 是输出门, $\\tilde{c}_{t}$ 是中间结果。状态 $h_{t}$ 、记忆元 $c_{t}$ 、输入门 $i_{t}$ 、遗忘门 $f_{t}$ 、输出门 $o_{t}$ 都是向量, 其维度相同。\n\n首先说明 LSTM 网络的整体架构。如图 25.5 所示, LSTM 网络整体是一个循环神经网络。在每一个位置上有输入 $\\boldsymbol{x}_{t}$ 、状态 $\\boldsymbol{h}_{t}$ 、输出 $\\boldsymbol{p}_{t}$, 特殊的还有记忆元 $\\boldsymbol{c}_{\\boldsymbol{t}}$ 。状态和记忆元的信息在 LSTM 单元之间传递。\n\n接着说明 LSTM 的单元结构。图 25.6 显示的是 LSTM 单元的结构。第 $t$ 个位置上的单元的输入是当前位置的数据 $\\boldsymbol{x}_{t}$ 、之前位置的记忆元 $\\boldsymbol{c}_{t-1}$ 和状态 $\\boldsymbol{h}_{t-1}$, 输出是当前位置的状态 $h_{t}$ 和记忆元 $c_{t}$ 。内部有三个门和一个记忆元。遗忘门 $f_{t}$ 、输入门 $i_{t}$ 、输出门 $o_{t}$ 有相同的结构, 都是以当前位置的输入 $\\boldsymbol{x}_{t}$ 和之前位置的状态 $\\boldsymbol{h}_{t-1}$ 为输入的函数, 相当于以 $\\mathrm{S}$ 型函数为激活函数的一层神经网络 (式 (25.20) 式 (25.22))。遗忘门决定忘记之前位置的哪些信息,输入门决定从之前位置传入哪些信息, 输出门决定向下一个位置传出哪些信息。为了确定记忆元 $\\boldsymbol{c}_{t}$ 和状态 $\\boldsymbol{h}_{t}$, 首先计算中间结果 $\\tilde{\\boldsymbol{c}}_{t}$, 是以当前位置的输入 $\\boldsymbol{x}_{t}$ 和之前位置的状态 $\\boldsymbol{h}_{t-1}$\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_fc25db59b1a18f350d07g-39(1)}\n\\end{center}\n\n图 25.5 LSTM 的网络架构\n\n为输入的函数, 相当于以双曲正切函数为激活函数的一层神经网络 (式 (25.23))。然后计算当前位置的记忆元 $c_{t}$, 是中间结果 $\\tilde{c}_{t}$ 和之前位置的记忆元 $c_{t-1}$ 的线性组合, 分别以输入门 $i_{t}$和遗忘门 $\\boldsymbol{f}_{t}$ 为系数, 其中系数乘积是向量的逐元素积 (式 (25.24))。最后计算当前位置的状态 $h_{t}$, 是以记忆元 $c_{t}$ 为输入的双曲正切函数的输出, 并以输出门 $o_{t}$ 为系数 (式 (25.25))。\n\n\\begin{center}\n\\includegraphics[max width=\\textwidth]{2024_03_13_fc25db59b1a18f350d07g-39}\n\\end{center}\n\n图 25.6 LSTM 单元结构\n\n\\section*{2. 模型特点}\nLSTM 能更好地表示和学习长距离依存关系。经验上, 记忆元、输入门和遗忘门起着重要作用。\n\n当输入门和遗忘门满足 $i_{t}=1, f_{t}=0$ 时, 当前位置的记忆元 $c_{t}$ 只依赖于当前位置的输入 $x_{t}$ 和之前位置的状态 $\\boldsymbol{h}_{t-1}$, LSTM 是 S-RNN 的近似。当输入门和遗忘门满足 $i_{t}=O, f_{t}=1$ 时, 当前位置的记忆元 $c_{t}$ 只依赖于之前位置的记忆元 $c_{t-1}$, LSTM 将之前位置的记忆元复制到当前位置。\n\n当前位置的记忆元 $c_{t}$ 可以展开成以下形式 (将推导作为习题):\n\n\n\\begin{equation*}\n\\boldsymbol{c}_{t}=\\boldsymbol{i}_{t} \\odot \\tilde{\\boldsymbol{c}}_{t}+\\boldsymbol{f}_{t} \\odot \\boldsymbol{c}_{t-1}=\\sum_{i=1}^{t}\\left(\\prod_{j=i+1}^{t} \\boldsymbol{f}_{j} \\odot \\boldsymbol{i}_{i}\\right) \\odot \\tilde{\\boldsymbol{c}}_{i}=\\sum_{i=1}^{t} \\boldsymbol{w}_{i}^{t} \\odot \\tilde{\\boldsymbol{c}}_{i} \\tag{25.26}\n\\end{equation*}\n\n\n其中, $\\boldsymbol{w}_{i}^{t}$ 表示计算得到的第 $t$ 个位置的权重。可以看出记忆元 $c_{t}$ 是之前所有位置的中间结果 $\\tilde{\\boldsymbol{c}}_{i}$ 的线性组合，而中间结果由所在位置的输入 $\\boldsymbol{x}_{i}$ 和之前位置的状态 $\\boldsymbol{h}_{i-1}$ 决定。所以，当前位置的记忆元以及状态由之前位置的状态综合决定。\n\n学习中由于位置之间的梯度传播不是通过矩阵的连乘而是通过矩阵连乘的线性组合, 所以可以避免梯度消失和梯度爆炸。"
+    },
+    {
+        "id": "chatcmpl-93w1vifc13FZmu7mzYlWXptk7S2sC",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"S-RNN 和 LSTM 在处理短距离和长距离依存关系方面有何区别？\",\n    \"回答1\": \"S-RNN 对短距离依存关系可以有效地表示和学习，而对长距离依存关系的处理能力有限，因为长距离依存关系在模型中会被逐渐“遗忘”。相比之下，LSTM 能更好地表示和学习长距离依存关系，通过引入记忆元和门控机制，记录并使用之前所有位置的状态，以更好地描述短距离和长距离依存关系。\",\n    \"问题2\": \"LSTM 是如何解决学习中的梯度消失和梯度爆炸问题的？\",\n    \"回答2\": \"LSTM 通过引入门控机制（包括输入门、遗忘门、输出门）和记忆元，使得位置之间的梯度传播不是通过矩阵的连乘而是通过矩阵连乘的线性组合。这种方式可以避免梯度消失和梯度爆炸，从而更好地实现长短期记忆的学习。\",\n    \"问题3\": \"LSTM 中的输入门、遗忘门和输出门分别起着什么作用？\",\n    \"回答3\": \"输入门决定从当前位置传入哪些信息，遗忘门决定忘记之前位置的哪些信息，输出门决定向下一个位置传出哪些信息。这三个门通过控制状态信息的使用，使得 LSTM 能够更好地处理长短期记忆和信息传递。\",\n    \"问题4\": \"LSTM 的记忆元 $c_{t}$ 是如何计算得到的？\",\n    \"回答4\": \"当前位置的记忆元 $c_{t}$ 是由输入门、遗忘门和中间结果 $\\tilde{c}_{t}$ 组合计算得到的。具体地，记忆元 $c_{t}$ 是输入门 $\\boldsymbol{i}_{t}$ 和中间结果 $\\tilde{\\boldsymbol{c}}_{t}$ 的逐元素积加上遗忘门 $\\boldsymbol{f}_{t}$ 和之前位置的记忆元 $\\boldsymbol{c}_{t-1}$ 的逐元素积所得。\",\n    \"问题5\": \"LSTM 中的记忆元 $c_{t}$ 和状态 $h_{t}$ 是如何相互影响的？\",\n    \"回答5\": \"当前位置的状态 $h_{t}$ 是由记忆元 $c_{t}$ 作为输入的双曲正切函数的输出，并且受输出门 $o_{t}$ 的控制。而记忆元 $c_{t}$ 则受到输入门、遗忘门和中间结果 $\\tilde{c}_{t}$ 的影响。因此，记忆元和状态在 LSTM 中相互影响，并通过门控机制实现信息传递和长短期记忆。\",\n    \"问题6\": \"LSTM 网络架构中状态、记忆元和输出是如何传递和交互的？\",\n    \"回答6\": \"LSTM 网络整体是一个循环神经网络，在每一个位置上有输入、状态、输出和特殊的记忆元。状态和记忆元的信息在 LSTM 单元之间传递，并通过输入门、遗忘门和输出门进行交互控制。这种机制使得状态和记忆能够在网络中有效地传递和交互。\",\n    \"问题7\": \"LSTM 的单元结构包括哪些部分？\",\n    \"回答7\": \"LSTM 的单元结构包括输入门、遗忘门、输出门以及记忆元。每个单元以当前位置的输入、之前位置的记忆元和状态为输入，并通过内部计算得到当前位置的状态和记忆元作为输出。\",\n    \"问题8\": \"LSTM 中的权重 $\\boldsymbol{w}_{i}^{t}$ 是如何影响记忆元 $c_{t}$ 的计算的？\",\n    \"回答8\": \"权重 $\\boldsymbol{w}_{i}^{t}$ 影响着记忆元 $c_{t}$ 的计算，它表示了第 $t$ 个位置上计算得到的权重。记忆元 $c_{t}$ 是之前所有位置的中间结果 $\\tilde{\\boldsymbol{c}}_{i}$ 的线性组合，而中间结果由所在位置的输入和之前位置的状态决定。因此，权重 $\\boldsymbol{w}_{i}^{t}$ 直接影响着记忆元 $c_{t}$ 的计算结果。\",\n    \"问题9\": \"LSTM 相比 S-RNN 有什么优势？\",\n    \"回答9\": \"LSTM 相比 S-RNN 能更好地表示和学习长距离依存关系，通过引入记忆元和门控机制，能够更有效地处理长短期记忆。此外，由于梯度传播方式的改变，LSTM 能够避免梯度消失和梯度爆炸问题，在学习中表现更加稳定。\",\n    \"问题10\": \"LSTM 如何实现对远距禈状态的“记忆”？\",\n    \"回答10\": \"LSTM 实现对远距离状态的“记忆”主要通过引入记忆元和门控机制。其中，输入门、遗忘门和中间结果 $\\tilde{\\boldsymbol{c}}_{t}$ 的组合计算使得当前位置的记忆元 $c_{t}$ 包含了之前所有位置的中间结果 $\\tilde{\\boldsymbol{c}}_{i}$ 的线性组合，从而实现了对远距离状态的“记忆”与综合。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710725079,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1608,
+            "prompt_tokens": 5387,
+            "total_tokens": 6995
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

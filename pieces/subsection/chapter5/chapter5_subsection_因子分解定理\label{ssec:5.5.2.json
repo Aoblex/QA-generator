@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "chapter5",
+        "title": "因子分解定理\\label{ssec:5.5.2",
+        "content_length": 3243,
+        "content": "Title: 因子分解定理\\label{ssec:5.5.2\nContent:\n}\n在统计学中有一个基本原则: 在充分统计量存在场合,任何统计推断都可以基于充分统计量进行,这可以简化统计推断的程序,通常将该原则称为充分性原则.然而在一般场合直接由定义~\\ref{def:5,5.1} 出发验证一个统计量是充分的是困难的,因为条件分布的计算通常不那么容易.幸运的是,我们有一个简单的办法判断一个统计量是否充分,这就是下面的\\textbf{因子分解定理},它由统计学家奈曼(Neyman)给出.为简便起见,我们引入一个在两种分布类型通用的概念—概率函数. $f(x)$称为随机变量$X$的概率函数: 在连续型场合, $f(x)$表示$X$的概率密度函数;在离散型场合,$f(x)$表示$X$的概率分布列.\n\\begin{theorem}{}{5.5.1}\n设总体概率函数为$f(x;\\theta),X_1,\\dotsc,X_n$为样本,则$T=T(X_1,\\dotsc,X_n)$为充分统计量的充分必要条件是: 存在两个函数$g(t,\\theta)$和$h(x_1,\\dotsc,x_n)$使得对任意的$\\theta$和任一组观测值$x_1,\\dotsc,x_n$,有\n\\begin{equation}\\label{eq:5.5.1}\nf(x_1,\\dotsc,x_n;\\theta)=g\\big(T(x_1,\\dotsc,x_n)\\big)h(x_1,\\dotsc,x_n),\n\\end{equation}\n其中$g(t,\\theta)$是通过统计量$T$的取值而依赖于样本的.\n\\end{theorem}\n\\begin{proof}\n一般性结果的证明超出本课程范围,此处我们将给出离散型随机变量下的证明,此时, $f(x_1,\\dotsc,x_n)=P(X_1=x_1,\\dotsc,X_n=x_n;\\theta)$.\n\n先证必要性.设$T$是充分统计量,则在$T=t$下, $P(X_1=x_1,\\dotsc,X_n=x_n|T=t)$与$\\theta$无关,记为$h(x_1,\\dotsc,x_n)$或$h(\\bm X)$,令$A(t)=\\{\\bm X:T(\\bm X)=t\\}$,当$\\bm X\\in A(t)$时有\n\\[\\{T=t\\}\\supset\\{X_1=x_1,\\dotsc,X_n=x_n\\},\\]\n故\n\\begin{align*}\nP(X_1=x_1,\\dotsc,X_n&=x_n;\\theta)=P(X_1=x_1,\\dotsc,X_n=x_n,T=t;\\theta)\\\\\n&=P(X_1=x_1,\\dotsc,X_n=x_n|T=t)P(T=t;\\theta)\\\\\n=h(x_1,\\dotsc,x_n)g(t,\\theta),\n\\end{align*}\n其中$g(t,\\theta)=P(T=t;\\theta)$,而$h(\\bm X)=P(X_1=x_1,\\dotsc,X_n=x_n|T=t)$与$\\theta$无关,必要性得证.\n\n对充分性,由于\n\\begin{align*}\nP(T=t;\\theta)&=\\sum_{\\{(x_1,\\dotsc,x_n):T(x_1,\\dotsc,x_n)=t\\}}P(X_1=x_1,\\dotsc,X_n=x_n;\\theta)\\\\\n&=\\sum_{\\{(x_1,\\dotsc,x_n):T(x_1,\\dotsc,x_n)=t\\}}g(t,\\theta)h(x_1,\\dotsc,x_n),\n\\end{align*}\n对任给$\\bm X=(x_1,\\dotsc,x_n)$和$t$,满足$\\bm X\\in A(t)$,有\n\\begin{align*}\nP(X_1=x_1,\\dotsc,X_n=x_n|T=t)&=\\frac{P(X_1=x_1,\\dotsc,X_n=x_n,T=t;\\theta)}{P(T=t;\\theta)}\\\\\n&=\\frac{P(X_1=x_1,\\dotsc,X_n=x_n;\\theta)}{P(T=t;\\theta)}\\\\\n&=\\frac{g(t,\\theta)h(x_1,\\dotsc,x_n)}{g(t,\\theta)\\sum_{\\{(y_1,\\dotsc,y_n):\nT(y_1,\\dotsc,y_n)=t\\}}h(y_1,\\dotsc,y_n)}\\\\\n&=\\frac{h(x_1,\\dotsc,x_n)}{\\sum_{\\{(y_1,\\dotsc,y_n):T(y_1,\\dotsc,y_n)=t\\}}h(y_1,\\dotsc,y_n)},\n\\end{align*}\n该分布与$\\theta$无关,这证明了充分性.\n\\end{proof}\n\\begin{example}\\label{exam:5.5.4}\n设$x_1,\\dotsc,x_n$是取自总体$U(0,\\theta)$的样本,即总体的密度函数为\n\\[p(x;\\theta)=\\begin{cases}\n1/\\theta,*0<x<\\theta\\\\\n0,&\\text{其他.}\n\\end{cases}\\]\n于是样本的联合密度函数为\n\\[p(x_1;\\theta)\\dotsm p(x_n;\\theta)=\\begin{cases}\n(1/\\theta)^n,&0<\\min\\{x_i\\}\\leq\\max\\{x_i\\}<\\theta,\\\\\n0,&\\text{其他}.\n\\end{cases}\\]\n由于诸$x_i>0$,所以我们将上式改写为\n\\[p(x_1;\\theta)\\dotsm p(x_n;\\theta)=(1/\\theta)^nI_{\\{x_{(n)}<\\theta\\}},\\]\n取$T=x_{(n)}$,并令$g(t,\\theta)=(1/\\theta)^nI_{t<\\theta},h(\\bm X)=1$,由因子分解定理知$T=x_{(n)}$是$\\theta$的充分统计量.\n\\end{example}\n\\begin{example}\n设$x_1,\\dotsc,x_n$是取自总体$N(\\mu,\\sigma^2)$的样本, $\\theta=(\\mu,\\sigma^2)$是未知的,则联合密度函数为\n\\begin{align*}\nP(x_1,\\dotsc,x_n;\\theta)&=(2\\pi\\sigma^2)^{-n/2}\\exp\\left\\{-\\frac1{2\\sigma^2}\\sum_{i=1}^n\n(x_i-\\mu)^2\\right\\}\\\\\n&=(2\\pi\\sigma^2)^{_n/2}\\exp\\left\\{-\\frac{n\\mu^2}{2\\sigma^2}\\right\\}\n\\exp\\left\\{-\\frac1{2\\sigma^2}\\left(\\sum_{i=1}^nx_i^2-2\\mu\\sim_{i=1}^n x_i\\right)\\right\\},\n\\end{align*}\n取$t_1=\\sum_{i=1}^nx_i,t_2=\\sum_{i=1}^nx_i^2$,并令\n\\[g(t_1,t_2,\\theta)=(2\\pi\\sigma^2)^{-n/2}\\exp\\left\\{-\\frac{n\\mu^2}{2\\sigma^2}\\right\\}\n\\exp\\left\\{-\\frac1{2\\sigma^2}(t_2-2\\mu t_1)\\right\\},h(\\bm X)=1,\\]\n则由因子分解定理, $T=(t_1,t_2)=\\left(\\sum_{i=1}^nx_i,\\sum_{i=1}^n x_i^2\\right)$是充分统计量.进一步,我们指出这个统计量与$(\\bar x,s^2)$是一一对应的,这说明在正态总体场合常用的$(\\bar x,s^2)$是充分统计量.\n\\end{example}"
+    },
+    {
+        "id": "chatcmpl-93zsEY2b0UAMCt00MKX9Yil82smIO",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"什么是充分统计量的充分必要条件？\",\n    \"回答1\": \"充分统计量的充分必要条件是存在两个函数 $g(t,\\theta)$ 和 $h(x_1,\\text{...},x_n)$，使得对任意的 $\\theta$ 和任一组观测值 $x_1,\\text{...},x_n$，有 $f(x_1,\\text{...},x_n;\\theta)=g\\big(T(x_1,\\text{...},x_n)\\big)h(x_1,\\text{...},x_n)$，其中 $T=T(X_1,\\text{...},X_n)$ 是充分统计量。\",\n    \"问题2\": \"因子分解定理是用来判断什么的？\",\n    \"回答2\": \"因子分解定理是用来判断一个统计量是否为充分统计量的。它提供了一种简单的方法来判断一个统计量是否充分，通过寻找满足特定条件的函数 $g(t,\\theta)$ 和 $h(x_1,\\text{...},x_n)$，从而判断统计量的充分性。\",\n    \"问题3\": \"在因子分解定理中，$g(t,\\theta)$ 和 $h(x_1,\\text{...},x_n)$ 的作用分别是什么？\",\n    \"回答3\": \"$g(t,\\theta)$ 是通过统计量 $T$ 的取值而依赖于样本的函数，而 $h(x_1,\\text{...},x_n)$ 则与参数 $\\theta$ 无关，它表示在给定统计量 $T$ 的取值下，样本的条件概率分布。\",\n    \"问题4\": \"离散型随机变量下的因子分解定理的证明思路是什么？\",\n    \"回答4\": \"在离散型随机变量下的因子分解定理证明中，首先证明了充分性，即在充分统计量 $T=t$ 下，样本的联合概率分布与参数 $\\theta$ 无关；然后证明了必要性，即通过对总体概率函数进行因子分解，得到了满足充分必要条件的函数形式。\",\n    \"问题5\": \"在例题 5.5.4 中，为什么 $T=x_{(n)}$ 被认为是 $\\theta$ 的充分统计量？\",\n    \"回答5\": \"$T=x_{(n)}$ 被认为是 $\\theta$ 的充分统计量是因为通过因子分解定理可以找到满足条件的函数 $g(t,\\theta)$ 和 $h(\\bm X)$。进一步地，在例题中给出了对于总体为 $U(0,\\theta)$ 的样本情况下，$T=x_{(n)}$ 是 $\\theta$ 的充分统计量的具体证明。\",\n    \"问题6\": \"在例题中提到的 $(\\bar x,s^2)$ 是什么？\",\n    \"回答6\": \"$(\\\\bar x,s^2)$ 分别表示样本均值和样本方差，它们是对正态总体场合常用的充分统计量。在例题中指出了 $(\\bar x,s^2)$ 与 $(\\text{...})$ 是一一对应的关系，从而说明了它们也是充分统计量。\",\n    \"问题7\": \"为什么直接由定义验证一个统计量是否充分是困难的？\",\n    \"回答7\": \"直接由定义验证一个统计量是否充分是困难的，因为条件分布的计算通常不那么容易。这涉及到对样本空间中各种可能情况下的联合概率密度函数或概率质量函数进行复杂的计算和推导，因此直接验证充分性会面临较大困难。\",\n    \"问题8\": \"为什么引入概率函数？\",\n    \"回答8\": \"引入概率函数是为了在连续型和离散型场合下都能够通用地描述随机变量的概率密度函数或概率质量函数。这样可以更加简洁地表达总体概率函数，并且方便进行统计推断和推导。\",\n    \"问题9\": \"谁给出了因子分解定理？\",\n    \"回答9\": \"因子分解定理由统计学家奈曼(Neyman)给出。这个定理提供了一种简单的方法来判断一个统计量是否为充分统计量，并且在实际应用中具有重要意义。\",\n    \"问题10\": \"在统计学中，什么是充分性原则？\",\n    \"回答10\": \"在统计学中，充分性原则指出在充分统计量存在场合，任何统计推断都可以基于充分统计量进行。这一原则可以简化统计推断的程序，并且在实际应用中具有重要意义。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710739854,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1333,
+            "prompt_tokens": 4550,
+            "total_tokens": 5883
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

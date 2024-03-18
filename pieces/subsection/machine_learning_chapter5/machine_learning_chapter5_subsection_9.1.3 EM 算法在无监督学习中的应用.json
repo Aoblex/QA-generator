@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "machine_learning_chapter5",
+        "title": "9.1.3 EM 算法在无监督学习中的应用",
+        "content_length": 3846,
+        "content": "Title: 9.1.3 EM 算法在无监督学习中的应用\nContent:\n监督学习是指由训练数据 $\\left\\{\\left(x_{1}, y_{1}\\right),\\left(x_{2}, y_{2}\\right), \\cdots,\\left(x_{N}, y_{N}\\right)\\right\\}$ 学习条件概率分布 $P(Y \\mid X)$或决策函数 $Y=f(X)$ 作为模型, 用于分类、回归、标注等任务。这时训练数据中的每个样本点由输入和输出对组成。\n\n有时训练数据只有输入没有对应的输出 $\\left\\{\\left(x_{1}, \\cdot\\right),\\left(x_{2}, \\cdot\\right), \\cdots,\\left(x_{N}, \\cdot\\right)\\right\\}$, 从这样的数据学习模型称为无监督学习问题。EM 算法可以用于生成模型的无监督学习。生成模型由联合概率分布 $P(X, Y)$ 表示, 可以认为无监督学习训练数据是联合概率分布产生的数据。 $X$ 为观测数据, $Y$ 为末观测数据。\n\n\\section*{$9.2 \\mathrm{EM}$ 算法的收敛性}\nEM 算法提供一种近似计算含有隐变量概率模型的极大似然估计的方法。EM 算法的最大优点是简单性和普适性。我们很自然地要问: EM 算法得到的估计序列是否收玫? 如果收敛，是否收玫到全局最大值或局部极大值? 下面给出关于 EM 算法收玫性的两个定理。\n\n定理 9.1 设 $P(Y \\mid \\theta)$ 为观测数据的似然函数, $\\theta^{(i)}(i=1,2, \\cdots)$ 为 $\\mathrm{EM}$ 算法得到的参数估计序列, $P\\left(Y \\mid \\theta^{(i)}\\right)(i=1,2, \\cdots)$ 为对应的似然函数序列, 则 $P\\left(Y \\mid \\theta^{(i)}\\right)$ 是单调递增的, 即\n\n\n\\begin{equation*}\nP\\left(Y \\mid \\theta^{(i+1)}\\right) \\geqslant P\\left(Y \\mid \\theta^{(i)}\\right) \\tag{9.18}\n\\end{equation*}\n\n\n证明 由于\n\n$$\nP(Y \\mid \\theta)=\\frac{P(Y, Z \\mid \\theta)}{P(Z \\mid Y, \\theta)}\n$$\n\n取对数有\n\n$$\n\\log P(Y \\mid \\theta)=\\log P(Y, Z \\mid \\theta)-\\log P(Z \\mid Y, \\theta)\n$$\n\n由式 (9.11) 得:\n\n$$\nQ\\left(\\theta, \\theta^{(i)}\\right)=\\sum_{Z} \\log P(Y, Z \\mid \\theta) P\\left(Z \\mid Y, \\theta^{(i)}\\right)\n$$\n\n令\n\n\n\\begin{equation*}\nH\\left(\\theta, \\theta^{(i)}\\right)=\\sum_{Z} \\log P(Z \\mid Y, \\theta) P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\tag{9.19}\n\\end{equation*}\n\n\n于是对数似然函数可以写成\n\n\n\\begin{equation*}\n\\log P(Y \\mid \\theta)=Q\\left(\\theta, \\theta^{(i)}\\right)-H\\left(\\theta, \\theta^{(i)}\\right) \\tag{9.20}\n\\end{equation*}\n\n\n在式 (9.20) 中分别取 $\\theta$ 为 $\\theta^{(i)}$ 和 $\\theta^{(i+1)}$ 并相减, 有\n\n\n\\begin{align*}\n& \\log P\\left(Y \\mid \\theta^{(i+1)}\\right)-\\log P\\left(Y \\mid \\theta^{(i)}\\right) \\\\\n& \\quad=\\left[Q\\left(\\theta^{(i+1)}, \\theta^{(i)}\\right)-Q\\left(\\theta^{(i)}, \\theta^{(i)}\\right)\\right]-\\left[H\\left(\\theta^{(i+1)}, \\theta^{(i)}\\right)-H\\left(\\theta^{(i)}, \\theta^{(i)}\\right)\\right] \\tag{9.21}\n\\end{align*}\n\n\n为证明式 (9.18), 只需证明式 (9.21) 右端是非负的。对于式 (9.21) 右端的第 1 项, 由于 $\\theta^{(i+1)}$ 使 $Q\\left(\\theta, \\theta^{(i)}\\right)$ 达到极大, 所以有\n\n\n\\begin{equation*}\nQ\\left(\\theta^{(i+1)}, \\theta^{(i)}\\right)-Q\\left(\\theta^{(i)}, \\theta^{(i)}\\right) \\geqslant 0 \\tag{9.22}\n\\end{equation*}\n\n\n对于第 2 项，由式 (9.19) 可得:\n\n\n\\begin{align*}\nH\\left(\\theta^{(i+1)}, \\theta^{(i)}\\right)-H\\left(\\theta^{(i)}, \\theta^{(i)}\\right) & =\\sum_{Z}\\left(\\log \\frac{P\\left(Z \\mid Y, \\theta^{(i+1)}\\right)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right)}\\right) P\\left(Z \\mid Y, \\theta^{(i)}\\right) \\\\\n& \\leqslant \\log \\left(\\sum_{Z} \\frac{P\\left(Z \\mid Y, \\theta^{(i+1)}\\right)}{P\\left(Z \\mid Y, \\theta^{(i)}\\right)} P\\left(Z \\mid Y, \\theta^{(i)}\\right)\\right) \\\\\n& =\\log \\left(\\sum_{Z} P\\left(Z \\mid Y, \\theta^{(i+1)}\\right)\\right)=0 \\tag{9.23}\n\\end{align*}\n\n\n这里的不等号由 Jensen 不等式得到。\n\n由式 (9.22) 和式 (9.23) 即知式 (9.21) 右端是非负的。\n\n定理 9.2 设 $L(\\theta)=\\log P(Y \\mid \\theta)$ 为观测数据的对数似然函数, $\\theta^{(i)}(i=1,2, \\cdots)$ 为 $\\mathrm{EM}$ 算法得到的参数估计序列, $L\\left(\\theta^{(i)}\\right)(i=1,2, \\cdots)$ 为对应的对数似然函数序列。\n\n(1) 如果 $P(Y \\mid \\theta)$ 有上界, 则 $L\\left(\\theta^{(i)}\\right)=\\log P\\left(Y \\mid \\theta^{(i)}\\right)$ 收敛到某一值 $L^{*}$;\n\n(2) 在函数 $Q\\left(\\theta, \\theta^{\\prime}\\right)$ 与 $L(\\theta)$ 满足一定条件的情况下, 由 $\\mathrm{EM}$ 算法得到的参数估计序列 $\\theta^{(i)}$ 的收敛值 $\\theta^{*}$ 是 $L(\\theta)$ 的稳定点。\n\n证明 (1) 由 $L(\\theta)=\\log P\\left(Y \\mid \\theta^{(i)}\\right)$ 的单调性及 $P(Y \\mid \\theta)$ 的有界性得到。\n\n(2) 证明从略, 参阅文献 [5]。\n\n定理 9.2 关于函数 $Q\\left(\\theta, \\theta^{\\prime}\\right)$ 与 $L(\\theta)$ 的条件在大多数情况下都是满足的。 $\\mathrm{EM}$ 算法的收玫性包含关于对数似然函数序列 $L\\left(\\theta^{(i)}\\right)$ 的收玫性和关于参数估计序列 $\\theta^{(i)}$ 的收玫性两层意思,前者并不蕴含后者。此外, 定理只能保证参数估计序列收玫到对数似然函数序列的稳定点,不能保证收玫到极大值点。所以在应用中, 初值的选择变得非常重要, 常用的方法是选取几个不同的初值进行迭代, 然后对得到的各个估计值加以比较, 从中选择最好的。\n\n\\section*{$9.3 \\mathrm{EM}$ 算法在高斯混合模型学习中的应用}\nEM 算法的一个重要应用是高斯混合模型的参数估计。高斯混合模型应用广泛, 在许多情况下, EM 算法是学习高斯混合模型 (Gaussian mixture model) 的有效方法。"
+    },
+    {
+        "id": "chatcmpl-948TflO1zkxqd3zTHB4EP2Qzwtz6E",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"监督学习和无监督学习有何区别？\",\n    \"回答1\": \"监督学习是指由训练数据 $\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big\\big(x_{1}, y_{1}\\right), \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}, \\text{...}\\right)$ 学习条件概率分布 $P(Y \\backslash X)$或决策函数 $Y=f(X)$ 作为模型，用于分类、回归、标注等任务。而无监督学习则是指训练数据只有输入没有对应的输出 $\\big(x_{1}, \\bullet), (x_{2}, \\bullet), \\text{...}, (x_{N}, \\bullet)\\big)$，从这样的数据学习模型称为无监督学习问题。\",\n    \"问题2\": \"EM 算法在无监督学习中的应用是指什么？\",\n    \"回答2\": \"EM 算法可以用于生成模型的无监督学习。生成模型由联合概率分布 $P(X, Y)$ 表示，可以认为无监督学习训练数据是联合概率分布产生的数据。这里 $X$ 为观测数据，$Y$ 为未观测数据。\",\n    \"问题3\": \"EM 算法的收敛性有哪些特点？\",\n    \"回答3\": \"EM 算法提供一种近似计算含有隐变量概率模型的极大似然估计的方法。它具有简单性和普适性。关于收敛性，EM 算法得到的估计序列是单调递增的，并且在一定条件下可以收敛到某一值或稳定点。\",\n    \"问题4\": \"EM 算法的参数估计序列是否收敛到全局最大值或局部极大值？\",\n    \"回答4\": \"EM 算法的参数估计序列可以收敛到对数似然函数序列的稳定点，但不能保证收敛到极大值点。因此，在应用中，初值的选择变得非常重要，常用的方法是选取几个不同的初值进行迭代，然后对得到的各个估计值加以比较，从中选择最好的。\",\n    \"问题5\": \"EM 算法在高斯混合模型学习中有何重要应用？\",\n    \"回答5\": \"EM 算法在高斯混合模型的参数估计中具有重要应用。高斯混合模型是一种广泛应用的模型，在许多情况下，EM 算法是学习高斯混合模型的有效方法。\",\n    \"问题6\": \"什么是观测数据和未观测数据？\",\n    \"回答6\": \"在 EM 算法中，观测数据指已知的数据 $X$，而未观测数据指未知的数据 $Y$。EM 算法通过对观测数据进行推断和参数估计来间接地推断未观测数据。\",\n    \"问题7\": \"EM 算法如何保证参数估计序列的收敛性？\",\n    \"回答7\": \"EM 算法通过单调递增性和对数似然函数的有界性来保证参数估计序列的收敛性。此外，在函数 $Q(\\theta, \\theta^{\\backprime})$ 与 $L(\\theta)$ 满足一定条件的情况下，由 EM 算法得到的参数估计序列 $\\theta^{(i)}$ 的收敛值 $\\theta^{*}$ 是 $L(\\theta)$ 的稳定点。\",\n    \"问题8\": \"为什么在应用 EM 算法时初值的选择变得非常重要？\",\n    \"回答8\": \"在应用中，初值的选择变得非常重要，因为 EM 算法不能保证参数估计序列收敛到极大值点。因此，常用的方法是选取几个不同的初值进行迭代，然后对得到的各个估计值加以比较，从中选择最好的。\",\n    \"问题9\": \"EM 算法如何处理含有隐变量概率模型的极大似然估计？\",\n    \"回答9\": \"EM 算法提供一种近似计算含有隐变量概率模型的极大似然估计的方法。它通过迭代求解期望步骤（E 步）和最大化步骤（M 步），逐步优化参数以达到极大似然估计。\",\n    \"问题10\": \"EM 算法如何应用于生成模型无监督学习？\",\n    \"回答10\": \"EM 算法可以用于生成模型无监督学习，其中生成模型由联合概率分布 $P(X, Y)$ 表示。它通过迭代求解 E 步和 M 步来间接地推断未观测数据，并优化参数以拟合联合概率分布产生的数据。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710772927,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1559,
+            "prompt_tokens": 4849,
+            "total_tokens": 6408
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

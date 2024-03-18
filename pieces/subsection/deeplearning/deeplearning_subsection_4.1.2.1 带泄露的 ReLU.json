@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "4.1.2.1 带泄露的 ReLU",
+        "content_length": 637,
+        "content": "Title: 4.1.2.1 带泄露的 ReLU\nContent:\n带泄露的 ReLU ( Leaky ReLU ) 在输入 $x<0$ 时, 保持一个很小的梯度 $\\gamma$. 这样当神经元非激活时也能有一个非零的梯度可以更新参数, 避免永远不能被激活 [Maas et al., 2013]. 带泄露的 ReLU 的定义如下:\n\n\n\\begin{align*}\n\\operatorname{LeakyReLU}(x) & = \\begin{cases}x & \\text { if } x>0 \\\\\n\\gamma x & \\text { if } x \\leq 0\\end{cases}  \\tag{4.18}\\\\\n& =\\max (0, x)+\\gamma \\min (0, x) \\tag{4.19}\n\\end{align*}\n\n\n参见第4.6.2节.\n\n$\\operatorname{ReLU}$ 神经元指采用 ReLU 作为激活函数的神经元.\n\n参见公式(4.66).\n\n参见习题4-3.\\\\\n其中 $\\gamma$ 是一个很小的常数, 比如 0.01 . 当 $\\gamma<1$ 时, 带泄露的 ReLU 也可以写为\n\n\n\\begin{equation*}\n\\operatorname{LeakyReLU}(x)=\\max (x, \\gamma x) \\tag{4.20}\n\\end{equation*}\n\n\n相当于是一个比较简单的 maxout 单元."
+    },
+    {
+        "id": "chatcmpl-941JMmDb32UZYsKMCJ1hd4X4WYUTp",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"带泄露的 ReLU 与普通 ReLU 激活函数有何区别？\",\n    \"回答1\": \"带泄露的 ReLU 在输入 $x<0$ 时保持一个很小的梯度 $\\text{γ}$，而普通 ReLU 在 $x<0$ 时梯度为零。这使得带泄露的 ReLU 在神经元非激活时也能有一个非零的梯度可以更新参数，避免永远不能被激活。\",\n    \"问题2\": \"带泄露的 ReLU 的定义是什么？\",\n    \"回答2\": \"带泄露的 ReLU 的定义为 $\\text{LeakyReLU}(x) = \\begin{cases}x & \\text { if } x>0 \\\\ \\text{γ}x & \\text { if } x \\text{ 为 } \\text{小于等于} 0\\big\\rbrace$ 或者等价地表示为 $\\text{LeakyReLU}(x)=\\text{max}(0, x)+\\text{γ}\\text{min}(0, x)$。\",\n    \"问题3\": \"带泄露的 ReLU 中的参数 $\\text{γ}$ 有何作用？\",\n    \"回答3\": \"参数 $\\text{γ}$ 在带泄露的 ReLU 中用于控制 $x<0$ 时的梯度大小。当 $\\text{γ}<1$ 时，带泄露的 ReLU 可以简化为 $\\text{LeakyReLU}(x)=\\text{max}(x, \\text{γ}x)$，这使得带泄露的 ReLU 在 $x<0$ 时仍然具有一个非零的梯度，从而避免神经元永远不能被激活。\",\n    \"问题4\": \"带泄露的 ReLU 如何避免神经元永远不能被激活？\",\n    \"回答4\": \"带泄露的 ReLU在输入 $x<0$ 时保持一个很小的梯度 $\\text{γ}$，这使得即使神经元非激活时也能有一个非零的梯度可以更新参数，从而避免神经元永远不能被激活。\",\n    \"问题5\": \"什么是 $\\text{ReLU}$ 神经元？\",\n    \"回答5\": \"$\\text{ReLU}$ 神经元指采用 ReLU 作为激活函数的神经元。ReLU 是一种常用的激活函数，具有简单的形式和计算高效性，在神经网络中被广泛应用。\",\n    \"问题6\": \"带泄露的 ReLU 和 maxout 单元有何联系？\",\n    \"回答6\": \"带泄露的 ReLU 在 $\\text{γ}<1$ 时可以简化为 $\\text{LeakyReLU}(x)=\\text{max}(x, \\text{γ}x)$，这与 maxout 单元具有一定相似性。因此，带泄露的 ReLU 在一定程度上可以看作是一个比较简单的 maxout 单元。\",\n    \"问题7\": \"什么是 Leaky ReLU？\",\n    \"回答7\": \"Leaky ReLU 是指在输入 $x<0$ 时保持一个很小的梯度 $\\text{γ}$ 的修正线性单元。它通过引入非零斜率来解决普通 ReLU 在 $x<0$ 时梯度为零导致无法更新参数的问题。\",\n    \"问题8\": \"Leaky ReLU 的数学表达式是什么？\",\n    \"回答8\": \"Leaky ReLU 的数学表达式为 $\\text{LeakyReLU}(x) = \\begin{cases}x & \\text { if } x>0 \\\\ \\text{γ}x & \\text { if } x \\text{ 为 } \\text{小于等于} 0\\big\\rbrace$ 或者等价地表示为 $\\text{LeakyReLU}(x)=\\text{max}(0, x)+\\text{γ}\\text{min}(0, x)$。\",\n    \"问题9\": \"Leaky ReLU 如何影响神经网络训练过程？\",\n    \"回答9\": \"Leaky ReLU 在输入 $x<0$ 时保持一个很小的梯度 $\\text{γ}$，这使得即使神经元非激活时也能有一个非零的梯度可以更新参数，从而有助于避免神经网络训练过程中出现梯度消失问题。\",\n    \"问题10\": \"带泄露的 ReLU 如何影响神经网络模型的表达能力？\",\n    \"回答10\": \"带泄露的 ReLU 在输入 $x<0$ 时保持一个很小的梯度 $\\text{γ}$，这使得即使神经元非激活时也能有一个非零的梯度可以更新参数。因此，带泄露的 ReLU 能够更灵活地适应复杂的非线性关系，从而提高神经网络模型的表达能力。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710745380,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1377,
+            "prompt_tokens": 2946,
+            "total_tokens": 4323
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]

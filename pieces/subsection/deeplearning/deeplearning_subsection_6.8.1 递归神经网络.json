@@ -1,0 +1,40 @@
+[
+    {
+        "strategy": "subsection",
+        "source": "deeplearning",
+        "title": "6.8.1 递归神经网络",
+        "content_length": 2031,
+        "content": "Title: 6.8.1 递归神经网络\nContent:\n递归神经网络 (Recursive Neural Network, RecNN) 是循环神经网络在有向无循环图上的扩展 [Pollack, 1990]. 递归神经网络的一般结构为树状的层次结构,如图6.11a所示.\n\n\n\n(a) 一般结构\n\n\n\n(b) 退化结构\n\n图 6.11 递归神经网络\n\n以图6.11a中的结构为例, 有三个隐藏层 $\\boldsymbol{h}_{1} 、 \\boldsymbol{h}_{2}$ 和 $\\boldsymbol{h}_{3}$, 其中 $\\boldsymbol{h}_{1}$ 由两个输入层 $\\boldsymbol{x}_{1}$ 和 $\\boldsymbol{x}_{2}$ 计算得到, $\\boldsymbol{h}_{2}$ 由另外两个输入层 $\\boldsymbol{x}_{3}$ 和 $\\boldsymbol{x}_{4}$ 计算得到, $\\boldsymbol{h}_{3}$ 由两个隐藏层 $\\boldsymbol{h}_{1}$和 $\\boldsymbol{h}_{2}$ 计算得到.\n\n对于一个节点 $\\boldsymbol{h}_{i}$, 它可以接受来自父节点集合 $\\pi_{i}$ 中所有节点的消息, 并更\\\\\n新自己的状态.\n\n\n\\begin{equation*}\n\\boldsymbol{h}_{i}=f\\left(\\boldsymbol{h}_{\\pi_{i}}\\right) \\tag{6.74}\n\\end{equation*}\n\n\n其中 $\\boldsymbol{h}_{\\pi_{i}}$ 表示集合 $\\pi_{i}$ 中所有节点状态的拼接, $f(\\cdot)$ 是一个和节点位置无关的非线性函数, 可以为一个单层的前馈神经网络. 比如图6.11a所示的递归神经网络具体可以写为\n\n\n\\begin{align*}\n& \\boldsymbol{h}_{1}=\\sigma\\left(\\boldsymbol{W}\\left[\\begin{array}{l}\n\\boldsymbol{x}_{1} \\\\\n\\boldsymbol{x}_{2}\n\\end{array}\\right]+\\boldsymbol{b}\\right),  \\tag{6.75}\\\\\n& \\boldsymbol{h}_{2}=\\sigma\\left(\\boldsymbol{W}\\left[\\begin{array}{l}\n\\boldsymbol{x}_{3} \\\\\n\\boldsymbol{x}_{4}\n\\end{array}\\right]+\\boldsymbol{b}\\right),  \\tag{6.76}\\\\\n& \\boldsymbol{h}_{3}=\\sigma\\left(\\boldsymbol{W}\\left[\\begin{array}{l}\n\\boldsymbol{h}_{1} \\\\\n\\boldsymbol{h}_{2}\n\\end{array}\\right]+\\boldsymbol{b}\\right), \\tag{6.77}\n\\end{align*}\n\n\n其中 $\\sigma(\\cdot)$ 表示非线性激活函数, $\\boldsymbol{W}$ 和 $\\boldsymbol{b}$ 是可学习的参数. 同样, 输出层 $y$ 可以为一个分类器, 比如\n\n\n\\begin{equation*}\ny=g\\left(\\boldsymbol{W}^{\\prime} \\boldsymbol{h}_{3}+\\boldsymbol{b}^{\\prime}\\right) \\tag{6.78}\n\\end{equation*}\n\n\n其中 $g(\\cdot)$ 为分类器, $\\boldsymbol{W}^{\\prime}$ 和 $\\boldsymbol{b}^{\\prime}$ 为分类器的参数.\n\n当递归神经网络的结构退化为线性序列结构 (见图6.11b) 时, 递归神经网络就等价于简单循环网络.\n\n参见习题6-7.\n\n递归神经网络主要用来建模自然语言句子的语义 [Socher et al., 2011, 2013].给定一个句子的语法结构 (一般为树状结构), 可以使用递归神经网络来按照句法的组合关系来合成一个句子的语义. 句子中每个短语成分又可以分成一些子成分, 即每个短语的语义都可以由它的子成分语义组合而来, 并进而合成整句的语义.\n\n同样, 我们也可以用门控机制来改进递归神经网络中的长距离依赖问题,比如树结构的长短期记忆模型 ( Tree-Structured LSTM ) [Tai et al., 2015; Zhu et al., 2015] 就是将 LSTM 模型的思想应用到树结构的网络中, 来实现更灵活的组合函数."
+    },
+    {
+        "id": "chatcmpl-942G5Py6NOKlhnmyIf6EN5TNgglzp",
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                    "content": "{\n    \"问题1\": \"递归神经网络和循环神经网络有什么区别？\",\n    \"回答1\": \"递归神经网络是循环神经网络在有向无循环图上的扩展，其一般结构为树状的层次结构。而循环神经网络则是一种特殊的递归神经网络，其结构是简单的循环序列结构。因此，递归神经网络和循环神经网络在结构上存在明显的区别。\",\n    \"问题2\": \"递归神经网络中的节点状态更新是如何进行的？\",\n    \"回答2\": \"对于一个节点 $\\boldsymbol{h}_{i}$，它可以接受来自父节点集合 $\\boldsymbol{\\text{π}}_{i}$ 中所有节点的消息，并更新自己的状态。具体地，节点状态更新公式为 $\\boldsymbol{h}_{i}=f\\big(\\boldsymbol{h}_{\\boldsymbol{\\text{π}}_{i}}\\big)$，其中 $\\boldsymbol{h}_{\\boldsymbol{\\text{π}}_{i}}$ 表示集合 $\\boldsymbol{\\text{π}}_{i}$ 中所有节点状态的拼接，$f(\\boldsymbol{\\text{·})}$ 是一个和节点位置无关的非线性函数。\",\n    \"问题3\": \"递归神经网络中的非线性函数 $f(\\boldsymbol{\\text{·})}$ 是如何定义的？\",\n    \"回答3\": \"递归神经网络中的非线性函数 $f(\\boldsymbol{\\text{·})}$ 是一个和节点位置无关的非线性函数，可以为一个单层的前馈神经网络。具体地，在递归神经网络中，非线性函数 $f(\\boldsymbol{\\text{·})}$ 可以通过具体的计算公式来定义，用于更新节点状态。\",\n    \"问题4\": \"递归神经网络中的输出层是如何定义的？\",\n    \"回答4\": \"在递归神经网络中，输出层 $y$ 可以为一个分类器，通常表示为 $y=g\\big(\\boldsymbol{W}^{\\boldsymbol{\\text{'}}} \\boldsymbol{h}_{3}+\\boldsymbol{b}^{\\boldsymbol{\\text{'}}}\\big)$，其中 $g(\\boldsymbol{\\text{·})}$ 为分类器函数，$\\boldsymbol{W}^{\\boldsymbol{\\text{'}}}$ 和 $\\boldsymbol{b}^{\\boldsymbol{\\text{'}}}$ 为分类器的参数。\",\n    \"问题5\": \"递归神经网络如何应用于建模自然语言句子的语义？\",\n    \"回答5\": \"递归神经网络主要用来建模自然语言句子的语义。给定一个句子的语法结构（一般为树状结构），可以使用递归神经网络来按照句法的组合关系来合成一个句子的语义。通过递归地组合每个短语成分的语义，并进而合成整句的语义，从而实现对句子语义的建模。\",\n    \"问题6\": \"递归神经网络中如何改进长距离依赖问题？\",\n    \"回答6\": \"可以用门控机制来改进递归神经网络中的长距离依赖问题。例如，可以应用树结构的长短期记忆模型（Tree-Structured LSTM），将 LSTM 模型的思想应用到树结构的网络中，以实现更灵活的组合函数。这样可以有效地改善递归神经网络在处理长距离依赖问题时遇到的挑战。\",\n    \"问题7\": \"递归神经网络退化为线性序列结构时等价于哪种类型的神经网络？\",\n    \"回答7\": \"当递归神经网络的结构退化为线性序列结构时，它等价于简单循环网络。这意味着在特定情况下，递归神经网络可以退化为简单循环网络，从而具有类似于简单循环网络的特性和行为。\",\n    \"问题8\": \"递归神经网络和深度学习中其他模型相比有哪些优势？\",\n    \"回答8\": \"递归神经网络在处理树状结构数据和自然语言句子等领域具有独特优势。它能够有效地捕捉复杂的语法结构和语义信息，并且能够通过门控机制改进长距离依赖问题。相比其他深度学习模型，在处理自然语言等领域时具有更好的表达能力和建模能力。\",\n    \"问题9\": \"递归神经网络如何应用于自然语言句子语义建模？\",\n    \"回答9\": \"递归神经网络主要用来建模自然语言句子的语义。通过按照句法的组合关系来合成一个句子的语义，实现对句子语义的建模。它能够有效地捕捉复杂的语法结构和语义信息，并且能够通过门控机制改进长距离依赖问题。\",\n    \"问题10\": \"递归神经网络如何应用于树结构数据建模？\",\n    \"回答10\": \"递归神经网络可以应用于树结构数据建模，例如树状结构数据或树形关系数据。它能够通过节点状态更新和非线性函数来有效地捕捉树状结构中节点之间复杂的关系，并实现对树结构数据的建模和学习。\"\n}",
+                    "role": "assistant",
+                    "function_call": null,
+                    "tool_calls": null
+                }
+            }
+        ],
+        "created": 1710749021,
+        "model": "gpt-3.5-turbo-1106",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4aaaf0dc94",
+        "usage": {
+            "completion_tokens": 1578,
+            "prompt_tokens": 3735,
+            "total_tokens": 5313
+        },
+        "parameters": {
+            "model": "gpt-3.5-turbo-1106",
+            "temperature": 0.2,
+            "frequency_penalty": 0.15,
+            "presence_penalty": 0.15
+        }
+    }
+]
