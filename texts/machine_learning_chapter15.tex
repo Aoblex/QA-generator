@@ -1,0 +1,1384 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\begin{document}
+指数分布族具有性质: 对数规范化因子 $A(\eta)$ 对自然参数 $\eta$ 的导数等于充分统计量 $T(x)$的数学期望。事实上,
+
+
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d} \eta} A(\eta) & =\frac{\mathrm{d}}{\mathrm{d} \eta} \log \int h(x) \exp \left(\eta^{\mathrm{T}} T(x)\right) \mathrm{d} x \\
+& =\frac{\int T(x) \exp \left(\eta^{\mathrm{T}} T(x)\right) h(x) \mathrm{d} x}{\int h(x) \exp \left(\eta^{\mathrm{T}} T(x)\right) \mathrm{d} x} \\
+& =\int T(x) \exp \left(\eta^{\mathrm{T}} T(x)-A(\eta)\right) h(x) \mathrm{d} x \\
+& =\int T(x) p(x \mid \eta) \mathrm{d} x \\
+& =E[T(X)] \tag{E.5}
+\end{align*}
+
+
+狄利克雷分布属于指数分布族, 因为其密度函数可以写成指数分布族的密度函数形式:
+
+
+\begin{align*}
+p(\theta \mid \alpha) & =\frac{\Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)}{\prod_{k=1}^{K} \Gamma\left(\alpha_{k}\right)} \prod_{k=1}^{K} \theta_{k}^{\alpha_{k}-1} \\
+& =\exp \left[\left(\sum_{k=1}^{K}\left(\alpha_{k}-1\right) \log \theta_{k}\right)+\log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)-\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right)\right] \tag{E.6}
+\end{align*}
+
+
+自然参数是 $\eta_{k}=\alpha_{k}-1$, 充分统计量是 $T\left(\theta_{k}\right)=\log \theta_{k}$, 对数规范化因子是 $A(\alpha)=$ $\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right)-\log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)$.
+
+利用性质 (E.5), 对数规范化因子对自然参数的导数等于充分统计量的数学期望, 得到狄利克雷分布的数学期望 $E_{p(\theta \mid \alpha)}[\log \theta]$ 的计算式:
+
+
+\begin{align*}
+E_{p(\theta \mid \alpha)}\left[\log \theta_{k}\right] & =\frac{\mathrm{d}}{\mathrm{d} \alpha_{k}} A(\alpha)=\frac{\mathrm{d}}{\mathrm{d} \alpha_{k}}\left[\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right)-\log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)\right] \\
+& =\Psi\left(\alpha_{k}\right)-\Psi\left(\sum_{l=1}^{K} \alpha_{l}\right), \quad k=1,2, \cdots, K \tag{E.7}
+\end{align*}
+
+
+其中, $\Psi$ 是 digamma 函数, 即对数伽马函数的一阶导数。
+
+\section*{附录 $\mathrm{F}$ 软最大化函数的偏导数和交叉熵损失函数的偏导数}
+\section*{1. 软最大化函数的偏导数}
+软最大化函数的定义是
+
+
+\begin{equation*}
+p_{k}=\frac{\mathrm{e}^{z_{k}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}}} \quad k=1,2, \cdots, l \tag{F.1}
+\end{equation*}
+
+
+其中, $z_{k} \in(-\infty,+\infty), p_{k} \in(0,1)$, 满足 $\sum_{k=1}^{l} p_{k}=1$ 。
+
+求其偏导数
+
+$$
+\frac{\partial p_{k}}{\partial z_{j}}=\frac{\partial}{\partial z_{j}}\left(\frac{\mathrm{e}^{z_{k}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}}}\right), \quad k, j=1,2, \cdots, l
+$$
+
+当 $j=k$ 时,
+
+$$
+\begin{aligned}
+\frac{\partial p_{k}}{\partial z_{j}} & =\frac{\partial}{\partial z_{j}}\left(\frac{\mathrm{e}^{z_{j}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}}}\right)=\frac{\mathrm{e}^{z_{j}}\left(\sum_{i=1}^{l} \mathrm{e}^{z_{i}}\right)-\mathrm{e}^{z_{j}} \mathrm{e}^{z_{j}}}{\left(\sum_{i=1}^{l} \mathrm{e}^{z_{i}}\right)^{2}} \\
+& =\frac{\mathrm{e}^{z_{j}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}}}\left(1-\frac{\mathrm{e}^{z_{j}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}}}\right)=p_{j}\left(1-p_{j}\right)
+\end{aligned}
+$$
+
+当 $j \neq k$ 时,
+
+$$
+\frac{\partial p_{k}}{\partial z_{j}}=\frac{\partial}{\partial z_{j}}\left(\frac{\mathrm{e}^{z_{k}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}}}\right)=\frac{0-\mathrm{e}^{z_{j}} \mathrm{e}^{z_{k}}}{\left(\sum_{i=1}^{l} \mathrm{e}^{z_{i}}\right)^{2}}
+$$
+
+$$
+=-\frac{\mathrm{e}^{z_{j}}}{\sum_{i=1}^{l} \mathrm{e}^{z_{i}} \sum_{i=1}^{l} \mathrm{e}^{z_{i}}}=-p_{j} p_{k}
+$$
+
+可统一表示为
+
+\[
+\frac{\partial p_{k}}{\partial z_{j}}=\left\{\begin{array}{ll}
+p_{j}\left(1-p_{j}\right), & j=k,  \tag{F.2}\\
+-p_{j} p_{k}, & j \neq k,
+\end{array} \quad j, k=1,2, \cdots, l\right.
+\]
+
+\section*{2. 交叉嫡损失函数的偏导数}
+交叉嫡损失函数的定义是
+
+
+\begin{equation*}
+L=-\sum_{k=1}^{l} y_{k} \log p_{k} \tag{F.3}
+\end{equation*}
+
+
+其中, $y_{k} \in\{0,1\}, k=1,2, \cdots, l$, 满足 $\sum_{k=1}^{l} y_{k}=1 ; p_{k} \in(0,1), k=1,2, \cdots, l$, 满足 $\sum_{k=1}^{l} p_{k}=1$ 。这里 $y_{k}$ 是常量, $p_{k}$ 是变量, 由式 (F.1) 定义。
+
+求其对变量 $z_{j}$ 的偏导数:
+
+$$
+\begin{aligned}
+\frac{\partial L}{\partial z_{j}} & =-\sum_{k=1}^{l} y_{k} \frac{\partial \log p_{k}}{\partial z_{j}} \\
+& =-\sum_{k=1}^{l} \frac{y_{k}}{p_{k}} \frac{\partial p_{k}}{\partial z_{j}}, \quad j=1,2, \cdots, l
+\end{aligned}
+$$
+
+代入式 (F.2), 得到:
+
+
+\begin{align*}
+\frac{\partial L}{\partial z_{j}} & =-y_{j}\left(1-p_{j}\right)+\sum_{k=1, k \neq j}^{l} y_{k} p_{j} \\
+& =p_{j} \sum_{k=1}^{l} y_{k}-y_{j} \\
+& =p_{j}-y_{j}, \quad j=1,2, \cdots, l \tag{F.4}
+\end{align*}
+
+
+\section*{索引}
+\section*{数字和字母}
+0-1 损失函数 (0-1 loss function), 14
+
+AdaBoost 算法 (AdaBoost algorithm), 131
+
+Adam (adaptive moment estimation algorithm) , 521
+
+Bagging (Bagging) , 131
+
+Baum-Welch 算法 (Baum-Welch algorithm), 175
+
+BERT (bidirectional encoder representations from Transformers ) , 488, 495
+
+BFGS (Broyden-Fletcher-Goldfarb-
+
+Shanno）算法 (BFGS algorithm), 529
+
+Broyden 类算法 (Broyden's algorithm), 530
+
+DFP (Davidon-Fletcher-Powell) 算法
+
+(DFP algorithm), 528
+
+GPT (generative pre-training) , 488, 490
+
+Gram 矩阵 (Gram matrix), 38
+
+Jensen 不等式 (Jensen inequality), 151
+
+$k$ 近邻法 ( $k$-nearest neighbor, $k$-NN), 41
+
+$k$ 均值聚类 ( $k$-means clustering), 216
+
+$k d$ 树 ( $k d$ tree) , 44
+
+KKT 条件 (Karush-Kuhn-Tucker conditions), 121
+
+KL 散度 (KL divergence, Kullback-Leibler divergence ) , 537
+
+$L_{p}$ 距离 ( $L_{p}$ distance), 42
+
+Mercer 核 (Mercer kernel), 118
+
+Minkowski 距离 (Minkowski distance), 42
+
+$n$ 元语言模型 ( $n$-gram model), 463
+
+$Q$ 函数 ( $Q$ function), 150
+
+RMSProp (root mean square propagation algorithm ), 521
+
+$S$ 折交叉验证 ( $S$-fold cross validation ), 21
+
+$\mathrm{S}$ 形曲线 (sigmoid curve), 77
+
+$\mathrm{S}$ 型函数 (sigmoid function), 377\\
+Transformer (Transformer) , 469, 475
+
+\section*{A}
+奥卡姆剃刀 (Occam's razor)，20
+
+B
+
+板块表示 (plate notation), 331
+
+半监督学习 (semi-supervised learning), 9
+
+饱和函数 (saturating function), 379
+
+贝塔分布 (beta distribution), 325
+
+贝叶斯推理 (Bayesian inference), 12
+
+贝叶斯学习 (Bayesian learning), 12
+
+边 (edge), 181
+
+边缘化 (marginalization), 311
+
+变分 EM 算法 (variational EM algorithm), 324
+
+变分分布（variational distribution）, 338
+
+变分推理 (variational inference), 333,338
+
+变分自动编码器 (variational autoencoder), 517
+
+标注 (tagging), 26
+
+表示学习 (representation learning), 517
+
+病态问题 (ill-formed problem), 15
+
+伯努利分布（Bernoulli distribution）, 327
+
+不可约的 (irreducible), 306
+
+不完全数据 (incomplete-data), 150
+
+步幅 (stride), 419
+
+\section*{C}
+参数服务器（parameter server）, 393
+
+参数化模型 (parametric model), 11
+
+参数空间 (parameter space), 14
+
+残差单元 (residual unit), 438
+
+残差连接（residual connection）, 438
+
+残差网络 (residual network, ResNet), 437
+
+测试集（test set）, 21
+
+测试数据（test data）, 6\\
+测试误差 (test error), 17
+
+策略（strategy）, 9
+
+层次聚类 (hierarchical clustering), 216
+
+层归一化 (layer normalization), 405
+
+查询 (query), 474
+
+长短期记忆 (long short term memory, LSTM ), 447, 455
+
+成对马尔可夫性 (pairwise Markov property), 181
+
+重置门 (reset gate), 457
+
+词嵌入 (word embedding), 460
+
+词嵌入或单词嵌入 (word embedding), 460
+
+词向量或单词向量 (word vector), 460
+
+次最优 (sub-optimal), 59
+
+簇（cluster）, 219
+
+\section*{D}
+代价函数 (cost function), 14, 67
+
+代理损失函数 (surrogate loss function), 112, 202
+
+带符号的距离 (signed distance), 97
+
+单纯形 (simplex), 81,289
+
+单词-话题矩阵 (word-topic matrix), 274
+
+单词-文本矩阵（word-document matrix）, 272
+
+单词频率-逆文本频率 (term frequencyinverse document frequency, TFIDF ) , 272
+
+单词向量空间模型 (word vector space model ), 271
+
+单 分 量 Metropolis-Hastings (singlecomponent Metropolis-Hastings), 315
+
+单连接 (single linkage), 220
+
+单向语言模型 (unidirectional language model ), 489
+
+单元 (cell) $, 42,58$
+
+单元 (unit), 455
+
+狄利克雷分布（Dirichlet distribution）, 325
+
+动量算法 (momentum algorithm), 520
+
+动态贝叶斯网络 (dynamic Bayesian network), 179
+
+动态规划 (dynamic programming), 176
+
+动态系统 (dynamical system), 449
+
+动作 (action), 8
+
+动作价值函数 (action value function), 9
+
+独热向量 (one-hot vector), 380端到端（end-to-end）, 517
+
+对偶算法 (dual algorithm), 101
+
+对偶问题 (dual problem), 101
+
+对数几率 ( $\log$ odds), 78
+
+对数几率 (logit), 33
+
+对数似然损失函数 ( log-likelihood loss function), 15
+
+对数损失函数（logarithmic loss function）, 15
+
+对数线性模型（logarithmic linear model）, 87
+
+多标签分类（multi-label classification）, 380
+
+多层感知机 (multilayer perceptron, MLP), 371
+
+多词一义性 (synonymy)，273
+
+多类分类（multi-class classification）, 380
+
+多数表决规则 (majority voting rule), 44
+
+多头注意力 (multi-head attention), 469
+
+多头自注意力（multi-head self-attention）, 469
+
+多项分布（multinomial distribution）, 324
+
+多项逻辑斯谛回归模型 (multi-nominal logistic regression model), 79
+
+多项式核函数 (polynomial kernel function), 118
+
+\section*{E}
+二项分布 (binomial distribution), 324
+
+二项逻辑斯谛回归模型 (binomial logistic regression model) , 78
+
+\section*{$\mathrm{F}$}
+罚项 (penalty term), 16, 20
+
+反卷积 (deconvolution), 509
+
+反向传播 (backward propagation), 394
+
+反向传播算法 (back propagation through time, BPTT ), 452
+
+泛化能力 (generalization ability), 17, 21
+
+泛化误差 (generalization error), 21
+
+泛化误差上界 (generalization error bound), 22
+
+非参数化模型（non-parametric model）, 11
+
+非负矩阵分解 (non-negative matrix factorization, NMF) , 271
+
+非概率模型 (non-probabilistic model), 10
+
+非线性模型（non-linear model）, 11\\
+非线性支持向量机 (non-linear support vector machine) , 94
+
+非周期的 (aperiodic), 307
+
+非周期性图 (aperiodic graph)，350
+
+非自回归过程 (non-autoregressive process), 495
+
+分布式表示（distributed representation）, 460
+
+分类 (classification), 25
+
+分类器 (classifier), 25
+
+分类与回归树 (classification and regression tree, CART) , 68
+
+分离超平面 (separating hyperplane), 31
+
+分裂 (divisive)，220
+
+风险函数 (risk function), 15
+
+弗罗贝尼斯范数 (Frobenius norm), 241
+
+\section*{G}
+改进的迭代尺度法 (improved iterative scaling, IIS) , 87
+
+概率近似正确 (probably approximately correct, PAC) , 131
+
+概率模型 (probabilistic model), 10
+
+概率模型估计 (probability model estimation), 209
+
+概率潜在语义分析 (probabilistic latent semantic analysis, PLSA), 286
+
+概率潜在语义索引 (probabilistic latent semantic indexing, PLSI), 286
+
+概率上下文无关文法 (probabilistic contextfree grammar) , 179
+
+概率图模型 (probabilistic graphical model), $10,181,331$
+
+概率无向图模型 (probabilistic undirected graphical model ) , 181, 182
+
+感受野 (receptive field), 416
+
+感知机 (perceptron), 30
+
+高斯核函数 (Gaussian kernel function), 119
+
+高斯混合模型（Gaussian mixture model）, 154
+
+根结点 (root node), 65
+
+更新门 (update gate) , 457
+
+工作服务器 (worker), 393
+
+共轭分布 (conjugate distributions), 327
+
+共轭先验 (conjugate prior), 327
+
+估计误差 (estimation error), 44观测变量 (observable variable), 148
+
+观测序列 (observation sequence), 163
+
+广义拉格朗日函数 (generalized Lagrange function) , 531
+
+广义期望极大 (generalized expectation maximization, GEM ), 158
+
+归范化 (normalization), 311
+
+规范化因子 (normalization factor), 183
+
+过度参数化 (over-parameterized), 406
+
+过拟合 (over-fitting) , 16, 18, 329
+
+\section*{$\mathrm{H}$}
+函数间隔（functional margin）, 96
+
+汉明距离 (Hamming distance), 461
+
+合页损失函数 (hinge loss function), 111
+
+核方法 (kernel method), 13, 94
+
+核函数 (kernel function), 94
+
+核技巧（kernel trick）, 112
+
+黑塞矩阵 (Hessian matrix), 526
+
+后向（backward）, 166
+
+互相关 (cross correlation), 416
+
+互信息 (mutual information), 63, 462
+
+划分 (partition), 45,58
+
+话题 (topic), 273
+
+话题-文本矩阵（topic-document matrix）, 275
+
+话题分析 (topic modeling), 271
+
+话题向量空间 (topic vector space), 274
+
+话题向量空间模型 (topic vector space model) , 274
+
+回归 (regression), 27
+
+汇聚 (pooling), 415
+
+汇聚层 (pooling layer), 512
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-06}
+\end{center}
+
+机器学习 (machine learning), 3
+
+迹 (trace), 256
+
+基尼指数（Gini index）, 69
+
+基于上下文的表示 (contextualized representation) , 482
+
+激活函数 (activation function), 372
+
+吉布斯抽样 (Gibbs sampling), 296, 316, 321, 324,333
+
+极大 (maximization), 148
+
+极大-极大算法 (maximization-maximization algorithm ) , 158\\
+极大似然估计 (maximum likelihood estimation) , 16
+
+几何间隔 (geometric margin), 96
+
+几率 (odds), 78
+
+挤压函数 (squashing function), 387
+
+计算图 (computation graph), 397
+
+记忆元 (memory cell) 455
+
+加法模型 (additive model), 137
+
+价值函数 (value function), 9
+
+假设空间 (hypothesis space), $4,6,13$
+
+间隔 (margin), 100
+
+监督学习 (supervised learning), 4,5
+
+剪枝 (pruning), 67
+
+简单循环神经网络 (simple recurrent neural network, S-RNN), 448
+
+建议分布 (proposal distribution), 297, 312
+
+键-值数据库 (key-value store), 472
+
+奖励（reward）, 8
+
+奖励函数（reward function）, 9
+
+降维 (dimensionality reduction), 209
+
+交叉熵（cross entropy）, 390
+
+交叉验证（cross validation）, 20
+
+接受-拒绝抽样法 (accept-reject sampling method), 297
+
+接受分布 (acceptance distribution), 312
+
+结点 (node) , 57, 181
+
+结构风险最小化 (structural risk minimization, SRM), 16
+
+截断奇异值分解 (truncated singular value decomposition), 234
+
+解码 (decoding), 166
+
+紧奇异值分解 (compact singular value decomposition) , 234
+
+近似误差 (approximation error), 43
+
+经验风险 (empirical risk), 15
+
+经验风险最小化 (empirical risk minimization, ERM ), 15
+
+经验熵 (empirical entropy), 62
+
+经验损失 (empirical loss), 15
+
+经验条件熵 (empirical conditional entropy), 62
+
+精确率 (precision), 25
+
+净输入 (net input), 372
+
+径向基函数 (radial basis function), 119
+
+局部马尔可夫性（local Markov property）,\\
+181
+
+局部式表示 (local representation), 460
+
+矩形对角矩阵 (rectangular diagonal matrix) , 229
+
+距离 (distance), 217
+
+聚合 (agglomerative), 220
+
+聚类 (clustering), 208
+
+卷积 (convolution), 509
+
+卷积神经网络 (convolutional neural network, CNN ), 516
+
+决策函数 (decision function), 6
+
+决策树 (decision tree), 57
+
+决策树桩 (decision stump), 140
+
+绝对损失函数 (absolute loss function), 15
+
+\section*{K}
+可交换的 (exchangeable), 332
+
+可逆马尔可夫链 (reversible Markov chain), 309
+
+可约的 (reducible), 306
+
+困惑度 (perplexity), 463
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-07}
+\end{center}
+
+拉格朗日乘子 (Lagrange multiplier), 101
+
+拉格朗日对偶性 (Lagrange duality), 531
+
+拉格朗日函数 (Lagrange function), 101
+
+拉普拉斯平滑 (Laplace smoothing), 54
+
+类标记 (class label) , 42, 50
+
+类别 (class), 25
+
+类别分布 (categorical distribution), 325, 391
+
+连接 (linkage), 220
+
+链接分析 (link analysis) , 213, 349
+
+零空间 (null space) , 535
+
+零填充 (zero padding) , 419
+
+流形 (manifold) , 209
+
+留一交叉验证 (leave-one-out cross validation) , 21
+
+滤波器 (filter), 417
+
+路径（path）, 350
+
+逻辑斯谛分布 (logistic distribution), 77
+
+逻辑斯谛函数 (logistic function), 377
+
+逻辑斯谛回归 (logistic regression), 77
+
+\section*{M}
+马尔可夫过程 (Markov process), 300
+
+马尔可夫决策过程 (Markov decision process ), 8\\
+马尔可夫链 (Markov chain), 296
+
+马尔可夫链蒙特卡罗法 (Markov Chain
+
+Monte Carlo, MCMC) , 296
+
+马尔可夫随机场 (Markov random field), 181, 182
+
+马哈拉诺比斯距离 (Mahalanobis distance), 217
+
+满条件分布（full conditional distribution）, 314
+
+曼哈顿距离 (Manhattan distance) , 43, 217
+
+门控 (gated control), 455
+
+门控循环单元 (gated recurrent unit, GRU), 447
+
+门控循环神经网络 (gate controlled RNN), 455
+
+蒙特卡罗法 (Monte Carlo method), 296
+
+蒙特卡罗积分（Monte Carlo integration）, 298
+
+幂法 (power method) , 349, 357
+
+闵可夫斯基距离（Minkowski distance）, 217
+
+模型 (model) , 4
+
+模型选择 (model selection), 18
+
+$\mathrm{N}$
+
+内部结点 (internal node), 57
+
+内部协变量偏移（internal covariate shift）, 402
+
+纳什均衡 (Nash equilibrium), 504
+
+拟牛顿法 (quasi-Newton method), 526
+
+逆暂退法 (inverted dropout), 409
+
+牛顿法 (Newton method), 526
+
+\section*{$\mathrm{O}$}
+欧氏距离 (Euclidean distance), 43, 217
+
+欧氏距离平方 (squared Euclidean distance), 223
+
+\section*{P}
+判别方法 (discriminative approach), 24
+
+判别模型 (discriminative model), 24
+
+判别网络 (discriminator), 504
+
+批量归一化 (batch normalization), 402
+
+批量学习 (batch learning), 11
+
+偏置（bias）, 30, 372
+
+平方损失 (square loss), 390
+
+平方损失函数 (quadratic loss function), 14
+
+平均场 (mean filed), 339平均汇聚 (mean pooling), 424
+
+评价准则 (evaluation criterion), 4
+
+朴素贝叶斯 (naïve Bayes), 50
+
+朴素贝叶斯算法 (naïve Bayes algorithm), 53
+
+期望 (expectation), 148
+
+期望极大算法 (expectation maximization algorithm) , 148
+
+期望损失（expected loss）, 15
+
+奇异值（singular value）, 230
+
+奇异值分解 (singular value decomposition, SVD ), 229, 230, 271
+
+恰当性 (adequacy), 522
+
+前馈神经网络 (feedforward neural network), 371
+
+前向 (forward), 166
+
+前向-后向算法 (forward-backward algorithm), 167
+
+前向分步算法 (forward stagewise algorithm) , 137
+
+潜在变量 (latent variable), 148
+
+潜在狄利克雷分配 (latent Dirichlet allocation, LDA), 324
+
+潜在语义分析 (latent semantic analysis, LSA), 271
+
+潜在语义索引 (latent semantic indexing, LSI) , 271
+
+强化学习 (reinforcement learning), 4,8
+
+强可学习 (strongly learnable), 131
+
+强连通图 (strongly connected graph), 350
+
+强制教学 (teacher forcing), 465, 471
+
+切比雪夫距离 (Chebyshev distance), 217
+
+切分变量 (splitting variable), 69
+
+切分点 (splitting point), 69
+
+区域（region）, 58
+
+去噪自动编码器 (denoising autoencoder), 494
+
+全局马尔可夫性（global Markov property), 181
+
+全填充 (full padding), 420
+
+权值（weight）, 30
+
+权值向量（weight vector）, 30
+
+权重（weight）, 372
+
+权重衰减 (weight decay), 406\\
+确定性模型（deterministic model）, 10
+
+\section*{$\mathrm{R}$}
+人工神经网络 (artificial neural network), 371
+
+人工神经元 (artificial neuron), 372
+
+软间隔最大化（soft margin maximization）, 94
+
+软聚类 (soft clustering), 208, 219
+
+软最大化函数（softmax function）, 381
+
+弱可学习 (weakly learnable), 131
+
+\section*{$\mathrm{S}$}
+散布矩阵 (scatter matrix), 220
+
+散度 (divergence) , 280
+
+熵 (entropy), 61
+
+上采样 (upsampling), 425
+
+上下文向量 (context vector), 474
+
+深度卷积生成对抗网络 (deep convolutional generative adversarial networks, DCGAN ), 511
+
+深度神经网络 (deep neural network, DNN), 371
+
+深度学习 (deep learning), 11
+
+神经网络 (neural network), 371
+
+神经元 (neuron), 372
+
+渗漏整流线性函数（leaky ReLu function）, 512
+
+生成对抗网络 (generative adversarial networks, GAN) , 519
+
+生成方法 (generative approach), 24
+
+生成模型 (generative model), 24
+
+生成式预训练 (generative pre-training, GPT) , 490
+
+生成网络 (generator), 504
+
+时间齐次的马尔可夫链 (time homogenous Markov chain) , 300
+
+实例 (instance), 5
+
+势函数 (potential function), 183
+
+试错（trial and error), 9
+
+收缩的吉布斯抽样 (collapsed Gibbs sampling) , 334
+
+输出空间 (output space), 5
+
+输出门 (output gate), 455
+
+输入空间 (input space), 5
+
+输入门 (input gate) , 455
+
+束搜索（beam search）, 464,471数据 (data), 3
+
+数学期望 (expectation), 311
+
+数学期望估计 (estimation of mathematical expectation), 297
+
+衰减系数 (discount factor), 9
+
+双曲正切函数 (hyperbolic tangent function), 378
+
+双向 Transformer 编码器表示 (bidirectional encoder representations from Transforers, BERT ) , 495
+
+双向语言模型 (bidirectional language model) , 489
+
+算法 (algorithm), 4
+
+随机抽样 (random sampling), 296
+
+随机过程 (stochastic process), 300
+
+随机矩阵 (stochastic matrix), 301, 351
+
+随机梯度下降法 (stochastic gradient descent), 33,392
+
+随机游走 (random walk), 351
+
+随时间的反向传播算法 (back propagation through time, BPTT) , 452
+
+损失函数 (loss function), 14,67
+
+\section*{T}
+贪心搜索 (greedy search), 464
+
+特异点 (outlier), 106
+
+特征尺度变换（feature scaling transform）, 402
+
+特征函数 (feature function), 82
+
+特征空间 (feature space), 6
+
+特征图 (feature map), 421
+
+特征向量 (feature vector), 5
+
+梯度爆炸（exploding gradient）, 401
+
+梯度提升 (gradient boosting), 144
+
+梯度下降法 (gradient descent), 524
+
+梯度下降法 (gradient descent), 392, 524
+
+梯度消失 (vanishing gradient), 401
+
+提升 (boost) , 131
+
+提升树 (boosting tree), 131, 140
+
+填充 (padding), 419
+
+条件熵 (conditional entropy), 62
+
+条件随机场 (conditional random field, CRF ) , 181, 184
+
+条件语言模型 (conditional language model), 470
+
+跳元模型（skip-gram model）, 461\\
+跳元模型加负采样 (skip-gram model with negative sampling) , 461
+
+通用近似定理 (universal approximation theorem) , 386
+
+统计机器学习 (statistical machine learning), 3
+
+统计模拟方法 (statistical simulation method) , 296
+
+凸二次规划 (convex quadratic programming ) , 94, 98, 106
+
+图 (graph), 181, 349
+
+图分析 (graph analytics), 213
+
+图卷积神经网络 (graph convolutional neural network), 516
+
+图神经网络 (graph neural network), 516
+
+团 (clique), 183
+
+\section*{W}
+完全连接 (complete linkage), 220
+
+完全奇异值分解 (full singular value decomposition) , 233
+
+完全数据 (complete-data), 150
+
+微步卷积 (fractionally strided convolution), 509
+
+微调 (fine tuning), 489
+
+维特比算法 (Viterbi algorithm), 175
+
+伪计数 (prior pseudo-counts), 328
+
+位置嵌入 (position embedding), 476
+
+稳健性 (robustness), 461, 522
+
+无监督学习 (unsupervised learning), 4, 7
+
+无限可交换（infinitely exchangeable）, 332
+
+误差反向传播算法 (error backpropagation algorithm) , 393
+
+误差率 (error rate), 17
+
+\section*{$\mathrm{X}$}
+希尔伯特空间 (Hilbert space), 115
+
+细致平衡方程 (detailed balance equation), 309
+
+下采样 (down sampling), 424
+
+下句预测 (next sentence prediction), 497
+
+下游任务 (downstream task), 489
+
+线性分类模型 (linear classification model), 30
+
+线性分类器 (linear classifier), 30
+
+线性可分数据集 (linearly separable data set ), 31线性可分支持向量机 (linear support vector machine in linearly separable case), 94
+
+线性链 (linear chain), 181
+
+线性链条件随机场 (linear chain conditional random field ), 184
+
+线性模型 (linear model), 11
+
+线性扫描 (linear scan), 44
+
+线性支持向量机 (linear support vector ma-
+
+chine), 94
+
+相关系数 (correlation coefficient), 218
+
+相似度 (similarity), 217
+
+向量空间模型 (vector space model, VSM), 271
+
+协方差矩阵 (covariance matrix), 220
+
+信息增益（information gain）, 60, 62
+
+信息增益比（information gain ratio）, 64
+
+序列到序列学习 (sequence to sequence learn-
+
+ing, Seq2Seq) , 469
+
+序列最小最优化 (sequential minimal optimization, SMO), 121
+
+学习率 (learning rate), 33
+
+循环神经网络 (recurrent neural network,
+
+RNN), 469, 516
+
+训练集（training set）, 21
+
+训练数据 (training data), 6
+
+训练误差 (training error), 17
+
+\section*{Y}
+掩码 (masking), 477
+
+掩码语言模型化 (mask language modeling), 490, 497
+
+验证集（validation set）, 21
+
+样本 (sample), 6
+
+样本复杂度 (sample complexity), 389
+
+叶结点 (leaf node), 57
+
+一般化 Bregman 散度 (generalized Bregman divergence) , 367
+
+一词多义性 (polysemy), 273
+
+遗忘门 (forget gate) , 455
+
+因子分解 (factorization), 183
+
+因子负荷量 (factor loading), 256
+
+隐变量 (hidden variable), 148
+
+隐马尔可夫模型 (hidden Markov model, HMM ), 163
+
+硬间隔最大化 (hard margin maximization), 94\\
+硬聚类 (hard clustering) , 208, 219
+
+有向边 (directed edge), 57
+
+有向图 (directed graph), 288, 350
+
+右饱和函数 (right saturating function), 379
+
+右奇异向量 (right singular vector), 230
+
+余弦 (cosine), 218
+
+余弦相似度 (cosine similarity), 120
+
+语言模型 (language model) , 302, 463
+
+语言模型化 (language modeling) , 489
+
+预训练 (pre-training) , 488
+
+预训练语言模型 (pretrained language model) , 488
+
+原始问题（primal problem）, 101
+
+\section*{Z}
+再生核希尔伯特空间 (reproducing kernel Hilbert space, RKHS), 117
+
+在线学习 (online learning), 11
+
+暂退法 (dropout), 371, 406, 408
+
+早停法 (early stopping) , 202, 406
+
+早停止 (early stopping), 202
+
+张成 (span), 534
+
+张量 (tensor) , 248, 422
+
+召回率 (recall), 25
+
+整流线性函数 (rectified linear unit, ReLU), 379
+
+正常返的 (positive recurrent), 307
+
+正定核函数 (positive definite kernel function) , 115
+
+正交矩阵 (orthogonal matrix), 229
+
+正向传播 (forward propagation), 393
+
+正则化 (regularization) , 16, 20, 406
+
+正则化项 (regularizer), 16, 20
+
+证据 (evidence), 339
+
+证据下界（evidence lower bound, ELBO）, 339
+
+支持向量 (support vector), 100
+
+支持向量机 (support vector machines, SVM), 94
+
+直径 (diameter), 219
+
+指示函数 (indicator function), 17
+
+指数加权移动平均 (exponentially weighted moving average), 520
+
+指数损失函数 (exponential loss function), 138
+
+指针网络 (pointer network), 518
+
+中位数 (median), 45
+
+周期的 (periodic) , 307
+
+逐元素积, 阿达玛积 (element-wiseproduct), 396
+
+主动学习 (active learning), 10
+
+主特征向量 (dominant eigenvector), 358
+
+主特征值 (dominant eigenvalue), 357
+
+注意力 (attention), 472
+
+转换器 (transformer), 469,476
+
+转移概率 (transition probability), 9
+
+转移核 (transition kernel), 305
+
+转置卷积 (transposed convolution), 509
+
+状态 (state), 8
+
+状态价值函数 (state value function), 9
+
+状态序列 (state sequence), 163
+
+准确率 (accuracy), 17
+
+字符串核函数（string kernel function）, 119
+
+自动编码器 (auto encoder), 493
+
+自回归过程 (autoregressive process), 495
+
+自回归模型 (autoregressive model), 449
+
+自上而下（top-down）, 220
+
+自下而上 (bottom-up), 220
+
+自注意力 (self-attention), 479
+
+阻尼因子 (damping factor), 354
+
+组合性 (compositionality), 479
+
+最大后验概率估计 (maximum posterior probability estimation, MAP) , 16
+
+最大汇聚 (max pooling), 424
+
+最大间隔法 (maximum margin method), 98
+
+最大熵模型 (maximum entropy model), 77 , 80
+
+最大团 (maximal clique), 183
+
+最速下降法（steepest descent）, 524
+
+最小二乘法 (least squares), 28
+
+最小二乘回归树 (least squares regression tree), 69
+
+左饱和函数 (left saturating function), 379
+
+左奇异向量 (left singular vector), 230
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-12}
+\end{center}
+
+彩图 15.1 奇异值分解的几何解释
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ & doc 1 & $\operatorname{doc} 2$ & $\operatorname{doc} 3$ & $\operatorname{doc} 4$ \\
+\hline
+word 1 & 2 & 2 & 4 & 3 \\
+\hline
+word 2 & 2 & 1 & 5 & 3 \\
+\hline
+word 3 & 1 & 1 & 2 & 0 \\
+\hline
+word 4 & 0 & 1 & 2 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+彩图 18.1 概率潜在语义分析的直观解释
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-12(1)}
+\end{center}
+
+彩图 19.1 接受-拒绝抽样法
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-13}
+\end{center}
+
+彩图 20.1 狄利克雷分布例
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-13(1)}
+\end{center}
+
+彩图 20.3 LDA 的文本生成过程\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-14(1)}
+
+彩图 23.3 神经元的三维图形\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-14}
+
+彩图 23.9 神经元的三维图形
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-14(2)}
+\end{center}
+
+彩图 23.10 前馈神经网络例的三维图形
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-15(1)}
+\end{center}
+
+彩图 23.12 XOR 神经网络例的三维图形
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-15}
+\end{center}
+
+彩图 23.18 非凸优化问题\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-15(2)}
+
+深度
+
+彩图 24.6 用张量表示的三通道数据和特征图\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-16}
+
+彩图 24.15 用卷积层代替全连接层
+
+图中显示的是一维卷积
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-16(1)}
+\end{center}
+
+输入层
+
+彩图 24.17 卷积神经网络中的感受野\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-16(2)}
+
+彩图 24.21 ResNet-18 的架构
+
+每一模块表示一层, 有色模块是残差网络的连接层, 每一种颜色成一组, 每一组有两个残差单元。数字是核的大小和步幅
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-17(2)}
+\end{center}
+
+彩图 25.4 简单循环神经网络上的反向传播
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-17(5)}
+\end{center}
+
+彩图 25.14 束搜索
+
+Head 8-10
+
+\begin{itemize}
+  \item Direct objects attend to their verbs
+  \item $86.8 \%$ accuracy at the dobj relation
+\end{itemize}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-17}
+\end{center}
+
+\section*{Head 8-11}
+\begin{itemize}
+  \item Noun modifiers (e.g., determiners) attend to their noun
+  \item $94.3 \%$ accuracy at the det relation
+\end{itemize}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-17(4)}
+\end{center}
+
+\section*{Head 9-6}
+\begin{itemize}
+  \item Prepositions attend to their objects
+  \item $76.3 \%$ accuracy at the pobj relation\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-17(3)}
+\end{itemize}
+
+\section*{Head 5-4}
+\begin{itemize}
+  \item Coreferent mentions attend to their antecedents - $65.1 \%$ accuracy at linking the head of a coreferent mention to the head of an antecedent
+\end{itemize}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-17(1)}
+\end{center}
+
+彩图 27.8 BERT 模型中的注意力权重分布的例子
+
+可以表示词汇、语法、语义关系
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-18(1)}
+\end{center}
+
+(a)
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-18(2)}
+\end{center}
+
+(b)
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-18(3)}
+\end{center}
+
+(c)
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-18}
+\end{center}
+
+(d)
+
+彩图 28.2 GAN 的学习过程\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-18(4)}
+
+彩图 28.3 卷积例\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-18(6)}
+
+彩图 28.4 转置卷积例\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_4dc28dfd971a29643fd3g-18(5)}
+
+彩图 28.5 转置卷积例
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_4dc28dfd971a29643fd3g-19}
+\end{center}
+
+\section*{李 航}
+字节跳动公司人工智能实验室总监。ACL会士, IEEE 会士, ACM 杰出科学家。京都大学毕业, 东京大学博士。主要研究方向为自然语言处理、信息检索、机器学习、数据挖掘。
+
+
+\end{document}

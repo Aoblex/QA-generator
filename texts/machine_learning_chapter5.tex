@@ -1,0 +1,2163 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\title{算法 8.2 (前向分步算法) }
+
+\author{}
+\date{}
+
+
+\begin{document}
+\maketitle
+给定训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}, x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=$ $\{-1,+1\}$, 损失函数 $L(y, f(x))$ 和基函数的集合 $\{b(x ; \gamma)\}$, 学习加法模型 $f(x)$ 的前向分步算法如下。
+
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 损失函数 $L(y, f(x))$, 基函数集 $\{b(x ; \gamma)\}$ 。
+
+输出: 加法模型 $f(x)$ 。
+
+(1) 初始化 $f_{0}(x)=0$;
+
+(2) 对 $m=1,2, \cdots, M$,
+
+(a) 极小化损失函数:
+
+
+\begin{equation*}
+\left(\beta_{m}, \gamma_{m}\right)=\arg \min _{\beta, \gamma} \sum_{i=1}^{N} L\left(y_{i}, f_{m-1}\left(x_{i}\right)+\beta b\left(x_{i} ; \gamma\right)\right) \tag{8.16}
+\end{equation*}
+
+
+得到参数 $\beta_{m}, \gamma_{m}$ 。
+
+(b) 更新:
+
+
+\begin{equation*}
+f_{m}(x)=f_{m-1}(x)+\beta_{m} b\left(x ; \gamma_{m}\right) \tag{8.17}
+\end{equation*}
+
+
+(3) 得到加法模型:
+
+
+\begin{equation*}
+f(x)=f_{M}(x)=\sum_{m=1}^{M} \beta_{m} b\left(x ; \gamma_{m}\right) \tag{8.18}
+\end{equation*}
+
+
+这样, 前向分步算法将同时求解从 $m=1$ 到 $m=M$ 所有参数 $\beta_{m}, \gamma_{m}$ 的优化问题简化为逐次求解各个 $\beta_{m}, \gamma_{m}$ 的优化问题。
+
+\subsection*{8.3.2 前向分步算法与 AdaBoost}
+由前向分步算法可以推导出 AdaBoost, 用定理叙述这一关系。
+
+定理 8.3 AdaBoost 算法是前向分步加法算法的特例。这时, 模型是由基本分类器组成的加法模型, 损失函数是指数函数。
+
+证明 前向分步算法学习的是加法模型, 当基函数为基本分类器时, 该加法模型等价于 AdaBoost 的最终分类器:
+
+
+\begin{equation*}
+f(x)=\sum_{m=1}^{M} \alpha_{m} G_{m}(x) \tag{8.19}
+\end{equation*}
+
+
+由基本分类器 $G_{m}(x)$ 及其系数 $\alpha_{m}$ 组成, $m=1,2, \cdots, M$ 。前向分步算法逐一学习基函数,这一过程与 AdaBoost 算法逐一学习基本分类器的过程一致。下面证明前向分步算法的损失函数是指数损失函数 (exponential loss function)
+
+$$
+L(y, f(x))=\exp (-y f(x))
+$$
+
+时, 其学习的具体操作等价于 AdaBoost 算法学习的具体操作。\\
+假设经过 $m-1$ 轮迭代前向分步算法已经得到 $f_{m-1}(x)$ :
+
+$$
+\begin{aligned}
+f_{m-1}(x) & =f_{m-2}(x)+\alpha_{m-1} G_{m-1}(x) \\
+& =\alpha_{1} G_{1}(x)+\cdots+\alpha_{m-1} G_{m-1}(x)
+\end{aligned}
+$$
+
+在第 $m$ 轮迭代得到 $\alpha_{m}, G_{m}(x)$ 和 $f_{m}(x)$ 。
+
+$$
+f_{m}(x)=f_{m-1}(x)+\alpha_{m} G_{m}(x)
+$$
+
+目标是使前向分步算法得到的 $\alpha_{m}$ 和 $G_{m}(x)$ 使 $f_{m}(x)$ 在训练数据集 $T$ 上的指数损失最小, 即
+
+
+\begin{equation*}
+\left(\alpha_{m}, G_{m}(x)\right)=\arg \min _{\alpha, G} \sum_{i=1}^{N} \exp \left[-y_{i}\left(f_{m-1}\left(x_{i}\right)+\alpha G\left(x_{i}\right)\right)\right] \tag{8.20}
+\end{equation*}
+
+
+式 (8.20) 可以表示为
+
+
+\begin{equation*}
+\left(\alpha_{m}, G_{m}(x)\right)=\arg \min _{\alpha, G} \sum_{i=1}^{N} \bar{w}_{m i} \exp \left(-y_{i} \alpha G\left(x_{i}\right)\right) \tag{8.21}
+\end{equation*}
+
+
+其中, $\bar{w}_{m i}=\exp \left(-y_{i} f_{m-1}\left(x_{i}\right)\right)$ 。因为 $\bar{w}_{m i}$ 既不依赖 $\alpha$ 也不依赖于 $G$, 所以与最小化无关。但 $\bar{w}_{m i}$ 依赖于 $f_{m-1}(x)$, 随着每一轮迭代而发生改变。
+
+现证明使式 (8.21) 达到最小的 $\alpha_{m}^{*}$ 和 $G_{m}^{*}(x)$ 就是 AdaBoost 算法所得到的 $\alpha_{m}$ 和 $G_{m}(x)$ 。求解式 (8.21) 可分两步:
+
+首先, 求 $G_{m}^{*}(x)$ 。对任意 $\alpha>0$, 使式 (8.21) 最小的 $G(x)$ 由下式得到:
+
+$$
+G_{m}^{*}(x)=\arg \min _{G} \sum_{i=1}^{N} \bar{w}_{m i} I\left(y_{i} \neq G\left(x_{i}\right)\right)
+$$
+
+其中, $\bar{w}_{m i}=\exp \left(-y_{i} f_{m-1}\left(x_{i}\right)\right)$ 。
+
+此分类器 $G_{m}^{*}(x)$ 即为 AdaBoost 算法的基本分类器 $G_{m}(x)$, 因为它是使第 $m$ 轮加权训练数据分类误差率最小的基本分类器。
+
+然后, 求 $\alpha_{m}^{*}$ 。参照式 (8.11), 式 (8.21) 中
+
+
+\begin{align*}
+\sum_{i=1}^{N} \bar{w}_{m i} \exp \left(-y_{i} \alpha G\left(x_{i}\right)\right) & =\sum_{y_{i}=G_{m}\left(x_{i}\right)} \bar{w}_{m i} \mathrm{e}^{-\alpha}+\sum_{y_{i} \neq G_{m}\left(x_{i}\right)} \bar{w}_{m i} \mathrm{e}^{\alpha} \\
+& =\left(\mathrm{e}^{\alpha}-\mathrm{e}^{-\alpha}\right) \sum_{i=1}^{N} \bar{w}_{m i} I\left(y_{i} \neq G\left(x_{i}\right)\right)+\mathrm{e}^{-\alpha} \sum_{i=1}^{N} \bar{w}_{m i} \tag{8.22}
+\end{align*}
+
+
+将已求得的 $G_{m}^{*}(x)$ 代入式 (8.22), 对 $\alpha$ 求导并使导数为 0 , 即得到使式 (8.21)最小的 $\alpha$ :
+
+$$
+\alpha_{m}^{*}=\frac{1}{2} \log \frac{1-e_{m}}{e_{m}}
+$$
+
+其中, $e_{m}$ 是分类误差率:
+
+
+\begin{align*}
+e_{m} & =\frac{\sum_{i=1}^{N} \bar{w}_{m i} I\left(y_{i} \neq G_{m}\left(x_{i}\right)\right)}{\sum_{i=1}^{N} \bar{w}_{m i}} \\
+& =\sum_{i=1}^{N} w_{m i} I\left(y_{i} \neq G_{m}\left(x_{i}\right)\right) \tag{8.23}
+\end{align*}
+
+
+这里的 $\alpha_{m}^{*}$ 与 AdaBoost 算法第 2(c) 步的 $\alpha_{m}$ 完全一致。
+
+最后来看每一轮样本权值的更新。由
+
+$$
+f_{m}(x)=f_{m-1}(x)+\alpha_{m} G_{m}(x)
+$$
+
+以及 $\bar{w}_{m i}=\exp \left(-y_{i} f_{m-1}\left(x_{i}\right)\right)$, 可得:
+
+$$
+\bar{w}_{m+1, i}=\bar{w}_{m, i} \exp \left(-y_{i} \alpha_{m} G_{m}(x)\right)
+$$
+
+这与 AdaBoost 算法第 2(d) 步的样本权值的更新只相差规范化因子, 因而等价。
+
+\section*{8.4 提 升 树}
+提升树是以分类树或回归树为基本分类器的 Boosting。提升树被认为是机器学习中性能最好的方法之一。
+
+\subsection*{8.4.1 提升树模型}
+Boosting 实际采用加法模型（即基函数的线性组合）与前向分步算法。以决策树为基函数的 Boosting 称为提升树 (boosting tree)。对分类问题决策树是二叉分类树, 对回归问题决策树是二叉回归树。在例 8.1 中看到的基本分类器 $x<v$ 或 $x>v$ 可以看作是由一个根结点直接连接两个叶结点的简单决策树, 即所谓的决策树桩 (decision stump)。提升树模型可以表示为决策树的加法模型:
+
+
+\begin{equation*}
+f_{M}(x)=\sum_{m=1}^{M} T\left(x ; \Theta_{m}\right) \tag{8.24}
+\end{equation*}
+
+
+其中, $T\left(x ; \Theta_{m}\right)$ 表示决策树, $\Theta_{m}$ 为决策树的参数, $M$ 为树的个数。
+
+\subsection*{8.4.2 提升树算法}
+提升树算法采用前向分步算法。首先确定初始提升树 $f_{0}(x)=0$, 第 $m$ 步的模型是
+
+
+\begin{equation*}
+f_{m}(x)=f_{m-1}(x)+T\left(x ; \Theta_{m}\right) \tag{https://cdn.mathpix.com/cropped/2024_03_13_85ccebcbbc039fa5a6c0g-03.jpg?height=172&width=302&top_left_y=7814&top_left_x=5219}
+\end{equation*}
+
+
+其中, $f_{m-1}(x)$ 为当前模型。通过经验风险极小化确定下一棵决策树的参数 $\Theta_{m}$ :
+
+
+\begin{equation*}
+\hat{\Theta}_{m}=\arg \min _{\Theta_{m}} \sum_{i=1}^{N} L\left(y_{i}, f_{m-1}\left(x_{i}\right)+T\left(x_{i} ; \Theta_{m}\right)\right) \tag{8.26}
+\end{equation*}
+
+
+由于树的线性组合可以很好地拟合训练数据, 即使数据中的输入与输出之间的关系很复杂也是如此, 所以提升树是一个高功能的学习算法。
+
+下面讨论针对不同问题的提升树学习算法, 其主要区别在于使用的损失函数不同。包括用平方误差损失函数的回归问题、用指数损失函数的分类问题, 以及用一般损失函数的一般决策问题。
+
+对于二类分类问题, 提升树算法只需将 AdaBoost 算法 8.1 中的基本分类器限制为二类分类树即可, 可以说这时的提升树算法是 AdaBoost 算法的特殊情况, 这里不再细述。下面叙述回归问题的提升树。
+
+已知一个训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}, x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}, \mathcal{X}$ 为输入空间, $y_{i} \in \mathcal{Y} \subseteq \boldsymbol{R}, \mathcal{Y}$ 为输出空间。在 5.5 节中已经讨论了回归树的问题。如果将输入空间 $\mathcal{X}$划分为 $J$ 个互不相交的区域 $R_{1}, R_{2}, \cdots, R_{J}$, 并且在每个区域上确定输出的常量 $c_{j}$, 那么树可表示为
+
+
+\begin{equation*}
+T(x ; \Theta)=\sum_{j=1}^{J} c_{j} I\left(x \in R_{j}\right) \tag{8.27}
+\end{equation*}
+
+
+其中, 参数 $\Theta=\left\{\left(R_{1}, c_{1}\right),\left(R_{2}, c_{2}\right), \cdots,\left(R_{J}, c_{J}\right)\right\}$ 表示树的区域划分和各区域上的常数, $J$ 是回归树的复杂度即叶结点个数。
+
+回归问题提升树使用以下前向分步算法:
+
+$$
+\begin{aligned}
+& f_{0}(x)=0 \\
+& f_{m}(x)=f_{m-1}(x)+T\left(x ; \Theta_{m}\right), \quad m=1,2, \cdots, M \\
+& f_{M}(x)=\sum_{m=1}^{M} T\left(x ; \Theta_{m}\right)
+\end{aligned}
+$$
+
+在前向分步算法的第 $m$ 步, 给定当前模型 $f_{m-1}(x)$, 需求解
+
+$$
+\hat{\Theta}_{m}=\arg \min _{\Theta_{m}} \sum_{i=1}^{N} L\left(y_{i}, f_{m-1}\left(x_{i}\right)+T\left(x_{i} ; \Theta_{m}\right)\right)
+$$
+
+得到 $\hat{\Theta}_{m}$, 即第 $m$ 棵树的参数。
+
+当采用平方误差损失函数时,
+
+$$
+L(y, f(x))=(y-f(x))^{2}
+$$
+
+其损失变为
+
+$$
+\begin{aligned}
+L\left(y, f_{m-1}(x)+T\left(x ; \Theta_{m}\right)\right) & =\left(y-f_{m-1}(x)-T\left(x ; \Theta_{m}\right)\right)^{2} \\
+& =\left(r-T\left(x ; \Theta_{m}\right)\right)^{2}
+\end{aligned}
+$$
+
+这里,
+
+
+\begin{equation*}
+r=y-f_{m-1}(x) \tag{8.28}
+\end{equation*}
+
+
+是当前模型拟合数据的残差 (residual)。所以, 对回归问题的提升树算法来说, 只需简单地拟合当前模型的残差。这样, 算法是相当简单的。现将回归问题的提升树算法叙述如下。
+
+\section*{算法 8.3 (回归问题的提升树算法)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}, x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}, y_{i} \in \mathcal{Y} \subseteq \boldsymbol{R}$ 。
+
+输出: 提升树 $f_{M}(x)$ 。
+
+(1) 初始化 $f_{0}(x)=0$ 。
+
+(2) 对 $m=1,2, \cdots, M$,
+
+(a) 按式 (8.27) 计算残差:
+
+$$
+r_{m i}=y_{i}-f_{m-1}\left(x_{i}\right), \quad i=1,2, \cdots, N
+$$
+
+(b) 拟合残差 $r_{m i}$ 学习一个回归树, 得到 $T\left(x ; \Theta_{m}\right)$ 。
+
+(c) 更新 $f_{m}(x)=f_{m-1}(x)+T\left(x ; \Theta_{m}\right)$ 。
+
+(3) 得到回归问题提升树:
+
+$$
+f_{M}(x)=\sum_{m=1}^{M} T\left(x ; \Theta_{m}\right)
+$$
+
+例 8.2 已知如表 8.2 所示的训练数据, $x$ 的取值范围为区间 $[0.5,10.5], y$ 的取值范围为区间 $[5.0,10.0]$, 学习这个回归问题的提升树模型, 考虑只用树桩作为基函数。
+
+表 8.2 训练数据表
+
+\begin{center}
+\begin{tabular}{ccccccccccc}
+\hline
+$x_{i}$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+$y_{i}$ & 5.56 & 5.70 & 5.91 & 6.40 & 6.80 & 7.05 & 8.90 & 8.70 & 9.00 & 9.05 \\
+\hline\hline
+\end{tabular}
+\end{center}
+
+解 按照算法 8.3 , 第 1 步求 $f_{1}(x)$ 即回归树 $T_{1}(x)$ 。
+
+首先通过以下优化问题
+
+$$
+\min _{s}\left[\min _{c_{1}} \sum_{x_{i} \in R_{1}}\left(y_{i}-c_{1}\right)^{2}+\min _{c_{2}} \sum_{x_{i} \in R_{2}}\left(y_{i}-c_{2}\right)^{2}\right]
+$$
+
+求解训练数据的切分点 $s$ :
+
+$$
+R_{1}=\{x \mid x \leqslant s\}, \quad R_{2}=\{x \mid x>s\}
+$$
+
+容易求得在 $R_{1}, R_{2}$ 内部使平方损失误差达到最小值的 $c_{1}, c_{2}$ 为
+
+$$
+c_{1}=\frac{1}{N_{1}} \sum_{x_{i} \in R_{1}} y_{i}, \quad c_{2}=\frac{1}{N_{2}} \sum_{x_{i} \in R_{2}} y_{i}
+$$
+
+这里 $N_{1}, N_{2}$ 是 $R_{1}, R_{2}$ 的样本点数。
+
+求训练数据的切分点。根据所给数据, 考虑如下切分点:
+
+$$
+1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5
+$$
+
+对各切分点, 不难求出相应的 $R_{1}, R_{2}, c_{1}, c_{2}$ 及
+
+$$
+m(s)=\min _{c_{1}} \sum_{x_{i} \in R_{1}}\left(y_{i}-c_{1}\right)^{2}+\min _{c_{2}} \sum_{x_{i} \in R_{2}}\left(y_{i}-c_{2}\right)^{2}
+$$
+
+例如, 当 $s=1.5$ 时, $R_{1}=\{1\}, R_{2}=\{2,3, \cdots, 10\}, c_{1}=5.56, c_{2}=7.50$,
+
+$$
+m(s)=\min _{c_{1}} \sum_{x_{i} \in R_{1}}\left(y_{i}-c_{1}\right)^{2}+\min _{c_{2}} \sum_{x_{i} \in R_{2}}\left(y_{i}-c_{2}\right)^{2}=0+15.72=15.72
+$$
+
+现将 $s$ 及 $m(s)$ 的计算结果列于表 8.3 。
+
+表 8.3 计算数据表
+
+\begin{center}
+\begin{tabular}{cccccccccc}
+\hline
+$s$ & 1.5 & 2.5 & 3.5 & 4.5 & 5.5 & 6.5 & 7.5 & 8.5 & 9.5 \\
+\hline
+$m(s)$ & 15.72 & 12.07 & 8.36 & 5.78 & 3.91 & 1.93 & 8.01 & 11.73 & 15.74 \\
+\hline
+\end{tabular}
+\end{center}
+
+由表 8.3 可知, 当 $s=6.5$ 时 $m(s)$ 达到最小值, 此时 $R_{1}=\{1,2, \cdots, 6\}, R_{2}=$ $\{7,8,9,10\}, c_{1}=6.24, c_{2}=8.91$, 所以回归树 $T_{1}(x)$ 为
+
+$$
+\begin{aligned}
+& T_{1}(x)= \begin{cases}6.24, & x<6.5 \\
+8.91, & x \geqslant 6.5\end{cases} \\
+& f_{1}(x)=T_{1}(x)
+\end{aligned}
+$$
+
+用 $f_{1}(x)$ 拟合训练数据的残差见表 8.4 , 表中 $r_{2 i}=y_{i}-f_{1}\left(x_{i}\right), i=1,2, \cdots, 10$ 。
+
+表 8.4 残差表
+
+\begin{center}
+\begin{tabular}{ccccccccccc}
+\hline
+$x_{i}$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+$r_{2 i}$ & -0.68 & -0.54 & -0.33 & 0.16 & 0.56 & 0.81 & -0.01 & -0.21 & 0.09 & 0.14 \\
+\hline
+\end{tabular}
+\end{center}
+
+用 $f_{1}(x)$ 拟合训练数据的平方损失误差:
+
+$$
+L\left(y, f_{1}(x)\right)=\sum_{i=1}^{10}\left(y_{i}-f_{1}\left(x_{i}\right)\right)^{2}=1.93
+$$
+
+第 2 步求 $T_{2}(x)$ 。方法与求 $T_{1}(x)$ 一样, 只是拟合的数据是表 8.4 的残差, 可以得到:
+
+$$
+\begin{gathered}
+T_{2}(x)= \begin{cases}-0.52, & x<3.5 \\
+0.22, & x \geqslant 3.5\end{cases} \\
+f_{2}(x)=f_{1}(x)+T_{2}(x)= \begin{cases}5.72, & x<3.5 \\
+6.46, & 3.5 \leqslant x<6.5 \\
+9.13, & x \geqslant 6.5\end{cases}
+\end{gathered}
+$$
+
+用 $f_{2}(x)$ 拟合训练数据的平方损失误差是
+
+$$
+L\left(y, f_{2}(x)\right)=\sum_{i=1}^{10}\left(y_{i}-f_{2}\left(x_{i}\right)\right)^{2}=0.79
+$$
+
+继续求得:
+
+$$
+\begin{aligned}
+& T_{3}(x)=\left\{\begin{array}{ll}
+0.15, & x<6.5 \\
+-0.22, & x \geqslant 6.5
+\end{array} \quad, \quad L\left(y, f_{3}(x)\right)=0.47\right. \\
+& T_{4}(x)=\left\{\begin{array}{ll}
+-0.16, & x<4.5 \\
+0.11, & x \geqslant 4.5
+\end{array} \quad, \quad L\left(y, f_{4}(x)\right)=0.30\right. \\
+& T_{5}(x)=\left\{\begin{array}{ll}
+0.07, & x<6.5 \\
+-0.11, & x \geqslant 6.5
+\end{array} \quad, \quad L\left(y, f_{5}(x)\right)=0.23\right. \\
+& T_{6}(x)= \begin{cases}-0.15, & x<2.5 \\
+0.04, & x \geqslant 2.5\end{cases} \\
+& f_{6}(x)=f_{5}(x)+T_{6}(x)=T_{1}(x)+\cdots+T_{5}(x)+T_{6}(x) \\
+& = \begin{cases}5.63, & x<2.5 \\
+5.82, & 2.5 \leqslant x<3.5 \\
+6.56, & 3.5 \leqslant x<4.5 \\
+6.83, & 4.5 \leqslant x<6.5 \\
+8.95, & x \geqslant 6.5\end{cases}
+\end{aligned}
+$$
+
+用 $f_{6}(x)$ 拟合训练数据的平方损失误差是
+
+$$
+L\left(y, f_{6}(x)\right)=\sum_{i=1}^{10}\left(y_{i}-f_{6}\left(x_{i}\right)\right)^{2}=0.17
+$$
+
+假设此时已满足误差要求, 那么 $f(x)=f_{6}(x)$ 即为所求提升树。
+
+\subsection*{8.4.3 梯度提升}
+提升树利用加法模型与前向分步算法实现学习的优化过程。当损失函数是平方损失和指数损失函数时, 每一步优化是很简单的。但对一般损失函数而言, 往往每一步优化并不那么容易。针对这一问题, Freidman 提出了梯度提升 (gradient boosting) 算法。这是利用最速下降法的近似方法, 其关键是利用损失函数的负梯度在当前模型的值
+
+$$
+-\left[\frac{\partial L\left(y, f\left(x_{i}\right)\right)}{\partial f\left(x_{i}\right)}\right]_{f(x)=f_{m-1}(x)}
+$$
+
+作为回归问题提升树算法中的残差的近似值, 拟合一个回归树。
+
+\section*{算法 8.4 (梯度提升算法)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}, x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}, y_{i} \in \mathcal{Y} \subseteq \boldsymbol{R}$; 损失函数 $L(y, f(x))$ 。\\
+输出: 回归树 $\hat{f}(x)$ 。
+
+(1) 初始化:
+
+$$
+f_{0}(x)=\arg \min _{c} \sum_{i=1}^{N} L\left(y_{i}, c\right)
+$$
+
+(2) 对 $m=1,2, \cdots, M$,
+
+(a) 对 $i=1,2, \cdots, N$ ，计算
+
+$$
+r_{m i}=-\left[\frac{\partial L\left(y_{i}, f\left(x_{i}\right)\right)}{\partial f\left(x_{i}\right)}\right]_{f(x)=f_{m-1}(x)}
+$$
+
+(b) 对 $r_{m i}$ 拟合一个回归树, 得到第 $m$ 棵树的叶结点区域 $R_{m j}, j=1,2, \cdots, J$ 。
+
+(c) 对 $j=1,2, \cdots, J$, 计算
+
+$$
+c_{m j}=\arg \min _{c} \sum_{x_{i} \in R_{m j}} L\left(y_{i}, f_{m-1}\left(x_{i}\right)+c\right)
+$$
+
+(d) 更新 $f_{m}(x)=f_{m-1}(x)+\sum_{j=1}^{J} c_{m j} I\left(x \in R_{m j}\right)$
+
+(3) 得到回归树:
+
+$$
+\hat{f}(x)=f_{M}(x)=\sum_{m=1}^{M} \sum_{j=1}^{J} c_{m j} I\left(x \in R_{m j}\right)
+$$
+
+算法第 1 步初始化, 估计使损失函数极小化的常数值, 它是只有一个根结点的树。第 2(a) 步计算损失函数的负梯度在当前模型的值, 将它作为残差的估计。对于平方损失函数,它就是通常所说的残差; 对于一般损失函数, 它就是残差的近似值。第 2(b) 步估计回归树叶结点区域, 以拟合残差的近似值。第 2(c) 步利用线性搜索估计叶结点区域的值, 使损失函数极小化。第 $2(\mathrm{~d})$ 步更新回归树。第 3 步得到输出的最终模型 $\hat{f}(x)$ 。
+
+\section*{本 章概要}
+\begin{enumerate}
+  \item Boosting 是将弱学习算法提升为强学习算法的机器学习方法。在分类学习中, Boosting 通过反复修改训练数据的权值分布构建一系列基本分类器 (弱分类器), 并将这些基本分类器线性组合, 构成一个强分类器。代表性的 Boosting 是 AdaBoost 算法。
+\end{enumerate}
+
+AdaBoost 模型是弱分类器的线性组合:
+
+$$
+f(x)=\sum_{m=1}^{M} \alpha_{m} G_{m}(x)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item AdaBoost 算法的特点是通过迭代每次学习一个基本分类器。每次迭代中, 提高那些被前一轮分类器错误分类数据的权值, 而降低那些被正确分类的数据的权值。最后, AdaBoost 将基本分类器的线性组合作为强分类器, 其中给分类误差率小的基本分类器以大的权值, 给分类误差率大的基本分类器以小的权值。
+
+  \item AdaBoost 的训练误差分析表明, AdaBoost 的每次迭代可以减少它在训练数据集上的分类误差率, 这说明了它作为 Boosting 的有效性。
+
+  \item AdaBoost 算法的一个解释是该算法实际是前向分步算法的一个实现。在这个方法里,模型是加法模型, 损失函数是指数损失, 算法是前向分步算法。
+
+\end{enumerate}
+
+每一步中极小化损失函数
+
+$$
+\left(\beta_{m}, \gamma_{m}\right)=\arg \min _{\beta, \gamma} \sum_{i=1}^{N} L\left(y_{i}, f_{m-1}\left(x_{i}\right)+\beta b\left(x_{i} ; \gamma\right)\right)
+$$
+
+得到参数 $\beta_{m}, \gamma_{m}$ 。
+
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item 提升树是以分类树或回归树为基本分类器的 Boosting, 被认为是机器学习中最有效的方法之一。
+\end{enumerate}
+
+\section*{继续阅 读}
+Boosting 的介绍可参见文献 [1] 和文献 [2]。PAC 学习可参见文献 [3]。强可学习与弱可学习的关系可参见文献 [4]。关于 AdaBoost 的最初论文是文献 [5]。关于 AdaBoost 的前向分步加法模型的解释参见文献 [6], 提升树与梯度提升可参见文献 [6] 和文献 [7]。AdaBoost 只是用于二类分类, Schapire 与 Singer 将它扩展到多类分类问题 ${ }^{[8]}$ 。AdaBoost 与逻辑斯谛回归的关系也有相关研究 ${ }^{[9]}$ 。
+
+\section*{习题}
+8.1 某公司招聘职员考查身体、业务能力、发展潜力这 3 项。身体分为合格 1 、不合格 0 两级, 业务能力和发展潜力分为上 1 、中 2 、下 3 三级。分类为合格 1 、不合格 -1 两类。已知 10 个人的数据, 见表 8.5 。假设弱分类器为决策树桩, 试用 AdaBoost 算法学习一个强分类器。
+
+表 8.5 应聘人员情况数据表
+
+\begin{center}
+\begin{tabular}{crrrrrrrrrr}
+\hline\hline
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+身体 & 0 & 0 & 1 & 1 & 1 & 0 & 1 & 1 & 1 & 0 \\
+业务能力 & 1 & 3 & 2 & 1 & 2 & 1 & 1 & 1 & 3 & 2 \\
+发展潜力 & 3 & 1 & 2 & 3 & 3 & 2 & 2 & 1 & 1 & 1 \\
+分类 & -1 & -1 & -1 & -1 & -1 & -1 & 1 & 1 & -1 & -1 \\
+\hline
+\end{tabular}
+\end{center}
+
+8.2 比较支持向量机、AdaBoost、逻辑斯谛回归模型的学习策略与算法。
+
+\section*{参考文献}
+[1] FREUND Y, SCHAPIRE R E. A short introduction to boosting[J]. Journal of Japanese Society for Artificial Intelligence, 1999, 14(5): 771-780.
+
+[2] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 旨红英, 等译. Springer, 2001.
+
+[3] VALIANT L G. A theory of the learnable[J]. Communications of the ACM, 1984, 27(11): $1134-1142$.
+
+[4] SCHAPIRE R. The strength of weak learnability[J]. Machine Learning, 1990, 5(2): 197-227.
+
+[5] FREUND Y, SCHAPIRE R E. A decision-theoretic generalization of on-line learning and an application to boosting [J]. Lecture Notes in Computer Science, 1995, 904: 23-37.
+
+[6] FRIEDMAN J, HASTIE T, TIBSHIRANI R. Additive logistic regression: a statistical view of boosting (with discussions)[J]. Annals of Statistics, 2000, 28: 337-407.
+
+[7] FRIEDMAN J. Greedy function approximation: a gradient boosting machine[J]. Annals of Statistics, 2001, 29(5): 1189-1232.
+
+[8] SCHAPIRE R E, SINGER Y. Improved boosting algorithms using confidence-rated predictions [J]. Machine Learning, 1999, 37(3): 297-336.
+
+[9] COLLINS M, SCHAPIRE R E, SINGER Y. Logistic regression, AdaBoost and Bregman distances[J]. Machine Learning, 2002, 48(1-3): 253-285.
+
+\section*{第 9 章 $\mathrm{EM}$ 算法及其推广}
+EM 算法是一种迭代算法, 1977 年由 Dempster 等人总结提出, 用于含有隐变量 (hidden variable）的概率模型参数的极大似然估计或极大后验概率估计。EM 算法的每次迭代由两步组成: $\mathrm{E}$ 步, 求期望 (expectation); $\mathrm{M}$ 步, 求极大（maximization）。所以这一算法称为期望极大算法 (expectation maximization algorithm), 简称 EM 算法。本章首先叙述 EM 算法, 然后讨论 EM 算法的收玫性; 作为 EM 算法的应用, 介绍高斯混合模型的学习; 最后叙述 EM 算法的推广一GEM 算法。
+
+\section*{$9.1 \mathrm{EM}$ 算法的引入}
+概率模型有时既含有观测变量 (observable variable), 又含有隐变量或潜在变量 (latent variable）。如果概率模型的变量都是观测变量, 那么给定数据, 可以直接用极大似然估计法或贝叶斯估计法估计模型参数。但是, 当模型含有隐变量时, 就不能简单地使用这些估计方法。EM 算法就是含有隐变量的概率模型参数的极大似然估计法或极大后验概率估计法。我们仅讨论极大似然估计，极大后验概率估计与其类似。
+
+\subsection*{9.1.1 EM 算法}
+首先介绍一个使用 $\mathrm{EM}$ 算法的例子。
+
+例 9.1 (三硬币模型） 假设有 3 枚硬币, 分别记作 A, B, C。这些硬币正面出现的概率分别是 $\pi, p$ 和 $q$ 。进行如下掷硬币试验: 先郑硬币 $\mathrm{A}$, 根据其结果选出硬币 $\mathrm{B}$ 或硬币 $\mathrm{C}$, 正面选硬币 $\mathrm{B}$, 反面选硬币 $\mathrm{C}$; 然后掷选出的硬币, 根据掷硬币的结果, 出现正面记作 1 , 出现反面记作 0 ; 独立地重复 $n$ 次试验 (这里, $n=10$ ), 观测结果如下:
+
+$$
+1,1,0,1,0,0,1,0,1,1
+$$
+
+假设只能观测到掷硬币的结果, 不能观测掷硬币的过程。问如何估计三硬币正面出现的概率,即三硬币模型的参数。
+
+解 三硬币模型可以写作
+
+
+\begin{align*}
+P(y \mid \theta) & =\sum_{z} P(y, z \mid \theta)=\sum_{z} P(z \mid \theta) P(y \mid z, \theta) \\
+& =\pi p^{y}(1-p)^{1-y}+(1-\pi) q^{y}(1-q)^{1-y} \tag{9.1}
+\end{align*}
+
+
+这里, 随机变量 $y$ 是观测变量, 表示一次试验观测的结果是 1 或 0 ; 随机变量 $z$ 是隐变量, 表示未观测到的郑硬币 $\mathrm{A}$ 的结果; $\theta=(\pi, p, q)$ 是模型参数。这一模型是以上数据的生成模型。注意, 随机变量 $y$ 的数据可以观测, 随机变量 $z$ 的数据不可观测。
+
+将观测数据表示为 $Y=\left(Y_{1}, Y_{2}, \cdots, Y_{n}\right)^{\mathrm{T}}$, 未观测数据表示为 $Z=\left(Z_{1}, Z_{2}, \cdots, Z_{n}\right)^{\mathrm{T}}$, 则观测数据的似然函数为
+
+
+\begin{equation*}
+P(Y \mid \theta)=\sum_{Z} P(Z \mid \theta) P(Y \mid Z, \theta) \tag{9.2}
+\end{equation*}
+
+
+即
+
+
+\begin{equation*}
+P(Y \mid \theta)=\prod_{j=1}^{n}\left[\pi p^{y_{j}}(1-p)^{1-y_{j}}+(1-\pi) q^{y_{j}}(1-q)^{1-y_{j}}\right] \tag{9.3}
+\end{equation*}
+
+
+考虑求模型参数 $\theta=(\pi, p, q)$ 的极大似然估计, 即
+
+
+\begin{equation*}
+\hat{\theta}=\arg \max _{\theta} \log P(Y \mid \theta) \tag{9.4}
+\end{equation*}
+
+
+这个问题没有解析解, 只有通过迭代的方法求解。EM 算法就是可以用于求解这个问题的一种迭代算法。下面给出针对以上问题的 EM 算法, 其推导过程省略。
+
+EM 算法首先选取参数的初值, 记作 $\theta^{(0)}=\left(\pi^{(0)}, p^{(0)}, q^{(0)}\right)$, 然后通过下面的步骤迭代计算参数的估计值, 直至收玫为止。第 $i$ 次迭代参数的估计值为 $\theta^{(i)}=\left(\pi^{(i)}, p^{(i)}, q^{(i)}\right)$ 。 $\mathrm{EM}$ 算法的第 $i+1$ 次迭代如下。
+
+$\mathrm{E}$ 步: 计算在模型参数 $\pi^{(i)}, p^{(i)}, q^{(i)}$ 下观测数据 $y_{j}$ 来自掷硬币 $\mathrm{B}$ 的概率。
+
+
+\begin{equation*}
+\mu_{j}^{(i+1)}=\frac{\pi^{(i)}\left(p^{(i)}\right)^{y_{j}}\left(1-p^{(i)}\right)^{1-y_{j}}}{\pi^{(i)}\left(p^{(i)}\right)^{y_{j}}\left(1-p^{(i)}\right)^{1-y_{j}}+\left(1-\pi^{(i)}\right)\left(q^{(i)}\right)^{y_{j}}\left(1-q^{(i)}\right)^{1-y_{j}}} \tag{9.5}
+\end{equation*}
+
+
+$M$ 步：计算模型参数的新估计值。
+
+\[
+\begin{array}{r}
+\pi^{(i+1)}=\frac{1}{n} \sum_{j=1}^{n} \mu_{j}^{(i+1)} \\
+p^{(i+1)}=\frac{\sum_{j=1}^{n} \mu_{j}^{(i+1)} y_{j}}{\sum_{j=1}^{n} \mu_{j}^{(i+1)}} \\
+q^{(i+1)}=\frac{\sum_{j=1}^{n}\left(1-\mu_{j}^{(i+1)}\right) y_{j}}{\sum_{j=1}^{n}\left(1-\mu_{j}^{(i+1)}\right)} \tag{9.8}
+\end{array}
+\]
+
+进行数值计算。假设模型参数的初值取为
+
+$$
+\pi^{(0)}=0.5, \quad p^{(0)}=0.5, \quad q^{(0)}=0.5
+$$
+
+由式 (9.5), 对 $y_{j}=1$ 与 $y_{j}=0$ 均有 $\mu_{j}^{(1)}=0.5$ 。\\
+利用迭代公式 (9.6) 公式 (9.8) 得到:
+
+$$
+\pi^{(1)}=0.5, \quad p^{(1)}=0.6, \quad q^{(1)}=0.6
+$$
+
+由式 (9.5) 得:
+
+$$
+\mu_{j}^{(2)}=0.5, \quad j=1,2, \cdots, 10
+$$
+
+继续迭代, 得:
+
+$$
+\pi^{(2)}=0.5, \quad p^{(2)}=0.6, \quad q^{(2)}=0.6
+$$
+
+于是得到模型参数 $\theta$ 的极大似然估计:
+
+$$
+\hat{\pi}=0.5, \quad \hat{p}=0.6, \quad \hat{q}=0.6
+$$
+
+$\pi=0.5$ 表示硬币 $\mathrm{A}$ 是均匀的, 这一结果容易理解。
+
+如果取初值 $\pi^{(0)}=0.4, p^{(0)}=0.6, q^{(0)}=0.7$, 那么得到的模型参数的极大似然估计是 $\hat{\pi}=0.4064, \hat{p}=0.5368, \hat{q}=0.6432$ 。这就是说, $\mathrm{EM}$ 算法与初值的选择有关, 选择不同的初值可能得到不同的参数估计值。
+
+一般地, 用 $Y$ 表示观测随机变量的数据, $Z$ 表示隐随机变量的数据。 $Y$ 和 $Z$ 连在一起称为完全数据 (complete-data), 观测数据 $Y$ 又称为不完全数据（incomplete-data）。假设给定观测数据 $Y$, 其概率分布是 $P(Y \mid \theta)$, 其中 $\theta$ 是需要估计的模型参数, 那么不完全数据 $Y$ 的似然函数是 $P(Y \mid \theta)$, 对数似然函数 $L(\theta)=\log P(Y \mid \theta)$; 假设 $Y$ 和 $Z$ 的联合概率分布是 $P(Y, Z \mid \theta)$, 那么完全数据的对数似然函数是 $\log P(Y, Z \mid \theta)$ 。
+
+EM 算法通过迭代求 $L(\theta)=\log P(Y \mid \theta)$ 的极大似然估计。每次迭代包含两步: $\mathrm{E}$ 步, 求期望; $\mathrm{M}$ 步, 求极大化。下面来介绍 $\mathrm{EM}$ 算法。
+
+\section*{算法 9.1 (EM 算法)}
+输入: 观测变量数据 $Y$, 隐变量数据 $Z$, 联合分布 $P(Y, Z \mid \theta)$, 条件分布 $P(Z \mid Y, \theta)$ 。
+
+输出: 模型参数 $\theta$ 。
+
+(1) 选择参数的初值 $\theta^{(0)}$, 开始迭代。
+
+(2) $\mathrm{E}$ 步: 记 $\theta^{(i)}$ 为第 $i$ 次迭代参数 $\theta$ 的估计值, 在第 $i+1$ 次迭代的 $\mathrm{E}$ 步, 计算
+
+
+\begin{align*}
+Q\left(\theta, \theta^{(i)}\right) & =E_{Z}\left[\log P(Y, Z \mid \theta) \mid Y, \theta^{(i)}\right] \\
+& =\sum_{Z} \log P(Y, Z \mid \theta) P\left(Z \mid Y, \theta^{(i)}\right) \tag{9.9}
+\end{align*}
+
+
+这里, $P\left(Z \mid Y, \theta^{(i)}\right)$ 是在给定观测数据 $Y$ 和当前的参数估计 $\theta^{(i)}$ 下隐变量数据 $Z$ 的条件概率分布。
+
+(3) $\mathrm{M}$ 步: 求使 $Q\left(\theta, \theta^{(i)}\right)$ 极大化的 $\theta$, 确定第 $i+1$ 次迭代的参数的估计值 $\theta^{(i+1)}$ 。
+
+
+\begin{equation*}
+\theta^{(i+1)}=\arg \max _{\theta} Q\left(\theta, \theta^{(i)}\right) \tag{9.10}
+\end{equation*}
+
+
+(4) 重复第 2 步和第 3 步, 直到收敛。
+
+式 (9.9) 的函数 $Q\left(\theta, \theta^{(i)}\right)$ 是 $\mathrm{EM}$ 算法的核心, 称为 $Q$ 函数 ( $Q$ function）。
+
+定义 9.1 ( $\boldsymbol{Q}$ 函数) 完全数据的对数似然函数 $\log P(Y, Z \mid \theta)$ 关于在给定观测数据 $Y$ 和当前参数 $\theta^{(i)}$ 下对未观测数据 $Z$ 的条件概率分布 $P\left(Z \mid Y, \theta^{(i)}\right)$ 的期望称为 $Q$ 函数, 即
+
+
+\begin{equation*}
+Q\left(\theta, \theta^{(i)}\right)=E_{Z}\left[\log P(Y, Z \mid \theta) \mid Y, \theta^{(i)}\right] \tag{9.11}
+\end{equation*}
+
+
+下面关于 EM 算法作几点说明:
+
+(1) 步骤 (1) 中参数的初值可以任意选择, 但需注意 EM 算法对初值是敏感的。
+
+(2) 步骤 (2) 中 $\mathrm{E}$ 步求 $Q\left(\theta, \theta^{(i)}\right)$ 。 $Q$ 函数式中 $Z$ 是未观测数据, $Y$ 是观测数据。注意, $Q\left(\theta, \theta^{(i)}\right)$ 的第 1 个变元表示要极大化的参数, 第 2 个变元表示参数的当前估计值。每次迭代实际在求 $Q$ 函数及其极大。
+
+(3) 步骤 (3) 中 $\mathrm{M}$ 步求 $Q\left(\theta, \theta^{(i)}\right)$ 的极大化, 得到 $\theta^{(i+1)}$, 完成一次迭代 $\theta^{(i)} \rightarrow \theta^{(i+1)}$ 。后面将证明每次迭代使似然函数增大或达到局部极值。
+
+(4) 步骤 (4) 给出停止迭代的条件, 一般是对较小的正数 $\varepsilon_{1}, \varepsilon_{2}$, 若满足
+
+$$
+\left\|\theta^{(i+1)}-\theta^{(i)}\right\|<\varepsilon_{1} \text { 或 }\left\|Q\left(\theta^{(i+1)}, \theta^{(i)}\right)-Q\left(\theta^{(i)}, \theta^{(i)}\right)\right\|<\varepsilon_{2}
+$$
+
+则停止迭代。
+
+\subsection*{9.1.2 EM 算法的导出}
+上面叙述了 $\mathrm{EM}$ 算法。为什么 $\mathrm{EM}$ 算法能近似实现对观测数据的极大似然估计呢? 下面通过近似求解观测数据的对数似然函数的极大化问题来导出 $\mathrm{EM}$ 算法, 由此可以清楚地看出 EM 算法的作用。
+
+我们面对一个含有隐变量的概率模型, 目标是极大化观测数据（不完全数据） $Y$ 关于参数 $\theta$ 的对数似然函数, 即极大化
+
+
+\begin{align*}
+L(\theta) & =\log P(Y \mid \theta)=\log \sum_{Z} P(Y, Z \mid \theta) \\
+& =\log \left(\sum_{Z} P(Y \mid Z, \theta) P(Z \mid \theta)\right) \tag{9.12}
+\end{align*}
+
+
+注意到这一极大化的主要困难是式 (9.12) 中有未观测数据并有包含和（或积分）的对数。
+
+事实上, $\mathrm{EM}$ 算法是通过迭代逐步近似极大化 $L(\theta)$ 的。假设在第 $i$ 次迭代后 $\theta$ 的估计值是 $\theta^{(i)}$ 。我们希望新估计值 $\theta$ 能使 $L(\theta)$ 增加, 即 $L(\theta)>L\left(\theta^{(i)}\right)$, 并逐步达到极大值。为此,考虑两者的差:
+
+$$
+L(\theta)-L\left(\theta^{(i)}\right)=\log \left(\sum_{Z} P(Y \mid Z, \theta) P(Z \mid \theta)\right)-\log P\left(Y \mid \theta^{(i)}\right)
+$$
+
+利用 Jensen 不等式 (Jensen inequality) (1) 得到其下界:
+
+$$
+\begin{aligned}
+L(\theta)-L\left(\theta^{(i)}\right) & =\log \left(\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \frac{P(Y \mid Z, \theta) P(Z \mid \theta)}{P\left(Z \mid Y, \theta^{(i)}\right)}\right)-\log P\left(Y \mid \theta^{(i)}\right) \\
+& \geqslant \sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log \frac{P(Y \mid Z, \theta) P(Z \mid \theta)}{P\left(Z \mid Y, \theta^{(i)}\right)}-\log P\left(Y \mid \theta^{(i)}\right) \\
+& =\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log \frac{P(Y \mid Z, \theta) P(Z \mid \theta)}{P\left(Z \mid Y, \theta^{(i)}\right) P\left(Y \mid \theta^{(i)}\right)}
+\end{aligned}
+$$
+
+(1) 这里用到的是 $\log \sum_{j} \lambda_{j} y_{j} \geqslant \sum_{j} \lambda_{j} \log y_{j}$, 其中 $\lambda_{j} \geqslant 0, \sum_{j} \lambda_{j}=1$ 。\\
+令
+
+
+\begin{equation*}
+B\left(\theta, \theta^{(i)}\right) \hat{=} L\left(\theta^{(i)}\right)+\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log \frac{P(Y \mid Z, \theta) P(Z \mid \theta)}{P\left(Z \mid Y, \theta^{(i)}\right) P\left(Y \mid \theta^{(i)}\right)} \tag{9.13}
+\end{equation*}
+
+
+则
+
+
+\begin{equation*}
+L(\theta) \geqslant B\left(\theta, \theta^{(i)}\right) \tag{9.14}
+\end{equation*}
+
+
+即函数 $B\left(\theta, \theta^{(i)}\right)$ 是 $L(\theta)$ 的一个下界, 而且由式 (9.13) 可知:
+
+
+\begin{equation*}
+L\left(\theta^{(i)}\right)=B\left(\theta^{(i)}, \theta^{(i)}\right) \tag{9.15}
+\end{equation*}
+
+
+因此, 任何可以使 $B\left(\theta, \theta^{(i)}\right)$ 增大的 $\theta$ 也可以使 $L(\theta)$ 增大。为了使 $L(\theta)$ 有尽可能大的增长,选择 $\theta^{(i+1)}$ 使 $B\left(\theta, \theta^{(i)}\right)$ 达到极大, 即
+
+
+\begin{equation*}
+\theta^{(i+1)}=\arg \max _{\theta} B\left(\theta, \theta^{(i)}\right) \tag{9.16}
+\end{equation*}
+
+
+现在求 $\theta^{(i+1)}$ 的表达式。省去对 $\theta$ 的极大化而言是常数的项, 由式 (9.16)、式 (9.13) 及式 (9.10), 有
+
+
+\begin{align*}
+\theta^{(i+1)} & =\arg \max _{\theta}\left(L\left(\theta^{(i)}\right)+\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log \frac{P(Y \mid Z, \theta) P(Z \mid \theta)}{P\left(Z \mid Y, \theta^{(i)}\right) P\left(Y \mid \theta^{(i)}\right)}\right) \\
+& =\arg \max _{\theta}\left(\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log (P(Y \mid Z, \theta) P(Z \mid \theta))\right) \\
+& =\arg \max _{\theta}\left(\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log P(Y, Z \mid \theta)\right) \\
+& =\arg \max _{\theta} Q\left(\theta, \theta^{(i)}\right) \tag{9.17}
+\end{align*}
+
+
+式 (9.17) 等价于 EM 算法的一次迭代, 即求 $Q$ 函数及其极大化。EM 算法是通过不断求解下界的极大化逼近求解对数似然函数极大化的算法。
+
+图 9.1 给出 $\mathrm{EM}$ 算法的直观解释。图中上方曲线为 $L(\theta)$, 下方曲线为 $B\left(\theta, \theta^{(i)}\right)$ 。根据
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_85ccebcbbc039fa5a6c0g-15}
+\end{center}
+
+图 $9.1 \mathrm{EM}$ 算法的解释\\
+式 (9.14), $B\left(\theta, \theta^{(i)}\right)$ 为对数似然函数 $L(\theta)$ 的下界。根据式 (9.15), 两个函数在点 $\theta=\theta^{(i)}$ 处相等。根据式 (9.16) 和式 (9.17), EM 算法找到下一个点 $\theta^{(i+1)}$ 使函数 $B\left(\theta, \theta^{(i)}\right)$ 极大化, 也使函数 $Q\left(\theta, \theta^{(i)}\right)$ 极大化。这时由于 $L(\theta) \geqslant B\left(\theta, \theta^{(i)}\right)$ 和函数 $B\left(\theta, \theta^{(i)}\right)$ 的增加, 保证了对数似然函数 $L(\theta)$ 在每次迭代中也是增加的。 $\mathrm{EM}$ 算法在点 $\left.\theta^{(i+1)}\right)$ 重新计算 $Q$ 函数值, 进行下一次迭代。在这个过程中, 对数似然函数 $L(\theta)$ 不断增大。从图可以推断出 $\mathrm{EM}$ 算法不能保证找到全局最优值。
+
+\subsection*{9.1.3 EM 算法在无监督学习中的应用}
+监督学习是指由训练数据 $\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$ 学习条件概率分布 $P(Y \mid X)$或决策函数 $Y=f(X)$ 作为模型, 用于分类、回归、标注等任务。这时训练数据中的每个样本点由输入和输出对组成。
+
+有时训练数据只有输入没有对应的输出 $\left\{\left(x_{1}, \cdot\right),\left(x_{2}, \cdot\right), \cdots,\left(x_{N}, \cdot\right)\right\}$, 从这样的数据学习模型称为无监督学习问题。EM 算法可以用于生成模型的无监督学习。生成模型由联合概率分布 $P(X, Y)$ 表示, 可以认为无监督学习训练数据是联合概率分布产生的数据。 $X$ 为观测数据, $Y$ 为末观测数据。
+
+\section*{$9.2 \mathrm{EM}$ 算法的收敛性}
+EM 算法提供一种近似计算含有隐变量概率模型的极大似然估计的方法。EM 算法的最大优点是简单性和普适性。我们很自然地要问: EM 算法得到的估计序列是否收玫? 如果收敛，是否收玫到全局最大值或局部极大值? 下面给出关于 EM 算法收玫性的两个定理。
+
+定理 9.1 设 $P(Y \mid \theta)$ 为观测数据的似然函数, $\theta^{(i)}(i=1,2, \cdots)$ 为 $\mathrm{EM}$ 算法得到的参数估计序列, $P\left(Y \mid \theta^{(i)}\right)(i=1,2, \cdots)$ 为对应的似然函数序列, 则 $P\left(Y \mid \theta^{(i)}\right)$ 是单调递增的, 即
+
+
+\begin{equation*}
+P\left(Y \mid \theta^{(i+1)}\right) \geqslant P\left(Y \mid \theta^{(i)}\right) \tag{9.18}
+\end{equation*}
+
+
+证明 由于
+
+$$
+P(Y \mid \theta)=\frac{P(Y, Z \mid \theta)}{P(Z \mid Y, \theta)}
+$$
+
+取对数有
+
+$$
+\log P(Y \mid \theta)=\log P(Y, Z \mid \theta)-\log P(Z \mid Y, \theta)
+$$
+
+由式 (9.11) 得:
+
+$$
+Q\left(\theta, \theta^{(i)}\right)=\sum_{Z} \log P(Y, Z \mid \theta) P\left(Z \mid Y, \theta^{(i)}\right)
+$$
+
+令
+
+
+\begin{equation*}
+H\left(\theta, \theta^{(i)}\right)=\sum_{Z} \log P(Z \mid Y, \theta) P\left(Z \mid Y, \theta^{(i)}\right) \tag{9.19}
+\end{equation*}
+
+
+于是对数似然函数可以写成
+
+
+\begin{equation*}
+\log P(Y \mid \theta)=Q\left(\theta, \theta^{(i)}\right)-H\left(\theta, \theta^{(i)}\right) \tag{9.20}
+\end{equation*}
+
+
+在式 (9.20) 中分别取 $\theta$ 为 $\theta^{(i)}$ 和 $\theta^{(i+1)}$ 并相减, 有
+
+
+\begin{align*}
+& \log P\left(Y \mid \theta^{(i+1)}\right)-\log P\left(Y \mid \theta^{(i)}\right) \\
+& \quad=\left[Q\left(\theta^{(i+1)}, \theta^{(i)}\right)-Q\left(\theta^{(i)}, \theta^{(i)}\right)\right]-\left[H\left(\theta^{(i+1)}, \theta^{(i)}\right)-H\left(\theta^{(i)}, \theta^{(i)}\right)\right] \tag{9.21}
+\end{align*}
+
+
+为证明式 (9.18), 只需证明式 (9.21) 右端是非负的。对于式 (9.21) 右端的第 1 项, 由于 $\theta^{(i+1)}$ 使 $Q\left(\theta, \theta^{(i)}\right)$ 达到极大, 所以有
+
+
+\begin{equation*}
+Q\left(\theta^{(i+1)}, \theta^{(i)}\right)-Q\left(\theta^{(i)}, \theta^{(i)}\right) \geqslant 0 \tag{9.22}
+\end{equation*}
+
+
+对于第 2 项，由式 (9.19) 可得:
+
+
+\begin{align*}
+H\left(\theta^{(i+1)}, \theta^{(i)}\right)-H\left(\theta^{(i)}, \theta^{(i)}\right) & =\sum_{Z}\left(\log \frac{P\left(Z \mid Y, \theta^{(i+1)}\right)}{P\left(Z \mid Y, \theta^{(i)}\right)}\right) P\left(Z \mid Y, \theta^{(i)}\right) \\
+& \leqslant \log \left(\sum_{Z} \frac{P\left(Z \mid Y, \theta^{(i+1)}\right)}{P\left(Z \mid Y, \theta^{(i)}\right)} P\left(Z \mid Y, \theta^{(i)}\right)\right) \\
+& =\log \left(\sum_{Z} P\left(Z \mid Y, \theta^{(i+1)}\right)\right)=0 \tag{9.23}
+\end{align*}
+
+
+这里的不等号由 Jensen 不等式得到。
+
+由式 (9.22) 和式 (9.23) 即知式 (9.21) 右端是非负的。
+
+定理 9.2 设 $L(\theta)=\log P(Y \mid \theta)$ 为观测数据的对数似然函数, $\theta^{(i)}(i=1,2, \cdots)$ 为 $\mathrm{EM}$ 算法得到的参数估计序列, $L\left(\theta^{(i)}\right)(i=1,2, \cdots)$ 为对应的对数似然函数序列。
+
+(1) 如果 $P(Y \mid \theta)$ 有上界, 则 $L\left(\theta^{(i)}\right)=\log P\left(Y \mid \theta^{(i)}\right)$ 收敛到某一值 $L^{*}$;
+
+(2) 在函数 $Q\left(\theta, \theta^{\prime}\right)$ 与 $L(\theta)$ 满足一定条件的情况下, 由 $\mathrm{EM}$ 算法得到的参数估计序列 $\theta^{(i)}$ 的收敛值 $\theta^{*}$ 是 $L(\theta)$ 的稳定点。
+
+证明 (1) 由 $L(\theta)=\log P\left(Y \mid \theta^{(i)}\right)$ 的单调性及 $P(Y \mid \theta)$ 的有界性得到。
+
+(2) 证明从略, 参阅文献 [5]。
+
+定理 9.2 关于函数 $Q\left(\theta, \theta^{\prime}\right)$ 与 $L(\theta)$ 的条件在大多数情况下都是满足的。 $\mathrm{EM}$ 算法的收玫性包含关于对数似然函数序列 $L\left(\theta^{(i)}\right)$ 的收玫性和关于参数估计序列 $\theta^{(i)}$ 的收玫性两层意思,前者并不蕴含后者。此外, 定理只能保证参数估计序列收玫到对数似然函数序列的稳定点,不能保证收玫到极大值点。所以在应用中, 初值的选择变得非常重要, 常用的方法是选取几个不同的初值进行迭代, 然后对得到的各个估计值加以比较, 从中选择最好的。
+
+\section*{$9.3 \mathrm{EM}$ 算法在高斯混合模型学习中的应用}
+EM 算法的一个重要应用是高斯混合模型的参数估计。高斯混合模型应用广泛, 在许多情况下, EM 算法是学习高斯混合模型 (Gaussian mixture model) 的有效方法。
+
+\subsection*{9.3.1 高斯混合模型}
+定义 9.2 (高斯混合模型) 高斯混合模型是指具有如下形式的概率分布模型:
+
+
+\begin{equation*}
+P(y \mid \theta)=\sum_{k=1}^{K} \alpha_{k} \phi\left(y \mid \theta_{k}\right) \tag{9.24}
+\end{equation*}
+
+
+其中, $\alpha_{k}$ 是系数, $\alpha_{k} \geqslant 0, \sum_{k=1}^{K} \alpha_{k}=1 ; \phi\left(y \mid \theta_{k}\right)$ 是高斯分布密度, $\theta_{k}=\left(\mu_{k}, \sigma_{k}^{2}\right)$,
+
+
+\begin{equation*}
+\phi\left(y \mid \theta_{k}\right)=\frac{1}{\sqrt{2 \pi} \sigma_{k}} \exp \left[-\frac{\left(y-\mu_{k}\right)^{2}}{2 \sigma_{k}^{2}}\right] \tag{9.25}
+\end{equation*}
+
+
+称为第 $k$ 个分模型。
+
+一般混合模型可以由任意概率分布密度代替式 (9.25) 中的高斯分布密度, 我们只介绍最常用的高斯混合模型。
+
+\subsection*{9.3.2 高斯混合模型参数估计的 EM 算法}
+假设观测数据 $y_{1}, y_{2}, \cdots, y_{N}$ 由高斯混合模型生成:
+
+
+\begin{equation*}
+P(y \mid \theta)=\sum_{k=1}^{K} \alpha_{k} \phi\left(y \mid \theta_{k}\right) \tag{9.26}
+\end{equation*}
+
+
+其中, $\theta=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{K} ; \theta_{1}, \theta_{2}, \cdots, \theta_{K}\right)$ 。我们用 $\mathrm{EM}$ 算法估计高斯混合模型的参数 $\theta$ 。
+
+\section*{1. 明确隐变量, 写出完全数据的对数似然函数}
+可以设想观测数据 $y_{j}, j=1,2, \cdots, N$, 是这样产生的: 首先根据概率 $\alpha_{k}$ 选择第 $k$ 个高斯分布分模型 $\phi\left(y \mid \theta_{k}\right)$, 然后由第 $k$ 个分模型的概率分布 $\phi\left(y \mid \theta_{k}\right)$ 生成观测数据 $y_{j}$ 。这时观测数据 $y_{j}, j=1,2, \cdots, N$, 是已知的, 反映观测数据 $y_{j}$ 来自第 $k$ 个分模型的数据是未知的, $k=1,2, \cdots, K$, 以隐变量 $\gamma_{j k}$ 表示, 其定义如下:
+
+
+\begin{align*}
+& \gamma_{j k}= \begin{cases}1, & \text { 第 } j \text { 个观测来自第 } k \text { 个分模型 } \\
+0, & \text { 否则 }\end{cases} \\
+& j=1,2, \cdots, N, \quad k=1,2, \cdots, K \tag{9.27}
+\end{align*}
+
+
+其中, $\gamma_{j k}$ 是 0-1 随机变量。
+
+有了观测数据 $y_{j}$ 及未观测数据 $\gamma_{j k}$, 那么完全数据是
+
+$$
+\left(y_{j}, \gamma_{j 1}, \gamma_{j 2}, \cdots, \gamma_{j K}\right), \quad j=1,2, \cdots, N
+$$
+
+于是, 可以写出完全数据的似然函数:
+
+$$
+\begin{aligned}
+P(y, \gamma \mid \theta) & =\prod_{j=1}^{N} P\left(y_{j}, \gamma_{j 1}, \gamma_{j 2}, \cdots, \gamma_{j K} \mid \theta\right) \\
+& =\prod_{k=1}^{K} \prod_{j=1}^{N}\left[\alpha_{k} \phi\left(y_{j} \mid \theta_{k}\right)\right]^{\gamma_{j k}} \\
+& =\prod_{k=1}^{K} \alpha_{k}^{n_{k}} \prod_{j=1}^{N}\left[\phi\left(y_{j} \mid \theta_{k}\right)\right]^{\gamma_{j k}} \\
+& =\prod_{k=1}^{K} \alpha_{k}^{n_{k}} \prod_{j=1}^{N}\left\{\frac{1}{\sqrt{2 \pi} \sigma_{k}} \exp \left[-\frac{\left(y_{j}-\mu_{k}\right)^{2}}{2 \sigma_{k}^{2}}\right]\right\}^{\gamma_{j k}}
+\end{aligned}
+$$
+
+式中, $n_{k}=\sum_{j=1}^{N} \gamma_{j k}, \sum_{k=1}^{K} n_{k}=N$ 。
+
+那么, 完全数据的对数似然函数为
+
+$$
+\log P(y, \gamma \mid \theta)=\sum_{k=1}^{K}\left\{n_{k} \log \alpha_{k}+\sum_{j=1}^{N} \gamma_{j k}\left[\log \frac{1}{\sqrt{2 \pi}}-\log \sigma_{k}-\frac{1}{2 \sigma_{k}^{2}}\left(y_{j}-\mu_{k}\right)^{2}\right]\right\}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item EM 算法的 $\mathrm{E}$ 步: 确定 $Q$ 函数
+\end{enumerate}
+
+
+\begin{align*}
+Q\left(\theta, \theta^{(i)}\right) & =E\left[\log P(y, \gamma \mid \theta) \mid y, \theta^{(i)}\right] \\
+& =E \sum_{k=1}^{K}\left\{n_{k} \log \alpha_{k}+\sum_{j=1}^{N} \gamma_{j k}\left[\log \frac{1}{\sqrt{2 \pi}}-\log \sigma_{k}-\frac{1}{2 \sigma_{k}^{2}}\left(y_{j}-\mu_{k}\right)^{2}\right]\right\} \\
+& =\sum_{k=1}^{K}\left\{\sum_{j=1}^{N}\left(E \gamma_{j k}\right) \log \alpha_{k}+\sum_{j=1}^{N}\left(E \gamma_{j k}\right)\left[\log \frac{1}{\sqrt{2 \pi}}-\log \sigma_{k}-\frac{1}{2 \sigma_{k}^{2}}\left(y_{j}-\mu_{k}\right)^{2}\right]\right\} \tag{9.28}
+\end{align*}
+
+
+这里需要计算 $E\left(\gamma_{j k} \mid y, \theta\right)$, 记为 $\hat{\gamma}_{j k}$ 。
+
+$$
+\begin{aligned}
+\hat{\gamma}_{j k} & =E\left(\gamma_{j k} \mid y, \theta\right)=P\left(\gamma_{j k}=1 \mid y, \theta\right) \\
+& =\frac{P\left(\gamma_{j k}=1, y_{j} \mid \theta\right)}{\sum_{k=1}^{K} P\left(\gamma_{j k}=1, y_{j} \mid \theta\right)} \\
+& =\frac{P\left(y_{j} \mid \gamma_{j k}=1, \theta\right) P\left(\gamma_{j k}=1 \mid \theta\right)}{\sum_{k=1}^{K} P\left(y_{j} \mid \gamma_{j k}=1, \theta\right) P\left(\gamma_{j k}=1 \mid \theta\right)} \\
+& =\frac{\alpha_{k} \phi\left(y_{j} \mid \theta_{k}\right)}{\sum_{k=1}^{K} \alpha_{k} \phi\left(y_{j} \mid \theta_{k}\right)}, \quad j=1,2, \cdots, N, \quad k=1,2, \cdots, K
+\end{aligned}
+$$
+
+$\hat{\gamma}_{j k}$ 是在当前模型参数下第 $j$ 个观测数据来自第 $k$ 个分模型的概率, 称为分模型 $k$ 对观测数据 $y_{j}$ 的响应度。
+
+将 $\hat{\gamma}_{j k}=E \gamma_{j k}$ 及 $n_{k}=\sum_{j=1}^{N} E \gamma_{j k}$ 代入式 (9.28), 即得:
+
+
+\begin{equation*}
+Q\left(\theta, \theta^{(i)}\right)=\sum_{k=1}^{K}\left\{n_{k} \log \alpha_{k}+\sum_{j=1}^{N} \hat{\gamma}_{j k}\left[\log \frac{1}{\sqrt{2 \pi}}-\log \sigma_{k}-\frac{1}{2 \sigma_{k}^{2}}\left(y_{j}-\mu_{k}\right)^{2}\right]\right\} \tag{9.29}
+\end{equation*}
+
+
+\section*{3. 确定 EM 算法的 $M$ 步}
+迭代的 $\mathrm{M}$ 步是求函数 $Q\left(\theta, \theta^{(i)}\right)$ 对 $\theta$ 的极大值, 即求新一轮迭代的模型参数:
+
+$$
+\theta^{(i+1)}=\arg \max _{\theta} Q\left(\theta, \theta^{(i)}\right)
+$$
+
+用 $\hat{\mu}_{k}, \hat{\sigma}_{k}^{2}$ 及 $\hat{\alpha}_{k}, k=1,2, \cdots, K$, 表示 $\theta^{(i+1)}$ 的各参数。求 $\hat{\mu}_{k}, \hat{\sigma}_{k}^{2}$ 只需将式 (9.29) 分别对 $\mu_{k}, \sigma_{k}^{2}$ 求偏导数并令其为 0 , 即可得到; $\hat{\alpha}_{k}$ 是在 $\sum_{k=1}^{K} \alpha_{k}=1$ 条件下求偏导数并令其为 0 得到的。结果如下:
+
+
+\begin{gather*}
+\hat{\mu}_{k}=\frac{\sum_{j=1}^{N} \hat{\gamma}_{j k} y_{j}}{\sum_{j=1}^{N} \hat{\gamma}_{j k}}, \quad k=1,2, \cdots, K  \tag{9.30}\\
+\hat{\sigma}_{k}^{2}=\frac{\sum_{j=1}^{N} \hat{\gamma}_{j k}\left(y_{j}-\mu_{k}\right)^{2}}{\sum_{j=1}^{N} \hat{\gamma}_{j k}}, \quad k=1,2, \cdots, K  \tag{9.31}\\
+\hat{\alpha}_{k}=\frac{n_{k}}{N}=\frac{\sum_{j=1}^{N} \hat{\gamma}_{j k}}{N}, \quad k=1,2, \cdots, K \tag{9.32}
+\end{gather*}
+
+
+重复以上计算, 直到对数似然函数值不再有明显的变化为止。
+
+现将估计高斯混合模型参数的 EM 算法总结如下。
+
+\section*{算法 9.2 (高斯混合模型参数估计的EM算法)}
+输入: 观测数据 $y_{1}, y_{2}, \cdots, y_{N}$, 高斯混合模型。
+
+输出: 高斯混合模型参数。
+
+(1) 取参数的初始值开始迭代。
+
+(2) $\mathrm{E}$ 步: 依据当前模型参数, 计算分模型 $k$ 对观测数据 $y_{j}$ 的响应度。
+
+$$
+\hat{\gamma}_{j k}=\frac{\alpha_{k} \phi\left(y_{j} \mid \theta_{k}\right)}{\sum_{k=1}^{K} \alpha_{k} \phi\left(y_{j} \mid \theta_{k}\right)}, \quad j=1,2, \cdots, N, \quad k=1,2, \cdots, K
+$$
+
+(3) $\mathrm{M}$ 步: 计算新一轮迭代的模型参数。
+
+$$
+\begin{gathered}
+\hat{\mu}_{k}=\frac{\sum_{j=1}^{N} \hat{\gamma}_{j k} y_{j}}{\sum_{j=1}^{N} \hat{\gamma}_{j k}}, \quad k=1,2, \cdots, K \\
+\hat{\sigma}_{k}^{2}=\frac{\sum_{j=1}^{N} \hat{\gamma}_{j k}\left(y_{j}-\mu_{k}\right)^{2}}{\sum_{j=1}^{N} \hat{\gamma}_{j k}}, \quad k=1,2, \cdots, K \\
+\hat{\alpha}_{k}=\frac{\sum_{j=1}^{N} \hat{\gamma}_{j k}}{N}, \quad k=1,2, \cdots, K
+\end{gathered}
+$$
+
+(4) 重复第 2 步和第 3 步, 直到收敛。
+
+\section*{$9.4 \mathrm{EM}$ 算法的推广}
+$\mathrm{EM}$ 算法还可以解释为 $F$ 函数 ( $F$ function) 的极大-极大算法 (maximization-maximization algorithm）, 基于这个解释有若干变形与推广, 如广义期望极大（generalized expectation maximization, GEM）算法。下面予以介绍。
+
+\subsection*{9.4.1 F函数的极大-极大算法}
+首先引入 $F$ 函数并讨论其性质。
+
+定义 9.3 ( $\boldsymbol{F}$ 函数) 假设隐变量数据 $Z$ 的概率分布为 $\tilde{P}(Z)$, 定义分布 $\tilde{P}$ 与参数 $\theta$ 的函数 $F(\tilde{P}, \theta)$ 如下:
+
+
+\begin{equation*}
+F(\tilde{P}, \theta)=E_{\tilde{P}}[\log P(Y, Z \mid \theta)]+H(\tilde{P}) \tag{9.33}
+\end{equation*}
+
+
+称为 $F$ 函数。式中 $H(\tilde{P})=-E_{\tilde{P}} \log \tilde{P}(Z)$ 是分布 $\tilde{P}(Z)$ 的熵。
+
+在定义 9.3 中, 通常假设 $P(Y, Z \mid \theta)$ 是 $\theta$ 的连续函数, 因而 $F(\tilde{P}, \theta)$ 是 $\tilde{P}$ 和 $\theta$ 的连续函数。函数 $F(\tilde{P}, \theta)$ 还有以下重要性质。
+
+引理 9.1 对于固定的 $\theta$, 存在唯一的分布 $\tilde{P}_{\theta}$ 极大化 $F(\tilde{P}, \theta)$, 这时 $\tilde{P}_{\theta}$ 由下式给出:
+
+
+\begin{equation*}
+\tilde{P}_{\theta}(Z)=P(Z \mid Y, \theta) \tag{9.34}
+\end{equation*}
+
+
+并且 $\tilde{P}_{\theta}$ 随 $\theta$ 连续变化。\\
+证明 对于固定的 $\theta$, 可以求得使 $F(\tilde{P}, \theta)$ 达到极大的分布 $\tilde{P}_{\theta}(Z)$ 。为此, 引入拉格朗日乘子 $\lambda$, 拉格朗日函数为
+
+
+\begin{equation*}
+L=E_{\tilde{P}} \log P(Y, Z \mid \theta)-E_{\tilde{P}} \log \tilde{P}(Z)+\lambda\left(1-\sum_{Z} \tilde{P}(Z)\right) \tag{9.35}
+\end{equation*}
+
+
+将其对 $\tilde{P}$ 求偏导数:
+
+$$
+\frac{\partial L}{\partial \tilde{P}(Z)}=\log P(Y, Z \mid \theta)-\log \tilde{P}(Z)-1-\lambda
+$$
+
+令偏导数等于 0 , 得出:
+
+$$
+\lambda=\log P(Y, Z \mid \theta)-\log \tilde{P}_{\theta}(Z)-1
+$$
+
+由此推导出 $\tilde{P}_{\theta}(Z)$ 与 $P(Y, Z \mid \theta)$ 成比例:
+
+$$
+\frac{P(Y, Z \mid \theta)}{\tilde{P}_{\theta}(Z)}=\mathrm{e}^{1+\lambda}
+$$
+
+再从约束条件 $\sum_{Z} \tilde{P}_{\theta}(Z)=1$ 得式 (9.34)。
+
+由假设 $P(Y, Z \mid \theta)$ 是 $\theta$ 的连续函数得到 $\tilde{P}_{\theta}$ 是 $\theta$ 的连续函数。
+
+引理 9.2 若 $\tilde{P}_{\theta}(Z)=P(Z \mid Y, \theta)$, 则
+
+
+\begin{equation*}
+F(\tilde{P}, \theta)=\log P(Y \mid \theta) \tag{9.36}
+\end{equation*}
+
+
+证明作为习题, 留给读者。
+
+由以上引理, 可以得到关于 $\mathrm{EM}$ 算法用 $F$ 函数的极大-极大算法的解释。
+
+定理 9.3 设 $L(\theta)=\log P(Y \mid \theta)$ 为观测数据的对数似然函数, $\theta^{(i)}, i=1,2, \cdots$, 为 $\mathrm{EM}$ 算法得到的参数估计序列, 函数 $F(\tilde{P}, \theta)$ 由式 (9.33) 定义。如果 $F(\tilde{P}, \theta)$ 在 $\tilde{P}^{*}$ 和 $\theta^{*}$ 有局部极大值, 那么 $L(\theta)$ 也在 $\theta^{*}$ 有局部极大值。类似地, 如果 $F(\tilde{P}, \theta)$ 在 $\tilde{P}^{*}$ 和 $\theta^{*}$ 达到全局最大值, 那么 $L(\theta)$ 也在 $\theta^{*}$ 达到全局最大值。
+
+证明 由引理 9.1 和引理 9.2 可知, $L(\theta)=\log P(Y \mid \theta)=F\left(\tilde{P}_{\theta}, \theta\right)$ 对任意 $\theta$ 成立。特别地, 对于使 $F(\tilde{P}, \theta)$ 达到极大的参数 $\theta^{*}$, 有
+
+
+\begin{equation*}
+L\left(\theta^{*}\right)=F\left(\tilde{P}_{\theta^{*}}, \theta^{*}\right)=F\left(\tilde{P}^{*}, \theta^{*}\right) \tag{9.37}
+\end{equation*}
+
+
+为了证明 $\theta^{*}$ 是 $L(\theta)$ 的极大点, 需要证明不存在接近 $\theta^{*}$ 的点 $\theta^{* *}$, 使 $L\left(\theta^{* *}\right)>L\left(\theta^{*}\right)$ 。假如存在这样的点 $\theta^{* *}$, 那么应有 $F\left(\tilde{P}^{* *}, \theta^{* *}\right)>F\left(\tilde{P}^{*}, \theta^{*}\right)$, 这里 $\tilde{P}^{* *}=\tilde{P}_{\theta^{* *}}$ 。但因 $\tilde{P}_{\theta}$ 是随 $\theta$ 连续变化的, $\tilde{P}^{* *}$ 应接近 $\tilde{P}^{*}$, 这与 $\tilde{P}^{*}$ 和 $\theta^{*}$ 是 $F(\tilde{P}, \theta)$ 的局部极大点的假设矛盾。
+
+类似可以证明关于全局最大值的结论。
+
+定理 9.4 EM 算法的一次迭代可由 $F$ 函数的极大-极大算法实现。
+
+设 $\theta^{(i)}$ 为第 $i$ 次迭代参数 $\theta$ 的估计, $\tilde{P}^{(i)}$ 为第 $i$ 次迭代函数 $\tilde{P}$ 的估计。第 $i+1$ 次迭代的两步如下:
+
+(1) 对固定的 $\theta^{(i)}$, 求 $\tilde{P}^{(i+1)}$ 使 $F\left(\tilde{P}, \theta^{(i)}\right)$ 极大化;
+
+(2) 对固定的 $\tilde{P}^{(i+1)}$, 求 $\theta^{(i+1)}$ 使 $F\left(\tilde{P}^{(i+1)}, \theta\right)$ 极大化。\\
+证明 (1) 由引理 9.1 , 对于固定的 $\theta^{(i)}$,
+
+$$
+\tilde{P}^{(i+1)}(Z)=\tilde{P}_{\theta^{(i)}}(Z)=P\left(Z \mid Y, \theta^{(i)}\right)
+$$
+
+使 $F\left(\tilde{P}, \theta^{(i)}\right)$ 极大化。此时,
+
+$$
+\begin{aligned}
+F\left(\tilde{P}^{(i+1)}, \theta\right) & =E_{\tilde{P}^{(i+1)}}[\log P(Y, Z \mid \theta)]+H\left(\tilde{P}^{(i+1)}\right) \\
+& =\sum_{Z} \log P(Y, Z \mid \theta) P\left(Z \mid Y, \theta^{(i)}\right)+H\left(\tilde{P}^{(i+1)}\right)
+\end{aligned}
+$$
+
+由 $Q\left(\theta, \theta^{(i)}\right)$ 的定义式 (9.11) 有
+
+$$
+F\left(\tilde{P}^{(i+1)}, \theta\right)=Q\left(\theta, \theta^{(i)}\right)+H\left(\tilde{P}^{(i+1)}\right)
+$$
+
+(2) 固定 $\tilde{P}^{(i+1)}$, 求 $\theta^{(i+1)}$ 使 $F\left(\tilde{P}^{(i+1)}, \theta\right)$ 极大化, 得到:
+
+$$
+\theta^{(i+1)}=\arg \max _{\theta} F\left(\tilde{P}^{(i+1)}, \theta\right)=\arg \max _{\theta} Q\left(\theta, \theta^{(i)}\right)
+$$
+
+通过以上两步完成了 $\mathrm{EM}$ 算法的一次迭代。由此可知, 由 $\mathrm{EM}$ 算法与 $F$ 函数的极大-极大算法得到的参数估计序列 $\theta^{(i)}, i=1,2, \cdots$, 是一致的。
+
+这样, 就有 EM 算法的推广。
+
+\subsection*{9.4.2 GEM 算法}
+\section*{算法 9.3 (GEM 算法 1)}
+输入: 观测数据, $F$ 函数。
+
+输出: 模型参数。
+
+(1) 初始化参数 $\theta^{(0)}$, 开始迭代;
+
+(2) 第 $i+1$ 次迭代, 第 1 步: 记 $\theta^{(i)}$ 为参数 $\theta$ 的估计值, $\tilde{P}^{(i)}$ 为函数 $\tilde{P}$ 的估计, 求 $\tilde{P}^{(i+1)}$ 使 $\tilde{P}$ 极大化 $F\left(\tilde{P}, \theta^{(i)}\right)$;
+
+(3) 第 2 步: 求 $\theta^{(i+1)}$ 使 $F\left(\tilde{P}^{(i+1)}, \theta\right)$ 极大化;
+
+(4) 重复步骤 (2) 和步骤 (3), 直到收玫。
+
+在 GEM 算法 1 中, 有时求 $Q\left(\theta, \theta^{(i)}\right)$ 的极大化是很困难的。下面介绍的 GEM 算法 2 和 GEM 算法 3 并不是直接求 $\theta^{(i+1)}$ 使 $Q\left(\theta, \theta^{(i)}\right)$ 达到极大的 $\theta$, 而是找一个 $\theta^{(i+1)}$ 使得 $Q\left(\theta^{(i+1)}, \theta^{(i)}\right)>Q\left(\theta^{(i)}, \theta^{(i)}\right)$ 。
+
+\section*{算法 9.4 (GEM 算法 2)}
+输入: 观测数据, $Q$ 函数。
+
+输出: 模型参数。
+
+(1) 初始化参数 $\theta^{(0)}$, 开始迭代;
+
+(2) 第 $i+1$ 次迭代, 第 1 步: 记 $\theta^{(i)}$ 为参数 $\theta$ 的估计值, 计算
+
+$$
+\begin{aligned}
+Q\left(\theta, \theta^{(i)}\right) & =E_{Z}\left[\log P(Y, Z \mid \theta) \mid Y, \theta^{(i)}\right] \\
+& =\sum_{Z} P\left(Z \mid Y, \theta^{(i)}\right) \log P(Y, Z \mid \theta)
+\end{aligned}
+$$
+
+(3) 第 2 步: 求 $\theta^{(i+1)}$ 使
+
+$$
+Q\left(\theta^{(i+1)}, \theta^{(i)}\right)>Q\left(\theta^{(i)}, \theta^{(i)}\right)
+$$
+
+(4) 重复步骤 (2) 和步骤 (3), 直到收玫。
+
+当参数 $\theta$ 的维数为 $d(d \geqslant 2)$ 时, 可采用一种特殊的 GEM 算法, 它将 EM 算法的 M 步分解为 $d$ 次条件极大化, 每次只改变参数向量的一个分量, 其余分量不改变。
+
+\section*{算法 9.5 (GEM 算法 3)}
+输入: 观测数据, $Q$ 函数。
+
+输出: 模型参数。
+
+(1) 初始化参数 $\theta^{(0)}=\left(\theta_{1}^{(0)}, \theta_{2}^{(0)}, \cdots, \theta_{d}^{(0)}\right)$, 开始迭代;
+
+(2) 第 $i+1$ 次迭代, 第 1 步: 记 $\theta^{(i)}=\left(\theta_{1}^{(i)}, \theta_{2}^{(i)}, \cdots, \theta_{d}^{(i)}\right)$ 为参数 $\theta=\left(\theta_{1}, \theta_{2}, \cdots, \theta_{d}\right)$ 的估计值, 计算
+
+$$
+\begin{aligned}
+Q\left(\theta, \theta^{(i)}\right) & =E_{Z}\left[\log P(Y, Z \mid \theta) \mid Y, \theta^{(i)}\right] \\
+& =\sum_{Z} P\left(Z \mid y, \theta^{(i)}\right) \log P(Y, Z \mid \theta)
+\end{aligned}
+$$
+
+(3) 第 2 步: 进行 $d$ 次条件极大化: 首先, 在 $\theta_{2}^{(i)}, \cdots, \theta_{d}^{(i)}$ 保持不变的条件下求使 $Q\left(\theta, \theta^{(i)}\right)$ 达到极大的 $\theta_{1}^{(i+1)}$; 然后, 在 $\theta_{1}=\theta_{1}^{(i+1)}, \theta_{j}=\theta_{j}^{(i)}, j=3,4, \cdots, d$ 的条件下求使 $Q\left(\theta, \theta^{(i)}\right)$ 达到极大的 $\theta_{2}^{(i+1)}$; 如此继续, 经过 $d$ 次条件极大化, 得到 $\theta^{(i+1)}=$ $\left(\theta_{1}^{(i+1)}, \theta_{2}^{(i+1)}, \cdots, \theta_{d}^{(i+1)}\right)$ 使得
+
+$$
+Q\left(\theta^{(i+1)}, \theta^{(i)}\right)>Q\left(\theta^{(i)}, \theta^{(i)}\right)
+$$
+
+(4) 重复步骤 (2) 和步骤 (3), 直到收玫。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item EM 算法是含有隐变量的概率模型极大似然估计或极大后验概率估计的迭代算法。含有隐变量的概率模型的数据表示为 $P(Y, Z \mid \theta)$ 。这里, $Y$ 是观测变量的数据, $Z$ 是隐变量的数据, $\theta$ 是模型参数。 $\mathrm{EM}$ 算法通过迭代求解观测数据的对数似然函数 $L(\theta)=\log P(Y \mid \theta)$的极大化, 实现极大似然估计。每次迭代包括两步: $\mathrm{E}$ 步, 求期望, 即求 $\log P(Y, Z \mid \theta)$ 关于 $P\left(Z \mid Y, \theta^{(i)}\right)$ 的期望:
+\end{enumerate}
+
+$$
+Q\left(\theta, \theta^{(i)}\right)=\sum_{Z} \log P(Y, Z \mid \theta) P\left(Z \mid Y, \theta^{(i)}\right)
+$$
+
+称为 $Q$ 函数, 这里 $\theta^{(i)}$ 是参数的现估计值; $\mathrm{M}$ 步, 求极大, 即极大化 $Q$ 函数得到参数的新估计值:
+
+$$
+\theta^{(i+1)}=\arg \max _{\theta} Q\left(\theta, \theta^{(i)}\right)
+$$
+
+在构建具体的 EM 算法时, 重要的是定义 $Q$ 函数。每次迭代中, EM 算法通过极大化 $Q$函数来增大对数似然函数 $L(\theta)$ 。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item EM 算法在每次迭代后均提高观测数据的似然函数值, 即
+\end{enumerate}
+
+$$
+P\left(Y \mid \theta^{(i+1)}\right) \geqslant P\left(Y \mid \theta^{(i)}\right)
+$$
+
+在一般条件下 EM 算法是收玫的, 但不能保证收玫到全局最优。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item EM 算法应用极其广泛, 主要应用于含有隐变量的概率模型的学习。高斯混合模型的参数估计是 EM 算法的一个重要应用, 第 10 章将要介绍的隐马尔可夫模型的无监督学习也是 EM 算法的一个重要应用。
+
+  \item EM 算法还可以解释为 $F$ 函数的极大-极大算法。EM 算法有许多变形, 如 GEM 算法。GEM 算法的特点是每次迭代增加 $F$ 函数值 (并不一定是极大化 $F$ 函数), 从而增加似然函数值。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+EM 算法由 Dempster 等人总结提出 ${ }^{[1]}$ 。类似的算法之前已被提出, 如 Baum-Welch 算法, 但是都没有 EM 算法那么广泛。EM 算法的介绍可参见文献 [2] 文献 [4]。EM 算法收玫性定理的有关证明见文献 [5]。GEM 是由 Neal 与 Hinton 提出的 ${ }^{[6]}$ 。
+
+\section*{习 题}
+9.1 如例 9.1 的三硬币模型。假设观测数据不变, 试选择不同的初值, 例如, $\pi^{(0)}=0.46$, $p^{(0)}=0.55, q^{(0)}=0.67$, 求模型参数 $\theta=(\pi, p, q)$ 的极大似然估计。
+
+9.2 证明引理 9.2 。
+
+9.3 已知观测数据 $-67,-48,6,8,14,16,23,24,28,29,41,49,56,60,75$, 试估计两个分量的高斯混合模型的 5 个参数。
+
+$9.4 \mathrm{EM}$ 算法可以用到朴素贝叶斯法的无监督学习, 试写出其算法。
+
+\section*{参考文献}
+[1] DEMPSTER A P, LAIRD N M, RUBIN D B. Maximum-likelihood from incomplete data via the EM algorithm[J]. Journal of the Royal Statistic Society (Series B), 1977, 39(1): 1-38.
+
+[2] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 旨红英, 等译. Springer, 2001.
+
+[3] MCLACHLAN G, KRISHNAN T. The EM algorithm and extensions[M]. New York: John Wiley \& Sons, 1996.
+
+[4] 苏诗松, 王静龙, 幞晓龙. 高等数理统计 $[\mathrm{M}]$. 北京: 高等教育出版社, 1998.
+
+[5] WU C F J. On the convergence properties of the EM algorithm[J]. The Annals of Statistics, 1983, 11: 95-103.
+
+[6] RADFORD N, GEOFFREY H, JORDAN M I. A view of the EM algorithm that justifies incremental, sparse, and other variants[C]//Learning in Graphical Models. Cambridge, MA: MIT Press, 1999: 355-368.
+
+\section*{第 10 章隐马尔可夫模型}
+隐马尔可夫模型 (hidden Markov model, HMM) 是可用于标注问题的机器学习模型,描述由隐藏的马尔可夫链随机生成观测序列的过程, 属于生成模型。本章首先介绍隐马尔可夫模型的基本概念, 然后分别叙述隐马尔可夫模型的概率计算算法、学习算法以及预测算法。隐马尔可夫模型在语音识别、自然语言处理、生物信息、模式识别等领域有着广泛的应用。
+
+\section*{10.1 隐马尔可夫模型的基本概念}
+\subsection*{10.1.1 隐马尔可夫模型的定义}
+定义 10.1 (隐马尔可夫模型) 隐马尔可夫模型是关于时序的概率模型, 描述由一个隐藏的马尔可夫链随机生成不可观测的状态随机序列, 再由各个状态生成一个观测从而产生观测随机序列的过程。隐藏的马尔可夫链随机生成的状态的序列称为状态序列 (state sequence); 每个状态生成一个观测, 而由此产生的观测的随机序列称为观测序列 (observation sequence)。序列的每一个位置又可以看作是一个时刻。
+
+隐马尔可夫模型由初始概率分布、状态转移概率分布以及观测概率分布确定。隐马尔可夫模型的形式定义如下:
+
+设 $Q$ 是所有可能的状态的集合, $V$ 是所有可能的观测的集合:
+
+$$
+Q=\left\{q_{1}, q_{2}, \cdots, q_{N}\right\}, \quad V=\left\{v_{1}, v_{2}, \cdots, v_{M}\right\}
+$$
+
+其中, $N$ 是可能的状态数, $M$ 是可能的观测数。
+
+$I$ 是长度为 $T$ 的状态序列, $O$ 是对应的观测序列:
+
+$$
+I=\left(i_{1}, i_{2}, \cdots, i_{T}\right), \quad O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)
+$$
+
+$A$ 是状态转移概率矩阵:
+
+
+\begin{equation*}
+A=\left[a_{i j}\right]_{N \times N} \tag{10.1}
+\end{equation*}
+
+
+其中,
+
+
+\begin{equation*}
+a_{i j}=P\left(i_{t+1}=q_{j} \mid i_{t}=q_{i}\right), \quad i=1,2, \cdots, N, \quad j=1,2, \cdots, N \tag{10.2}
+\end{equation*}
+
+
+是在时刻 $t$ 处于状态 $q_{i}$ 的条件下在时刻 $t+1$ 转移到状态 $q_{j}$ 的概率。\\
+$B$ 是观测概率矩阵:
+
+
+\begin{equation*}
+B=\left[b_{j}(k)\right]_{N \times M} \tag{10.3}
+\end{equation*}
+
+
+其中，
+
+
+\begin{equation*}
+b_{j}(k)=P\left(o_{t}=v_{k} \mid i_{t}=q_{j}\right), \quad k=1,2, \cdots, M, \quad j=1,2, \cdots, N \tag{10.4}
+\end{equation*}
+
+
+是在时刻 $t$ 处于状态 $q_{j}$ 的条件下生成观测 $v_{k}$ 的概率。
+
+$\pi$ 是初始状态概率向量:
+
+
+\begin{equation*}
+\pi=\left(\pi_{i}\right) \tag{10.5}
+\end{equation*}
+
+
+其中,
+
+
+\begin{equation*}
+\pi_{i}=P\left(i_{1}=q_{i}\right), \quad i=1,2, \cdots, N \tag{10.6}
+\end{equation*}
+
+
+是时刻 $t=1$ 处于状态 $q_{i}$ 的概率。
+
+隐马尔可夫模型由初始状态概率向量 $\pi$ 、状态转移概率矩阵 $A$ 和观测概率矩阵 $B$ 决定。 $\pi$ 和 $A$ 决定状态序列, $B$ 决定观测序列。因此, 隐马尔可夫模型 $\lambda$ 可以用三元符号表示,即
+
+
+\begin{equation*}
+\lambda=(A, B, \pi) \tag{10.7}
+\end{equation*}
+
+
+$A, B, \pi$ 称为隐马尔可夫模型的三要素。
+
+状态转移概率矩阵 $A$ 与初始状态概率向量 $\pi$ 确定了隐藏的马尔可夫链, 生成不可观测的状态序列。观测概率矩阵 $B$ 确定了如何从状态生成观测, 与状态序列综合确定了如何产生观测序列。
+
+从定义可知, 隐马尔可夫模型作了两个基本假设:
+
+(1) 齐次马尔可夫性假设, 即假设隐藏的马尔可夫链在任意时刻 $t$ 的状态只依赖于其前一时刻的状态，与其他时刻的状态及观测无关，也与时刻 $t$ 无关:
+
+
+\begin{equation*}
+P\left(i_{t} \mid i_{t-1}, o_{t-1}, \cdots, i_{1}, o_{1}\right)=P\left(i_{t} \mid i_{t-1}\right), \quad t=1,2, \cdots, T \tag{10.8}
+\end{equation*}
+
+
+（2）观测独立性假设，即假设任意时刻的观测只依赖于该时刻的马尔可夫链的状态，与其他观测及状态无关:
+
+
+\begin{equation*}
+P\left(o_{t} \mid i_{T}, o_{T}, i_{T-1}, o_{T-1}, \cdots, i_{t+1}, o_{t+1}, i_{t}, i_{t-1}, o_{t-1}, \cdots, i_{1}, o_{1}\right)=P\left(o_{t} \mid i_{t}\right) \tag{10.9}
+\end{equation*}
+
+
+隐马尔可夫模型可以用于标注, 这时状态对应着标记。标注问题是给定观测的序列预测其对应的标记序列。可以假设标注问题的数据是由隐马尔可夫模型生成的, 这样我们可以利用隐马尔可夫模型的学习与预测算法进行标注。
+
+下面看一个隐马尔可夫模型的例子。
+
+例 10.1 (盒子和球模型) 假设有 4 个盒子, 每个盒子里都装有红、白两种颜色的球, 盒子里的红、白球数由表 10.1 列出。
+
+按照下面的方法抽球, 产生一个球的颜色的观测序列:
+
+\begin{itemize}
+  \item 首先, 从 4 个盒子里以等概率随机选取 1 个盒子, 从这个盒子里随机抽出 1 个球, 记录其颜色后，放回。\\
+表 10.1 各盒子的红、白球数
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+ & \multicolumn{3}{c}{盒} & 子 \\
+\cline { 2 - 6 }
+ & 1 & 2 & 3 & 4 \\
+\hline
+红球数 & 5 & 3 & 6 & 8 \\
+白球数 & 5 & 7 & 4 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item 然后, 从当前盒子随机转移到下一个盒子, 规则是: 如果当前盒子是盒子 1 , 那么下一盒子一定是盒子 2 ; 如果当前是盒子 2 或 3 , 那么分别以概率 0.4 和 0.6 转移到左边或右边的盒子; 如果当前是盒子 4 , 那么各以 0.5 的概率停留在盒子 4 或转移到盒子 3 。
+  \item 确定转移的盒子后, 再从这个盒子里随机抽出 1 个球, 记录其颜色, 放回。
+  \item 如此下去, 重复进行 5 次, 得到一个球的颜色的观测序列:
+\end{itemize}
+
+$$
+O=(\text { 红, 红, 白, 白, 红 })
+$$
+
+在这个过程中, 观察者只能观测到球的颜色的序列, 观测不到球是从哪个盒子取出的, 即观测不到盒子的序列。
+
+在这个例子中有两个随机序列, 一个是盒子的序列 (状态序列), 一个是球的颜色的观测序列 (观测序列)。前者是隐藏的, 只有后者是可观测的。这是一个隐马尔可夫模型的例子。根据所给条件, 可以明确状态集合、观测集合、序列长度以及模型的三要素。
+
+盒子对应状态, 状态的集合是
+
+$$
+Q=\{\text { 盒子 } 1, \text { 盒子 } 2, \text { 盒子 } 3 \text {, 盒子 } 4\}, N=4
+$$
+
+球的颜色对应观测，观测的集合是
+
+$$
+V=\{\text { 红, 白 }\}, M=2
+$$
+
+状态序列和观测序列长度 $T=5$ 。
+
+初始概率分布为
+
+$$
+\pi=(0.25,0.25,0.25,0.25)^{\mathrm{T}}
+$$
+
+状态转移概率分布为
+
+$$
+A=\left[\begin{array}{llll}
+0 & 1 & 0 & 0 \\
+0.4 & 0 & 0.6 & 0 \\
+0 & 0.4 & 0 & 0.6 \\
+0 & 0 & 0.5 & 0.5
+\end{array}\right]
+$$
+
+观测概率分布为
+
+$$
+B=\left[\begin{array}{ll}
+0.5 & 0.5 \\
+0.3 & 0.7 \\
+0.6 & 0.4 \\
+0.8 & 0.2
+\end{array}\right]
+$$
+
+\subsection*{10.1.2 观测序列的生成过程}
+根据隐马尔可夫模型定义, 可以将一个长度为 $T$ 的观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 的生成过程描述如下。
+
+\section*{算法 10.1 (观测序列的生成)}
+输入: 隐马尔可夫模型 $\lambda=(A, B, \pi)$, 观测序列长度 $T$ 。
+
+输出: 观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 。
+
+(1) 按照初始状态分布 $\pi$ 产生状态 $i_{1}$;
+
+(2) 令 $t=1$;
+
+(3) 按照状态 $i_{t}$ 的观测概率分布 $b_{i_{t}}(k)$ 生成 $o_{t}$;
+
+(4) 按照状态 $i_{t}$ 的状态转移概率分布 $\left\{a_{i_{t} i_{t+1}}\right\}$ 产生状态 $i_{t+1}, i_{t+1}=1,2, \cdots, N$;
+
+(5) 令 $t=t+1$, 如果 $t<T$, 转步骤 (3); 否则, 终止。
+
+\subsection*{10.1.3 隐马尔可夫模型的 3 个基本问题}
+隐马尔可夫模型有 3 个基本问题:
+
+(1) 概率计算问题。给定模型 $\lambda=(A, B, \pi)$ 和观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 计算在模型 $\lambda$ 下观测序列 $O$ 出现的概率 $P(O \mid \lambda)$ 。
+
+(2) 学习问题。已知观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 估计模型 $\lambda=(A, B, \pi)$ 参数, 使得在该模型下观测序列概率 $P(O \mid \lambda)$ 最大, 即用极大似然估计的方法估计参数。
+
+(3) 预测问题, 也称为解码 (decoding) 问题。已知模型 $\lambda=(A, B, \pi)$ 和观测序列 $O=$ $\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 求对给定观测序列条件概率 $P(I \mid O)$ 最大的状态序列 $I=\left(i_{1}, i_{2}, \cdots, i_{T}\right)$ 。即给定观测序列, 求最有可能的对应的状态序列。
+
+下面各节将逐一介绍这些基本问题的解法。
+
+\section*{10.2 概率计算算法}
+本节介绍计算观测序列概率 $P(O \mid \lambda)$ 的前向 (forward) 与后向 (backward) 算法。先介绍概念上可行但计算上不可行的直接计算法。
+
+\subsection*{10.2.1 直接计算法}
+给定模型 $\lambda=(A, B, \pi)$ 和观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 计算观测序列 $O$ 出现的概率 $P(O \mid \lambda)$ 。最直接的方法是按概率公式直接计算。通过列举所有可能的长度为 $T$ 的状态序列 $I=\left(i_{1}, i_{2}, \cdots, i_{T}\right)$, 求各个状态序列 $I$ 与观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 的联合概率 $P(O, I \mid \lambda)$, 然后对所有可能的状态序列求和, 得到 $P(O \mid \lambda)$ 。
+
+状态序列 $I=\left(i_{1}, i_{2}, \cdots, i_{T}\right)$ 的概率是
+
+
+\begin{equation*}
+P(I \mid \lambda)=\pi_{i_{1}} a_{i_{1} i_{2}} a_{i_{2} i_{3}} \cdots a_{i_{T-1} i_{T}} \tag{10.10}
+\end{equation*}
+
+
+对固定的状态序列 $I=\left(i_{1}, i_{2}, \cdots, i_{T}\right)$, 观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 的概率是
+
+
+\begin{equation*}
+P(O \mid I, \lambda)=b_{i_{1}}\left(o_{1}\right) b_{i_{2}}\left(o_{2}\right) \cdots b_{i_{T}}\left(o_{T}\right) \tag{10.11}
+\end{equation*}
+
+
+$O$ 和 $I$ 同时出现的联合概率为
+
+
+\begin{align*}
+P(O, I \mid \lambda) & =P(O \mid I, \lambda) P(I \mid \lambda) \\
+& =\pi_{i_{1}} b_{i_{1}}\left(o_{1}\right) a_{i_{1} i_{2}} b_{i_{2}}\left(o_{2}\right) \cdots a_{i_{T-1} i_{T}} b_{i_{T}}\left(o_{T}\right) \tag{10.12}
+\end{align*}
+
+
+然后, 对所有可能的状态序列 $I$ 求和, 得到观测序列 $O$ 的概率 $P(O \mid \lambda)$, 即
+
+
+\begin{align*}
+P(O \mid \lambda) & =\sum_{I} P(O \mid I, \lambda) P(I \mid \lambda) \\
+& =\sum_{i_{1}, i_{2}, \cdots, i_{T}} \pi_{i_{1}} b_{i_{1}}\left(o_{1}\right) a_{i_{1} i_{2}} b_{i_{2}}\left(o_{2}\right) \cdots a_{i_{T-1} i_{T}} b_{i_{T}}\left(o_{T}\right) \tag{10.13}
+\end{align*}
+
+
+但是, 利用公式 (10.13) 计算量很大, 是 $O\left(T N^{\mathrm{T}}\right)$ 阶的, 这种算法不可行。
+
+下面介绍计算观测序列概率 $P(O \mid \lambda)$ 的有效算法——前向-后向算法 (forward-backward algorithm）。
+
+\section*{10.2 .2 前向算法}
+首先定义前向概率。
+
+定义 10.2（前向概率） 给定隐马尔可夫模型 $\lambda$, 定义到时刻 $t$ 部分观测序列为 $o_{1}, o_{2}, \cdots, o_{t}$ 且状态为 $q_{i}$ 的概率为前向概率, 记作
+
+
+\begin{equation*}
+\alpha_{t}(i)=P\left(o_{1}, o_{2}, \cdots, o_{t}, i_{t}=q_{i} \mid \lambda\right) \tag{10.14}
+\end{equation*}
+
+
+可以递推地求得前向概率 $\alpha_{t}(i)$ 及观测序列概率 $P(O \mid \lambda)$ 。
+
+\section*{算法 10.2 (观测序列概率的前向算法)}
+输入: 隐马尔可夫模型 $\lambda$, 观测序列 $O$ 。
+
+输出: 观测序列概率 $P(O \mid \lambda)$ 。
+
+(1) 初值
+
+
+\begin{equation*}
+\alpha_{1}(i)=\pi_{i} b_{i}\left(o_{1}\right), \quad i=1,2, \cdots, N \tag{10.15}
+\end{equation*}
+
+
+(2) 递推
+
+对 $t=1,2, \cdots, T-1$, 有
+
+
+\begin{equation*}
+\alpha_{t+1}(i)=\left[\sum_{j=1}^{N} \alpha_{t}(j) a_{j i}\right] b_{i}\left(o_{t+1}\right), \quad i=1,2, \cdots, N \tag{10.16}
+\end{equation*}
+
+
+(3) 终止
+
+
+\begin{equation*}
+P(O \mid \lambda)=\sum_{i=1}^{N} \alpha_{T}(i) \tag{10.17}
+\end{equation*}
+
+
+在前向算法中, 步骤 (1) 初始化前向概率, 是初始时刻的状态 $i_{1}=q_{i}$ 和观测 $o_{1}$ 的联合概率。步骤 (2) 是前向概率的递推公式, 计算到时刻 $t+1$ 部分观测序列为 $o_{1}, o_{2}, \cdots, o_{t}, o_{t+1}$且在时刻 $t+1$ 处于状态 $q_{i}$ 的前向概率, 如图 10.1 所示。在式 (10.16) 的方括号里, 既然 $\alpha_{t}(j)$ 是到时刻 $t$ 观测到 $o_{1}, o_{2}, \cdots, o_{t}$ 并在时刻 $t$ 处于状态 $q_{j}$ 的前向概率, 那么乘积 $\alpha_{t}(j) a_{j i}$就是到时刻 $t$ 观测到 $o_{1}, o_{2}, \cdots, o_{t}$ 并在时刻 $t$ 处于状态 $q_{j}$ 而在时刻 $t+1$ 到达状态 $q_{i}$ 的联合概率。对这个乘积在时刻 $t$ 的所有可能的 $N$ 个状态 $q_{j}$ 求和, 其结果就是到时刻 $t$ 观测为 $o_{1}, o_{2}, \cdots, o_{t}$ 并在时刻 $t+1$ 处于状态 $q_{i}$ 的联合概率。方括号里的值与观测概率 $b_{i}\left(o_{t+1}\right)$ 的乘积恰好是到时刻 $t+1$ 观测到 $o_{1}, o_{2}, \cdots, o_{t}, o_{t+1}$ 并在时刻 $t+1$ 处于状态 $q_{i}$ 的前向概率 $\alpha_{t+1}(i)$ 。步骤 (3) 给出 $P(O \mid \lambda)$ 的计算公式。因为
+
+$$
+\alpha_{T}(i)=P\left(o_{1}, o_{2}, \cdots, o_{T}, i_{T}=q_{i} \mid \lambda\right)
+$$
+
+所以
+
+$$
+P(O \mid \lambda)=\sum_{i=1}^{N} \alpha_{T}(i)
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_85ccebcbbc039fa5a6c0g-31(1)}
+\end{center}
+
+图 10.1 前向概率的递推公式
+
+如图 10.2 所示, 前向算法实际是基于 “状态序列的路径结构” 递推计算 $P(O \mid \lambda)$ 的算法。前向算法高效的关键是其局部计算前向概率, 然后利用路径结构将前向概率 “递推” 到全局,得到 $P(O \mid \lambda)$ 。具体地, 在时刻 $t=1$, 计算 $\alpha_{1}(i)$ 的 $N$ 个值 $(i=1,2, \cdots, N)$; 在各个时刻 $t=1,2, \cdots, T-1$, 计算 $\alpha_{t+1}(i)$ 的 $N$ 个值 $(i=1,2, \cdots, N)$, 而且每个 $\alpha_{t+1}(i)$ 的计算利用前一时刻的 $N$ 个 $\alpha_{t}(j)$ 。减少计算量的原因在于每一次计算直接引用前一个时刻的计算结果,避免重复计算。这样, 利用前向概率计算 $P(O \mid \lambda)$ 的计算量是 $O\left(N^{2} T\right)$ 阶的, 而不是直接计算的 $O\left(T N^{T}\right)$ 阶。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_85ccebcbbc039fa5a6c0g-31}
+
+图 10.2 观测序列路径结构\\
+例 10.2 考虑盒子和球模型 $\lambda=(A, B, \pi)$, 状态集合 $Q=\{1,2,3\}$, 观测集合 $V=$ \{红, 白\},
+
+$$
+A=\left[\begin{array}{lll}
+0.5 & 0.2 & 0.3 \\
+0.3 & 0.5 & 0.2 \\
+0.2 & 0.3 & 0.5
+\end{array}\right], \quad B=\left[\begin{array}{cc}
+0.5 & 0.5 \\
+0.4 & 0.6 \\
+0.7 & 0.3
+\end{array}\right], \quad \pi=\left[\begin{array}{l}
+0.2 \\
+0.4 \\
+0.4
+\end{array}\right]
+$$
+
+设 $T=3, O=$ (红, 白, 红), 试用前向算法计算 $P(O \mid \lambda)$ 。
+
+解 按照算法 10.2:
+
+(1) 计算初值
+
+$$
+\begin{aligned}
+& \alpha_{1}(1)=\pi_{1} b_{1}\left(o_{1}\right)=0.10 \\
+& \alpha_{1}(2)=\pi_{2} b_{2}\left(o_{1}\right)=0.16 \\
+& \alpha_{1}(3)=\pi_{3} b_{3}\left(o_{1}\right)=0.28
+\end{aligned}
+$$
+
+(2) 递推计算
+
+$$
+\begin{aligned}
+& \alpha_{2}(1)=\left[\sum_{i=1}^{3} \alpha_{1}(i) a_{i 1}\right] b_{1}\left(o_{2}\right)=0.154 \times 0.5=0.077 \\
+& \alpha_{2}(2)=\left[\sum_{i=1}^{3} \alpha_{1}(i) a_{i 2}\right] b_{2}\left(o_{2}\right)=0.184 \times 0.6=0.1104 \\
+& \alpha_{2}(3)=\left[\sum_{i=1}^{3} \alpha_{1}(i) a_{i 3}\right] b_{3}\left(o_{2}\right)=0.202 \times 0.3=0.0606 \\
+& \alpha_{3}(1)=\left[\sum_{i=1}^{3} \alpha_{2}(i) a_{i 1}\right] b_{1}\left(o_{3}\right)=0.04187 \\
+& \alpha_{3}(2)=\left[\sum_{i=1}^{3} \alpha_{2}(i) a_{i 2}\right] b_{2}\left(o_{3}\right)=0.03551 \\
+& \alpha_{3}(3)=\left[\sum_{i=1}^{3} \alpha_{2}(i) a_{i 3}\right] b_{3}\left(o_{3}\right)=0.05284
+\end{aligned}
+$$
+
+(3) 终止
+
+$$
+P(O \mid \lambda)=\sum_{i=1}^{3} \alpha_{3}(i)=0.13022
+$$
+
+\subsection*{10.2.3 后向算法}
+定义 10.3 (后向概率) 给定隐马尔可夫模型 $\lambda$, 定义在时刻 $t$ 状态为 $q_{i}$ 的条件下, 从 $t+1$ 到 $T$ 的部分观测序列为 $o_{t+1}, o_{t+2}, \cdots, o_{T}$ 的概率为后向概率, 记作
+
+
+\begin{equation*}
+\beta_{t}(i)=P\left(o_{t+1}, o_{t+2}, \cdots, o_{T} \mid i_{t}=q_{i}, \lambda\right) \tag{10.18}
+\end{equation*}
+
+
+可以用递推的方法求得后向概率 $\beta_{t}(i)$ 及观测序列概率 $P(O \mid \lambda)$ 。
+
+\section*{算法 10.3 (观测序列概率的后向算法)}
+输入: 隐马尔可夫模型 $\lambda$, 观测序列 $O$ 。
+
+输出: 观测序列概率 $P(O \mid \lambda)$ 。
+
+(1)
+
+
+\begin{equation*}
+\beta_{T}(i)=1, \quad i=1,2, \cdots, N \tag{10.19}
+\end{equation*}
+
+
+(2) 对 $t=T-1, T-2, \cdots, 1$,
+
+
+\begin{equation*}
+\beta_{t}(i)=\sum_{j=1}^{N} a_{i j} b_{j}\left(o_{t+1}\right) \beta_{t+1}(j), \quad i=1,2, \cdots, N \tag{10.20}
+\end{equation*}
+
+
+(3)
+
+
+\begin{equation*}
+P(O \mid \lambda)=\sum_{i=1}^{N} \pi_{i} b_{i}\left(o_{1}\right) \beta_{1}(i) \tag{10.21}
+\end{equation*}
+
+
+步骤 (1) 初始化后向概率, 对最终时刻的所有状态 $q_{i}$ 规定 $\beta_{T}(i)=1$ 。步骤 (2) 是后向概率的递推公式。如图 10.3 所示, 为了计算在时刻 $t$ 状态为 $q_{i}$ 条件下时刻 $t+1$ 之后的观测序列为 $o_{t+1}, o_{t+2}, \cdots, o_{T}$ 的后向概率 $\beta_{t}(i)$, 只需考虑在时刻 $t+1$ 所有可能的 $N$ 个状态 $q_{j}$ 的转移概率 (即 $a_{i j}$ 项), 以及在此状态下的观测 $o_{t+1}$ 的观测概率 (即 $b_{j}\left(o_{t+1}\right)$ 项), 然后考虑状态 $q_{j}$ 之后的观测序列的后向概率（即 $\beta_{t+1}(j)$ 项）。步骤 (3) 求 $P(O \mid \lambda)$ 的思路与步骤 (2) 一致, 只是初始概率 $\pi_{i}$ 代替转移概率。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_85ccebcbbc039fa5a6c0g-33}
+\end{center}
+
+图 10.3 后向概率递推公式
+
+利用前向概率和后向概率的定义可以将观测序列概率 $P(O \mid \lambda)$ 统一写成
+
+
+\begin{equation*}
+P(O \mid \lambda)=\sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{t}(i) a_{i j} b_{j}\left(o_{t+1}\right) \beta_{t+1}(j), \quad t=1,2, \cdots, T-1 \tag{10.22}
+\end{equation*}
+
+
+\subsection*{10.2.4 一些概率与期望值的计算}
+利用前向概率和后向概率, 可以得到关于单个状态和两个状态概率的计算公式。
+
+\begin{enumerate}
+  \item 给定模型 $\lambda$ 和观测 $O$, 在时刻 $t$ 处于状态 $q_{i}$ 的概率。记
+\end{enumerate}
+
+
+\begin{equation*}
+\gamma_{t}(i)=P\left(i_{t}=q_{i} \mid O, \lambda\right) \tag{10.23}
+\end{equation*}
+
+
+可以通过前向概率和后向概率计算。事实上,
+
+$$
+\gamma_{t}(i)=P\left(i_{t}=q_{i} \mid O, \lambda\right)=\frac{P\left(i_{t}=q_{i}, O \mid \lambda\right)}{P(O \mid \lambda)}
+$$
+
+由前向概率 $\alpha_{t}(i)$ 和后向概率 $\beta_{t}(i)$ 定义可知:
+
+$$
+\alpha_{t}(i) \beta_{t}(i)=P\left(i_{t}=q_{i}, O \mid \lambda\right)
+$$
+
+于是得到:
+
+
+\begin{equation*}
+\gamma_{t}(i)=\frac{\alpha_{t}(i) \beta_{t}(i)}{P(O \mid \lambda)}=\frac{\alpha_{t}(i) \beta_{t}(i)}{\sum_{j=1}^{N} \alpha_{t}(j) \beta_{t}(j)} \tag{10.24}
+\end{equation*}
+
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 给定模型 $\lambda$ 和观测 $O$, 在时刻 $t$ 处于状态 $q_{i}$ 且在时刻 $t+1$ 处于状态 $q_{j}$ 的概率。记
+\end{enumerate}
+
+
+\begin{equation*}
+\xi_{t}(i, j)=P\left(i_{t}=q_{i}, i_{t+1}=q_{j} \mid O, \lambda\right) \tag{10.25}
+\end{equation*}
+
+
+可以通过前向概率和后向概率计算:
+
+$$
+\xi_{t}(i, j)=\frac{P\left(i_{t}=q_{i}, i_{t+1}=q_{j}, O \mid \lambda\right)}{P(O \mid \lambda)}=\frac{P\left(i_{t}=q_{i}, i_{t+1}=q_{j}, O \mid \lambda\right)}{\sum_{i=1}^{N} \sum_{j=1}^{N} P\left(i_{t}=q_{i}, i_{t+1}=q_{j}, O \mid \lambda\right)}
+$$
+
+而
+
+$$
+P\left(i_{t}=q_{i}, i_{t+1}=q_{j}, O \mid \lambda\right)=\alpha_{t}(i) a_{i j} b_{j}\left(o_{t+1}\right) \beta_{t+1}(j)
+$$
+
+所以
+
+
+\begin{equation*}
+\xi_{t}(i, j)=\frac{\alpha_{t}(i) a_{i j} b_{j}\left(o_{t+1}\right) \beta_{t+1}(j)}{\sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{t}(i) a_{i j} b_{j}\left(o_{t+1}\right) \beta_{t+1}(j)} \tag{10.26}
+\end{equation*}
+
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 将 $\gamma_{t}(i)$ 和 $\xi_{t}(i, j)$ 对各个时刻 $t$ 求和, 可以得到一些有用的期望值。
+\end{enumerate}
+
+(1) 在观测 $O$ 下状态 $i$ 出现的期望值:
+
+
+\begin{equation*}
+\sum_{t=1}^{T} \gamma_{t}(i) \tag{10.27}
+\end{equation*}
+
+
+(2) 在观测 $O$ 下由状态 $i$ 转移的期望值:
+
+
+\begin{equation*}
+\sum_{t=1}^{T-1} \gamma_{t}(i) \tag{10.28}
+\end{equation*}
+
+
+(3) 在观测 $O$ 下由状态 $i$ 转移到状态 $j$ 的期望值:
+
+
+\begin{equation*}
+\sum_{t=1}^{T-1} \xi_{t}(i, j) \tag{10.29}
+\end{equation*}
+
+
+\section*{10.3 学习算法}
+根据训练数据是包括观测序列和对应的状态序列还是只有观测序列, 隐马尔可夫模型的学习可以分别由监督学习与无监督学习实现。本节首先介绍监督学习算法, 而后介绍无监督学习算法—B Baum-Welch 算法 (也就是 EM 算法)。
+
+\subsection*{10.3.1 监督学习方法}
+假设已给训练数据包含 $S$ 个长度相同的观测序列和对应的状态序列 $\left\{\left(O_{1}, I_{1}\right),\left(O_{2}, I_{2}\right), \cdots\right.$, $\left.\left(O_{S}, I_{S}\right)\right\}$, 那么可以利用极大似然估计法来估计隐马尔可夫模型的参数。具体方法如下。
+
+\section*{1. 转移概率 $a_{i j}$ 的估计}
+设样本中时刻 $t$ 处于状态 $i$ 而时刻 $t+1$ 转移到状态 $j$ 的频数为 $A_{i j}$, 那么状态转移概率 $a_{i j}$ 的估计是
+
+
+\begin{equation*}
+\hat{a}_{i j}=\frac{A_{i j}}{\sum_{j=1}^{N} A_{i j}}, \quad i=1,2, \cdots, N, \quad j=1,2, \cdots, N \tag{10.30}
+\end{equation*}
+
+
+\section*{2. 观测概率 $b_{j}(k)$ 的估计}
+设样本中状态为 $j$ 并观测为 $k$ 的频数是 $B_{j k}$, 那么状态为 $j$ 、观测为 $k$ 的概率 $b_{j}(k)$ 的估计是
+
+
+\begin{equation*}
+\hat{b}_{j}(k)=\frac{B_{j k}}{\sum_{k=1}^{M} B_{j k}}, \quad j=1,2, \cdots, N, \quad k=1,2, \cdots, M \tag{10.31}
+\end{equation*}
+
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 初始状态概率 $\pi_{i}$ 的估计 $\hat{\pi}_{i}$ 为 $S$ 个样本中初始状态为 $q_{i}$ 的频率
+\end{enumerate}
+
+由于监督学习需要使用标注的训练数据, 而人工标注训练数据往往代价很高, 有时就会利用无监督学习的方法。
+
+\subsection*{10.3.2 Baum-Welch 算法}
+假设给定训练数据只包含 $S$ 个长度为 $T$ 的观测序列 $\left\{O_{1}, O_{2}, \cdots, O_{S}\right\}$ 而没有对应的状态序列, 目标是学习隐马尔可夫模型 $\lambda=(A, B, \pi)$ 的参数。我们将观测序列数据看作观测数据 $O$, 状态序列数据看作不可观测的隐数据 $I$, 那么隐马尔可夫模型事实上是一个含有隐变量的概率模型:
+
+
+\begin{equation*}
+P(O \mid \lambda)=\sum_{I} P(O \mid I, \lambda) P(I \mid \lambda) \tag{10.32}
+\end{equation*}
+
+
+它的参数学习可以由 EM 算法实现。
+
+\section*{1. 确定完全数据的对数似然函数}
+所有观测数据写成 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 所有隐数据写成 $I=\left(i_{1}, i_{2}, \cdots, i_{T}\right)$, 完全数据是 $(O, I)=\left(o_{1}, o_{2}, \cdots, o_{T}, i_{1}, i_{2}, \cdots, i_{T}\right)$ 。完全数据的对数似然函数是 $\log P(O, I \mid \lambda)$ 。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item EM 算法的 $\mathrm{E}$ 步: 求 $Q$ 函数 $Q(\lambda, \bar{\lambda})^{(1)}$
+\end{enumerate}
+
+
+\begin{equation*}
+Q(\lambda, \bar{\lambda})=\sum_{I} \log P(O, I \mid \lambda) P(O, I \mid \bar{\lambda}) \tag{10.33}
+\end{equation*}
+
+
+其中, $\bar{\lambda}$ 是隐马尔可夫模型参数的当前估计值, $\lambda$ 是要极大化的隐马尔可夫模型参数。
+
+$$
+P(O, I \mid \lambda)=\pi_{i_{1}} b_{i_{1}}\left(o_{1}\right) a_{i_{1} i_{2}} b_{i_{2}}\left(o_{2}\right) \cdots a_{i_{T-1} i_{T}} b_{i_{T}}\left(o_{T}\right)
+$$
+
+于是函数 $Q(\lambda, \bar{\lambda})$ 可以写成
+
+
+\begin{align*}
+Q(\lambda, \bar{\lambda})= & \sum_{I} \log \pi_{i_{1}} P(O, I \mid \bar{\lambda})+\sum_{I}\left(\sum_{t=1}^{T-1} \log a_{i_{t} i_{t+1}}\right) P(O, I \mid \bar{\lambda})+ \\
+& \sum_{I}\left(\sum_{t=1}^{T} \log b_{i_{t}}\left(o_{t}\right)\right) P(O, I \mid \bar{\lambda}) \tag{10.34}
+\end{align*}
+
+
+式中求和都是对所有数据的序列总长度 $T$ 进行的。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item EM 算法的 $\mathrm{M}$ 步: 极大化 $Q$ 函数 $Q(\lambda, \bar{\lambda})$ 求模型参数 $A, B, \pi$
+\end{enumerate}
+
+由于要极大化的参数在式 (10.34) 中单独地出现在 3 个项中, 所以只需对各项分别极大化。
+
+(1) 式 (10.34) 的第 1 项可以写成
+
+$$
+\sum_{I} \log \pi_{i_{1}} P(O, I \mid \bar{\lambda})=\sum_{i=1}^{N} \log \pi_{i} P\left(O, i_{1}=i \mid \bar{\lambda}\right)
+$$
+
+注意到 $\pi_{i}$ 满足约束条件 $\sum_{i=1}^{N} \pi_{i}=1$, 利用拉格朗日乘子法, 写出拉格朗日函数:
+
+$$
+\sum_{i=1}^{N} \log \pi_{i} P\left(O, i_{1}=i \mid \bar{\lambda}\right)+\gamma\left(\sum_{i=1}^{N} \pi_{i}-1\right)
+$$
+
+对其求偏导数并令结果为 0 :
+
+
+\begin{equation*}
+\frac{\partial}{\partial \pi_{i}}\left[\sum_{i=1}^{N} \log \pi_{i} P\left(O, i_{1}=i \mid \bar{\lambda}\right)+\gamma\left(\sum_{i=1}^{N} \pi_{i}-1\right)\right]=0 \tag{10.35}
+\end{equation*}
+
+
+得:
+
+$$
+P\left(O, i_{1}=i \mid \bar{\lambda}\right)+\gamma \pi_{i}=0
+$$
+
+(1) 按照 $Q$ 函数的定义
+
+$$
+Q(\lambda, \bar{\lambda})=E_{I}[\log P(O, I \mid \lambda) \mid O, \bar{\lambda}]
+$$
+
+式 (10.33) 略去了对 $\lambda$ 而言的常数因子 $1 / P(O \mid \bar{\lambda})$ 。\\
+对 $i$ 求和得到 $\gamma$ :
+
+$$
+\gamma=-P(O \mid \bar{\lambda})
+$$
+
+代入式 (10.35) 即得:
+
+
+\begin{equation*}
+\pi_{i}=\frac{P\left(O, i_{1}=i \mid \bar{\lambda}\right)}{P(O \mid \bar{\lambda})} \tag{10.36}
+\end{equation*}
+
+
+(2) 式 (10.34) 的第 2 项可以写成
+
+$$
+\sum_{I}\left(\sum_{t=1}^{T-1} \log a_{i_{t} i_{t+1}}\right) P(O, I \mid \bar{\lambda})=\sum_{i=1}^{N} \sum_{j=1}^{N} \sum_{t=1}^{T-1} \log a_{i j} P\left(O, i_{t}=i, i_{t+1}=j \mid \bar{\lambda}\right)
+$$
+
+类似第 1 项, 应用具有约束条件 $\sum_{j=1}^{N} a_{i j}=1$ 的拉格朗日乘子法可以求出:
+
+
+\begin{equation*}
+a_{i j}=\frac{\sum_{t=1}^{T-1} P\left(O, i_{t}=i, i_{t+1}=j \mid \bar{\lambda}\right)}{\sum_{t=1}^{T-1} P\left(O, i_{t}=i \mid \bar{\lambda}\right)} \tag{10.37}
+\end{equation*}
+
+
+(3) 式 (10.34) 的第 3 项为
+
+$$
+\sum_{I}\left(\sum_{t=1}^{T} \log b_{i_{t}}\left(o_{t}\right)\right) P(O, I \mid \bar{\lambda})=\sum_{j=1}^{N} \sum_{t=1}^{T} \log b_{j}\left(o_{t}\right) P\left(O, i_{t}=j \mid \bar{\lambda}\right)
+$$
+
+同样用拉格朗日乘子法, 约束条件是 $\sum_{k=1}^{M} b_{j}(k)=1$ 。注意, 只有在 $o_{t}=v_{k}$ 时 $b_{j}\left(o_{t}\right)$ 对 $b_{j}(k)$的偏导数才不为 0 , 以 $I\left(o_{t}=v_{k}\right)$ 表示。求得:
+
+
+\begin{equation*}
+b_{j}(k)=\frac{\sum_{t=1}^{T} P\left(O, i_{t}=j \mid \bar{\lambda}\right) I\left(o_{t}=v_{k}\right)}{\sum_{t=1}^{T} P\left(O, i_{t}=j \mid \bar{\lambda}\right)} \tag{10.38}
+\end{equation*}
+
+
+\subsection*{10.3.3 Baum-Welch 模型参数估计公式}
+将式 (10.36) 式 (10.38) 中的各概率分别用 $\gamma_{t}(i), \xi_{t}(i, j)$ 表示, 则可将相应的公式写成
+
+
+\begin{equation*}
+a_{i j}=\frac{\sum_{t=1}^{T-1} \xi_{t}(i, j)}{\sum_{t=1}^{T-1} \gamma_{t}(i)} \tag{10.39}
+\end{equation*}
+
+
+
+\begin{equation*}
+b_{j}(k)=\frac{\sum_{t=1, o_{t}=v_{k}}^{T} \gamma_{t}(j)}{\sum_{t=1}^{T} \gamma_{t}(j)} \tag{10.40}
+\end{equation*}
+
+
+$$
+\pi_{i}=\gamma_{1}(i)
+$$
+
+其中, $\gamma_{t}(i), \xi_{t}(i, j)$ 分别由式 (10.24) 及式 (10.26) 给出。式 (10.39) 式 (10.41) 就是 BaumWelch 算法 (Baum-Welch algorithm), 它是 EM 算法在隐马尔可夫模型学习中的具体实现,由 Baum 和 Welch 提出。
+
+\section*{算法 10.4 (Baum-Welch 算法)}
+输入: 观测数据 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 。
+
+输出: 隐马尔可夫模型参数。
+
+(1) 初始化。对 $n=0$, 选取 $a_{i j}^{(0)}, b_{j}(k)^{(0)}, \pi_{i}^{(0)}$, 得到模型 $\lambda^{(0)}=\left(A^{(0)}, B^{(0)}, \pi^{(0)}\right)$ 。
+
+(2) 递推。对 $n=1,2, \cdots$,
+
+$$
+\begin{aligned}
+a_{i j}^{(n+1)} & =\frac{\sum_{t=1}^{T-1} \xi_{t}(i, j)}{\sum_{t=1}^{T-1} \gamma_{t}(i)} \\
+b_{j}(k)^{(n+1)} & =\frac{\sum_{t=1, o_{t}=v_{k}}^{T} \gamma_{t}(j)}{\sum_{t=1}^{T} \gamma_{t}(j)} \\
+\pi_{i}^{(n+1)} & =\gamma_{1}(i)
+\end{aligned}
+$$
+
+右端各值按观测 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 和模型 $\lambda^{(n)}=\left(A^{(n)}, B^{(n)}, \pi^{(n)}\right)$ 计算。式中 $\gamma_{t}(i), \xi_{t}(i, j)$由式 (10.24) 和式 (10.26) 给出。
+
+(3) 终止。得到模型参数 $\lambda^{(n+1)}=\left(A^{(n+1)}, B^{(n+1)}, \pi^{(n+1)}\right)$ 。
+
+\section*{10.4 预测 算法}
+下面介绍隐马尔可夫模型预测的两种算法: 近似算法与维特比算法 (Viterbi algorithm)。
+
+\subsection*{10.4.1 近似算法}
+近似算法的想法是: 在每个时刻 $t$ 选择在该时刻最有可能出现的状态 $i_{t}^{*}$, 从而得到一个状态序列 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, \cdots, i_{T}^{*}\right)$, 将它作为预测的结果。\\
+给定隐马尔可夫模型 $\lambda$ 和观测序列 $O$, 在时刻 $t$ 处于状态 $q_{i}$ 的概率 $\gamma_{t}(i)$ 是
+
+
+\begin{equation*}
+\gamma_{t}(i)=\frac{\alpha_{t}(i) \beta_{t}(i)}{P(O \mid \lambda)}=\frac{\alpha_{t}(i) \beta_{t}(i)}{\sum_{j=1}^{N} \alpha_{t}(j) \beta_{t}(j)} \tag{10.42}
+\end{equation*}
+
+
+在每一时刻 $t$ 最有可能的状态 $i_{t}^{*}$ 是
+
+
+\begin{equation*}
+i_{t}^{*}=\arg \max _{1 \leqslant i \leqslant N}\left[\gamma_{t}(i)\right], \quad t=1,2, \cdots, T \tag{10.43}
+\end{equation*}
+
+
+从而得到状态序列 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, \cdots, i_{T}^{*}\right)$ 。
+
+近似算法的优点是计算简单, 其缺点是不能保证预测的状态序列整体是最有可能的状态序列, 因为预测的状态序列可能有实际不发生的部分。事实上, 上述方法得到的状态序列中有可能存在转移概率为 0 的相邻状态, 即对某些 $i, j, a_{i j}=0$ 时。尽管如此, 近似算法仍然是有用的。
+
+\subsection*{10.4.2 维特比算法}
+维特比算法实际是用动态规划 (dynamic programming) 解隐马尔可夫模型预测问题, 即用动态规划求概率最大路径 (最优路径)。这时一条路径对应着一个状态序列。
+
+根据动态规划原理, 最优路径具有这样的特性: 如果最优路径在时刻 $t$ 通过结点 $i_{t}^{*}$, 那么这一路径从结点 $i_{t}^{*}$ 到终点 $i_{T}^{*}$ 的部分路径对于从 $i_{t}^{*}$ 到 $i_{T}^{*}$ 的所有可能的部分路径来说, 必须是最优的。因为假如不是这样, 那么从 $i_{t}^{*}$ 到 $i_{T}^{*}$ 就有另一条更好的部分路径存在, 如果把它和从 $i_{1}^{*}$ 到 $i_{t}^{*}$ 的部分路径连接起来, 就会形成一条比原来的路径更优的路径, 这是矛盾的。依据这一原理, 我们只需从时刻 $t=1$ 开始, 递推地计算在时刻 $t$ 状态为 $i$ 的各条部分路径的最大概率, 直至得到时刻 $t=T$ 时状态为 $i$ 的各条路径的最大概率。时刻 $t=T$ 的最大概率即为最优路径的概率 $P^{*}$, 最优路径的终结点 $i_{T}^{*}$ 也同时得到。之后, 为了找出最优路径的各个结点, 从终结点 $i_{T}^{*}$ 开始, 由后向前逐步求得结点 $i_{T-1}^{*}, i_{T-2}^{*}, \cdots, i_{1}^{*}$, 得到最优路径 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, \cdots, i_{T}^{*}\right)$ 。这就是维特比算法。
+
+首先导入两个变量 $\delta$ 和 $\Psi$ 。定义在时刻 $t$ 状态为 $i$ 的所有单个路径 $\left(i_{1}, i_{2}, \cdots, i_{t}\right)$ 中概率最大值为
+
+
+\begin{equation*}
+\delta_{t}(i)=\max _{i_{1}, i_{2}, \cdots, i_{t-1}} P\left(i_{t}=i, i_{t-1}, \cdots, i_{1}, o_{t}, \cdots, o_{1} \mid \lambda\right), \quad i=1,2, \cdots, N \tag{10.44}
+\end{equation*}
+
+
+由定义可得变量 $\delta$ 的递推公式:
+
+
+\begin{align*}
+\delta_{t+1}(i) & =\max _{i_{1}, i_{2}, \cdots, i_{t}} P\left(i_{t+1}=i, i_{t}, \cdots, i_{1}, o_{t+1}, \cdots, o_{1} \mid \lambda\right) \\
+& =\max _{1 \leqslant j \leqslant N}\left[\delta_{t}(j) a_{j i}\right] b_{i}\left(o_{t+1}\right), \quad i=1,2, \cdots, N, \quad t=1,2, \cdots, T-1 \tag{10.45}
+\end{align*}
+
+
+定义在时刻 $t$ 状态为 $i$ 的所有单个路径 $\left(i_{1}, i_{2}, \cdots, i_{t-1}, i\right)$ 中概率最大的路径的第 $t-1$个结点为
+
+
+\begin{equation*}
+\Psi_{t}(i)=\arg \max _{1 \leqslant j \leqslant N}\left[\delta_{t-1}(j) a_{j i}\right], \quad i=1,2, \cdots, N \tag{10.46}
+\end{equation*}
+
+
+下面介绍维特比算法。
+
+\section*{算法 10.5 (维特比算法)}
+输入: 模型 $\lambda=(A, B, \pi)$ 和观测 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$ 。
+
+输出: 最优路径 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, \cdots, i_{T}^{*}\right)$ 。
+
+(1) 初始化。
+
+$$
+\begin{gathered}
+\delta_{1}(i)=\pi_{i} b_{i}\left(o_{1}\right), \quad i=1,2, \cdots, N \\
+\Psi_{1}(i)=0, \quad i=1,2, \cdots, N
+\end{gathered}
+$$
+
+(2) 递推。对 $t=2,3, \cdots, T$,
+
+$$
+\begin{gathered}
+\delta_{t}(i)=\max _{1 \leqslant j \leqslant N}\left[\delta_{t-1}(j) a_{j i}\right] b_{i}\left(o_{t}\right), \quad i=1,2, \cdots, N \\
+\Psi_{t}(i)=\arg \max _{1 \leqslant j \leqslant N}\left[\delta_{t-1}(j) a_{j i}\right], \quad i=1,2, \cdots, N
+\end{gathered}
+$$
+
+(3) 终止。
+
+$$
+\begin{gathered}
+P^{*}=\max _{1 \leqslant i \leqslant N} \delta_{T}(i) \\
+i_{T}^{*}=\arg \max _{1 \leqslant i \leqslant N}\left[\delta_{T}(i)\right]
+\end{gathered}
+$$
+
+（4）最优路径回溯。对 $t=T-1, T-2, \cdots, 1$,
+
+$$
+i_{t}^{*}=\Psi_{t+1}\left(i_{t+1}^{*}\right)
+$$
+
+求得最优路径 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, \cdots, i_{T}^{*}\right)$ 。
+
+下面通过一个例子来说明维特比算法。
+
+例 10.3 对例 10.2 的模型 $\lambda=(A, B, \pi)$,
+
+$$
+A=\left[\begin{array}{lll}
+0.5 & 0.2 & 0.3 \\
+0.3 & 0.5 & 0.2 \\
+0.2 & 0.3 & 0.5
+\end{array}\right], \quad B=\left[\begin{array}{ll}
+0.5 & 0.5 \\
+0.4 & 0.6 \\
+0.7 & 0.3
+\end{array}\right], \quad \pi=\left[\begin{array}{l}
+0.2 \\
+0.4 \\
+0.4
+\end{array}\right]
+$$
+
+已知观测序列 $O=$ (红, 白, 红), 试求最优状态序列, 即最优路径 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, i_{3}^{*}\right)$ 。
+
+解 如图 10.4 所示, 要在所有可能的路径中选择一条最优路径, 按照以下步骤处理:
+
+(1) 初始化。在 $t=1$ 时, 对每一个状态 $i, i=1,2,3$, 求状态为 $i$ 、观测 $o_{1}$ 为红的概率,记此概率为 $\delta_{1}(i)$, 则
+
+$$
+\delta_{1}(i)=\pi_{i} b_{i}\left(o_{1}\right)=\pi_{i} b_{i}(\text { 红 }), \quad i=1,2,3
+$$
+
+代入实际数据
+
+$$
+\delta_{1}(1)=0.10, \quad \delta_{1}(2)=0.16, \quad \delta_{1}(3)=0.28
+$$
+
+记 $\Psi_{1}(i)=0, i=1,2,3$ 。
+
+(2) 在 $t=2$ 时, 对每个状态 $i, i=1,2,3$, 求在 $t=1$ 时状态为 $j$, 观测为红并在 $t=2$时状态为 $i$ 、观测 $o_{2}$ 为白的路径的最大概率, 记此最大概率为 $\delta_{2}(i)$, 则
+
+$$
+\delta_{2}(i)=\max _{1 \leqslant j \leqslant 3}\left[\delta_{1}(j) a_{j i}\right] b_{i}\left(o_{2}\right)
+$$
+
+
+\end{document}

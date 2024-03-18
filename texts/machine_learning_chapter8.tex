@@ -1,0 +1,1934 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan,}
+\urlstyle{same}
+
+\begin{document}
+
+\begin{align*}
+\operatorname{tr}\left(\boldsymbol{B}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{B}\right) & =\sum_{j=1}^{m} \lambda_{j} \operatorname{tr}\left(\boldsymbol{c}_{j} \boldsymbol{c}_{j}^{\mathrm{T}}\right) \\
+& =\sum_{j=1}^{m} \lambda_{j} \operatorname{tr}\left(\boldsymbol{c}_{j}^{\mathrm{T}} \boldsymbol{c}_{j}\right) \\
+& =\sum_{j=1}^{m} \lambda_{j} \boldsymbol{c}_{j}^{\mathrm{T}} \boldsymbol{c}_{j} \\
+& =\sum_{j=1}^{m} \sum_{k=1}^{q} \lambda_{j} c_{j k}^{2} \tag{16.26}
+\end{align*}
+
+
+其次, 由式 (16.25) 及 $\boldsymbol{A}$ 的正交性知:
+
+$$
+\boldsymbol{C}=\boldsymbol{A}^{\mathrm{T}} \boldsymbol{B}
+$$
+
+由于 $A$ 是正交的, $B$ 的列是正交的, 所以
+
+$$
+\boldsymbol{C}^{\mathrm{T}} \boldsymbol{C}=\boldsymbol{B}^{\mathrm{T}} \boldsymbol{A} \boldsymbol{A}^{\mathrm{T}} \boldsymbol{B}=\boldsymbol{B}^{\mathrm{T}} \boldsymbol{B}=\boldsymbol{I}_{\boldsymbol{q}}
+$$
+
+即 $\boldsymbol{C}$ 的列也是正交的。于是
+
+
+\begin{align*}
+& \operatorname{tr}\left(\boldsymbol{C}^{\mathrm{T}} \boldsymbol{C}\right)=\operatorname{tr}\left(\boldsymbol{I}_{q}\right) \\
+& \sum_{j=1}^{m} \sum_{k=1}^{q} c_{j k}^{2}=q \tag{16.27}
+\end{align*}
+
+
+这样, 矩阵 $\boldsymbol{C}$ 可以认为是某个 $m$ 阶正交矩阵 $\boldsymbol{D}$ 的前 $q$ 列。正交矩阵 $\boldsymbol{D}$ 的行也正交, 所以满足
+
+$$
+\boldsymbol{d}_{j}^{\mathrm{T}} \boldsymbol{d}_{j}=1, \quad j=1,2, \cdots, m
+$$
+
+其中, $\boldsymbol{d}_{j}^{\mathrm{T}}$ 是 $\boldsymbol{D}$ 的第 $j$ 行。由于矩阵 $\boldsymbol{D}$ 的行包括矩阵 $\boldsymbol{C}$ 的行的前 $q$ 个元素, 所以
+
+$$
+\boldsymbol{c}_{j}^{\mathrm{T}} \boldsymbol{c}_{j} \leqslant 1, \quad j=1,2, \cdots, m
+$$
+
+即
+
+
+\begin{equation*}
+\sum_{k=1}^{q} c_{j k}^{2} \leqslant 1, \quad j=1,2, \cdots, m \tag{16.28}
+\end{equation*}
+
+
+注意到在式 (16.26) 中 $\sum_{k=1}^{q} c_{j k}^{2}$ 是 $\lambda_{j}$ 的系数, 由式 (16.27) 知这些系数之和是 $q$, 且由式 (16.28) 知这些系数小于等于 1 。因为 $\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{q} \geqslant \cdots \geqslant \lambda_{m}$, 显然, 当能找到 $c_{j k}$使得
+
+\[
+\sum_{k=1}^{q} c_{j k}^{2}= \begin{cases}1, & j=1,2, \cdots, q  \tag{16.29}\\ 0, & j=q+1, q+2, \cdots, m\end{cases}
+\]
+
+时, $\sum_{j=1}^{m}\left(\sum_{k=1}^{q} c_{j k}^{2}\right) \lambda_{j}$ 最大。而当 $\boldsymbol{B}=\boldsymbol{A}_{q}$ 时, 有
+
+$$
+c_{j k}= \begin{cases}1, & 1 \leqslant j=k \leqslant q \\ 0, & \text { 其他 }\end{cases}
+$$
+
+满足式 (16.29)。所以, 当 $\boldsymbol{B}=\boldsymbol{A}_{\boldsymbol{q}}$ 时, $\operatorname{tr}\left(\boldsymbol{\Sigma}_{\boldsymbol{y}}\right)$ 达到最大值。
+
+定理 16.2 表明, 当 $\boldsymbol{x}$ 的线性变换 $\boldsymbol{y}$ 在 $\boldsymbol{B}=\boldsymbol{A}_{\boldsymbol{q}}$ 时, 其协方差矩阵 $\boldsymbol{\Sigma}_{\boldsymbol{y}}$ 的迹 $\operatorname{tr}\left(\boldsymbol{\Sigma}_{\boldsymbol{y}}\right)$ 取得最大值, 这就是说, 当取 $\boldsymbol{A}$ 的前 $q$ 列、取 $\boldsymbol{x}$ 的前 $q$ 个主成分时, 能够最大限度地保留原有变量方差的信息。
+
+定理 16.3 考虑正交变换
+
+$$
+\boldsymbol{y}=\boldsymbol{B}^{\mathrm{T}} \boldsymbol{x}
+$$
+
+这里 $\boldsymbol{B}^{\mathrm{T}}$ 是 $p \times m$ 矩阵, $\boldsymbol{A}$ 和 $\boldsymbol{\Sigma}_{\boldsymbol{y}}$ 的定义与定理 16.2 相同, 则 $\operatorname{tr}\left(\boldsymbol{\Sigma}_{\boldsymbol{y}}\right)$ 在 $\boldsymbol{B}=\boldsymbol{A}_{p}$ 时取得最小值, 其中矩阵 $A_{p}$ 由 $\boldsymbol{A}$ 的后 $p$ 列组成。
+
+证明类似定理 16.2, 有兴趣的读者可以自行证明。定理 16.3 可以理解为, 当舍弃 $\boldsymbol{A}$ 的后 $p$ 列, 即舍弃变量 $\boldsymbol{x}$ 的后 $p$ 个主成分时, 原有变量的方差的信息损失最少。
+
+以上两个定理可以作为选择 $k$ 个主成分的理论依据。具体选择 $k$ 的方法通常利用方差贡献率。
+
+定义 16.2 第 $k$ 主成分 $y_{k}$ 的方差贡献率定义为 $y_{k}$ 的方差与所有方差之和的比, 记作 $\eta_{k}$ :
+
+
+\begin{equation*}
+\eta_{k}=\frac{\lambda_{k}}{\sum_{i=1}^{m} \lambda_{i}} \tag{16.30}
+\end{equation*}
+
+
+$k$ 个主成分 $y_{1}, y_{2}, \cdots, y_{k}$ 的累计方差贡献率定义为 $k$ 个方差之和与所有方差之和的比:
+
+
+\begin{equation*}
+\sum_{i=1}^{k} \eta_{i}=\frac{\sum_{i=1}^{k} \lambda_{i}}{\sum_{i=1}^{m} \lambda_{i}} \tag{16.31}
+\end{equation*}
+
+
+通常取 $k$ 使得累计方差贡献率达到规定的百分比以上, 如 70\% 80\%以上。累计方差贡献率反映了主成分保留信息的比例, 但它不能反映对某个原有变量 $x_{i}$ 保留信息的比例, 这时通常利用 $k$ 个主成分 $y_{1}, y_{2}, \cdots, y_{k}$ 对原有变量 $x_{i}$ 的贡献率。
+
+定义 $16.3 k$ 个主成分 $y_{1}, y_{2}, \cdots, y_{k}$ 对原有变量 $x_{i}$ 的贡献率定义为 $x_{i}$ 与 $\left(y_{1}, y_{2}, \cdots, y_{k}\right)$的相关系数的平方, 记作 $\nu_{i}$ :
+
+$$
+\nu_{i}=\rho^{2}\left(x_{i},\left(y_{1}, y_{2}, \cdots, y_{k}\right)\right)
+$$
+
+计算公式如下:
+
+
+\begin{equation*}
+\nu_{i}=\rho^{2}\left(x_{i},\left(y_{1}, y_{2}, \cdots, y_{k}\right)\right)=\sum_{j=1}^{k} \rho^{2}\left(x_{i}, y_{j}\right)=\sum_{j=1}^{k} \frac{\lambda_{j} \alpha_{i j}^{2}}{\sigma_{i i}} \tag{16.32}
+\end{equation*}
+
+
+\subsection*{16.1.5 规范化变量的总体主成分}
+在实际问题中, 不同变量可能有不同的量纲, 直接求主成分有时会产生不合理的结果。为了消除这个影响, 常常对各个随机变量实施规范化, 使其均值为 0 , 方差为 1 。
+
+设 $\boldsymbol{x}=\left(x_{1}, x_{2}, \cdots, x_{m}\right)^{\mathrm{T}}$ 为 $m$ 维随机变量, $x_{i}$ 为第 $i$ 个随机变量, $i=1,2, \cdots, m$, 令
+
+
+\begin{equation*}
+x_{i}^{*}=\frac{x_{i}-E\left(x_{i}\right)}{\sqrt{\operatorname{var}\left(x_{i}\right)}}, \quad i=1,2, \cdots, m \tag{16.33}
+\end{equation*}
+
+
+其中, $E\left(x_{i}\right), \operatorname{var}\left(x_{i}\right)$ 分别是随机变量 $x_{i}$ 的均值和方差, 这时 $x_{i}^{*}$ 就是 $x_{i}$ 的规范化随机变量。
+
+显然, 规范化随机变量的协方差矩阵就是相关矩阵 $\boldsymbol{R}$ 。主成分分析通常在规范化随机变量的协方差矩阵即相关矩阵上进行。
+
+对照总体主成分的性质可知, 规范化随机变量的总体主成分有以下性质:
+
+（1）规范化变量主成分的协方差矩阵是
+
+
+\begin{equation*}
+\boldsymbol{\Lambda}^{*}=\operatorname{diag}\left(\lambda_{1}^{*}, \lambda_{2}^{*}, \cdots, \lambda_{m}^{*}\right) \tag{16.34}
+\end{equation*}
+
+
+其中, $\lambda_{1}^{*} \geqslant \lambda_{2}^{*} \geqslant \cdots \geqslant \lambda_{m}^{*} \geqslant 0$ 为相关矩阵 $\boldsymbol{R}$ 的特征值。
+
+(2) 协方差矩阵的特征值之和为 $m:$
+
+
+\begin{equation*}
+\sum_{k=1}^{m} \lambda_{k}^{*}=m \tag{16.35}
+\end{equation*}
+
+
+（3）规范化随机变量 $x_{i}^{*}$ 与主成分 $y_{k}^{*}$ 的相关系数 (因子负荷量) 为
+
+
+\begin{equation*}
+\rho\left(y_{k}^{*}, x_{i}^{*}\right)=\sqrt{\lambda_{k}^{*}} e_{i k}^{*}, \quad k, i=1,2, \cdots, m \tag{16.36}
+\end{equation*}
+
+
+其中, $e_{k}^{*}=\left(e_{1 k}^{*}, e_{2 k}^{*}, \cdots, e_{m k}^{*}\right)^{\mathrm{T}}$ 为矩阵 $\boldsymbol{R}$ 对应于特征值 $\lambda_{k}^{*}$ 的单位特征向量。
+
+(4) 所有规范化随机变量 $x_{i}^{*}$ 与主成分 $y_{k}^{*}$ 的相关系数的平方和等于 $\lambda_{k}^{*}$ :
+
+
+\begin{equation*}
+\sum_{i=1}^{m} \rho^{2}\left(y_{k}^{*}, x_{i}^{*}\right)=\sum_{i=1}^{m} \lambda_{k}^{*} e_{i k}^{* 2}=\lambda_{k}^{*}, \quad k=1,2, \cdots, m \tag{16.37}
+\end{equation*}
+
+
+(5) 规范化随机变量 $x_{i}^{*}$ 与所有主成分 $y_{k}^{*}$ 的相关系数的平方和等于 $1:$
+
+
+\begin{equation*}
+\sum_{k=1}^{m} \rho^{2}\left(y_{k}^{*}, x_{i}^{*}\right)=\sum_{k=1}^{m} \lambda_{k}^{*} e_{i k}^{* 2}=1, \quad i=1,2, \cdots, m \tag{16.38}
+\end{equation*}
+
+
+\section*{16.2 样本主成分分析}
+16.1 节叙述了总体主成分分析, 是定义在样本总体上的。在实际问题中, 需要在观测数据上进行主成分分析, 这就是样本主成分分析。有了总体主成分的概念, 容易理解样本主成分的概念。样本主成分也和总体主成分具有相同的性质, 所以本节重点叙述样本主成分的算法。
+
+\subsection*{16.2.1 样本主成分的定义和性质}
+假设对 $m$ 维随机变量 $\boldsymbol{x}=\left(x_{1}, x_{2}, \cdots, x_{m}\right)^{\mathrm{T}}$ 进行 $n$ 次独立观测, $\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{n}$ 表示观测样本, 其中 $\boldsymbol{x}_{j}=\left(x_{1 j}, x_{2 j}, \cdots, x_{m j}\right)^{\mathrm{T}}$ 表示第 $j$ 个观测样本, $x_{i j}$ 表示第 $j$ 个观测样本的第 $i$ 个变量, $j=1,2, \cdots, n$ 。观测数据用样本矩阵 $\boldsymbol{X}$ 表示, 记作
+
+\[
+\boldsymbol{X}=\left[\begin{array}{llll}
+\boldsymbol{x}_{1} & \boldsymbol{x}_{2} & \cdots & \boldsymbol{x}_{n}
+\end{array}\right]=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n}  \tag{16.39}\\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+\]
+
+给定样本矩阵 $\boldsymbol{X}$, 可以估计样本均值以及样本协方差。样本均值向量 $\overline{\boldsymbol{x}}$ 为
+
+
+\begin{equation*}
+\overline{\boldsymbol{x}}=\frac{1}{n} \sum_{j=1}^{n} \boldsymbol{x}_{j} \tag{16.40}
+\end{equation*}
+
+
+样本协方差矩阵 $\boldsymbol{S}$ 为
+
+
+\begin{align*}
+& \boldsymbol{S}=\left[s_{i j}\right]_{m \times m} \\
+& s_{i j}=\frac{1}{n-1} \sum_{k=1}^{n}\left(x_{i k}-\bar{x}_{i}\right)\left(x_{j k}-\bar{x}_{j}\right), \quad i, j=1,2, \cdots, m \tag{16.41}
+\end{align*}
+
+
+其中, $\bar{x}_{i}=\frac{1}{n} \sum_{k=1}^{n} x_{i k}$ 为第 $i$ 个变量的样本均值, $\bar{x}_{j}=\frac{1}{n} \sum_{k=1}^{n} x_{j k}$ 为第 $j$ 个变量的样本均值。
+
+样本相关矩阵 $\boldsymbol{R}$ 为
+
+
+\begin{equation*}
+\boldsymbol{R}=\left[r_{i j}\right]_{m \times m}, \quad r_{i j}=\frac{s_{i j}}{\sqrt{s_{i i} s_{j j}}}, \quad i, j=1,2, \cdots, m \tag{16.42}
+\end{equation*}
+
+
+定义 $m$ 维向量 $\boldsymbol{x}=\left(x_{1}, x_{2}, \cdots, x_{m}\right)^{\mathrm{T}}$ 到 $m$ 维向量 $\boldsymbol{y}=\left(y_{1}, y_{2}, \cdots, y_{m}\right)^{\mathrm{T}}$ 的线性变换:
+
+
+\begin{equation*}
+\boldsymbol{y}=\boldsymbol{A}^{\mathrm{T}} \boldsymbol{x} \tag{16.43}
+\end{equation*}
+
+
+其中，
+
+$$
+\begin{aligned}
+& \boldsymbol{A}=\left[\begin{array}{llll}
+a_{1} & a_{2} & \cdots & \boldsymbol{a}_{m}
+\end{array}\right]=\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1 m} \\
+a_{21} & a_{22} & \cdots & a_{2 m} \\
+\vdots & \vdots & & \vdots \\
+a_{m 1} & a_{m 2} & \cdots & a_{m m}
+\end{array}\right] \\
+& \boldsymbol{a}_{i}=\left(a_{1 i}, a_{2 i}, \cdots, a_{m i}\right)^{\mathrm{T}}, \quad i=1,2, \cdots, m
+\end{aligned}
+$$
+
+考虑式 (16.43) 的任意一个线性变换:
+
+
+\begin{equation*}
+\boldsymbol{y}_{i}=\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}=a_{1 i} \boldsymbol{x}_{1}+a_{2 i} \boldsymbol{x}_{2}+\cdots+a_{m i} \boldsymbol{x}_{m}, \quad i=1,2, \cdots, m \tag{16.44}
+\end{equation*}
+
+
+其中, $y_{i}$ 是 $m$ 维向量 $\boldsymbol{y}$ 的第 $i$ 个变量, 相应于容量为 $n$ 的样本 $\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{n}, y_{i}$ 的样本均值 $\bar{y}_{i}$ 为
+
+
+\begin{equation*}
+\bar{y}_{i}=\frac{1}{n} \sum_{j=1}^{n} \boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}_{j}=\boldsymbol{a}_{i}^{\mathrm{T}} \overline{\boldsymbol{x}} \tag{16.45}
+\end{equation*}
+
+
+其中, $\overline{\boldsymbol{x}}$ 是随机向量 $\boldsymbol{x}$ 的样本均值:
+
+$$
+\overline{\boldsymbol{x}}=\frac{1}{n} \sum_{j=1}^{n} \boldsymbol{x}_{j}
+$$
+
+$y_{i}$ 的样本方差 $\operatorname{var}\left(y_{i}\right)$ 为
+
+
+\begin{align*}
+\operatorname{var}\left(y_{i}\right) & =\frac{1}{n-1} \sum_{j=1}^{n}\left(\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}_{j}-\boldsymbol{a}_{i}^{\mathrm{T}} \overline{\boldsymbol{x}}\right)^{2} \\
+& =\boldsymbol{a}_{i}^{\mathrm{T}}\left[\frac{1}{n-1} \sum_{j=1}^{n}\left(\boldsymbol{x}_{j}-\overline{\boldsymbol{x}}\right)\left(\boldsymbol{x}_{j}-\overline{\boldsymbol{x}}\right)^{\mathrm{T}}\right] \boldsymbol{a}_{i}=\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{i} \tag{16.46}
+\end{align*}
+
+
+对任意两个线性变换 $y_{i}=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{x}, y_{k}=\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}$, 相应于容量为 $n$ 的样本 $\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{n}, y_{i}$和 $y_{k}$ 的样本协方差为
+
+
+\begin{equation*}
+\operatorname{cov}\left(y_{i}, y_{k}\right)=\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{k} \tag{16.47}
+\end{equation*}
+
+
+现在给出样本主成分的定义。
+
+定义 16.4 (样本主成分) 给定样本矩阵 $\boldsymbol{X}$ 。样本第一主成分 $y_{1}=\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{x}$ 是在 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{a}_{1}=1$条件下, 使 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本方差 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{1}$ 最大的 $\boldsymbol{x}$ 的线性变换; 样本第二主成分 $y_{2}=\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{x}$ 是在 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{a}_{2}=1$ 和 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{x}_{j}$ 与 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本协方差 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{2}=0$条件下, 使 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本方差 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{2}$ 最大的 $\boldsymbol{x}$ 的线性变换; 一般地, 样本第 $i$ 主成分 $y_{i}=\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}$ 是在 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{a}_{i}=1$ 和 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}_{j}$ 与 $\boldsymbol{a}_{k}^{\mathrm{T}} \boldsymbol{x}_{j}(k<i, j=1,2, \cdots, n)$ 的样本协方差 $\boldsymbol{a}_{k}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{i}=0$ 条件下, 使 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本方差 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{i}$ 最大的 $\boldsymbol{x}$ 的线性变换。
+
+样本主成分与总体主成分具有同样的性质, 这从样本主成分的定义容易看出。只要以样本协方差矩阵 $\boldsymbol{S}$ 代替总体协方差矩阵 $\boldsymbol{\Sigma}$ 即可。总体主成分的定理 16.2 及定理 16.3 对样本主成分依然成立。样本主成分的性质不再重述。
+
+在使用样本主成分时, 一般假设样本数据是规范化的, 即对样本矩阵作如下变换:
+
+
+\begin{equation*}
+x_{i j}^{*}=\frac{x_{i j}-\bar{x}_{i}}{\sqrt{s_{i i}}}, \quad i=1,2, \cdots, m, \quad j=1,2, \cdots, n \tag{16.48}
+\end{equation*}
+
+
+其中,
+
+$$
+\begin{aligned}
+& \bar{x}_{i}=\frac{1}{n} \sum_{j=1}^{n} x_{i j}, \quad i=1,2, \cdots, m \\
+& s_{i i}=\frac{1}{n-1} \sum_{j=1}^{n}\left(x_{i j}-\bar{x}_{i}\right)^{2}, \quad i=1,2, \cdots, m
+\end{aligned}
+$$
+
+为了方便, 将规范化变量 $x_{i j}^{*}$ 仍记作 $x_{i j}$, 规范化的样本矩阵仍记作 $\boldsymbol{X}$ 。这时, 样本协方差矩阵 $\boldsymbol{S}$ 就是样本相关矩阵 $\boldsymbol{R}:$
+
+
+\begin{equation*}
+\boldsymbol{R}=\frac{1}{n-1} \boldsymbol{X} \boldsymbol{X}^{\mathrm{T}} \tag{16.49}
+\end{equation*}
+
+
+样本协方差矩阵 $\boldsymbol{S}$ 是总体协方差矩阵 $\boldsymbol{\Sigma}$ 的无偏估计，样本相关矩阵 $\boldsymbol{R}$ 是总体相关矩阵的无偏估计, $\boldsymbol{S}$ 的特征值和特征向量是 $\boldsymbol{\Sigma}$ 的特征值和特征向量的极大似然估计。关于这个问题本书不作讨论, 有兴趣的读者可参阅多元统计的书籍, 如文献 [1]。
+
+\subsection*{16.2.2 相关矩阵的特征值分解算法}
+传统的主成分分析通过数据的协方差矩阵或相关矩阵的特征值分解进行, 现在常用的方法是通过数据矩阵的奇异值分解进行。首先叙述数据的协方差矩阵或相关矩阵的特征值分解方法。
+
+给定样本矩阵 $\boldsymbol{X}$, 利用数据的样本协方差矩阵或者样本相关矩阵的特征值分解进行主成分分析。具体步骤如下:
+
+(1) 对观测数据按式 (16.48) 进行规范化处理, 得到规范化数据矩阵, 仍以 $\boldsymbol{X}$ 表示。
+
+(2) 依据规范化数据矩阵, 计算样本相关矩阵 $\boldsymbol{R}$ :
+
+$$
+\boldsymbol{R}=\left[r_{i j}\right]_{m \times m}=\frac{1}{n-1} \boldsymbol{X} \boldsymbol{X}^{\mathrm{T}}
+$$
+
+其中,
+
+$$
+r_{i j}=\frac{1}{n-1} \sum_{l=1}^{n} x_{i l} x_{l j}, \quad i, j=1,2, \cdots, m
+$$
+
+(3) 求样本相关矩阵 $\boldsymbol{R}$ 的 $k$ 个特征值和对应的 $k$ 个单位特征向量。
+
+求解 $\boldsymbol{R}$ 的特征方程
+
+$$
+|\boldsymbol{R}-\lambda \boldsymbol{I}|=0
+$$
+
+得 $\boldsymbol{R}$ 的 $m$ 个特征值:
+
+$$
+\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{m}
+$$
+
+求方差贡献率 $\sum_{i=1}^{k} \eta_{i}$ 达到预定值的主成分个数 $k$ 。
+
+求前 $k$ 个特征值对应的单位特征向量:
+
+$$
+\boldsymbol{a}_{i}=\left(a_{1 i}, a_{2 i}, \cdots, a_{m i}\right)^{\mathrm{T}}, \quad i=1,2, \cdots, k
+$$
+
+(4) 求 $k$ 个样本主成分
+
+以 $k$ 个单位特征向量为系数进行线性变换, 求出 $k$ 个样本主成分:
+
+
+\begin{equation*}
+y_{i}=\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}, \quad i=1,2, \cdots, k \tag{16.50}
+\end{equation*}
+
+
+(5) 计算 $k$ 个主成分 $y_{j}$ 与原变量 $x_{i}$ 的相关系数 $\rho\left(x_{i}, y_{j}\right)$, 以及 $k$ 个主成分对原变量 $x_{i}$的贡献率 $\nu_{i}$ 。
+
+(6) 计算 $n$ 个样本的 $k$ 个主成分值
+
+将规范化样本数据代入 $k$ 个主成分式 (16.50), 得到 $n$ 个样本的主成分值。第 $j$ 个样本 $\boldsymbol{x}_{j}=\left(x_{1 j}, x_{2 j}, \cdots, x_{m j}\right)^{\mathrm{T}}$ 的第 $i$ 主成分值是
+
+$$
+\begin{gathered}
+y_{i j}=\left(a_{1 i}, a_{2 i}, \cdots, a_{m i}\right)\left(x_{1 j}, x_{2 j}, \cdots, x_{m j}\right)^{\mathrm{T}}=\sum_{l=1}^{m} a_{l i} x_{l j}, \\
+i=1,2, \cdots, m, \quad j=1,2, \cdots, n
+\end{gathered}
+$$
+
+主成分分析得到的结果可以用于其他机器学习方法的输入。比如, 将样本点投影到以主成分为坐标轴的空间中, 然后应用聚类算法就可以对样本点进行聚类。
+
+下面举例说明主成分分析方法。
+
+例 16.1 假设有 $n$ 个学生参加四门课程的考试, 将学生们的考试成绩看作随机变量的取值, 对考试成绩数据进行标准化处理, 得到样本相关矩阵 $\boldsymbol{R}$, 列于表 16.1。
+
+表 16.1 样本相关矩阵 $\boldsymbol{R}$
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+课程 & 语文 & 外语 & 数学 & 物理 \\
+\hline
+语文 & 1.00 & 0.44 & 0.29 & 0.33 \\
+外语 & 0.44 & 1.00 & 0.35 & 0.32 \\
+数学 & 0.29 & 0.35 & 1.00 & 0.60 \\
+物理 & 0.33 & 0.32 & 0.60 & 1.00 \\
+\hline
+\end{tabular}
+\end{center}
+
+试对数据进行主成分分析。
+
+解 设变量 $x_{1}, x_{2}, x_{3}, x_{4}$ 分别表示语文、外语、数学、物理的成绩。对样本相关矩阵进行特征值分解, 得到相关矩阵的特征值, 并按大小排序:
+
+$$
+\lambda_{1}=2.17, \quad \lambda_{2}=0.87, \quad \lambda_{3}=0.57, \quad \lambda_{4}=0.39
+$$
+
+这些特征值就是各主成分的方差贡献率。假设要求主成分的累计方差贡献率大于 $75 \%$, 那么只需取前两个主成分即可, 即 $k=2$, 因为
+
+$$
+\frac{\lambda_{1}+\lambda_{2}}{\sum_{i=1}^{4} \lambda_{i}}=0.76
+$$
+
+求出对应于特征值 $\lambda_{1}, \lambda_{2}$ 的单位特征向量, 列于表 16.2 , 表中最后一列为主成分的方差贡献率。
+
+表 16.2 单位特征向量和主成分的方差贡献率
+
+\begin{center}
+\begin{tabular}{cccccc}
+\hline
+项目 & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & 方差贡献率 \\
+\hline
+$y_{1}$ & 0.460 & 0.476 & 0.523 & 0.537 & 0.543 \\
+$y_{2}$ & 0.574 & 0.486 & -0.476 & -0.456 & 0.218 \\
+\hline
+\end{tabular}
+\end{center}
+
+由此按照式 (16.50) 可得第一、第二主成分:
+
+$$
+\begin{aligned}
+& y_{1}=0.460 x_{1}+0.476 x_{2}+0.523 x_{3}+0.537 x_{4} \\
+& y_{2}=0.574 x_{1}+0.486 x_{2}-0.476 x_{3}-0.456 x_{4}
+\end{aligned}
+$$
+
+这就是主成分分析的结果。变量 $y_{1}$ 和 $y_{2}$ 表示第一、第二主成分。\\
+接下来由特征值和单位特征向量求出第一、第二主成分的因子负荷量, 以及第一、第二主成分对变量 $x_{i}$ 的贡献率, 列于表 16.3 。
+
+表 16.3 主成分的因子负荷量和贡献率
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+项目 & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ \\
+\hline
+$y_{1}$ & 0.678 & 0.701 & 0.770 & 0.791 \\
+$y_{2}$ & 0.536 & 0.453 & -0.444 & -0.425 \\
+$y_{1}, y_{2}$ 对 $x_{i}$ 的贡献率 & 0.747 & 0.697 & 0.790 & 0.806 \\
+\hline
+\end{tabular}
+\end{center}
+
+从表 16.3 中可以看出, 第一主成分 $y_{1}$ 对应的因子负荷量 $\rho\left(y_{1}, x_{i}\right), i=1,2,3,4$, 均为正数, 表明各门课程成绩提高都可使 $y_{1}$ 提高, 也就是说, 第一主成分 $y_{1}$ 反映了学生的整体成绩。还可以看出, 因子负荷量的数值相近, 且 $\rho\left(y_{1}, x_{4}\right)$ 的数值最大, 这表明物理成绩在整体成绩中占最重要位置。
+
+第二主成分 $y_{2}$ 对应的因子负荷量 $\rho\left(y_{2}, x_{i}\right), i=1,2,3,4$, 有正有负, 正的是语文和外语,负的是数学和物理, 表明文科成绩提高都可使 $y_{2}$ 提高, 而理科成绩提高都可使 $y_{2}$ 降低, 也就是说, 第二主成分 $y_{2}$ 反映了学生的文科成绩与理科成绩的关系。
+
+图 16.3 将原变量 $x_{1}, x_{2}, x_{3}, x_{4}$ (分别表示语文、外语、数学、物理) 和主成分 $y_{1}, y_{2}$ (分别表示整体成绩、文科对理科成绩) 的因子负荷量在平面坐标系中表示, 从中可以看出变量之间的关系。 4 个原变量聚成了两类: 因子负荷量相近的语文、外语为一类, 数学、物理为一类, 前者反映文科课程成绩, 后者反映理科课程成绩。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-08}
+\end{center}
+
+图 16.3 因子负荷量的分布图
+
+\subsection*{16.2.3 数据矩阵的奇异值分解算法}
+给定样本矩阵 $\boldsymbol{X}$, 利用数据矩阵奇异值分解进行主成分分析。具体过程如下, 这里假设有 $k$ 个主成分。\\
+参照式 (15.19), 对于 $m \times n$ 实矩阵 $\boldsymbol{A}$, 假设其秩为 $r, 0<k<r$, 则可以将矩阵 $\boldsymbol{A}$ 进行截断奇异值分解:
+
+$$
+\boldsymbol{A} \approx \boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}
+$$
+
+式中 $\boldsymbol{U}_{k}$ 是 $m \times k$ 矩阵, $\boldsymbol{V}_{k}$ 是 $n \times k$ 矩阵, $\boldsymbol{\Sigma}_{k}$ 是 $k$ 阶对角矩阵; $\boldsymbol{U}_{k}, \boldsymbol{V}_{k}$ 分别由取 $\boldsymbol{A}$ 的完全奇异值分解的矩阵 $\boldsymbol{U}, \boldsymbol{V}$ 的前 $k$ 列, $\boldsymbol{\Sigma}_{k}$ 由取 $\boldsymbol{A}$ 的完全奇异值分解的矩阵 $\boldsymbol{\Sigma}$ 的前 $k$ 个对角线元素得到。
+
+定义一个新的 $n \times m$ 矩阵 $\boldsymbol{X}^{\prime}:$
+
+
+\begin{equation*}
+\boldsymbol{X}^{\prime}=\frac{1}{\sqrt{n-1}} \boldsymbol{X}^{\mathrm{T}} \tag{16.51}
+\end{equation*}
+
+
+$X^{\prime}$ 的每一列均值为零。不难得知:
+
+
+\begin{align*}
+\boldsymbol{X}^{\prime \mathrm{T}} \boldsymbol{X}^{\prime} & =\left(\frac{1}{\sqrt{n-1}} \boldsymbol{X}^{\mathrm{T}}\right)^{\mathrm{T}}\left(\frac{1}{\sqrt{n-1}} \boldsymbol{X}^{\mathrm{T}}\right) \\
+& =\frac{1}{n-1} \boldsymbol{X} \boldsymbol{X}^{\mathrm{T}} \tag{16.52}
+\end{align*}
+
+
+即 $\boldsymbol{X}^{\prime \mathrm{T}} \boldsymbol{X}^{\prime}$ 等于 $\boldsymbol{X}$ 的协方差矩阵 $\boldsymbol{S}_{\boldsymbol{X}}$ :
+
+
+\begin{equation*}
+\boldsymbol{S}_{X}=\boldsymbol{X}^{\prime \mathrm{T}} \boldsymbol{X}^{\prime} \tag{16.53}
+\end{equation*}
+
+
+主成分分析归结于求协方差矩阵 $\boldsymbol{S}_{X}$ 的特征值和对应的单位特征向量, 所以问题转化为求矩阵 $\boldsymbol{X}^{\prime \mathrm{T}} \boldsymbol{X}^{\prime}$ 的特征值和对应的单位特征向量。
+
+假设 $\boldsymbol{X}^{\prime}$ 的截断奇异值分解为 $\boldsymbol{X}^{\prime}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$, 那么 $\boldsymbol{V}$ 的列向量就是 $\boldsymbol{S}_{X}=\boldsymbol{X}^{\prime \mathrm{T}} \boldsymbol{X}^{\prime}$ 的单位特征向量。因此, $\boldsymbol{V}$ 的列向量构成 $\boldsymbol{X}$ 的主成分的正交直角坐标系。于是, 求 $\boldsymbol{X}$ 主成分可以通过求 $\boldsymbol{X}^{\prime}$ 的奇异值分解来实现。具体算法如下。
+
+\section*{算法 16.1 (主成分分析算法)}
+输入: $m \times n$ 样本矩阵 $\boldsymbol{X}$, 其每一行元素的均值为零。
+
+输出: $k \times n$ 样本主成分矩阵 $\boldsymbol{Y}$ 。
+
+参数: 主成分个数 $k$ 。
+
+（1）构造新的 $n \times m$ 矩阵:
+
+$$
+\boldsymbol{X}^{\prime}=\frac{1}{\sqrt{n-1}} \boldsymbol{X}^{\mathbf{T}}
+$$
+
+$X^{\prime}$ 每一列的均值为零。
+
+(2) 对矩阵 $\boldsymbol{X}^{\prime}$ 进行截断奇异值分解，得到:
+
+$$
+\boldsymbol{X}^{\prime}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}
+$$
+
+有 $k$ 个奇异值、奇异向量。矩阵 $\boldsymbol{V}^{\mathrm{T}}$ 和 $\boldsymbol{X}$ 的乘积构成样本主成分矩阵。
+
+(3) 求 $k \times n$ 样本主成分矩阵:
+
+$$
+\boldsymbol{Y}=\boldsymbol{V}^{\mathrm{T}} \boldsymbol{X}
+$$
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 假设 $\boldsymbol{x}$ 为 $m$ 维随机变量, 其均值为 $\boldsymbol{\mu}$, 协方差矩阵为 $\boldsymbol{\Sigma}$ 。考虑由 $m$ 维随机变量 $\boldsymbol{x}$ 到 $m$ 维随机变量 $\boldsymbol{y}$ 的线性变换:
+\end{enumerate}
+
+$$
+y_{i}=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{x}=\sum_{k=1}^{m} \alpha_{k i} x_{k}, \quad i=1,2, \cdots, m
+$$
+
+其中, $\boldsymbol{\alpha}_{i}^{\mathrm{T}}=\left(\alpha_{1 i}, \alpha_{2 i}, \cdots, \alpha_{m i}\right)$ 。
+
+如果该线性变换满足以下条件, 则称之为总体主成分:
+
+(1) $\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\alpha}_{i}=1, i=1,2, \cdots, m$;
+
+(2) $\operatorname{cov}\left(y_{i}, y_{j}\right)=0(i \neq j)$;
+
+(3) 变量 $y_{1}$ 是 $\boldsymbol{x}$ 的所有线性变换中方差最大的; $y_{2}$ 是与 $y_{1}$ 不相关的 $\boldsymbol{x}$ 的所有线性变换中方差最大的; 一般地, $y_{i}$ 是与 $y_{1}, y_{2}, \cdots, y_{i-1}(i=1,2, \cdots, m)$ 都不相关的 $\boldsymbol{x}$ 的所有线性变换中方差最大的, 这时分别称 $y_{1}, y_{2}, \cdots, y_{m}$ 为 $\boldsymbol{x}$ 的第一主成分、第二主成分、 $\cdots \cdots$ 、第 $m$ 主成分。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 假设 $\boldsymbol{x}$ 是 $m$ 维随机变量, 其协方差矩阵是 $\boldsymbol{\Sigma}, \boldsymbol{\Sigma}$ 的特征值分别是 $\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant$ $\lambda_{m} \geqslant 0$, 特征值对应的单位特征向量分别是 $\boldsymbol{\alpha}_{1}, \boldsymbol{\alpha}_{2}, \cdots, \boldsymbol{\alpha}_{m}$, 则 $\boldsymbol{x}$ 的第 $i$ 主成分可以写作
+\end{enumerate}
+
+$$
+y_{i}=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{x}=\sum_{k=1}^{m} \alpha_{k i} x_{k}, \quad i=1,2, \cdots, m
+$$
+
+并且, $\boldsymbol{x}$ 的第 $i$ 主成分的方差是协方差矩阵 $\boldsymbol{\Sigma}$ 的第 $i$ 个特征值, 即
+
+$$
+\operatorname{var}\left(y_{i}\right)=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{i}=\lambda_{i}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 主成分有以下性质:
+\end{enumerate}
+
+主成分 $\boldsymbol{y}$ 的协方差矩阵是对角矩阵:
+
+$$
+\operatorname{cov}(\boldsymbol{y})=\boldsymbol{\Lambda}=\operatorname{diag}\left(\lambda_{1}, \lambda_{2}, \cdots, \lambda_{m}\right)
+$$
+
+主成分 $\boldsymbol{y}$ 的方差之和等于随机变量 $\boldsymbol{x}$ 的方差之和:
+
+$$
+\sum_{i=1}^{m} \lambda_{i}=\sum_{i=1}^{m} \sigma_{i i}
+$$
+
+其中, $\sigma_{i i}$ 是 $x_{i}$ 的方差, 即协方差矩阵 $\boldsymbol{\Sigma}$ 的对角线元素。
+
+主成分 $y_{k}$ 与变量 $x_{i}$ 的相关系数 $\rho\left(y_{k}, x_{i}\right)$ 称为因子负荷量 (factor loading), 它表示第 $k$个主成分 $y_{k}$ 与变量 $x_{i}$ 的相关关系, 即 $y_{k}$ 对 $x_{i}$ 的贡献程度。
+
+$$
+\rho\left(y_{k}, x_{i}\right)=\frac{\sqrt{\lambda_{k}} \alpha_{i k}}{\sqrt{\sigma_{i i}}}, \quad k, i=1,2, \cdots, m
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 样本主成分分析就是基于样本协方差矩阵的主成分分析。\\
+给定样本矩阵
+\end{enumerate}
+
+$$
+\boldsymbol{X}=\left[\begin{array}{llll}
+\boldsymbol{x}_{1} & \boldsymbol{x}_{2} & \cdots & \boldsymbol{x}_{n}
+\end{array}\right]=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n} \\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+$$
+
+其中, $\boldsymbol{x}_{j}=\left(x_{1 j}, x_{2 j}, \cdots, x_{m j}\right)^{\mathrm{T}}$ 是 $\boldsymbol{x}$ 的第 $j$ 个独立观测样本, $j=1,2, \cdots, n$ 。
+
+$\boldsymbol{X}$ 的样本协方差矩阵
+
+$$
+\begin{gathered}
+\boldsymbol{S}=\left[s_{i j}\right]_{m \times m}, \quad s_{i j}=\frac{1}{n-1} \sum_{k=1}^{n}\left(x_{i k}-\bar{x}_{i}\right)\left(x_{j k}-\bar{x}_{j}\right), \\
+i=1,2, \cdots, m, \quad j=1,2, \cdots, m
+\end{gathered}
+$$
+
+其中, $\bar{x}_{i}=\frac{1}{n} \sum_{k=1}^{n} x_{i k}$ 。
+
+给定样本数据矩阵 $\boldsymbol{X}$, 考虑向量 $\boldsymbol{x}$ 到 $\boldsymbol{y}$ 的线性变换:
+
+$$
+\boldsymbol{y}=\boldsymbol{A}^{\mathrm{T}} \boldsymbol{x}
+$$
+
+这里,
+
+$$
+\boldsymbol{A}=\left[\begin{array}{llll}
+\boldsymbol{a}_{1} & \boldsymbol{a}_{2} & \cdots & \boldsymbol{a}_{m}
+\end{array}\right]=\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1 m} \\
+a_{21} & a_{22} & \cdots & a_{2 m} \\
+\vdots & \vdots & & \vdots \\
+a_{m 1} & a_{m 2} & \cdots & a_{m m}
+\end{array}\right]
+$$
+
+如果该线性变换满足以下条件, 则称之为样本主成分。样本第一主成分 $y_{1}=\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{x}$ 是在 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{a}_{1}=1$ 条件下, 使 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本方差 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{1}$ 最大的 $\boldsymbol{x}$ 的线性变换; 样本第二主成分 $y_{2}=\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{x}$ 是在 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{a}_{2}=1$ 和 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{x}_{j}$ 与 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本协方差 $\boldsymbol{a}_{1}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{2}=0$ 条件下, 使 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本方差 $\boldsymbol{a}_{2}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{2}$ 最大的 $\boldsymbol{x}$ 的线性变换; 一般地, 样本第 $i$ 主成分 $y_{i}=\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}$ 是在 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{a}_{i}=1$ 和 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}_{j}$ 与 $\boldsymbol{a}_{k}^{\mathrm{T}} \boldsymbol{x}_{j}(k<i, j=1,2, \cdots, n)$ 的样本协方差 $\boldsymbol{a}_{k}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{i}=0$ 条件下, 使 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{x}_{j}(j=1,2, \cdots, n)$ 的样本方差 $\boldsymbol{a}_{i}^{\mathrm{T}} \boldsymbol{S} \boldsymbol{a}_{i}$ 最大的 $\boldsymbol{x}$ 的线性变换。
+
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item 主成分分析方法主要有两种, 可以通过相关矩阵的特征值分解或样本矩阵的奇异值分解进行。
+\end{enumerate}
+
+(1) 相关矩阵的特征值分解算法。针对 $m \times n$ 样本矩阵 $\boldsymbol{X}$, 求样本相关矩阵
+
+$$
+\boldsymbol{R}=\frac{1}{n-1} \boldsymbol{X} \boldsymbol{X}^{\mathrm{T}}
+$$
+
+再求样本相关矩阵的 $k$ 个特征值和对应的单位特征向量, 构造正交矩阵:
+
+$$
+\boldsymbol{V}=\left(\boldsymbol{v}_{1}, \boldsymbol{v}_{2}, \cdots, \boldsymbol{v}_{k}\right)
+$$
+
+$\boldsymbol{V}$ 的每一列对应一个主成分, 得到 $k \times n$ 样本主成分矩阵:
+
+$$
+\boldsymbol{Y}=\boldsymbol{V}^{\mathrm{T}} \boldsymbol{X}
+$$
+
+(2) 矩阵 $\boldsymbol{X}$ 的奇异值分解算法。针对 $m \times n$ 样本矩阵 $\boldsymbol{X}$ :
+
+$$
+\boldsymbol{X}^{\prime}=\frac{1}{\sqrt{n-1}} \boldsymbol{X}^{\mathrm{T}}
+$$
+
+对矩阵 $\boldsymbol{X}^{\prime}$ 进行截断奇异值分解, 保留 $k$ 个奇异值、奇异向量, 得到:
+
+$$
+\boldsymbol{X}^{\prime}=\boldsymbol{U} \boldsymbol{S} \boldsymbol{V}^{\mathrm{T}}
+$$
+
+$\boldsymbol{V}$ 的每一列对应一个主成分, 得到 $k \times n$ 样本主成分矩阵 $\boldsymbol{Y}$ :
+
+$$
+\boldsymbol{Y}=\boldsymbol{V}^{\mathrm{T}} \boldsymbol{X}
+$$
+
+\section*{继续阅读}
+要进一步了解主成分分析, 可参阅文献 [1] 文献 [4]。可以通过核方法隐式地在高维空间中进行主成分分析, 相关的方法称为核主成分分析 (kernel principal component analysis ) ${ }^{[5]}$ 。主成分分析是关于一组变量之间的相关关系的分析方法, 典型相关分析 (canonical correlation analysis) 是关于两组变量之间的相关关系的分析方法 ${ }^{[6]}$ 。近年, 稳健的主成分分析 (robust principal component analysis) 被提出, 是主成分分析的扩展, 适合于严重受损数据的基本结构发现 ${ }^{[7]}$ 。
+
+\section*{习 题}
+16.1 对以下样本数据进行主成分分析:
+
+$$
+\boldsymbol{X}=\left[\begin{array}{llllll}
+2 & 3 & 3 & 4 & 5 & 7 \\
+2 & 4 & 5 & 5 & 6 & 8
+\end{array}\right]
+$$
+
+16.2 证明样本协方差矩阵 $\boldsymbol{S}$ 是总体协方差矩阵方差 $\boldsymbol{\Sigma}$ 的无偏估计。
+
+16.3 设 $\boldsymbol{X}$ 为数据规范化样本矩阵, 则主成分等价于求解以下最优化问题:
+
+$$
+\begin{array}{ll}
+\min _{L} & \|\boldsymbol{X}-\boldsymbol{L}\|_{F} \\
+\text { s.t. } & \operatorname{rank}(\boldsymbol{L}) \leqslant k
+\end{array}
+$$
+
+其中, $F$ 是弗罗贝尼乌斯范数, $k$ 是主成分个数。试问为什么?
+
+\section*{参考文献}
+[1] 方开泰. 实用多元统计分析 [M]. 上海: 华东师范大学出版社, 1989.
+
+[2] 夏绍玮, 杨家本, 杨振斌. 系统工程概论 [M]. 北京: 清华大学出版社, 1995.
+
+[3] JOLLIFFE I. Principal component analysis[M]. 2nd ed. John Wiley \& Sons, 2002.
+
+[4] SHLENS J. A tutorial on principal component analysis[Z/OL]. arXiv preprint arXiv: 14016.1100, 2014.
+
+[5] SCHÖLKOPF B, SMOLA A, MÜLLER K-R. Kernel principal component analysis[C]// Artificial Neural Networks-ICANN'97. Springer, 1997: 583-588.
+
+[6] HARDOON D R, SZEDMAK S, SHAWE-TAYLOR J. Canonical correlation analysis: an overview with application to learning methods[J]. Neural Computation, 2004, 16(12): $2639-$ 2664 .
+
+[7] CANDES E J, LI X D, MA Y, et al. Robust principal component analysis?[J]. Journal of the ACM (JACM), 2011, 58(3): 11.
+
+\section*{第 17 章 潜在语义分析}
+潜在语义分析 (latent semantic analysis, LSA) 是一种无监督学习方法, 主要用于文本的话题分析, 其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。潜在语义分析由 Deerwester 等于 1990 年提出, 最初应用于文本信息检索, 所以也被称为潜在语义索引 (latent semantic indexing, LSI), 在推荐系统、图像处理、生物信息学等领域也有广泛应用。
+
+文本信息处理中, 传统的方法以单词向量表示文本的语义内容, 以单词向量空间的度量表示文本之间的语义相似度。潜在语义分析旨在解决这种方法不能准确表示语义的问题, 试图从大量的文本数据中发现潜在的话题, 以话题向量表示文本的语义内容, 以话题向量空间的度量更准确地表示文本之间的语义相似度。这也是话题分析（topic modeling）的基本想法。
+
+潜在语义分析使用的是非概率的话题分析模型。具体地, 将文本集合表示为单词-文本矩阵, 对单词-文本矩阵进行奇异值分解, 从而得到话题向量空间, 以及文本在话题向量空间的表示。奇异值分解 (singular value decomposition, SVD) 即在第 15 章介绍的矩阵因子分解方法, 其特点是分解的矩阵正交。
+
+非负矩阵分解 (non-negative matrix factorization, NMF) 是另一种矩阵的因子分解方法, 其特点是分解的矩阵非负。1999 年 Lee 和 Sheung 的论文 [3] 发表之后, 非负矩阵分解引起高度重视和广泛使用。非负矩阵分解也可以用于话题分析。
+
+本章 17.1 节介绍单词向量空间模型和话题向量空间模型, 指出进行潜在语义分析的必要性。17.2 节叙述潜在语义分析的奇异值分解算法。17.3 节叙述非负矩阵分解算法。
+
+\section*{17.1 单词向量空间与话题向量空间}
+\subsection*{17.1.1 单词向量空间}
+文本信息处理, 比如文本信息检索、文本数据挖掘的一个核心问题是对文本的语义内容进行表示, 并进行文本之间的语义相似度计算。最简单的方法是利用向量空间模型 (vector space model, VSM）, 也就是单词向量空间模型（word vector space model）。向量空间模型的基本想法是：给定一个文本，用一个向量表示该文本的 “语义”，向量的每一维对应一个单词, 其数值为该单词在该文本中出现的频数或权值; 基本假设是文本中所有单词的出现情况表示了文本的语义内容; 文本集合中的每个文本都表示为一个向量, 存在于一个向量空间;向量空间的度量, 如内积或标准化内积表示文本之间的“语义相似度”。\\
+例如, 文本信息检索的任务是用户提出查询时, 帮助用户找到与查询最相关的文本, 以排序的形式展示给用户。一个最简单的做法是采用单词向量空间模型, 将查询与文本表示为单词的向量, 计算查询向量与文本向量的内积, 作为语义相似度, 以这个相似度的高低对文本进行排序。在这里, 查询被看成是一个伪文本, 查询与文本的语义相似度表示查询与文本的相关性。
+
+下面给出严格定义。给定一个含有 $n$ 个文本的集合 $\boldsymbol{D}=\left\{d_{1}, d_{2}, \cdots, d_{n}\right\}$, 以及在所有文本中出现的 $m$ 个单词的集合 $\boldsymbol{W}=\left\{w_{1}, w_{2}, \cdots, w_{m}\right\}$ 。将单词在文本中出现的数据用一个单词-文本矩阵（word-document matrix）表示, 记作 $\boldsymbol{X}$ :
+
+\[
+\boldsymbol{X}=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n}  \tag{17.1}\\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+\]
+
+这是一个 $m \times n$ 矩阵, 元素 $x_{i j}$ 表示单词 $w_{i}$ 在文本 $d_{j}$ 中出现的频数或权值。由于单词的种类很多, 而每个文本中出现单词的种类通常较少, 所以单词-文本矩阵是一个稀疏矩阵。
+
+权值通常用单词频率-逆文本频率 (term frequency-inverse document frequency, TFIDF）表示，其定义是
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-15}
+\end{center}
+
+式中 $\mathrm{tf}_{i j}$ 是单词 $w_{i}$ 出现在文本 $d_{j}$ 中的频数, $\mathrm{tf}_{\cdot j}$ 是文本 $d_{j}$ 中出现的所有单词的频数之和, $\mathrm{df}_{i}$ 是含有单词 $w_{i}$ 的文本数, $\mathrm{df}$ 是文本集合 $D$ 的全部文本数。直观上, 一个单词在一个文本中出现的频数越高, 这个单词在这个文本中的重要度就越高; 一个单词在整个文本集合中出现的文本数越少, 这个单词就越能表示其所在文本的特点, 重要度就越高; 一个单词在一个文本的 TF-IDF 是两种重要度的积, 表示综合重要度。
+
+单词向量空间模型直接使用单词-文本矩阵的信息。单词-文本矩阵的第 $j$ 列向量 $\boldsymbol{x}_{j}$ 表示文本 $d_{j}$ :
+
+\[
+\boldsymbol{x}_{j}=\left[\begin{array}{c}
+x_{1 j}  \tag{17.3}\\
+x_{2 j} \\
+\vdots \\
+x_{m j}
+\end{array}\right], \quad j=1,2, \cdots, n
+\]
+
+其中, $x_{i j}$ 是单词 $w_{i}$ 在文本 $d_{j}$ 的权值, $i=1,2, \cdots, m$, 权值越大, 该单词在该文本中的重要度就越高。这时矩阵 $\boldsymbol{X}$ 也可以写作 $\boldsymbol{X}=\left[\begin{array}{llll}x_{1} & \boldsymbol{x}_{2} & \cdots & \boldsymbol{x}_{n}\end{array}\right]$ 。
+
+两个单词向量的内积或标准化内积（余弦）表示对应的文本之间的语义相似度。因此, 文本 $d_{i}$ 与 $d_{j}$ 之间的相似度为
+
+
+\begin{equation*}
+x_{i} \cdot x_{j}, \quad \frac{x_{i} \cdot x_{j}}{\left\|x_{i}\right\|\left\|x_{j}\right\|} \tag{17.4}
+\end{equation*}
+
+
+式中 ・ 表示向量的内积, $\|\cdot\|$ 表示向量的范数。\\
+直观上, 在两个文本中共同出现的单词越多, 其语义内容就越相近, 这时, 对应的单词向量同不为零的维度就越多, 内积就越大 (单词向量元素的值都是非负的), 表示两个文本在语义内容上越相似。这个模型虽然简单, 却能很好地表示文本之间的语义相似度, 与人们对语义相似度的判断接近, 在一定程度上能够满足应用的需求, 至今仍在文本信息检索、文本数据挖掘等领域被广泛使用, 可以认为是文本信息处理的一个基本原理。注意, 两个文本的语义相似度并不是由一两个单词是否在两个文本中出现决定, 而是由所有的单词在两个文本中共同出现的 “模式” 决定。
+
+单词向量空间模型的优点是模型简单, 计算效率高。因为单词向量通常是稀疏的, 两个向量的内积计算只需要在其同不为零的维度上进行即可, 需要的计算很少, 可以高效地完成。单词向量空间模型也有一定的局限性, 体现在内积相似度未必能够准确表达两个文本的语义相似度上。因为自然语言的单词具有一词多义性 (polysemy) 及多词一义性 (synonymy), 即同一个单词可以表示多个语义, 多个单词可以表示同一个语义, 所以基于单词向量的相似度计算存在不精确的问题。
+
+图 17.1 给出一个例子一一单词-文本矩阵, 每一行表示一个单词, 每一列表示一个文本,矩阵的每一个元素表示单词在文本中出现的频数, 频数 0 省略。单词向量空间模型中, 文本 $d_{1}$ 与 $d_{2}$ 相似度并不高, 尽管两个文本的内容相似, 这是因为同义词 “airplane” 与 “aircraft”被当作了两个独立的单词, 单词向量空间模型不考虑单词的同义性, 在此情况下无法进行准确的相似度计算。另一方面, 文本 $d_{3}$ 与 $d_{4}$ 有一定的相似度, 尽管两个文本的内容并不相似,这是因为单词 “apple” 具有多义, 可以表示 “apple computer” 和 “fruit”, 单词向量空间模型不考虑单词的多义性, 在此情况下也无法进行准确的相似度计算。
+
+\begin{center}
+\begin{tabular}{|l|cccc|}
+\hline
+ & $d_{1}$ & $d_{2}$ & $d_{3}$ & $d_{4}$ \\
+\hline
+airplane & 2 &  &  &  \\
+aircraft &  & 2 &  &  \\
+computer &  &  & 1 &  \\
+apple &  &  & 2 & 3 \\
+fruit &  &  &  & 1 \\
+produce & 1 & 2 & 2 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+图 17.1 单词-文本矩阵例
+
+\subsection*{17.1.2 话题向量空间}
+两个文本的语义相似度可以体现在两者的话题相似度上。所谓话题（topic）, 并没有严格的定义, 就是指文本所讨论的内容或主题。一个文本一般含有若干个话题。如果两个文本的话题相似, 那么两者的语义应该也相似。话题可以由若干个语义相关的单词表示, 同义\\
+词 (如 “airplane” 与 “aircraft”) 可以表示同一个话题, 而多义词 (如 “apple”) 可以表示不同的话题。这样, 基于话题的模型就可以解决上述基于单词的模型存在的问题。
+
+可以设想定义一种话题向量空间模型（topic vector space model）。给定一个文本, 用话题空间的一个向量表示该文本, 该向量的每一分量对应一个话题, 其数值为该话题在该文本中出现的权值。用两个向量的内积或标准化内积表示对应的两个文本的语义相似度。注意话题的个数通常远远小于单词的个数, 话题向量空间模型更加抽象。事实上潜在语义分析正是构建话题向量空间的方法 (即话题分析的方法), 单词向量空间模型与话题向量空间模型可以互为补充，现实中，两者可以同时使用。
+
+\section*{1. 话题向量空间}
+给定一个文本集合 $\boldsymbol{D}=\left\{d_{1}, d_{2}, \cdots, d_{n}\right\}$ 和一个相应的单词集合 $\boldsymbol{W}=\left\{w_{1}, w_{2}, \cdots, w_{m}\right\}$,可以获得其单词-文本矩阵 $\boldsymbol{X}, \boldsymbol{X}$ 构成原始的单词向量空间, 每一列是一个文本在单词向量空间中的表示。
+
+\[
+\boldsymbol{X}=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n}  \tag{17.5}\\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+\]
+
+矩阵 $\boldsymbol{X}$ 也可以写作 $\boldsymbol{X}=\left[\begin{array}{llll}\boldsymbol{x}_{1} & \boldsymbol{x}_{2} & \cdots & \boldsymbol{x}_{n}\end{array}\right]$ 。
+
+假设所有文本共含有 $k$ 个话题, 每个话题由一个定义在单词集合 $W$ 上的 $m$ 维向量表示, 称为话题向量, 即
+
+\[
+\boldsymbol{t}_{l}=\left[\begin{array}{c}
+t_{1 l}  \tag{17.6}\\
+t_{2 l} \\
+\vdots \\
+t_{m l}
+\end{array}\right], \quad l=1,2, \cdots, k
+\]
+
+其中, $t_{i l}$ 是单词 $w_{i}$ 在话题 $t_{l}$ 的权值, $i=1,2, \cdots, m$, 权值越大, 该单词在该话题中的重要度就越高。这 $k$ 个话题向量 $\boldsymbol{t}_{1}, \boldsymbol{t}_{2}, \cdots, \boldsymbol{t}_{k}$ 张成一个话题向量空间 (topic vector space), 维数为 $k$ 。注意话题向量空间 $\boldsymbol{T}$ 是单词向量空问 $\boldsymbol{X}$ 的一个子空间。
+
+话题向量空间 $\boldsymbol{T}$ 也可以表示为一个矩阵, 称为单词-话题矩阵 (word-topic matrix), 记作
+
+\[
+\boldsymbol{T}=\left[\begin{array}{cccc}
+t_{11} & t_{12} & \cdots & t_{1 k}  \tag{17.7}\\
+t_{21} & t_{22} & \cdots & t_{2 k} \\
+\vdots & \vdots & & \vdots \\
+t_{m 1} & t_{m 2} & \cdots & t_{m k}
+\end{array}\right]
+\]
+
+矩阵 $\boldsymbol{T}$ 也可以写作 $\boldsymbol{T}=\left[\begin{array}{llll}\boldsymbol{t}_{1} & \boldsymbol{t}_{2} & \cdots & \boldsymbol{t}_{k}\end{array}\right]$ 。
+
+\section*{2. 文本在话题向量空间的表示}
+现在考虑文本集合 $\boldsymbol{D}$ 的文本 $d_{j}$, 在单词向量空间中由一个向量 $\boldsymbol{x}_{j}$ 表示, 将 $\boldsymbol{x}_{j}$ 投影到\\
+话题向量空间 $\boldsymbol{T}$ 中, 得到在话题向量空间的一个向量 $\boldsymbol{y}_{j}, \boldsymbol{y}_{j}$ 是一个 $k$ 维向量, 其表达式为
+
+\[
+\boldsymbol{y}_{j}=\left[\begin{array}{c}
+y_{1 j}  \tag{17.8}\\
+y_{2 j} \\
+\vdots \\
+y_{k j}
+\end{array}\right], \quad j=1,2, \cdots, n
+\]
+
+其中, $y_{l j}$ 是文本 $d_{j}$ 在话题 $\boldsymbol{t}_{l}$ 的权值, $l=1,2, \cdots, k$, 权值越大, 该话题在该文本中的重要度就越高。
+
+矩阵 $\boldsymbol{Y}$ 表示话题在文本中出现的情况, 称为话题-文本矩阵（topic-document matrix）,记作
+
+\[
+\boldsymbol{Y}=\left[\begin{array}{cccc}
+y_{11} & y_{12} & \cdots & y_{1 n}  \tag{17.9}\\
+y_{21} & y_{22} & \cdots & y_{2 n} \\
+\vdots & \vdots & & \vdots \\
+y_{k 1} & y_{k 2} & \cdots & y_{k n}
+\end{array}\right]
+\]
+
+矩阵 $\boldsymbol{Y}$ 也可以写作 $\boldsymbol{Y}=\left[\begin{array}{llll}\boldsymbol{y}_{1} & \boldsymbol{y}_{2} & \cdots & \boldsymbol{y}_{n}\end{array}\right]$ 。
+
+\section*{3. 从单词向量空间到话题向量空间的线性变换}
+这样一来, 在单词向量空间的文本向量 $\boldsymbol{x}_{j}$ 可以通过它在话题空间中的向量 $\boldsymbol{y}_{j}$ 近似表示, 具体地, 由 $k$ 个话题向量以 $\boldsymbol{y}_{j}$ 为系数的线性组合近似表示。
+
+
+\begin{equation*}
+\boldsymbol{x}_{j} \approx y_{1 j} \boldsymbol{t}_{1}+y_{2 j} \boldsymbol{t}_{2}+\cdots+y_{k j} \boldsymbol{t}_{k}, \quad j=1,2, \cdots, n \tag{17.10}
+\end{equation*}
+
+
+所以, 单词-文本矩阵 $\boldsymbol{X}$ 可以近似地表示为单词-话题矩阵 $\boldsymbol{T}$ 与话题-文本矩阵 $\boldsymbol{Y}$ 的乘积形式。这就是潜在语义分析。
+
+
+\begin{equation*}
+X \approx T Y \tag{17.11}
+\end{equation*}
+
+
+直观上潜在语义分析是将文本在单词向量空间的表示通过线性变换转换为在话题向量空间中的表示, 如图 17.2 所示。这个线性变换由矩阵因子分解式 (17.11) 的形式体现。图 17.3 示意性地表示实现潜在语义分析的矩阵因子分解。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-18(1)}
+\end{center}
+
+单词向量空间
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-18}
+\end{center}
+
+话题向量空间
+
+图 17.2 将文本在单词向量空间的表示通过线性变换转换为话题空间的表示\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_60436489efc55078c367g-19}
+
+图 17.3 潜在语义分析通过矩阵因子分解实现, 单词-文本矩阵 $\boldsymbol{X}$ 可以近似地表示为单词-话题矩阵 $\boldsymbol{T}$ 与话题-文本矩阵 $\boldsymbol{Y}$ 的乘积形式
+
+在原始的单词向量空间中, 两个文本 $d_{i}$ 与 $d_{j}$ 的相似度可以由对应的向量的内积表示,即 $\boldsymbol{x}_{i} \cdot \boldsymbol{x}_{j}$ 。经过潜在语义分析之后, 在话题向量空间中, 两个文本 $d_{i}$ 与 $d_{j}$ 的相似度可以由对应的向量的内积即 $\boldsymbol{y}_{i} \cdot \boldsymbol{y}_{j}$ 表示。
+
+要进行潜在语义分析, 需要同时决定两部分的内容, 一是话题向量空间 $T$, 二是文本在话题空间的表示 $\boldsymbol{Y}$, 使两者的乘积是原始矩阵数据的近似, 而这一结果完全从话题-文本矩阵的信息中获得。
+
+\section*{17.2 潜在语义分析算法}
+潜在语义分析利用矩阵奇异值分解, 具体地, 对单词-文本矩阵进行奇异值分解, 将其左矩阵作为话题向量空间, 将其对角矩阵与右矩阵的乘积作为文本在话题向量空间的表示。
+
+\subsection*{17.2.1 矩阵奇异值分解算法}
+\section*{1. 单词-文本矩阵}
+给定文本集合 $\boldsymbol{D}=\left\{d_{1}, d_{2}, \cdots, d_{n}\right\}$ 和单词集合 $\boldsymbol{W}=\left\{w_{1}, w_{2}, \cdots, w_{m}\right\}$ 。潜在语义分析首先将这些数据表示成一个单词-文本矩阵:
+
+\[
+\boldsymbol{X}=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n}  \tag{17.12}\\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+\]
+
+这是一个 $m \times n$ 矩阵, 元素 $x_{i j}$ 表示单词 $w_{i}$ 在文本 $d_{j}$ 中出现的频数或权值。
+
+\section*{2. 截断奇异值分解}
+潜在语义分析根据确定的话题个数 $k$ 对单词-文本矩阵 $\boldsymbol{X}$ 进行截断奇异值分解:
+
+\[
+\boldsymbol{X} \approx \boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}=\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{k}
+\end{array}\right]\left[\begin{array}{lllll}
+\sigma_{1} & & &  \tag{17.13}\\
+& \sigma_{2} & & \\
+& & \ddots & \\
+& & & \sigma_{k}
+\end{array}\right]\left[\begin{array}{c}
+\boldsymbol{v}_{1}^{\mathrm{T}} \\
+\boldsymbol{v}_{2}^{\mathrm{T}} \\
+\vdots \\
+\boldsymbol{v}_{k}^{\mathrm{T}}
+\end{array}\right]
+\]
+
+式中 $k \leqslant n \leqslant m ; \boldsymbol{U}_{k}$ 是 $m \times k$ 矩阵, 它的列由 $\boldsymbol{X}$ 的前 $k$ 个互相正交的左奇异向量组成; $\boldsymbol{\Sigma}_{k}$是 $k$ 阶对角方阵, 对角元素为前 $k$ 个最大奇异值; $\boldsymbol{V}_{k}$ 是 $n \times k$ 矩阵, 它的列由 $\boldsymbol{X}$ 的前 $k$ 个互相正交的右奇异向量组成。
+
+\section*{3. 话题向量空间}
+在单词-文本矩阵 $\boldsymbol{X}$ 的截断奇异值分解式 (17.13) 中, 矩阵 $\boldsymbol{U}_{k}$ 的每一个列向量 $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{k}$ 表示一个话题, 称为话题向量。由这 $k$ 个话题向量张成一个子空间:
+
+$$
+\boldsymbol{U}_{k}=\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{k}
+\end{array}\right]
+$$
+
+称为话题向量空间。
+
+\section*{4. 文本的话题空间表示}
+有了话题向量空间, 接着考虑文本在话题空间的表示。将式 (17.13) 写作
+
+$$
+\begin{aligned}
+& \boldsymbol{X}=\left[\begin{array}{llll}
+\boldsymbol{x}_{1} & \boldsymbol{x}_{2} & \cdots & \boldsymbol{x}_{n}
+\end{array}\right] \approx \boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}} \\
+& =\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{k}
+\end{array}\right]\left[\begin{array}{cccc}
+\sigma_{1} & & & \\
+& \sigma_{2} & & \\
+& & \ddots & \\
+& & & \sigma_{k}
+\end{array}\right]\left[\begin{array}{cccc}
+v_{11} & v_{21} & \cdots & v_{n 1} \\
+v_{12} & v_{22} & \cdots & v_{n 2} \\
+\vdots & \vdots & & \vdots \\
+& & & \\
+v_{1 k} & v_{2 k} & \cdots & v_{n k}
+\end{array}\right] \\
+& =\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{k}
+\end{array}\right]\left[\begin{array}{cccc}
+\sigma_{1} v_{11} & \sigma_{1} v_{21} & \cdots & \sigma_{1} v_{n 1} \\
+\sigma_{2} v_{12} & \sigma_{2} v_{22} & \cdots & \sigma_{2} v_{n 2} \\
+\vdots & \vdots & & \vdots \\
+\sigma_{k} v_{1 k} & \sigma_{k} v_{2 k} & \cdots & \sigma_{k} v_{n k}
+\end{array}\right]
+\end{aligned}
+$$
+
+其中，
+
+$$
+\boldsymbol{u}_{l}=\left[\begin{array}{c}
+u_{1 l} \\
+u_{2 l} \\
+\vdots \\
+u_{m l}
+\end{array}\right], \quad l=1,2, \cdots, k
+$$
+
+由式 (17.14) 知, 矩阵 $\boldsymbol{X}$ 的第 $j$ 列向量 $\boldsymbol{x}_{j}$ 满足
+
+
+\begin{align*}
+\boldsymbol{x}_{j} & \approx \boldsymbol{U}_{k}\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)_{j} \\
+& =\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{k}
+\end{array}\right]\left[\begin{array}{c}
+\sigma_{1} v_{j 1} \\
+\sigma_{2} v_{j 2} \\
+\vdots \\
+\sigma_{k} v_{j k}
+\end{array}\right] \\
+& =\sum_{l=1}^{k} \sigma_{l} v_{j l} \boldsymbol{u}_{l}, \quad j=1,2, \cdots, n \tag{17.15}
+\end{align*}
+
+
+式中 $\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)_{j}$ 是矩阵 $\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)$ 的第 $j$ 列向量。式 (17.15) 是文本 $d_{j}$ 的近似表达式, 由 $k$ 个话题向量 $\boldsymbol{u}_{l}$ 的线性组合构成。矩阵 $\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)$ 的每一个列向量
+
+$$
+\left[\begin{array}{c}
+\sigma_{1} v_{11} \\
+\sigma_{2} v_{12} \\
+\vdots \\
+\sigma_{k} v_{1 k}
+\end{array}\right], \quad\left[\begin{array}{c}
+\sigma_{1} v_{21} \\
+\sigma_{2} v_{22} \\
+\vdots \\
+\sigma_{k} v_{2 k}
+\end{array}\right], \cdots,\left[\begin{array}{c}
+\sigma_{1} v_{n 1} \\
+\sigma_{2} v_{n 2} \\
+\vdots \\
+\sigma_{k} v_{n k}
+\end{array}\right]
+$$
+
+是一个文本在话题向量空间的表示。
+
+综上，可以通过对单词-文本矩阵的奇异值分解进行潜在语义分析
+
+
+\begin{equation*}
+\boldsymbol{X} \approx \boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}=\boldsymbol{U}_{k}\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right) \tag{17.16}
+\end{equation*}
+
+
+得到话题空间 $U_{k}$, 以及文本在话题空间的表示 $\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)$ 。
+
+\subsection*{17.2.2 例子}
+下面介绍潜在语义分析的一个例子 (1)。假设有 9 个文本、11 个单词, 单词-文本矩阵 $\boldsymbol{X}$
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\multirow{2}{*}{单词} & \multicolumn{9}{|c|}{文本} \\
+\hline
+ & $\mathrm{T} 1$ & $\mathrm{~T} 2$ & T3 & $\mathrm{T} 4$ & $\mathrm{~T} 5$ & T6 & T7 & $\mathrm{T} 8$ & T9 \\
+\hline
+book &  &  & 1 & 1 &  &  &  &  &  \\
+\hline
+dads &  &  &  &  &  & 1 &  &  & 1 \\
+\hline
+dummies &  & 1 &  &  &  &  &  & 1 &  \\
+\hline
+estate &  &  &  &  &  &  & 1 &  & 1 \\
+\hline
+guide & 1 &  &  &  &  & 1 &  &  &  \\
+\hline
+investing & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+\hline
+market & 1 &  & 1 &  &  &  &  &  &  \\
+\hline
+real &  &  &  &  &  &  & 1 &  & 1 \\
+\hline
+rich &  &  &  &  &  & 2 &  &  & 1 \\
+\hline
+stock & 1 &  & 1 &  &  &  &  & 1 &  \\
+\hline
+value &  &  &  & 1 & 1 &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+为 $11 \times 9$ 矩阵, 矩阵的元素是单词在文本中出现的频数, 表示如下:
+
+然后进行潜在语义分析。实施对矩阵的截断奇异值分解, 假设话题的个数是 3 , 矩阵的截断奇异值分解结果为
+
+\begin{center}
+\begin{tabular}{|l|r|r|r|}
+\hline
+book & 0.15 & -0.27 & 0.04 \\
+\hline
+dads & 0.24 & 0.38 & -0.09 \\
+\hline
+dummies & 0.13 & -0.17 & 0.07 \\
+\hline
+estate & 0.18 & 0.19 & 0.45 \\
+\hline
+guide & 0.22 & 0.09 & -0.46 \\
+\hline
+investing & 0.74 & -0.21 & 0.21 \\
+\hline
+market & 0.18 & -0.30 & -0.28 \\
+\hline
+real & 0.18 & 0.19 & 0.45 \\
+\hline
+rich & 0.36 & 0.59 & -0.34 \\
+\hline
+stock & 0.25 & -0.42 & -0.28 \\
+\hline
+value & 0.12 & -0.14 & 0.23 \\
+\hline
+0 & 0 & 0 &  \\
+\hline
+0 & 0 & 2.00 &  \\
+\hline
+\end{tabular}
+\end{center}$* *$
+
+\begin{center}
+\begin{tabular}{|c|r|r|r|r|r|c|r|c|}
+\hline
+T1 & \multicolumn{1}{|c|}{T2} & \multicolumn{1}{c|}{T3} & \multicolumn{1}{c|}{T4} & T5 & T6 & T7 & T8 & T9 \\
+\hline
+0.35 & 0.22 & 0.34 & 0.26 & 0.22 & 0.49 & 0.28 & 0.29 & 0.44 \\
+\hline
+-0.32 & -0.15 & -0.46 & -0.24 & -0.14 & 0.55 & 0.07 & -0.31 & 0.44 \\
+\hline
+-0.41 & 0.14 & -0.16 & 0.25 & 0.22 & -0.51 & 0.55 & 0.00 & 0.34 \\
+\hline
+\end{tabular}
+\end{center}
+
+(1) \href{http://www.puffinwarellc.com/index.php/news-and-articles/articles/33-latent-semantic-anal-ysistutorial.html?showall=1%E3%80%82}{http://www.puffinwarellc.com/index.php/news-and-articles/articles/33-latent-semantic-anal-ysistutorial.html?showall=1。}\\
+可以看出, 左矩阵 $\boldsymbol{U}_{3}$ 有 3 个列向量 (左奇异向量)。第 1 列向量 $\boldsymbol{u}_{1}$ 的值均为正, 第 2 列向量 $\boldsymbol{u}_{2}$ 和第 3 列向量 $\boldsymbol{u}_{3}$ 的值有正有负。中间的对角矩阵 $\boldsymbol{\Sigma}_{3}$ 的元素是 3 个由大到小的奇异值（正值）。右矩阵是 $\boldsymbol{V}_{3}^{\mathrm{T}}$ ，其转置矩阵 $\boldsymbol{V}_{3}$ 也有 3 个列向量（右奇异向量）。第 1 列向量 $\boldsymbol{v}_{1}$的值也都为正, 第 2 列向量 $\boldsymbol{v}_{2}$ 和第 3 列向量 $\boldsymbol{v}_{3}$ 的值有正有负。
+
+现在, 将 $\boldsymbol{\Sigma}_{3}$ 与 $\boldsymbol{V}_{3}^{\mathrm{T}}$ 相乘, 整体变成两个矩阵乘积的形式:
+
+$$
+\begin{aligned}
+& \boldsymbol{X} \approx \boldsymbol{U}_{3}\left(\boldsymbol{\Sigma}_{3} \boldsymbol{V}_{3}^{\mathrm{T}}\right)
+\end{aligned}
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-22}
+\end{center}
+
+矩阵 $\boldsymbol{U}_{3}$ 有 3 个列向量, 表示 3 个话题, 矩阵 $\boldsymbol{U}_{3}$ 表示话题向量空间。矩阵 $\left(\boldsymbol{\Sigma}_{3} \boldsymbol{V}_{3}^{\mathrm{T}}\right)$ 有 9 个列向量, 表示 9 个文本, 矩阵 $\left(\boldsymbol{\Sigma}_{3} \boldsymbol{V}_{3}^{\mathrm{T}}\right)$ 是文本集合在话题向量空间的表示。
+
+\section*{17.3 非负矩阵分解算法}
+非负矩阵分解也可以用于话题分析。对单词-文本矩阵进行非负矩阵分解, 将其左矩阵作为话题向量空间, 将其右矩阵作为文本在话题向量空间的表示。注意通常单词-文本矩阵是非负的。
+
+\subsection*{17.3.1 非负矩阵分解}
+若一个矩阵的所有元素非负, 则称该矩阵为非负矩阵, 若 $\boldsymbol{X}$ 是非负矩阵, 则记作 $\boldsymbol{X} \geqslant 0$ 。给定一个非负矩阵 $\boldsymbol{X} \geqslant 0$, 找到两个非负矩阵 $\boldsymbol{W} \geqslant 0$ 和 $\boldsymbol{H} \geqslant 0$, 使得
+
+
+\begin{equation*}
+\boldsymbol{X} \approx \boldsymbol{W} \boldsymbol{H} \tag{17.17}
+\end{equation*}
+
+
+即将非负矩阵 $\boldsymbol{X}$ 分解为两个非负矩阵 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 的乘积的形式, 称为非负矩阵分解。因为 $\boldsymbol{W} \boldsymbol{H}$ 与 $\boldsymbol{X}$ 完全相等很难实现, 所以只要求 $\boldsymbol{W} \boldsymbol{H}$ 与 $\boldsymbol{X}$ 近似相等。
+
+假设非负矩阵 $\boldsymbol{X}$ 是 $m \times n$ 矩阵, 非负矩阵 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 分别为 $m \times k$ 矩阵和 $k \times n$ 矩阵。假设 $k<\min (m, n)$, 即 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 小于原矩阵 $\boldsymbol{X}$, 所以非负矩阵分解是对原数据的压缩。
+
+由式 (17.17) 知, 矩阵 $\boldsymbol{X}$ 的第 $j$ 列向量 $\boldsymbol{x}_{j}$ 满足
+
+
+\begin{align*}
+\boldsymbol{x}_{j} & \approx \boldsymbol{W} \boldsymbol{h}_{j} \\
+& =\left[\begin{array}{llll}
+\boldsymbol{w}_{1} & \boldsymbol{w}_{2} & \cdots & \boldsymbol{w}_{k}
+\end{array}\right]\left[\begin{array}{c}
+h_{1 j} \\
+h_{2 j} \\
+\vdots \\
+h_{k j}
+\end{array}\right] \\
+& =\sum_{l=1}^{k} h_{l j} \boldsymbol{w}_{l}, \quad j=1,2, \cdots, n \tag{17.18}
+\end{align*}
+
+
+其中, $\boldsymbol{h}_{j}$ 是矩阵 $\boldsymbol{H}$ 的第 $j$ 列, $\boldsymbol{w}_{l}$ 是矩阵 $\boldsymbol{W}$ 的第 $l$ 列, $h_{l j}$ 是 $\boldsymbol{h}_{j}$ 的第 $l$ 个元素, $l=1,2, \cdots, k$ 。
+
+式 (17.18) 表明, 矩阵 $\boldsymbol{X}$ 的第 $j$ 列 $\boldsymbol{x}_{j}$ 可以由矩阵 $\boldsymbol{W}$ 的 $k$ 个列 $\boldsymbol{w}_{l}$ 的线性组合逼近, 线性组合的系数是矩阵 $\boldsymbol{H}$ 的第 $j$ 列 $\boldsymbol{h}_{j}$ 的元素。这里矩阵 $\boldsymbol{W}$ 的列向量为一组基, 矩阵 $\boldsymbol{H}$ 的列向量为线性组合系数。称 $\boldsymbol{W}$ 为基矩阵, $\boldsymbol{H}$ 为系数矩阵。非负矩阵分解旨在用较少的基向量、系数向量来表示较大的数据矩阵。
+
+\subsection*{17.3.2 潜在语义分析模型}
+给定一个 $m \times n$ 非负的单词-文本矩阵 $\boldsymbol{X} \geqslant 0$ 。假设文本集合共包含 $k$ 个话题, 对 $\boldsymbol{X}$ 进行非负矩阵分解, 即求非负的 $m \times k$ 矩阵 $\boldsymbol{W} \geqslant 0$ 和 $k \times n$ 矩阵 $\boldsymbol{H} \geqslant 0$, 使得
+
+
+\begin{equation*}
+\boldsymbol{X} \approx \boldsymbol{W} \boldsymbol{H} \tag{17.19}
+\end{equation*}
+
+
+令 $\boldsymbol{W}=\left[\begin{array}{llll}\boldsymbol{w}_{1} & \boldsymbol{w}_{2} & \cdots & \boldsymbol{w}_{k}\end{array}\right]$ 为话题向量空间, $\boldsymbol{w}_{1}, \boldsymbol{w}_{2}, \cdots, \boldsymbol{w}_{k}$ 表示文本集合的 $k$ 个话题,令 $H=\left[\begin{array}{llll}h_{1} & h_{2} & \cdots & h_{n}\end{array}\right]$ 为文本在话题向量空间的表示, $h_{1}, h_{2}, \cdots, h_{n}$ 表示文本集合的 $n$ 个文本。这就是基于非负矩阵分解的潜在语义分析模型。
+
+非负矩阵分解具有很直观的解释, 话题向量和文本向量都非负, 对应 “伪概率分布”, 向量的线性组合表示局部叠加构成整体。
+
+\subsection*{17.3.3 非负矩阵分解的形式化}
+非负矩阵分解可以形式化为最优化问题求解。首先定义损失函数或代价函数。
+
+第一种损失函数是平方损失。设两个非负矩阵 $\boldsymbol{A}=\left[a_{i j}\right]_{m \times n}$ 和 $\boldsymbol{B}=\left[b_{i j}\right]_{m \times n}$, 平方损失函数定义为
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{B}\|^{2}=\sum_{i, j}\left(a_{i j}-b_{i j}\right)^{2} \tag{17.20}
+\end{equation*}
+
+
+其下界是 0 , 当且仅当 $\boldsymbol{A}=\boldsymbol{B}$ 时达到下界。
+
+另一种损失函数是散度 (divergence)。设两个非负矩阵 $\boldsymbol{A}=\left[a_{i j}\right]_{m \times n}$ 和 $\boldsymbol{B}=\left[b_{i j}\right]_{m \times n}$,散度损失函数定义为
+
+
+\begin{equation*}
+D(\boldsymbol{A} \| \boldsymbol{B})=\sum_{i, j}\left(a_{i j} \log \frac{a_{i j}}{b_{i j}}-a_{i j}+b_{i j}\right) \tag{17.21}
+\end{equation*}
+
+
+其下界也是 0, 当且仅当 $\boldsymbol{A}=\boldsymbol{B}$ 时达到下界。 $\boldsymbol{A}$ 和 $\boldsymbol{B}$ 不对称。当 $\sum_{i, j} a_{i j}=\sum_{i, j} b_{i j}=1$ 时散度损失函数退化为 Kullback-Leiber 散度或相对嫡, 这时 $\boldsymbol{A}$ 和 $\boldsymbol{B}$ 是概率分布。
+
+接着定义以下的最优化问题。
+
+目标函数 $\|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2}$ 关于 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 的最小化满足约束条件 $\boldsymbol{W}, \boldsymbol{H} \geqslant 0$, 即
+
+\[
+\begin{array}{ll}
+\min _{W, H} & \|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2}  \tag{17.22}\\
+\text { s.t. } & \boldsymbol{W}, \boldsymbol{H} \geqslant 0
+\end{array}
+\]
+
+或者, 目标函数 $D(\boldsymbol{X} \| \boldsymbol{W} \boldsymbol{H})$ 关于 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 的最小化满足约束条件 $\boldsymbol{W}, \boldsymbol{H} \geqslant 0$, 即
+
+\[
+\begin{array}{ll}
+\min _{W, H} & D(\boldsymbol{X} \| \boldsymbol{W} \boldsymbol{H})  \tag{17.23}\\
+\text { s.t. } & \boldsymbol{W}, \boldsymbol{H} \geqslant 0
+\end{array}
+\]
+
+\subsection*{17.3.4 算法}
+考虑求解最优化问题 (17.22) 和问题 (17.23)。由于目标函数 $\|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2}$ 和 $D(\boldsymbol{X} \| \boldsymbol{W} \boldsymbol{H})$只是对变量 $W$ 和 $\boldsymbol{H}$ 之一的凸函数, 而不是同时对两个变量的凸函数, 因此找到全局最优 (最小值) 比较困难, 可以通过数值最优化方法求局部最优 (极小值)。梯度下降法比较容易实现, 但是收玫速度慢。共轭梯度法收玫速度快, 但实现比较复杂。Lee 和 Seung 提出了新的基于 “乘法更新规则” 的优化算法, 交替地对 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 进行更新, 其理论依据是下面的定理。
+
+定理 17.1 平方损失 $\|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2}$ 对下列乘法更新规则
+
+
+\begin{align*}
+& H_{l j} \leftarrow H_{l j} \frac{\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{X}\right)_{l j}}{\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{W} \boldsymbol{H}\right)_{l j}}  \tag{17.24}\\
+& W_{i l} \leftarrow W_{i l} \frac{\left(\boldsymbol{X} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}}{\left(\boldsymbol{W} \boldsymbol{H} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}} \tag{17.25}
+\end{align*}
+
+
+是非增的, 当且仅当 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 是平方损失函数的稳定点时函数的更新不变。
+
+定理 17.2 散度损失 $D(\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H})$ 对下列乘法更新规则
+
+\[
+\begin{array}{r}
+H_{l j} \leftarrow H_{l j} \frac{\sum_{i}\left[W_{i l} X_{i j} /(\boldsymbol{W} \boldsymbol{H})_{i j}\right]}{\sum_{i} W_{i l}} \\
+W_{i l} \leftarrow W_{i l} \frac{\sum_{j}\left[H_{l j} X_{i j} /(\boldsymbol{W} \boldsymbol{H})_{i j}\right]}{\sum_{j} H_{l j}} \tag{17.27}
+\end{array}
+\]
+
+是非增的, 当且仅当 $W$ 和 $\boldsymbol{H}$ 是散度损失函数的稳定点时函数的更新不变。
+
+定理 17.1 和定理 17.2 给出了乘法更新规则。定理的证明可以参阅文献 [4]。\\
+现叙述非负矩阵分解的算法。只介绍第一个问题 (17.22) 的算法, 第二个问题 (17.23) 的算法类似。
+
+最优化目标函数是 $\|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2}$, 为了方便将目标函数乘以 $1 / 2$, 其最优解与原问题相同, 记作
+
+$$
+J(\boldsymbol{W}, \boldsymbol{H})=\frac{1}{2}\|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2}=\frac{1}{2} \sum\left[X_{i j}-(\boldsymbol{W} \boldsymbol{H})_{i j}\right]^{2}
+$$
+
+应用梯度下降法求解。首先求目标函数的梯度:
+
+
+\begin{align*}
+\frac{\partial J(\boldsymbol{W}, \boldsymbol{H})}{\partial W_{i l}} & =-\sum_{j}\left[X_{i j}-(\boldsymbol{W} \boldsymbol{H})_{i j}\right] H_{l j} \\
+& =-\left[\left(\boldsymbol{X} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}-\left(\boldsymbol{W} \boldsymbol{H} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}\right] \tag{17.28}
+\end{align*}
+
+
+同样可得:
+
+
+\begin{equation*}
+\frac{\partial J(\boldsymbol{W}, \boldsymbol{H})}{\partial H_{l j}}=-\left[\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{X}\right)_{l j}-\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{W} \boldsymbol{H}\right)_{l j}\right] \tag{17.29}
+\end{equation*}
+
+
+然后求得梯度下降法的更新规则, 由式 (17.28) 和式 (17.29) 有
+
+
+\begin{align*}
+& W_{i l}=W_{i l}+\lambda_{i l}\left[\left(\boldsymbol{X} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}-\left(\boldsymbol{W} \boldsymbol{H} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}\right]  \tag{17.30}\\
+& H_{l j}=H_{l j}+\mu_{l j}\left[\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{X}\right)_{l j}-\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{W} \boldsymbol{H}\right)_{l j}\right] \tag{17.31}
+\end{align*}
+
+
+式中 $\lambda_{i l}, \mu_{l j}$ 是步长。选取
+
+
+\begin{equation*}
+\lambda_{i l}=\frac{W_{i l}}{\left(\boldsymbol{W} \boldsymbol{H} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}}, \quad \mu_{l j}=\frac{H_{l j}}{\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{W} \boldsymbol{H}\right)_{l j}} \tag{17.32}
+\end{equation*}
+
+
+即得乘法更新规则:
+
+
+\begin{align*}
+& W_{i l}=W_{i l} \frac{\left(\boldsymbol{X} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}}{\left(\boldsymbol{W} \boldsymbol{H} \boldsymbol{H}^{\mathrm{T}}\right)_{i l}}, \quad i=1,2, \cdots, m, \quad l=1,2, \cdots, k  \tag{17.33}\\
+& H_{l j}=H_{l j} \frac{\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{X}\right)_{l j}}{\left(\boldsymbol{W}^{\mathrm{T}} \boldsymbol{W} \boldsymbol{H}\right)_{l j}}, \quad l=1,2, \cdots, k, \quad j=1,2, \cdots, n \tag{17.34}
+\end{align*}
+
+
+选取初始矩阵 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 为非负矩阵, 可以保证迭代过程及结果的矩阵 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 均为非负。
+
+下面叙述基于乘法更新规则的矩阵非负分解迭代算法。算法交替对 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 迭代，每次迭代对 $\boldsymbol{W}$ 的列向量归一化，使基向量为单位向量。
+
+\section*{算法 17.1 (非负矩阵分解的迭代算法)}
+输入: 单词-文本矩阵 $\boldsymbol{X} \geqslant 0$, 文本集合的话题个数 $k$, 最大迭代次数 $t$ 。
+
+输出: 话题矩阵 $\boldsymbol{W}$, 文本表示矩阵 $\boldsymbol{H}$ 。
+
+(1) 初始化
+
+$\boldsymbol{W} \geqslant 0$, 并对 $\boldsymbol{W}$ 的每一列数据归一化; $\boldsymbol{H} \geqslant 0$ 。
+
+(2) 迭代
+
+对迭代次数由 1 到 $t$ 执行下列步骤:\\
+(a) 更新 $\boldsymbol{W}$ 的元素, 对 $l$ 从 1 到 $k, i$ 从 1 到 $m$ 按式 (17.33) 更新 $W_{i l}$;
+
+(b) 更新 $\boldsymbol{H}$ 的元素, 对 $l$ 从 1 到 $k, j$ 从 1 到 $n$ 按式 (17.34) 更新 $H_{l j}$ 。
+
+\section*{本 章概 要}
+\begin{enumerate}
+  \item 单词向量空间模型通过单词的向量表示文本的语义内容。以单词-文本矩阵 $\boldsymbol{X}$ 为输入, 其中每一行对应一个单词, 每一列对应一个文本, 每一个元素表示单词在文本中的频数或权值（如 TF-IDF）。
+\end{enumerate}
+
+$$
+\boldsymbol{X}=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n} \\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+$$
+
+单词向量空间模型认为, 这个矩阵的每一列向量是单词向量, 表示一个文本, 两个单词向量的内积或标准化内积表示文本之间的语义相似度。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 话题向量空间模型通过话题的向量表示文本的语义内容。假设有话题-文本矩阵
+\end{enumerate}
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{cccc}
+y_{11} & y_{12} & \cdots & y_{1 n} \\
+y_{21} & y_{22} & \cdots & y_{2 n} \\
+\vdots & \vdots & & \vdots \\
+y_{k 1} & y_{k 2} & \cdots & y_{k n}
+\end{array}\right]
+$$
+
+其中每一行对应一个话题, 每一列对应一个文本, 每一个元素表示话题在文本中的权值。话题向量空间模型认为, 这个矩阵的每一列向量是话题向量, 表示一个文本, 两个话题向量的内积或标准化内积表示文本之间的语义相似度。假设有单词-话题矩阵 $\boldsymbol{T}$ :
+
+$$
+\boldsymbol{T}=\left[\begin{array}{cccc}
+t_{11} & t_{12} & \cdots & t_{1 k} \\
+t_{21} & t_{22} & \cdots & t_{2 k} \\
+\vdots & \vdots & & \vdots \\
+t_{m 1} & t_{m 2} & \cdots & t_{m k}
+\end{array}\right]
+$$
+
+其中每一行对应一个单词, 每一列对应一个话题, 每一个元素表示单词在话题中的权值。
+
+给定一个单词-文本矩阵 $\boldsymbol{X}$ :
+
+$$
+\boldsymbol{X}=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n} \\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+$$
+
+潜在语义分析的目标是找到合适的单词-话题矩阵 $\boldsymbol{T}$ 与话题-文本矩阵 $\boldsymbol{Y}$, 将单词-文本矩阵 $\boldsymbol{X}$ 近似地表示为 $\boldsymbol{T}$ 与 $\boldsymbol{Y}$ 的乘积形式:
+
+$$
+X \approx T Y
+$$
+
+等价地, 潜在语义分析将文本在单词向量空间的表示 $\boldsymbol{X}$ 通过线性变换 $\boldsymbol{T}$ 转换为话题向量空间中的表示 $\boldsymbol{Y}$ 。
+
+潜在语义分析的关键是对单词-文本矩阵进行以上的矩阵因子分解 (话题分析)。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 潜在语义分析的算法是奇异值分解。通过对单词-文本矩阵进行截断奇异值分解,得到:
+\end{enumerate}
+
+$$
+\boldsymbol{X} \approx \boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}=\boldsymbol{U}_{k}\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)
+$$
+
+矩阵 $U_{k}$ 表示话题空间, 矩阵 $\left(\boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}\right)$ 是文本在话题空间的表示。
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 非负矩阵分解也可以用于话题分析。非负矩阵分解将非负的单词-文本矩阵近似分解成两个非负矩阵 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 的乘积, 得到:
+\end{enumerate}
+
+$$
+\boldsymbol{X} \approx \boldsymbol{W} \boldsymbol{H}
+$$
+
+矩阵 $\boldsymbol{W}$ 表示话题空间, 矩阵 $\boldsymbol{H}$ 是文本在话题空间的表示。
+
+非负矩阵分解可以表示为以下的最优化问题:
+
+$$
+\begin{aligned}
+& \min _{W, H}\|\boldsymbol{X}-\boldsymbol{W} \boldsymbol{H}\|^{2} \\
+& \text { s.t. } \boldsymbol{W}, \boldsymbol{H} \geqslant 0
+\end{aligned}
+$$
+
+非负矩阵分解的算法是迭代算法。乘法更新规则的迭代算法, 交替地对 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 进行更新。本质是梯度下降法, 通过定义特殊的步长和非负的初始值, 保证迭代过程及结果的矩阵 $\boldsymbol{W}$ 和 $\boldsymbol{H}$ 均为非负。
+
+\section*{继续阅读}
+文献 [1] 为潜在语义分析的原始论文, 相关的介绍还有文献 [2], 主要是关于基于矩阵奇异值分解的潜在语义分析。基于非负矩阵分解的潜在语义分析可以参照文献 [3] ～文献 [5]。还有基于稀疏矩阵分解的方法 [6] 。后两种方法可以通过并行计算实现, 大大提高计算效率。
+
+\section*{习 题}
+17.1 试将图 17.1 的例子进行潜在语义分析, 并对结果进行观察。
+
+17.2 给出损失函数是散度损失时的非负矩阵分解（潜在语义分析）的算法。
+
+17.3 给出潜在语义分析的两种算法的计算复杂度, 包括奇异值分解法和非负矩阵分解法。
+
+17.4 列出潜在语义分析与主成分分析的异同。
+
+\section*{参考文献}
+[1] DEERWESTER S C, DUMAIS S T, LANDAUER T K, et al. Indexing by latent semantic analysis[J]. Journal of the Association for Information Science and Technology, 1990, 41: 391407.
+
+[2] LANDAUER T K. Latent semantic analysis[C]//Encyclopedia of Cognitive Science, Wiley. 2006 .
+
+[3] LEE D D, SEUNG H S. Learning the parts of objects by non-negative matrix factorization[J]. Nature, 1999, 401(6755): 788-791.
+
+[4] LEE D D, SEUNG H S. Algorithms for non-negative matrix factorization[J]. Advances in Neural Information Processing Systems, 2001: 556-562.
+
+[5] XU W, LIU X, GONG Y. Document clustering based on non-negative matrix factorization[C]// Proceedings of the 26th Annual International ACM SIGIR Conference on Research and Development in Information Retrieval, 2003.
+
+[6] WANG Q, XU J, LI H, et al. Regularized latent semantic indexing[C]//Proceedings of the 34th International ACM SIGIR Conference on Research and Development in Information Retrieval, 2011.
+
+\section*{第 18 章 概率潜在语义分析}
+概率潜在语义分析 (probabilistic latent semantic analysis, PLSA) 也称概率潜在语义索引（probabilistic latent semantic indexing, PLSI），是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。模型的最大特点是用隐变量表示话题; 整个模型表示文本生成话题, 话题生成单词, 从而得到单词-文本共现数据的过程; 假设每个文本由一个话题分布决定, 每个话题由一个单词分布决定。
+
+概率潜在语义分析受潜在语义分析的启发, 于 1999 年由 Hofmann 提出, 前者基于概率模型, 后者基于非概率模型。概率潜在语义分析最初用于文本数据挖掘, 后来扩展到其他领域。
+
+本章首先在 18.1 节叙述概率潜在语义分析的模型, 包括生成模型和共现模型。然后在 18.2 节介绍概率潜在语义分析模型的学习策略和算法。
+
+\section*{18.1 概率潜在语义分析模型}
+首先叙述概率潜在语义分析的直观解释。概率潜在语义分析模型有生成模型以及等价的共现模型。首先介绍生成模型, 然后介绍共现模型, 最后讲解模型的性质。
+
+\subsection*{18.1.1 基本想法}
+给定一个文本集合, 每个文本讨论若干个话题, 每个话题由若干个单词表示。对文本集合进行概率潜在语义分析, 就能够发现每个文本的话题, 以及每个话题的单词。话题是不能从数据中直接观察到的, 是潜在的。
+
+文本集合转换为文本-单词共现数据, 具体表现为单词-文本矩阵, 图 18.1 给出一个单词-文本矩阵的例子。每一行对应一个单词, 每一列对应一个文本, 每一个元素表示单词在文本中出现的次数。一个话题表示一个语义内容。文本数据基于如下的概率模型产生（共现模型): 首先有话题的概率分布, 然后有话题给定条件下文本的条件概率分布, 以及话题给定条件下单词的条件概率分布。概率潜在语义分析就是发现由隐变量表示的话题, 即潜在语义。直观上, 语义相近的单词、语义相近的文本会被聚到相同的 “软的类别” 中, 而话题所表示的就是这样的软的类别。假设有 3 个潜在的话题, 图中红、绿、蓝框各表示一个话题。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-30}
+\end{center}
+
+图 18.1 概率潜在语义分析的直观解释 (见文前彩图)
+
+\subsection*{18.1.2 生成模型}
+假设有单词集合 $W=\left\{w_{1}, w_{2}, \cdots, w_{M}\right\}$, 其中 $M$ 是单词个数; 文本（指标）集合 $D=\left\{d_{1}, d_{2}, \cdots, d_{N}\right\}$, 其中 $N$ 是文本个数; 话题集合 $Z=\left\{z_{1}, z_{2}, \cdots, z_{K}\right\}$, 其中 $K$ 是预先设定的话题个数。随机变量 $w$ 取值于单词集合, 随机变量 $d$ 取值于文本集合, 随机变量 $z$ 取值于话题集合。概率分布 $P(d)$ 、条件概率分布 $P(z \mid d)$ 、条件概率分布 $P(w \mid z)$ 皆属于多项分布, 其中 $P(d)$ 表示生成文本 $d$ 的概率, $P(z \mid d)$ 表示文本 $d$ 生成话题 $z$ 的概率, $P(w \mid z)$ 表示话题 $z$ 生成单词 $w$ 的概率。
+
+每个文本 $d$ 拥有自己的话题概率分布 $P(z \mid d)$, 每个话题 $z$ 拥有自己的单词概率分布 $P(w \mid z)$, 也就是说一个文本的内容由其相关话题决定, 一个话题的内容由其相关单词决定。
+
+生成模型通过以下步骤生成文本-单词共现数据:
+
+（1）依据概率分布 $P(d)$, 从文本（指标）集合中随机选取一个文本 $d$, 共生成 $N$ 个文本,针对每个文本, 执行以下操作;
+
+(2) 在文本 $d$ 给定的条件下, 依据条件概率分布 $P(z \mid d)$, 从话题集合随机选取一个话题 $z$, 共生成 $L$ 个话题, 这里 $L$ 是文本长度;
+
+(3) 在话题 $z$ 给定的条件下, 依据条件概率分布 $P(w \mid z)$, 从单词集合中随机选取一个单词 $w$ 。
+
+注意这里为叙述方便, 假设文本都是等长的, 现实中不需要这个假设。
+
+生成模型中, 单词变量 $w$ 与文本变量 $d$ 是观测变量, 话题变量 $z$ 是隐变量。也就是说模型生成的是单词-话题-文本三元组 $(w, z, d)$ 的集合, 但观测到的是单词-文本二元组 $(w, d)$ 的集合, 观测数据表示为单词-文本矩阵 $T$ 的形式, 矩阵 $T$ 的行表示单词, 列表示文本, 元素表示单词-文本对 $(w, d)$ 的出现次数。
+
+从数据的生成过程可以推出, 文本-单词共现数据 $T$ 的生成概率为所有单词-文本对 $(w, d)$ 的生成概率的乘积:
+
+
+\begin{equation*}
+P(T)=\prod_{(w, d)} P(w, d)^{n(w, d)} \tag{18.1}
+\end{equation*}
+
+
+这里 $n(w, d)$ 表示 $(w, d)$ 的出现次数, 单词-文本对出现的总次数是 $N \times L$ 。每个单词-文本对\\
+$(w, d)$ 的生成概率由以下公式决定:
+
+
+\begin{align*}
+P(w, d) & =P(d) P(w \mid d) \\
+& =P(d) \sum_{z} P(w, z \mid d) \\
+& =P(d) \sum_{z} P(z \mid d) P(w \mid z) \tag{18.2}
+\end{align*}
+
+
+式 (18.2) 即生成模型的定义。
+
+生成模型假设在话题 $z$ 给定的条件下, 单词 $w$ 与文本 $d$ 条件独立, 即
+
+
+\begin{equation*}
+P(w, z \mid d)=P(z \mid d) P(w \mid z) \tag{18.3}
+\end{equation*}
+
+
+生成模型属于概率有向图模型, 可以用有向图 (directed graph) 表示, 如图 18.2 所示。图中实心圆表示观测变量, 空心圆表示隐变量, 箭头表示概率依存关系, 方框表示多次重复,方框内数字表示重复次数。文本变量 $d$ 是一个观测变量, 话题变量 $z$ 是一个隐变量, 单词变量 $w$ 是一个观测变量。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-31}
+\end{center}
+
+图 18.2 概率潜在语义分析的生成模型
+
+\subsection*{18.1.3 共现模型}
+可以定义与以上的生成模型等价的共现模型。
+
+文本-单词共现数据 $T$ 的生成概率为所有单词-文本对 $(w, d)$ 的生成概率的乘积:
+
+
+\begin{equation*}
+P(T)=\prod_{(w, d)} P(w, d)^{n(w, d)} \tag{18.4}
+\end{equation*}
+
+
+每个单词-文本对 $(w, d)$ 的概率由以下公式决定:
+
+
+\begin{equation*}
+P(w, d)=\sum_{z \in Z} P(z) P(w \mid z) P(d \mid z) \tag{18.5}
+\end{equation*}
+
+
+式 (18.5) 即共现模型的定义。容易验证, 生成模型 (18.2) 和共现模型 (18.5) 是等价的。
+
+共现模型假设在话题 $z$ 给定的条件下, 单词 $w$ 与文本 $d$ 是条件独立的, 即
+
+
+\begin{equation*}
+P(w, d \mid z)=P(w \mid z) P(d \mid z) \tag{18.6}
+\end{equation*}
+
+
+图 18.3 所示是共现模型。图中文本变量 $d$ 是一个观测变量, 单词变量 $w$ 是一个观测变量, 话题变量 $z$ 是一个隐变量。图 18.1 是共现模型的直观解释。
+
+虽然生成模型与共现模型在概率公式意义上是等价的, 但是具有不同的性质。生成模型刻画文本-单词共现数据生成的过程, 共现模型描述文本-单词共现数据拥有的模式。生成模
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-32(1)}
+\end{center}
+
+图 18.3 概率潜在语义模型的共现模型
+
+型式 (18.2) 中单词变量 $w$ 与文本变量 $d$ 是非对称的, 而共现模型式 (18.5) 中单词变量 $w$ 与文本变量 $d$ 是对称的, 所以前者也称为非对称模型, 后者也称为对称模型。由于两个模型的形式不同, 其学习算法的形式也不同。
+
+\subsection*{18.1.4 模型性质}
+\section*{1. 模型参数}
+如果直接定义单词与文本的共现概率是 $P(w, d)$, 模型参数的个数是 $O(M \cdot N)$, 其中 $M$ 是单词数, $N$ 是文本数。概率潜在语义分析的生成模型和共现模型的参数个数是 $O(M \cdot K+N \cdot K)$, 其中 $K$ 是话题数。现实中 $K \ll M$, 所以概率潜在语义分析通过话题对数据进行了更简洁的表示, 减少了学习过程中过拟合的可能性。图 18.4 显示模型中文本、话题、单词之间的关系。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-32}
+\end{center}
+
+图 18.4 概率潜在语义分析中文本、话题、单词之间的关系
+
+\section*{2. 模型的几何解释}
+下面给出生成模型的几何解释。概率分布 $P(w \mid d)$ 表示文本 $d$ 生成单词 $w$ 的概率:
+
+$$
+\sum_{i=1}^{M} P\left(w_{i} \mid d\right)=1, \quad 0 \leqslant P\left(w_{i} \mid d\right) \leqslant 1, \quad i=1,2, \cdots, M
+$$
+
+可以由 $M$ 维空间的 $(M-1)$ 单纯形 (simplex) 中的点表示。图 18.5 为三维空间的情况。单纯形上的每个点表示一个分布 $P(w \mid d)$ (分布的参数向量), 所有的分布 $P(w \mid d)$ (分布的参数向量）都在单纯形上, 称这个 $(M-1)$ 单纯形为单词单纯形。
+
+从式 (18.2) 可知, 概率潜在分析模型 (生成模型) 中的文本概率分布 $P(w \mid d)$ 有下面的关
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-33(1)}
+\end{center}
+
+图 18.5 单词单纯形与话题单纯形
+
+系成立:
+
+
+\begin{equation*}
+P(w \mid d)=\sum_{z} P(z \mid d) P(w \mid z) \tag{18.7}
+\end{equation*}
+
+
+这里概率分布 $P(w \mid z)$ 表示话题 $z$ 生成单词 $w$ 的概率。
+
+概率分布 $P(w \mid z)$ 也存在于 $M$ 维空间中的 $(M-1)$ 单纯形之中。如果有 $K$ 个话题, 那么就有 $K$ 个概率分布 $P\left(w \mid z_{k}\right), k=1,2, \cdots, K$, 由 $(M-1)$ 单纯形上的 $K$ 个点表示 (参照图 18.5)。以这 $K$ 个点为顶点, 构成一个 $(K-1)$ 单纯形, 称为话题单纯形。话题单纯形是单词单纯形的子单纯形, 参阅图 18.5 。
+
+从式 (18.7) 知, 生成模型中文本的分布 $P(w \mid d)$ 可以由 $K$ 个话题的分布 $P\left(w \mid z_{k}\right), k=$ $1,2, \cdots, K$ 的线性组合表示, 文本对应的点就在 $K$ 个话题的点构成的 $(K-1)$ 话题单纯形中。这就是生成模型的几何解释。注意通常 $K \ll M$, 概率潜在语义模型存在于一个相对很小的参数空间中。图 18.5 中显示的是 $M=3, K=3$ 时的情况。当 $K=2$ 时话题单纯形是一个线段, 当 $K=1$ 时话题单纯形是一个点。
+
+\section*{3. 与潜在语义分析的关系}
+概率潜在语义分析模型 (共现模型) 可以在潜在语义分析模型的框架下描述。图 18.6 显示潜在语义分析, 对单词-文本矩阵进行奇异值分解得到 $X=U \Sigma V^{\mathrm{T}}$, 其中 $U$ 和 $V$ 为正交矩阵, $\Sigma$ 为非负降序对角矩阵 (参照第 17 章)。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-33}
+\end{center}
+
+图 18.6 概率潜在语义分析与潜在语义分析的关系\\
+共现模型 (18.5) 也可以表示为三个矩阵乘积的形式。这样, 概率潜在语义分析与潜在语义分析的对应关系可以从中看得很清楚。下面是共现模型的矩阵乘积形式:
+
+\[
+\left\{\begin{array}{l}
+X^{\prime}=U^{\prime} \Sigma^{\prime} V^{\prime \mathrm{T}}  \tag{18.8}\\
+X^{\prime}=[P(w, d)]_{M \times N} \\
+U^{\prime}=[P(w \mid z)]_{M \times K} \\
+\Sigma^{\prime}=[P(z)]_{K \times K} \\
+V^{\prime}=[P(d \mid z)]_{N \times K}
+\end{array}\right.
+\]
+
+概率潜在语义分析模型 (18.8) 中的矩阵 $U^{\prime}$ 和 $V^{\prime}$ 是非负的、规范化的, 表示条件概率分布, 而潜在语义分析模型中的矩阵 $U$ 和 $V$ 是正交的, 未必非负, 并不表示概率分布。
+
+\section*{18.2 概率潜在语义分析的算法}
+概率潜在语义分析模型是含有隐变量的模型, 其学习通常使用 EM 算法。本节介绍生成模型学习的 EM 算法。
+
+EM 算法是一种迭代算法, 每次迭代包括交替的两步： $\mathrm{E}$ 步, 求期望; $\mathrm{M}$ 步, 求极大。 $\mathrm{E}$步是计算 $Q$ 函数, 即完全数据的对数似然函数对不完全数据的条件分布的期望。 $\mathrm{M}$ 步是对 $Q$函数极大化, 更新模型参数。详细介绍见第 9 章。下面叙述生成模型的 $\mathrm{EM}$ 算法。
+
+设单词集合为 $W=\left\{w_{1}, w_{2}, \cdots, w_{M}\right\}$, 文本集合为 $D=\left\{d_{1}, d_{2}, \cdots, d_{N}\right\}$, 话题集合为 $Z=\left\{z_{1}, z_{2}, \cdots, z_{K}\right\}$ 。给定单词-文本共现数据 $T=\left\{n\left(w_{i}, d_{j}\right)\right\}, i=1,2, \cdots, M, j=$ $1,2, \cdots, N$, 目标是估计概率潜在语义分析模型 (生成模型) 的参数。如果使用极大似然估计,对数似然函数是
+
+$$
+\begin{aligned}
+L & =\sum_{i=1}^{M} \sum_{j=1}^{N} n\left(w_{i}, d_{j}\right) \log P\left(w_{i}, d_{j}\right) \\
+& =\sum_{i=1}^{M} \sum_{j=1}^{N} n\left(w_{i}, d_{j}\right) \log \left[\sum_{k=1}^{K} P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)\right]
+\end{aligned}
+$$
+
+但是模型含有隐变量, 对数似然函数的优化无法用解析方法求解, 这时使用 $\mathrm{EM}$ 算法。应用 $\mathrm{EM}$ 算法的核心是定义 $Q$ 函数。
+
+(1) $\mathrm{E}$ 步: 计算 $Q$ 函数
+
+$Q$ 函数为完全数据的对数似然函数对不完全数据的条件分布的期望。针对概率潜在语义分析的生成模型, $Q$ 函数是
+
+
+\begin{equation*}
+Q=\sum_{k=1}^{K}\left\{\sum_{j=1}^{N} n\left(d_{j}\right)\left[\log P\left(d_{j}\right)+\sum_{i=1}^{M} \frac{n\left(w_{i}, d_{j}\right)}{n\left(d_{j}\right)} \log P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)\right]\right\} P\left(z_{k} \mid w_{i}, d_{j}\right) \tag{18.9}
+\end{equation*}
+
+
+式中 $n\left(d_{j}\right)=\sum_{i=1}^{M} n\left(w_{i}, d_{j}\right)$ 表示文本 $d_{j}$ 中的单词个数, $n\left(w_{i}, d_{j}\right)$ 表示单词 $w_{i}$ 在文本 $d_{j}$ 中出\\
+现的次数。条件概率分布 $P\left(z_{k} \mid w_{i}, d_{j}\right)$ 代表不完全数据, 是已知变量。条件概率分布 $P\left(w_{i} \mid z_{k}\right)$和 $P\left(z_{k} \mid d_{j}\right)$ 的乘积代表完全数据, 是未知变量。
+
+由于可以从数据中直接统计得出 $P\left(d_{j}\right)$ 的估计, 这里只考虑 $P\left(w_{i} \mid z_{k}\right), P\left(z_{k} \mid d_{j}\right)$ 的估计,可将 $Q$ 函数简化为函数 $Q^{\prime}$ :
+
+
+\begin{equation*}
+Q^{\prime}=\sum_{i=1}^{M} \sum_{j=1}^{N} n\left(w_{i}, d_{j}\right) \sum_{k=1}^{K} P\left(z_{k} \mid w_{i}, d_{j}\right) \log \left[P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)\right] \tag{18.10}
+\end{equation*}
+
+
+$Q^{\prime}$ 函数中的 $P\left(z_{k} \mid w_{i}, d_{j}\right)$ 可以根据贝叶斯公式计算:
+
+
+\begin{equation*}
+P\left(z_{k} \mid w_{i}, d_{j}\right)=\frac{P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)}{\sum_{k=1}^{K} P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)} \tag{18.11}
+\end{equation*}
+
+
+其中 $P\left(z_{k} \mid d_{j}\right)$ 和 $P\left(w_{i} \mid z_{k}\right)$ 由上一步迭代得到。
+
+(2) $\mathrm{M}$ 步: 极大化 $Q$ 函数
+
+通过约束最优化求解 $Q$ 函数的极大值, 这时 $P\left(z_{k} \mid d_{j}\right)$ 和 $P\left(w_{i} \mid z_{k}\right)$ 是变量。因为变量 $P\left(w_{i} \mid z_{k}\right), P\left(z_{k} \mid d_{j}\right)$ 形成概率分布, 满足约束条件:
+
+$$
+\begin{aligned}
+& \sum_{i=1}^{M} P\left(w_{i} \mid z_{k}\right)=1, \quad k=1,2, \cdots, K \\
+& \sum_{k=1}^{K} P\left(z_{k} \mid d_{j}\right)=1, \quad j=1,2, \cdots, N
+\end{aligned}
+$$
+
+应用拉格朗日法, 引入拉格朗日乘子 $\tau_{k}$ 和 $\rho_{j}$, 定义拉格朗日函数 $\Lambda$ :
+
+$$
+\Lambda=Q^{\prime}+\sum_{k=1}^{K} \tau_{k}\left(1-\sum_{i=1}^{M} P\left(w_{i} \mid z_{k}\right)\right)+\sum_{j=1}^{N} \rho_{j}\left(1-\sum_{k=1}^{K} P\left(z_{k} \mid d_{j}\right)\right)
+$$
+
+将拉格朗日函数 $\Lambda$ 分别对 $P\left(w_{i} \mid z_{k}\right)$ 和 $P\left(z_{k} \mid d_{j}\right)$ 求偏导数, 并令其等于 0 , 得到下面的方程组:
+
+$$
+\begin{aligned}
+& \sum_{j=1}^{N} n\left(w_{i}, d_{j}\right) P\left(z_{k} \mid w_{i}, d_{j}\right)-\tau_{k} P\left(w_{i} \mid z_{k}\right)=0, \quad i=1,2, \cdots, M, \quad k=1,2, \cdots, K \\
+& \sum_{i=1}^{M} n\left(w_{i}, d_{j}\right) P\left(z_{k} \mid w_{i}, d_{j}\right)-\rho_{j} P\left(z_{k} \mid d_{j}\right)=0, \quad j=1,2, \cdots, N, \quad k=1,2, \cdots, K
+\end{aligned}
+$$
+
+解方程组得到 $M$ 步的参数估计公式:
+
+
+\begin{equation*}
+P\left(w_{i} \mid z_{k}\right)=\frac{\sum_{j=1}^{N} n\left(w_{i}, d_{j}\right) P\left(z_{k} \mid w_{i}, d_{j}\right)}{\sum_{m=1}^{M} \sum_{j=1}^{N} n\left(w_{m}, d_{j}\right) P\left(z_{k} \mid w_{m}, d_{j}\right)} \tag{18.12}
+\end{equation*}
+
+
+
+\begin{equation*}
+P\left(z_{k} \mid d_{j}\right)=\frac{\sum_{i=1}^{M} n\left(w_{i}, d_{j}\right) P\left(z_{k} \mid w_{i}, d_{j}\right)}{n\left(d_{j}\right)} \tag{18.13}
+\end{equation*}
+
+
+总结有下面的算法:
+
+\section*{算法 18.1 (概率潜在语义模型参数估计的 EM 算法)}
+输入: 设单词集合为 $W=\left\{w_{1}, w_{2}, \cdots, w_{M}\right\}$, 文本集合为 $D=\left\{d_{1}, d_{2}, \cdots, d_{N}\right\}$, 话题集合为 $Z=\left\{z_{1}, z_{2}, \cdots, z_{K}\right\}$, 共现数据 $\left\{n\left(w_{i}, d_{j}\right)\right\}, i=1,2, \cdots, M, j=1,2, \cdots, N$ 。
+
+输出: $P\left(w_{i} \mid z_{k}\right)$ 和 $P\left(z_{k} \mid d_{j}\right)$ 。
+
+(1) 设置参数 $P\left(w_{i} \mid z_{k}\right)$ 和 $P\left(z_{k} \mid d_{j}\right)$ 的初始值。
+
+(2) 迭代执行以下 $\mathrm{E}$ 步和 $\mathrm{M}$ 步, 直到收敛为止。
+
+E 步:
+
+$$
+P\left(z_{k} \mid w_{i}, d_{j}\right)=\frac{P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)}{\sum_{k=1}^{K} P\left(w_{i} \mid z_{k}\right) P\left(z_{k} \mid d_{j}\right)}
+$$
+
+M 步:
+
+$$
+\begin{aligned}
+& P\left(w_{i} \mid z_{k}\right)=\frac{\sum_{j=1}^{N} n\left(w_{i}, d_{j}\right) P\left(z_{k} \mid w_{i}, d_{j}\right)}{\sum_{m=1}^{M} \sum_{j=1}^{N} n\left(w_{m}, d_{j}\right) P\left(z_{k} \mid w_{m}, d_{j}\right)} \\
+& P\left(z_{k} \mid d_{j}\right)= \\
+& \frac{\sum_{i=1}^{M} n\left(w_{i}, d_{j}\right) P\left(z_{k} \mid w_{i}, d_{j}\right)}{n\left(d_{j}\right)}
+\end{aligned}
+$$
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 概率潜在语义分析是利用概率生成模型对文本集合进行话题分析的方法。概率潜在语义分析受潜在语义分析的启发提出，两者可以通过矩阵分解关联起来。
+\end{enumerate}
+
+给定一个文本集合, 通过概率潜在语义分析, 可以得到各个文本生成话题的条件概率分布, 以及各个话题生成单词的条件概率分布。
+
+概率潜在语义分析的模型有生成模型以及等价的共现模型。其学习策略是观测数据的极大似然估计, 其学习算法是 EM 算法。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 生成模型表示文本生成话题, 话题生成单词, 从而得到单词-文本共现数据的过程; 假设每个文本由一个话题分布决定, 每个话题由一个单词分布决定。单词变量 $w$ 与文本变量 $d$是观测变量, 话题变量 $z$ 是隐变量。生成模型的定义如下:
+\end{enumerate}
+
+$$
+P(T)=\prod_{(w, d)} P(w, d)^{n(w, d)}
+$$
+
+$$
+P(w, d)=P(d) P(w \mid d)=P(d) \sum_{z} P(z \mid d) P(w \mid z)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 共现模型描述文本单词共现数据拥有的模式。共现模型的定义如下:
+\end{enumerate}
+
+$$
+\begin{gathered}
+P(T)=\prod_{(w, d)} P(w, d)^{n(w, d)} \\
+P(w, d)=\sum_{z \in Z} P(z) P(w \mid z) P(d \mid z)
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 概率潜在语义分析模型的参数个数是 $O(M \cdot K+N \cdot K)$ 。现实中 $K \ll M$, 所以概率潜在语义分析通过话题对数据进行了更简洁的表示, 实现了数据压缩。
+
+  \item 模型中的概率分布 $P(w \mid d)$ 可以由参数空间中的单纯形表示。 $M$ 维参数空间中, 单词单纯形表示所有可能的文本的分布, 其中的话题单纯形表示在 $K$ 个话题定义下的所有可能的文本的分布。话题单纯形是单词单纯形的子集, 表示潜在语义空间。
+
+  \item 概率潜在语义分析的学习通常采用 $\mathrm{EM}$ 算法。通过迭代学习模型的参数、 $P(w \mid z)$ 和 $P(z \mid d)$, 而 $P(d)$ 可直接统计得出。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+概率潜在语义分析的原始文献有文献 [1] 文献 [3]。在文献 [4] 中, 作者讨论了概率潜在语义分析与非负矩阵分解的关系。
+
+\section*{习 题}
+18.1 证明生成模型与共现模型是等价的。
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\multirow{2}{*}{单词} & \multicolumn{9}{|c|}{文本} \\
+\hline
+ & $\mathrm{T} 1$ & $\mathrm{~T} 2$ & T3 & $\mathrm{T} 4$ & $\mathrm{~T} 5$ & $\mathrm{~T} 6$ & $\mathrm{~T} 7$ & T8 & $\mathrm{T} 9$ \\
+\hline
+book &  &  & 1 & 1 &  &  &  &  &  \\
+\hline
+dads &  &  &  &  &  & 1 &  &  & 1 \\
+\hline
+dummies &  & 1 &  &  &  &  &  & 1 &  \\
+\hline
+estate &  &  &  &  &  &  & 1 &  & 1 \\
+\hline
+guide & 1 &  &  &  &  & 1 &  &  &  \\
+\hline
+investing & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+\hline
+market & 1 &  & 1 &  &  &  &  &  &  \\
+\hline
+real &  &  &  &  &  &  & 1 &  & 1 \\
+\hline
+rich &  &  &  &  &  & 2 &  &  & 1 \\
+\hline
+stock & 1 &  & 1 &  &  &  &  & 1 &  \\
+\hline
+value &  &  &  & 1 & 1 &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+18.2 推导共现模型的 EM 算法。
+
+18.3 对以下文本数据集进行概率潜在语义分析。
+
+\section*{参考文献}
+[1] HOFMANN T. Probabilistic latent semantic analysis[C]//Proceedings of the Fifteenth Conference on Uncertainty in Artificial Intelligence. 1999: 289-296.
+
+[2] HOFMANN T. Probabilistic latent semantic indexing[C]//Proceedings of the 22nd Annual International ACM SIGIR Conference on Research and Development in Information Retrieval, 1999 .
+
+[3] HOFMANN T. Unsupervised learning by probabilistic latent semantic analysis[J]. Machine Learning, 2001, 42: 177-196.
+
+[4] DING C, LI T, PENG W. On the equivalence between non-negative matrix factorization and probabilistic latent semantic indexing $[\mathrm{J}]$. Computational Statistics \& Data Analysis, 2008, 52(8): 3913-3927.
+
+\section*{第 19 章 马尔可夫链蒙特卡罗法}
+蒙特卡罗法 (Monte Carlo method) 也称为统计模拟方法 (statistical simulation method)，是通过从概率模型的随机抽样进行近似数值计算的方法。马尔可夫链蒙特卡罗法 (Markov Chain Monte Carlo, MCMC) 则是以马尔可夫链 (Markov chain) 为概率模型的蒙特卡罗法。马尔可夫链蒙特卡罗法构建一个马尔可夫链, 使其平稳分布就是要进行抽样的分布, 首先基于该马尔可夫链进行随机游走, 产生样本的序列, 之后使用该平稳分布的样本进行近似数值计算。
+
+Metropolis-Hastings 算法是最基本的马尔可夫链蒙特卡罗法, Metropolis 等人在 1953 年提出原始的算法, Hastings 在 1970 年对之加以推广, 形成了现在的形式。吉布斯抽样 (Gibbs sampling) 是更简单、使用更广泛的马尔可夫链蒙特卡罗法, 1984 年由 S. Geman 和 D. Geman 提出。
+
+马尔可夫链蒙特卡罗法被应用于概率分布的估计、定积分的近似计算、最优化问题的近似求解等问题, 特别是被应用于机器学习中概率模型的学习与推理, 是重要的机器学习计算方法。
+
+本章首先在 19.1 节介绍一般的蒙特卡罗法, 在 19.2 节介绍马尔可夫链, 然后在 19.3 节叙述马尔可夫链蒙特卡罗法的一般方法, 最后在 19.4 节和 19.5 节分别讲述 Metropolis-Hastings 算法和吉布斯抽样。
+
+\section*{19.1 蒙特卡罗法}
+本节介绍一般的蒙特卡罗法在随机抽样、数学期望估计、定积分计算的应用。马尔可夫链蒙特卡罗法是蒙特卡罗法的一种方法。
+
+\subsection*{19.1.1 随机抽样}
+统计学和机器学习的目的是基于数据对概率分布的特征进行推断, 蒙特卡罗法要解决的问题是: 假设概率分布的定义已知, 通过抽样获得概率分布的随机样本, 并通过得到的随机样本对概率分布的特征进行分析。比如, 从样本得到经验分布, 从而估计总体分布; 或者从样本计算出样本均值, 从而估计总体期望。所以蒙特卡罗法的核心是随机抽样 (random sampling）。
+
+一般的蒙特卡罗法有直接抽样法、接受-拒绝抽样法、重要性抽样法等。接受-拒绝抽样\\
+法、重要性抽样法适合于概率密度函数复杂 (如密度函数含有多个变量, 各变量相互不独立,密度函数形式复杂) 、不能直接抽样的情况。
+
+这里介绍接受-拒绝抽样法 (accept-reject sampling method)。假设有随机变量 $x$, 取值 $x \in \mathcal{X}$, 其概率密度函数为 $p(x)$ 。目标是得到该概率分布的随机样本, 以对这个概率分布进行分析。
+
+接受-拒绝法的基本想法如下。假设 $p(x)$ 不可以直接抽样。找一个可以直接抽样的分布,称为建议分布 (proposal distribution)。假设 $q(x)$ 是建议分布的概率密度函数, 并且有 $q(x)$的 $c$ 倍一定大于等于 $p(x)$, 其中 $c>0$, 如图 19.1 所示。按照 $q(x)$ 进行抽样, 假设得到的结果是 $x^{*}$, 再按照 $\frac{p\left(x^{*}\right)}{c q\left(x^{*}\right)}$ 的比例随机决定是否接受 $x^{*}$ 。直观上, 落到 $p\left(x^{*}\right)$ 范围内的就接受 (绿色), 落到 $p\left(x^{*}\right)$ 范围外的就拒绝 (红色)。接受-拒绝法实际是按照 $p(x)$ 的涵盖面积（或涵盖体积）占 $c q(x)$ 的涵盖面积（或涵盖体积）的比例进行抽样。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_60436489efc55078c367g-40}
+\end{center}
+
+图 19.1 接受-拒绝抽样法 (见文前彩图)
+
+接受-拒绝法的具体算法如下。
+
+\section*{算法 19.1 (接受-拒绝法)}
+输入: 抽样的目标概率分布的概率密度函数 $p(x)$ 。
+
+输出: 概率分布的随机样本 $x_{1}, x_{2}, \cdots, x_{n}$ 。
+
+参数: 样本数 $n$ 。
+
+(1) 选择概率密度函数为 $q(x)$ 的概率分布, 作为建议分布, 使其对任一 $x$ 满足 $c q(x) \geqslant p(x)$, 其中 $c>0$ 。
+
+(2) 按照建议分布 $q(x)$ 随机抽样得到样本 $x^{*}$, 再按照均匀分布在 $(0,1)$ 范围内抽样得到 $u$ 。
+
+(3) 如果 $u \leqslant \frac{p\left(x^{*}\right)}{c q\left(x^{*}\right)}$, 则将 $x^{*}$ 作为抽样结果; 否则, 回到步骤 $(2)$ 。
+
+(4) 直至得到 $n$ 个随机样本, 结束。
+
+接受-拒绝法的优点是容易实现, 缺点是效率可能不高。如果 $p(x)$ 的涵盖体积占 $c q(x)$ 的涵盖体积的比例很低, 就会导致拒绝的比例很高, 抽样效率很低。注意, 一般是在高维空间进行抽样, 即使 $p(x)$ 与 $c q(x)$ 很接近, 两者涵盖体积的差异也可能很大 (与我们在三维空间的直观不同)。
+
+\subsection*{19.1.2 数学期望估计}
+一般的蒙特卡罗法如直接抽样法、接受-拒绝抽样法、重要性抽样法, 也可以用于数学期望估计（estimation of mathematical expectation）。假设有随机变量 $x$, 取值 $x \in \mathcal{X}$, 其概率
+
+
+\end{document}

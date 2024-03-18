@@ -1,0 +1,2090 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\begin{document}
+解 $\boldsymbol{W}$ 作用在 $\boldsymbol{X}$ 上, 并不超出 $\boldsymbol{X}$ 的范围。按照式 (24.5), 计算
+
+$$
+\begin{gathered}
+y_{11}=\sum_{m=1}^{3} \sum_{n=1}^{3} w_{m n} x_{m n}=11 \\
+y_{12}=\sum_{m=1}^{3} \sum_{n=1}^{3} w_{m n} x_{m, n+1}=18
+\end{gathered}
+$$
+
+同样可计算 $y_{21}, y_{22}$, 得到输出矩阵 $\boldsymbol{Y}$ :
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{lll}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right] *\left[\begin{array}{cccc}
+3 & 2 & 0 & 1 \\
+0 & 2 & 1 & 2 \\
+2 & 0 & 0 & 3 \\
+2 & 3 & 1 & 2
+\end{array}\right]=\left[\begin{array}{cc}
+11 & 18 \\
+6 & 22
+\end{array}\right]
+$$
+
+输入矩阵是 $4 \times 4$ 矩阵, 核矩阵是 $3 \times 3$ 矩阵, 输出矩阵是 $2 \times 2$ 矩阵。图 24.2 显示这个卷积计算的过程。
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+0 & 2 & 1 & 2 \\
+\hline
+2 & 0 & 0 & 3 \\
+\hline
+2 & 3 & 1 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-01}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+0 & 2 & 1 & 2 \\
+\hline
+2 & 0 & 0 & 3 \\
+\hline
+2 & 3 & 1 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+2 & 1 & 2 \\
+\hline
+0 & 0 & 3 \\
+\hline
+0 & 0 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-01(2)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+0 & 2 & 1 & 2 \\
+\hline
+2 & 0 & 0 & 3 \\
+\hline
+2 & 3 & 1 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-01(1)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+0 & 2 & 1 & 2 \\
+\hline
+2 & 0 & 0 & 3 \\
+\hline
+2 & 3 & 1 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-01(3)}
+\end{center}
+
+图 24.2 卷积计算例
+
+\section*{3. 填充和步幅}
+卷积运算的扩展可以通过增加填充和步幅实现。在输入矩阵的周边添加元素为 0 的行和列, 使卷积核能更充分地作用于输入矩阵边缘的元素, 这样的处理称为填充 (padding) 或零填充 (zero padding)。下面是含有填充的卷积运算的例子。
+
+例 24.3 对例 24.2 的输入矩阵进行填充, 得到矩阵
+
+$$
+\tilde{\boldsymbol{X}}=\left[\begin{array}{llllll}
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 3 & 2 & 0 & 1 & 0 \\
+0 & 0 & 2 & 1 & 2 & 0 \\
+0 & 2 & 0 & 0 & 3 & 0 \\
+0 & 2 & 3 & 1 & 2 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+核矩阵 $\boldsymbol{W}$ 不变, 求卷积 $\boldsymbol{Y}=\boldsymbol{W} * \tilde{\boldsymbol{X}}$ 。
+
+解 $\boldsymbol{W}$ 作用在 0 填充后的 $\boldsymbol{X}$ 上。按照式 (24.5) 可以计算每一个卷积的值, 得到输出矩阵 $\boldsymbol{Y}$ :
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{lll}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right] *\left[\begin{array}{cccccc}
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 3 & 2 & 0 & 1 & 0 \\
+0 & 0 & 2 & 1 & 2 & 0 \\
+0 & 2 & 0 & 0 & 3 & 0 \\
+0 & 2 & 3 & 1 & 2 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0
+\end{array}\right]=\left[\begin{array}{cccc}
+10 & 2 & 7 & 0 \\
+13 & 11 & 18 & 1 \\
+10 & 6 & 22 & 4 \\
+11 & 7 & 12 & 3
+\end{array}\right]
+$$
+
+输入矩阵通过填充由 $4 \times 4$ 变为 $6 \times 6$ 的矩阵, 核矩阵是 $3 \times 3$ 矩阵, 输出矩阵是 $4 \times 4$ 矩阵。图 24.3 显示这个卷积计算的一步。
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+ &  &  &  &  &  \\
+\hline
+ & 3 & 2 & 0 & 1 &  \\
+\hline
+ & 0 & 2 & 1 & 2 &  \\
+\hline
+ & 2 & 0 & 0 & 3 &  \\
+\hline
+ & 2 & 3 & 1 & 2 &  \\
+\hline
+ &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-02}
+\end{center}
+
+图 24.3 包含填充的卷积计算例
+
+在卷积运算中, 卷积核每次向右或向下移动的列数或行数称为步幅 (stride)。以上的卷积运算例中步幅均为 1 。下面是步幅为 2 的卷积计算的例子。\\
+例 24.4 给定输入矩阵 $\boldsymbol{X}$ 和核矩阵 $\boldsymbol{W}:$
+
+$$
+\boldsymbol{X}=\left[\begin{array}{lllllll}
+3 & 2 & 0 & 1 & 0 & 2 & 1 \\
+0 & 2 & 1 & 2 & 1 & 2 & 1 \\
+2 & 0 & 0 & 3 & 0 & 0 & 2 \\
+2 & 3 & 1 & 0 & 1 & 1 & 3 \\
+2 & 2 & 1 & 1 & 0 & 3 & 1 \\
+1 & 1 & 0 & 0 & 1 & 2 & 2 \\
+2 & 1 & 0 & 3 & 2 & 1 & 1
+\end{array}\right], \quad \boldsymbol{W}=\left[\begin{array}{lll}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right]
+$$
+
+设卷积步幅为 2 , 求卷积 $\boldsymbol{Y}=\boldsymbol{W} * \boldsymbol{X}$ 。
+
+解 $\boldsymbol{W}$ 作用在 $\boldsymbol{X}$ 上, 每次计算向右或向下移动两列或两行。按照式 (24.5) 可以计算每一个卷积的值, 得到输出矩阵 $\boldsymbol{Y}$ :
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{lll}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right] *\left[\begin{array}{ccccccc}
+3 & 2 & 0 & 1 & 0 & 2 & 1 \\
+0 & 2 & 1 & 2 & 1 & 2 & 1 \\
+2 & 0 & 0 & 3 & 0 & 0 & 2 \\
+2 & 3 & 1 & 0 & 1 & 1 & 3 \\
+2 & 2 & 1 & 1 & 0 & 3 & 1 \\
+1 & 1 & 0 & 0 & 1 & 2 & 2 \\
+2 & 1 & 0 & 3 & 2 & 1 & 1
+\end{array}\right]=\left[\begin{array}{ccc}
+11 & 4 & 11 \\
+9 & 6 & 15 \\
+8 & 10 & 13
+\end{array}\right]
+$$
+
+输入矩阵是 $7 \times 7$ 矩阵, 核矩阵是 $3 \times 3$ 矩阵, 输出矩阵是 $3 \times 3$ 矩阵。图 24.4 显示这个卷积计算的两步。
+
+卷积运算依赖于卷积核的大小、填充的大小、步幅。这些是卷积运算的超参数。假设输入矩阵的大小是 $I \times J$, 卷积核的大小是 $M \times N$, 两个方向填充的大小是 $P$ 和 $Q$, 步幅的大小是 $S$, 则卷积的输出矩阵的大小 $I \times J$ 满足
+
+
+\begin{equation*}
+K \times L=\left\lfloor\frac{I+2 P-M}{S}+1\right\rfloor \times\left\lfloor\frac{J+2 Q-N}{S}+1\right\rfloor \tag{24.6}
+\end{equation*}
+
+
+这里 $\lfloor a\rfloor$ 表示不超过 $a$ 的最大整数。填充 $P$ 和 $Q$ 的最大值分别是 $M-1$ 和 $N-1$, 这时的填充称为全填充 (full padding)。
+
+在图像处理中, 卷积实现的是特征检测。最基本的情况是二维卷积, 卷积的输入矩阵表示灰度图像, 矩阵的一个元素对应图像的一个像素, 代表像素的灰度。卷积的核矩阵表示特征, 比如物体的边缘, 矩阵的一个元素代表特征在一个像素点上的灰度 (权重), 一个卷积核表示一个特征。卷积运算将卷积核在图像上进行滑动, 在图像的每一个位置对一个特定的特征进行检测, 输出一个检测值, 参见图 24.2 图 24.4。当在某个位置的图像的特征和卷积核的特征一致时, 检测值最大, 这是因为卷积进行的是矩阵内积计算。注意在卷积神经网络中卷积核的权重是通过学习获得的, 也就是说学习得到的是特征检测的能力。
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 & 0 & 2 & 1 \\
+\hline
+0 & 2 & 1 & 2 & 1 & 2 & 1 \\
+\hline
+2 & 0 & 0 & 3 & 0 & 0 & 2 \\
+\hline
+2 & 3 & 1 & 0 & 1 & 1 & 3 \\
+\hline
+2 & 2 & 1 & 1 & 0 & 3 & 1 \\
+\hline
+1 & 1 & 0 & 0 & 1 & 2 & 2 \\
+\hline
+2 & 1 & 0 & 3 & 2 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-04}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 & 0 & 2 & 1 \\
+\hline
+0 & 2 & 1 & 2 & 1 & 2 & 1 \\
+\hline
+2 & 0 & 0 & 3 & 0 & 0 & 2 \\
+\hline
+2 & 3 & 1 & 0 & 1 & 1 & 3 \\
+\hline
+2 & 2 & 1 & 1 & 0 & 3 & 1 \\
+\hline
+1 & 1 & 0 & 0 & 1 & 2 & 2 \\
+\hline
+2 & 1 & 0 & 3 & 2 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+图 24.4 步幅为 2 的卷积计算例
+
+卷积的输入和输出称为特征图 (feature map)。二维卷积的特征图一般是矩阵 (后面叙述特征图是张量的情况)。灰度图像的输入矩阵也可以看作是一种特殊的特征图。
+
+例 24.5 给定输入矩阵 $\boldsymbol{X}$ 和核矩阵 $\boldsymbol{W}$ :
+
+$$
+\boldsymbol{X}=\left[\begin{array}{llll}
+0 & 0 & 0 & 0 \\
+0 & 2 & 0 & 0 \\
+0 & 2 & 0 & 0 \\
+0 & 2 & 2 & 2
+\end{array}\right], \quad \boldsymbol{W}=\left[\begin{array}{ccc}
+2 & 0 & 0 \\
+2 & 0 & 0 \\
+2 & 2 & 2
+\end{array}\right]
+$$
+
+求卷积 $\boldsymbol{Y}=\boldsymbol{W} * \boldsymbol{X}$ 。
+
+解 按照卷积公式计算可得:
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{lll}
+2 & 0 & 0 \\
+2 & 0 & 0 \\
+2 & 2 & 2
+\end{array}\right] *\left[\begin{array}{llll}
+0 & 0 & 0 & 0 \\
+0 & 2 & 0 & 0 \\
+0 & 2 & 0 & 0 \\
+0 & 2 & 2 & 2
+\end{array}\right]=\left[\begin{array}{cc}
+4 & 8 \\
+8 & 20
+\end{array}\right]
+$$
+
+图 24.5 显示卷积进行特征检测的情况。输入矩阵 $\boldsymbol{X}$ 表示一个 $4 \times 4$ 图片, 取值为 0 或 2 , 图片中有一个 $\mathrm{L}$ 字。核矩阵 $\boldsymbol{W}$ 表示一个特征, 取值也是 0 或 2 , 也包含一个 $\mathrm{L}$ 字。输出矩阵表示特征检测值, 当卷积核滑动到图片中的 L 字型边时, 检测值最大。
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+0 & 0 & 0 & 0 \\
+\hline
+0 & 2 & 0 & 0 \\
+\hline
+0 & 2 & 0 & 0 \\
+\hline
+0 & 2 & 2 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+2 & 0 & 0 \\
+\hline
+2 & 0 & 0 \\
+\hline
+2 & 2 & 2 \\
+\hline
+\end{tabular}
+\end{center}$\longrightarrow$\begin{tabular}{|c|c|}
+\hline
+4 & 8 \\
+\hline
+8 & 20 \\
+\hline
+\end{tabular}
+
+图 24.5 卷积计算例
+
+\section*{4. 三维卷积}
+三维卷积的输入和输出一般是由张量 (tensor) 表示的特征图 (注意矩阵表示的特征图可以看作是一张特征图, 张量表示的特征图可以看作是多张特征图, 本书都称为特征图)。这样的特征图有高度、宽度、深度。这里, 将彩色图像数据也看作是一种特殊的特征图。
+
+图像处理常使用彩色图像, 由红、绿、蓝三个通道的数据组成。每一个通道的数据由一个矩阵表示, 矩阵的每一个元素对应一个像素, 代表颜色的深度。三个矩阵排列起来构成一个张量。三维卷积作用于这样的张量数据 (特征图)。彩色图像三个通道的矩阵的行数和列数是特征图的高度和宽度, 也就是彩色图像看上去的高度和宽度, 通道数是特征图的深度 (见图 24.6 左侧)。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-05}
+
+深度
+
+深度
+
+图 24.6 用张量表示的三通道数据和特征图 (见文前彩图)
+
+通过卷积或汇聚运算也得到由张量表示的特征图。张量由多个大小相同的矩阵组成。矩阵的行数和列数是特征图的高度和宽度, 矩阵的个数是特征图的深度 (见图 24.6 右侧)。三维卷积作用于这样的特征图。一个三维卷积的输出是一个矩阵。多个三维卷积的输出矩阵排列起来得到一个张量特征图。
+
+下面, 以彩色图像数据为例介绍三维卷积的计算方法。输入是三通道数据, 用张量表示 $\boldsymbol{X}=\left(\boldsymbol{X}_{\mathrm{R}}, \boldsymbol{X}_{\mathrm{G}}, \boldsymbol{X}_{\mathrm{B}}\right)$ 。其中 $\boldsymbol{X}_{\mathrm{R}}, \boldsymbol{X}_{\mathrm{G}}, \boldsymbol{X}_{\mathrm{B}}$ 是三个通道的数据, 各自用矩阵表示。卷积核也用\\
+张量表示 $\boldsymbol{W}=\left(\boldsymbol{W}_{\mathrm{R}}, \boldsymbol{W}_{\mathrm{G}}, \boldsymbol{W}_{\mathrm{B}}\right)$, 其中 $\boldsymbol{W}_{\mathrm{R}}, \boldsymbol{W}_{\mathrm{G}}, \boldsymbol{W}_{B}$ 是三个通道的（二维）卷积核, 也各自由矩阵表示。那么, 三维卷积可以通过以下等价关系计算。
+
+
+\begin{equation*}
+\boldsymbol{Y}=\boldsymbol{X} * \boldsymbol{W}=\boldsymbol{X}_{\mathrm{R}} * \boldsymbol{W}_{\mathrm{R}}+\boldsymbol{X}_{\mathrm{G}} * \boldsymbol{W}_{\mathrm{G}}+\boldsymbol{X}_{\mathrm{B}} * \boldsymbol{W}_{\mathrm{B}} \tag{24.7}
+\end{equation*}
+
+
+也就是说以上的三维卷积计算首先使用三个不同的二维卷积核对三个通道的输入矩阵分别进行二维卷积计算, 然后将得到的三个输出矩阵相加, 最终得到一个三维卷积的输出矩阵。注意这时二维卷积核的个数和通道的个数相等。
+
+例 24.6 输入张量由三个通道的矩阵组成 $\boldsymbol{X}=\left(\boldsymbol{X}_{\mathrm{R}}, \boldsymbol{X}_{\mathrm{G}}, \boldsymbol{X}_{\mathrm{B}}\right)$,
+
+$$
+\boldsymbol{X}_{\mathrm{R}}=\left[\begin{array}{cccc}
+3 & 2 & 0 & 1 \\
+0 & 2 & 1 & 2 \\
+2 & 0 & 0 & 3 \\
+2 & 3 & 1 & 2
+\end{array}\right], \quad \boldsymbol{X}_{\mathrm{G}}=\left[\begin{array}{cccc}
+3 & 2 & 0 & 1 \\
+2 & 1 & 0 & 1 \\
+1 & 0 & 2 & 1 \\
+2 & 1 & 0 & 0
+\end{array}\right], \quad \boldsymbol{X}_{\mathrm{B}}=\left[\begin{array}{cccc}
+4 & 2 & 0 & 1 \\
+0 & 3 & 1 & 0 \\
+3 & 1 & 0 & 2 \\
+2 & 2 & 0 & 1
+\end{array}\right]
+$$
+
+卷积核张量由三个矩阵组成 $\boldsymbol{W}=\left(\boldsymbol{W}_{R}, \boldsymbol{W}_{G}, \boldsymbol{W}_{B}\right)$,
+
+$$
+\boldsymbol{W}_{\mathrm{R}}=\left[\begin{array}{ccc}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right], \quad \boldsymbol{W}_{\mathrm{G}}=\left[\begin{array}{ccc}
+1 & 0 & 1 \\
+0 & 1 & 0 \\
+1 & 0 & 1
+\end{array}\right], \quad \boldsymbol{W}_{\mathrm{B}}=\left[\begin{array}{ccc}
+1 & 0 & -1 \\
+1 & 0 & -1 \\
+1 & 0 & -1
+\end{array}\right]
+$$
+
+求在其上的三维卷积 $\boldsymbol{Y}$ 。
+
+解 按照式 (24.7) 计算, 可得输出矩阵 $\boldsymbol{Y}$ :
+
+$$
+\begin{aligned}
+\boldsymbol{Y}= & {\left[\begin{array}{lll}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right] *\left[\begin{array}{cccc}
+3 & 2 & 0 & 1 \\
+0 & 2 & 1 & 2 \\
+2 & 0 & 0 & 3 \\
+2 & 3 & 1 & 2
+\end{array}\right]+\left[\begin{array}{lll}
+1 & 0 & 1 \\
+0 & 1 & 0 \\
+1 & 0 & 1
+\end{array}\right] *\left[\begin{array}{llll}
+3 & 2 & 0 & 1 \\
+2 & 1 & 0 & 1 \\
+1 & 0 & 2 & 1 \\
+2 & 1 & 0 & 0
+\end{array}\right]+} \\
+& {\left[\begin{array}{ccc}
+1 & 0 & -1 \\
+1 & 0 & -1 \\
+1 & 0 & -1
+\end{array}\right] *\left[\begin{array}{llll}
+4 & 2 & 0 & 1 \\
+0 & 3 & 1 & 0 \\
+3 & 1 & 0 & 2 \\
+2 & 2 & 0 & 1
+\end{array}\right] } \\
+= & {\left[\begin{array}{ll}
+24 & 25 \\
+14 & 30
+\end{array}\right] }
+\end{aligned}
+$$
+
+输出矩阵是一个 $2 \times 2$ 矩阵。图 24.7 示意三维卷积计算的一步。
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+4 & 2 & 0 & 1 \\
+\hline
+0 & 3 & 1 & 0 \\
+\hline
+3 & 1 & 0 & 2 \\
+\hline
+2 & 2 & 0 & 1 \\
+\hline
+\end{tabular}
+\end{center}$*$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-07(2)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+2 & 1 & 0 & 1 \\
+\hline
+1 & 0 & 2 & 1 \\
+\hline
+2 & 1 & 0 & 0 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-07}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+0 & 2 & 1 & 2 \\
+\hline
+2 & 0 & 0 & 3 \\
+\hline
+2 & 3 & 1 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-07(1)}
+\end{center}
+
+图 24.7 三维卷积计算例
+
+\subsection*{24.1.3 汇聚}
+卷积神经网络还使用汇聚 (pooling) 运算。
+
+\section*{1. 二维汇聚}
+定义 24.2 (二维汇聚) 给定一个 $I \times J$ 输入矩阵 $\boldsymbol{X}=\left[x_{i j}\right]_{I \times J}$, 一个虚设的 $M \times N$ 核矩阵, $M \ll I, N \ll J$ 。让核矩阵在输入矩阵上从左到右再从上到下滑动, 将输入矩阵划分成若千大小为 $M \times N$ 的子矩阵, 这些子矩阵相互不重叠且完全覆盖整个输入矩阵。对每一个子矩阵求最大值或平均值, 产生一个 $K \times L$ 输出矩阵 $\boldsymbol{Y}=\left[y_{k l}\right]_{K \times L}$, 称此运算为汇聚或二维汇聚。对子矩阵取最大值的称为最大汇聚 (max pooling), 取平均值的称为平均汇聚 (mean pooling )。即有
+
+
+\begin{equation*}
+y_{k l}=\max _{m \in\{1,2, \cdots, M\}, n \in\{1,2, \cdots N\}} x_{k+m-1, l+n-1} \tag{24.8}
+\end{equation*}
+
+
+或
+
+
+\begin{equation*}
+y_{k l}=\frac{1}{M N} \sum_{m=1}^{M} \sum_{n=1}^{N} x_{k+m-1, l+n-1} \tag{24.9}
+\end{equation*}
+
+
+其中, $k=1,2, \cdots, K, l=1,2, \cdots, L, K$ 和 $L$ 满足
+
+$$
+K=\frac{I}{M}, \quad L=\frac{J}{N}
+$$
+
+这里假设 $I$ 和 $J$ 分别可以被 $M$ 和 $N$ 整除。
+
+以上是基本汇聚的定义, 还有多种扩展。在汇聚运算中, 核矩阵每次向右或向下移动的列数或行数也称为步幅。通常汇聚的步幅与核的大小相同。汇聚运算也可以进行填充, 即在输入矩阵的周边添加元素为 0 的行和列。汇聚运算依赖于核的大小、填充的大小和步幅, 也就是说, 这些都是超参数。
+
+汇聚也称为下采样 (down sampling), 因为通过汇聚数据矩阵的大小变小。相反, 使数据\\
+矩阵变大的运算称为上采样 (upsampling)。
+
+比较式 (24.5) 和式 (24.9) 容易看出, 平均汇聚是卷积的一种特殊情况, 其参数个数为 0 。
+
+例 24.7 给定输入矩阵 $\boldsymbol{X}$ :
+
+$$
+\boldsymbol{X}=\left[\begin{array}{llll}
+3 & 2 & 0 & 1 \\
+0 & 2 & 1 & 2 \\
+2 & 0 & 0 & 3 \\
+2 & 3 & 1 & 2
+\end{array}\right]
+$$
+
+核的大小为 $2 \times 2$, 步幅为 2 。求 $\boldsymbol{X}$ 上的最大汇聚。
+
+解 按照式 (24.8) 计算得到最大汇聚的输出矩阵 $\boldsymbol{Y}$ :
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{ll}
+3 & 2 \\
+3 & 3
+\end{array}\right]
+$$
+
+图 24.8 示意最大汇聚的计算过程。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-08(2)}
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+3 & 2 \\
+\hline
+3 &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-08(1)}
+\end{center}
+
+图 24.8 最大汇聚计算例
+
+例 24.8 对于与例 24.7 相同的输入矩阵 $\boldsymbol{X}$, 核的大小为 $2 \times 2$, 步幅为 2 , 求 $\boldsymbol{X}$ 上的平均汇聚。
+
+解 按照式 (24.9) 计算得到平均汇聚的输出矩阵 $\boldsymbol{Y}$ :
+
+$$
+\boldsymbol{Y}=\left[\begin{array}{ll}
+1.75 & 1 \\
+1.75 & 1.5
+\end{array}\right]
+$$
+
+图 24.9 示意平均汇聚计算的一步。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-08}
+\end{center}
+
+图 24.9 平均汇聚计算例\\
+在图像处理中, 汇聚实现的是特征选择。最基本的情况是二维汇聚, 输入是一个矩阵, 矩阵的一个元素表示一个特征, 代表特征的检测值。汇聚运算实际是将汇聚核在输入矩阵上进行滑动, 从汇聚核覆盖的特征检测值中选择一个最大值或平均值, 这样可以有效地进行特征抽取。输出是一个缩小的矩阵, 也就是进行了下采样。
+
+\section*{2. 三维汇聚}
+三维汇聚的输入和输出都是张量表示的特征图。汇聚对输入张量的各个矩阵分别进行汇聚计算, 再将结果排列起来, 产生输出张量。汇聚的输入特征图和输出特征图的深度相同, 输出特征图比输入特征图有更小的高度和宽度。
+
+例 24.9 对于例 24.6 的输入张量, 核的大小为 $2 \times 2$, 步幅为 2 , 求 $\boldsymbol{X}$ 上的三维最大汇聚。
+
+解 对各个矩阵分别按照式 (24.8) 计算, 可得输出张量 $\boldsymbol{Y}$ :
+
+$$
+\begin{aligned}
+\boldsymbol{Y} & =\text { pooling }\left(\left[\begin{array}{llll}
+3 & 2 & 0 & 1 \\
+0 & 2 & 1 & 2 \\
+2 & 0 & 0 & 3 \\
+2 & 3 & 1 & 2
+\end{array}\right],\left[\begin{array}{llll}
+3 & 2 & 0 & 1 \\
+2 & 1 & 0 & 1 \\
+1 & 0 & 2 & 1 \\
+2 & 1 & 0 & 0
+\end{array}\right],\left[\begin{array}{llll}
+4 & 2 & 0 & 1 \\
+0 & 3 & 1 & 0 \\
+3 & 1 & 0 & 2 \\
+2 & 2 & 0 & 1
+\end{array}\right]\right) \\
+& =\left(\left[\begin{array}{ll}
+3 & 2 \\
+3 & 3
+\end{array}\right],\left[\begin{array}{ll}
+3 & 1 \\
+2 & 2
+\end{array}\right],\left[\begin{array}{ll}
+4 & 1 \\
+3 & 2
+\end{array}\right]\right)
+\end{aligned}
+$$
+
+输出特征图 (输出张量) 是一个 $2 \times 2 \times 3$ 张量。输入特征图和输出特征图的深度都是 3 。输入特征图高度和宽度都是 4 , 而输出特征图的高度和宽度都是 2 。图 24.10 示意三维最大汇聚计算的一步。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-09(2)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+4 & 2 & 0 & 1 \\
+\hline
+0 & 3 & 1 & 0 \\
+\hline
+3 & 1 & 0 & 2 \\
+\hline
+2 & 2 & 0 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-09}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+3 & 2 & 0 & 1 \\
+\hline
+0 & 2 & 1 & 2 \\
+\hline
+2 & 0 & 0 & 3 \\
+\hline
+2 & 3 & 1 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-09(1)}
+\end{center}
+
+三维最大汇聚计算例
+
+\subsection*{24.1.4 卷积神经网络}
+\section*{1. 模型定义}
+卷积神经网络是包含卷积运算的一种特殊前馈神经网络。卷积神经网络一般由卷积层、汇聚层和全连接层构成。卷积神经网络架构如图 24.11 所示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-10}
+\end{center}
+
+图 24.11 卷积神经网络架构
+
+\section*{定义 24.3 (卷积神经网络)}
+卷积神经网络是具有以下特点的神经网络。输入是张量表示的数据, 输出是标量, 表示分类或回归的预测值。经过多个卷积层, 有时中间经过汇聚层, 最后经过全连接层。每层的输入是张量 (包括矩阵) 表示的特征图, 输出也是张量 (包括矩阵) 表示的特征图。
+
+卷积层进行基于卷积函数的仿射变换和基于激活函数的非线性变换。假设第 $l$ 层是卷积层, 则第 $l$ 层的计算如下:
+
+
+\begin{gather*}
+\boldsymbol{Z}^{(l)}=\boldsymbol{W}^{(l)} * \boldsymbol{X}^{(l-1)}+\boldsymbol{b}^{(l)}  \tag{24.10}\\
+\boldsymbol{X}^{(l)}=a\left(\boldsymbol{Z}^{(l)}\right) \tag{24.11}
+\end{gather*}
+
+
+这里 $\boldsymbol{X}^{(l-1)}$ 是输入的 $I \times J \times K$ 张量, $\boldsymbol{X}^{(l)}$ 是输出的 $I^{\prime} \times J^{\prime} \times K^{\prime}$ 张量, $\boldsymbol{W}^{(l)}$ 是卷积核的 $M \times N \times K \times K^{\prime}$ 张量, $\boldsymbol{b}^{(l)}$ 是偏置的 $I^{\prime} \times J^{\prime} \times K^{\prime}$ 张量, $\boldsymbol{Z}^{(l)}$ 是净输入的 $I^{\prime} \times J^{\prime} \times K^{\prime}$ 张量, $a(\cdot)$ 是激活函数。可以认为式 (24.10) 和式 (24.11) 表示的变换由一组函数决定, 也就是第 $l$ 层的神经元, 一个神经元对应输出张量 $\boldsymbol{X}^{(l)}$ 的一个元素。另一方面, 输入张量 $\boldsymbol{X}^{(l-1)}$也就是第 $l-1$ 层的输出张量由第 $l-1$ 层的神经元决定。当 $\boldsymbol{X}^{(l-1)}$ 的元素到 $\boldsymbol{X}^{(l)}$ 的元素之间存在映射关系时，对应的神经元之间存在连接。
+
+汇聚层进行汇聚运算。假设第 $l$ 层是汇聚层, 则第 $l$ 层的计算如下:
+
+
+\begin{equation*}
+\boldsymbol{X}^{(l)}=\operatorname{pooling}\left(\boldsymbol{X}^{(l-1)}\right) \tag{24.12}
+\end{equation*}
+
+
+这里 $\boldsymbol{X}^{(l-1)}$ 是输入的 $I \times J \times K$ 张量, $\boldsymbol{X}^{(l)}$ 是输出的 $I^{\prime} \times J^{\prime} \times K$ 张量, $\operatorname{pooling}(\cdot)$ 是汇聚运算。\\
+可以认为式 (24.12) 表示的是基于神经元的变换（汇聚加恒等）。输入张量 $\boldsymbol{X}^{(l-1)}$ 由第 $l-1$ 层的神经元决定, 输出张量 $\boldsymbol{X}^{(l)}$ 由第 $l$ 层的神经元决定。当 $\boldsymbol{X}^{(l-1)}$ 的元素到 $\boldsymbol{X}^{(l)}$ 的元素之间存在映射关系时, 对应的神经元之间存在连接。
+
+全连接的第 $l$ 层是前馈神经网络的一层, 进行仿射变换和非线性变换。
+
+
+\begin{gather*}
+\boldsymbol{z}^{(l)}=\boldsymbol{W}^{(l)} \boldsymbol{x}^{(l-1)}+\boldsymbol{b}^{(l)}  \tag{24.13}\\
+\boldsymbol{x}^{(l)}=a\left(\boldsymbol{z}^{(l)}\right) \tag{24.14}
+\end{gather*}
+
+
+这里 $\boldsymbol{x}^{(l-1)}$ 是 $N$ 维输入向量, 是由张量展开得到的; $\boldsymbol{x}^{(l)}$ 是 $M$ 维输出向量; $\boldsymbol{W}^{(l)}$ 是 $M \times N$权重矩阵; $\boldsymbol{b}^{(l)}$ 是 $M$ 维偏置向量; $\boldsymbol{z}^{(l)}$ 是 $M$ 维净输入向量; $a(\cdot)$ 是激活函数。全连接的最后一层输出的是标量。
+
+卷积神经网络中的所有参数, 包括卷积核的权重和偏置、全连接的权重和偏置, 都通过学习获得。
+
+卷积神经网络也可以只有卷积层和全连接层, 而没有汇聚层。步幅大于 1 的卷积运算也可以起到下采样作用, 以代替汇聚运算。为了达到更好的预测效果, 设计上的原则通常是使用更小的卷积核 (如 $3 \times 3$ ) 和更深的结构, 前端使用少量的卷积核, 后端使用大量的卷积核。
+
+可以将 $I \times J \times K$ 张量展开成 $K$ 个 $I \times J$ 矩阵, 将 $I^{\prime} \times J^{\prime} \times K^{\prime}$ 张量展开成 $K^{\prime}$ 个 $I^{\prime} \times J^{\prime}$矩阵。卷积层计算也可以写作
+
+
+\begin{gather*}
+\boldsymbol{Z}_{k^{\prime}}^{(l)}=\sum_{k} \boldsymbol{W}_{k, k^{\prime}}^{(l)} * \boldsymbol{X}_{k}^{(l-1)}+\boldsymbol{b}_{k^{\prime}}^{(l)}  \tag{24.15}\\
+\boldsymbol{X}_{k^{\prime}}^{(l)}=a\left(\boldsymbol{Z}_{k^{\prime}}^{(l)}\right) \tag{24.16}
+\end{gather*}
+
+
+这里 $\boldsymbol{X}_{k}^{(l-1)}$ 是输入的第 $k$ 个 $I \times J$ 矩阵, $\boldsymbol{X}_{k^{\prime}}^{(l)}$ 是输出的第 $k^{\prime}$ 个 $I^{\prime} \times J^{\prime}$ 矩阵, $\boldsymbol{W}_{k, k^{\prime}}^{(l)}$ 是二维卷积核的第 $k \times k^{\prime}$ 个 $M \times N$ 矩阵, $\boldsymbol{b}_{k^{\prime}}^{(l)}$ 是偏置的第 $k^{\prime}$ 个 $I^{\prime} \times J^{\prime}$ 矩阵, $Z_{k^{\prime}}^{(l)}$ 是净输入的第 $k^{\prime}$个 $I^{\prime} \times J^{\prime}$ 矩阵。图 24.12 显示卷积层的输入和输出张量 (特征图)。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-11}
+
+图 24.12 卷积层的输入和输出张量
+
+每次对 $K$ 个 $I \times J$ 矩阵同时进行卷积运算得到 1 个 $I^{\prime} \times J^{\prime}$ 矩阵, 整体计算 $K^{\prime}$ 次得到 $K^{\prime}$个 $I^{\prime} \times J^{\prime}$ 矩阵, 卷积核是 $K^{\prime}$ 个 $M \times N \times K$ 张量。输入和输出张量的深度分别是 $K$ 和 $K^{\prime}$ 。
+
+可以将 $I \times J \times K$ 张量展开成 $K$ 个 $I \times J$ 矩阵, 将 $I^{\prime} \times J^{\prime} \times K$ 张量展开成 $K$ 个 $I^{\prime} \times J^{\prime}$矩阵。汇聚层计算也可以写作
+
+
+\begin{equation*}
+\boldsymbol{X}_{k}^{(l)}=\operatorname{pooling}\left(\boldsymbol{X}_{k}^{(l-1)}\right) \tag{24.17}
+\end{equation*}
+
+
+这里 $\boldsymbol{X}_{k}^{(l-1)}$ 是输入的是第 $k$ 个 $I \times J$ 矩阵, $\boldsymbol{X}_{k}^{(l)}$ 是输出的第 $k$ 个 $I^{\prime} \times J^{\prime}$ 矩阵。图 24.13 显示汇聚层的输入和输出张量 (特征图)。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-12}
+
+图 24.13 汇聚层的输入和输出张量
+
+汇聚运算对 $K$ 个 $I \times J$ 矩阵分别进行, 得到 $K$ 个 $I^{\prime} \times J^{\prime}$ 矩阵, 汇聚核是 $K$ 个 $M \times N$矩阵。输入和输出张量的深度都是 $K$ 。
+
+卷积神经网络的特点可以由每一层的输入和输出张量体现, 所以习惯上用输入和输出张量表示其架构。
+
+\section*{2. 模型例子}
+下面是一个简单的卷积神经网络的例子。这个 CNN 模型与 LeCun 提出的 LeNet 模型有相近的架构和规模。该模型在手写数字识别上达到很高的准确率, 是卷积神经网络最基本的模型。整个网络由两个卷积层、两个汇聚层、两个全连接层、一个输出层组成 (图 24.14)。表 24.1 列出了卷积层、汇聚层、全连接层、输出层的超参数, 输出特征图的大小, 其中 $F$表示卷积核或汇聚核的大小, $S$ 表示步幅, $W$ 表示权重矩阵的大小, $B$ 表示偏置向量的长度。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-12(1)}
+\end{center}
+
+图 $24.14 \mathrm{CNN}$ 模型的网络架构\\
+表 24.1 CNN 模型的规模
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+ & 超参数 & 输出特征图大小 \\
+\hline
+输入 & $F=5 \times 5 \times 3 \times 8, S=1$ & $32 \times 32 \times 3$ \\
+\hline
+Conv1 & $F=2 \times 2 \times 8, S=2$ & $28 \times 28 \times 8$ \\
+\hline
+Pool1 & $F=5 \times 5 \times 8 \times 16, S=1$ & $14 \times 14 \times 8$ \\
+\hline
+Conv2 & $F=2 \times 2 \times 16, S=2$ & $10 \times 10 \times 16$ \\
+\hline
+Pool2 & $W=400 \times 120, \quad B=120$ & $5 \times 5 \times 16$ \\
+\hline
+FC1 & $W=120 \times 84, \quad B=84$ & $120 \times 1$ \\
+\hline
+FC2 & $W=84 \times 10$ & $10 \times 1$ \\
+\hline
+Softmax &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{24.1.5 卷积神经网络性质}
+\section*{1. 表示效率}
+卷积神经网络的表示和学习效率比前馈神经网络高。首先层与层之间的连接是稀疏的,因为卷积代表的是稀疏连接, 比全连接的数目大幅减少, 如图 24.15 所示。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-13}
+
+图 24.15 用卷积层代替全连接层 (见文前彩图)
+
+图中显示的是一维卷积
+
+其次同一层的卷积的参数是共享的, 卷积核在前一层的各个位置上滑动计算, 在所有位置上具有相同的参数, 这样就大幅减少了参数的数量。另外, 每一层内的卷积运算可以并行处理, 这样也可以加快学习和推理的速度。
+
+\section*{2. 不变性}
+设 $f(\boldsymbol{x})$ 是以 $\boldsymbol{x}$ 为输入的函数, $\tau(\boldsymbol{x})$ 是对 $\boldsymbol{x}$ 的变换, 如平移变换、旋转变换、缩放变换。如果满足以下关系,
+
+
+\begin{equation*}
+f(\boldsymbol{x})=f(\tau(\boldsymbol{x})) \tag{24.18}
+\end{equation*}
+
+
+则称函数 $f(\cdot)$ 对变换 $\tau(\cdot)$ 具有不变性。如果 $\tau(\cdot)$ 表示的是平移变换、旋转变换、缩放变换, 则函数 $f(\cdot)$ 具有平移不变性、旋转不变性、缩放不变性。
+
+卷积神经网络具有平移不变性, 但不能严格保证; 不具有旋转不变性、缩放不变性。这意味着在图像识别中, 图像中的物体平行移动位置也能被识别。在图像识别中, 往往通过数据增强的方法提高卷积神经网络的旋转不变性和缩放不变性。
+
+例 24.10 图 24.16 给出从两张图片中进行特征抽取的例子。两张图片中都包含 $\mathrm{L}$ 字,但位置发生了平移。通过卷积和汇聚运算, 可以分别抽取出两张图片中的这个特征, 卷积使\\
+用表示 L 字的卷积核, 汇聚使用最大汇聚。所以, 这里的卷积和汇聚运算对特征抽取具有平移不变性。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-14}
+
+图 24.16 卷积和汇聚运算实现的特征抽取具有平移不变性
+
+下面给出三个不变性的严格定义。在平面上的点的坐标 $(x, y)$ 通过以下矩阵表示的变换变成新的坐标 $\left(x^{\prime}, y^{\prime}\right)$,则分别称变换为平移变换、旋转变换、缩放变换。
+
+(1) 平移变换
+
+$$
+\left[\begin{array}{c}
+x^{\prime} \\
+y^{\prime} \\
+1
+\end{array}\right]=\left[\begin{array}{lll}
+1 & 0 & t_{x} \\
+0 & 1 & t_{y} \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{l}
+x \\
+y \\
+1
+\end{array}\right]
+$$
+
+其中, $t_{x}$ 和 $t_{y}$ 分别表示点在 $x$ 轴和 $y$ 轴方向平移的幅度。
+
+(2) 旋转变换
+
+$$
+\left[\begin{array}{c}
+x^{\prime} \\
+y^{\prime} \\
+1
+\end{array}\right]=\left[\begin{array}{ccc}
+\cos \theta & -\sin \theta & 0 \\
+\sin \theta & \cos \theta & 0 \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{l}
+x \\
+y \\
+1
+\end{array}\right]
+$$
+
+其中, $\theta$ 表示点围绕原点旋转的角度。
+
+(3) 缩放变换
+
+$$
+\left[\begin{array}{c}
+x^{\prime} \\
+y^{\prime} \\
+1
+\end{array}\right]=\left[\begin{array}{ccc}
+s_{x} & 0 & 0 \\
+0 & s_{y} & 0 \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{l}
+x \\
+y \\
+1
+\end{array}\right]
+$$
+
+其中, $s_{x}$ 和 $s_{y}$ 分别表示点在 $x$ 轴和 $y$ 轴方向缩放的尺度。
+
+\section*{3. 感受野}
+卷积神经网络利用卷积实现了图像处理需要的特征的表示。前端的神经元表示的是局部\\
+的特征, 如物体的轮廓; 后端的神经元表示的是全局的特征, 如物体的部件, 可以更好地对图像数据进行预测。
+
+卷积神经网络通过特殊的函数表示和学习实现了自己的感受野机制。卷积神经网络的感受野是指其神经元涵盖的输入矩阵的部分 (二维图像的区域)。图 24.17 显示的网络有两个卷积层, 输入层是二维图像。第一层的绿色神经元的感受野是输入层的绿色区域, 第二层的黄色神经元的感受野是输入层的整个区域。感受野是从神经元的输出到输入反向看过去得到的结果。卷积核加激活函数产生的感受野具有与生物视觉系统中的感受野相似的特点。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-15}
+\end{center}
+
+输入层
+
+图 24.17 卷积神经网络中的感受野 (见文前彩图)
+
+考虑卷积神经网络全部由卷积层组成的情况, 神经元的感受野的大小有以下关系成立。证明留作习题。
+
+
+\begin{equation*}
+R^{(l)}=1+\sum_{j=1}^{l}\left(F^{(j)}-1\right) \prod_{i=0}^{j-1} S^{(i)} \tag{24.19}
+\end{equation*}
+
+
+设输入矩阵和卷积核都呈正方形。 $R^{(l)} \times R^{(l)}$ 表示第 $l$ 层的神经元的感受野的大小, $F^{(j)} \times F^{(j)}$表示第 $j$ 层的卷积核的大小, $S^{(i)}$ 表示第 $i$ 层卷积的步幅, 设 $S^{(0)}=1$ 。
+
+\section*{24.2 卷积神经网络的学习算法}
+卷积神经网络的学习算法也是反向传播算法, 与前馈神经网络学习的反向传播算法相似, 不同点在于正向和反向传播基于卷积函数。
+
+\subsection*{24.2.1 卷积导数}
+设有函数 $f(\boldsymbol{Z}), \boldsymbol{Z}=\boldsymbol{W} * \boldsymbol{X}$, 其中 $\boldsymbol{X}=\left[x_{i j}\right]_{I \times J}$ 是输入矩阵, $\boldsymbol{W}=\left[w_{m n}\right]_{M \times N}$ 是卷积\\
+核, $\boldsymbol{Z}=\left[z_{k l}\right]_{K \times L}$ 是净输入矩阵, 则 $f(\boldsymbol{Z})$ 对 $\boldsymbol{W}$ 的偏导数如下:
+
+
+\begin{equation*}
+\frac{\partial f(\boldsymbol{Z})}{\partial w_{m n}}=\sum_{k=1}^{K} \sum_{l=1}^{L} \frac{\partial z_{k l}}{\partial w_{m n}} \frac{\partial f(\boldsymbol{Z})}{\partial z_{k l}}=\sum_{k=1}^{K} \sum_{l=1}^{L} x_{k+m-1, l+n-1} \frac{\partial f(\boldsymbol{Z})}{\partial z_{k l}} \tag{24.20}
+\end{equation*}
+
+
+整体可以写作
+
+
+\begin{equation*}
+\frac{\partial f(\boldsymbol{Z})}{\partial \boldsymbol{W}}=\frac{\partial f(\boldsymbol{Z})}{\partial \boldsymbol{Z}} * \boldsymbol{X} \tag{24.21}
+\end{equation*}
+
+
+$f(\boldsymbol{Z})$ 对 $\boldsymbol{X}$ 的偏导数如下:
+
+
+\begin{equation*}
+\frac{\partial f(\boldsymbol{Z})}{\partial x_{i j}}=\sum_{k=1}^{K} \sum_{l=1}^{L} \frac{\partial z_{k l}}{\partial x_{i j}} \frac{\partial f(\boldsymbol{Z})}{\partial z_{k l}}=\sum_{k=1}^{K} \sum_{l=1}^{L} w_{i-k+1, j-l+1} \frac{\partial f(\boldsymbol{Z})}{\partial z_{k l}} \tag{24.22}
+\end{equation*}
+
+
+整体可以写作
+
+
+\begin{equation*}
+\frac{\partial f(\boldsymbol{Z})}{\partial \boldsymbol{X}}=\operatorname{rot} 180\left(\frac{\partial f(\boldsymbol{Z})}{\partial \boldsymbol{Z}}\right) * \boldsymbol{W}=\operatorname{rot} 180(\boldsymbol{W}) * \frac{\partial f(\boldsymbol{Z})}{\partial \boldsymbol{Z}} \tag{24.23}
+\end{equation*}
+
+
+其中, $\operatorname{rot} 180()$ 表示矩阵 180 度旋转, 这里的卷积 $*$ 是对输入矩阵进行全填充后的卷积。相关例子见习题。
+
+\section*{24.2 .2 反向传播算法}
+卷积神经网络和前馈神经网络一样, 也是通过反向传播算法求出损失函数对各层参数的梯度, 利用随机梯度下降法更新模型参数。对于每次迭代, 首先通过正向传播从前往后传递信号, 然后通过反向传播从后往前传递误差, 最后求损失函数对每层的参数的梯度, 对每层的参数进行更新。对于卷积神经网络, 特殊的是卷积层和汇聚层的参数更新。
+
+\section*{1. 卷积层}
+设第 $l$ 层为卷积层。由式 (24.15) 和式 (24.16) 可知, 第 $l$ 层的第 $k^{\prime}$ 个净输入矩阵 $\boldsymbol{Z}_{k^{\prime}}^{(l)}$ 为
+
+$$
+\boldsymbol{Z}_{k^{\prime}}^{(l)}=\sum_{k=1}^{K} \boldsymbol{W}_{k, k^{\prime}}^{(l)} * \boldsymbol{X}_{k}^{(l-1)}+\boldsymbol{b}_{k^{\prime}}^{(l)}
+$$
+
+其中, $\boldsymbol{X}_{k}^{(l-1)}$ 是第 $l$ 层的第 $k$ 个输入矩阵, $\boldsymbol{W}_{k, k^{\prime}}^{(l)}$ 是第 $l$ 层的第 $k \times k^{\prime}$ 个卷积核矩阵, $\boldsymbol{b}_{k^{\prime}}^{(l)}$ 是第 $l$ 层的第 $k^{\prime}$ 个偏置矩阵。第 $k^{\prime}$ 个输出矩阵 $\boldsymbol{X}_{k^{\prime}}^{(l)}$ 为
+
+$$
+\boldsymbol{X}_{k^{\prime}}^{(l)}=a\left(\boldsymbol{Z}_{k^{\prime}}^{(l)}\right)
+$$
+
+由此可以进行从第 $l-1$ 层到第 $l$ 层的正向转播, $\boldsymbol{X}_{k}^{(l-1)}$ 从第 $l-1$ 层的神经元传递到第 $l$ 层的相连神经元，得到 $\boldsymbol{X}_{k^{\prime}}^{(l)}$ 。以上计算可以扩展到第 $l$ 层的所有 $K^{\prime}$ 个输出矩阵上。
+
+再考虑第 $l$ 层的梯度更新。第 $l$ 层的第 $k$ 个输入矩阵是 $\boldsymbol{X}_{k}^{(l-1)}$ 。设第 $l$ 层的第 $k^{\prime}$ 个误差矩阵 $\boldsymbol{\delta}_{k^{\prime}}^{(l)}$ 是
+
+$$
+\delta_{k^{\prime}}^{(l)}=\frac{\partial L}{\partial Z_{k^{\prime}}^{(l)}}
+$$
+
+设从正向传播得到输出矩阵 $\boldsymbol{X}_{k}^{(l-1)}$, 从反向传播得到误差矩阵 $\boldsymbol{\delta}_{k^{\prime}}^{(l)}$ 。根据式 (24.21), 可以计算第 $l$ 层的第 $k \times k^{\prime}$ 个权重矩阵和第 $k^{\prime}$ 个偏置矩阵的梯度:
+
+
+\begin{gather*}
+\frac{\partial L}{\partial \boldsymbol{W}_{k, k^{\prime}}^{(l)}}=\frac{\partial L}{\partial \boldsymbol{Z}_{k^{\prime}}^{(l)}} * \boldsymbol{X}_{k}^{(l-1)}=\boldsymbol{\delta}_{k^{\prime}}^{(l)} * \boldsymbol{X}_{k}^{(l-1)}  \tag{24.24}\\
+\frac{\partial L}{\partial \boldsymbol{b}_{k^{\prime}}^{(l)}}=\delta_{k^{\prime}}^{(l)} \tag{24.25}
+\end{gather*}
+
+
+由此可以对第 $l$ 层 (卷积层) 的梯度进行更新。在其基础上进行参数更新, 实现梯度下降的一步。以上计算可以扩展到第 $l$ 层的所有 $K \times K^{\prime}$ 个权重矩阵和 $K^{\prime}$ 个偏置矩阵上。
+
+再考虑从第 $l$ 层到第 $l-1$ 层的误差反向传播。设第 $l-1$ 层的第 $k$ 个误差矩阵 $\delta_{k}^{(l-1)}$ 是
+
+$$
+\delta_{k}^{(l-1)}=\frac{\partial L}{\partial Z_{k}^{(l-1)}}
+$$
+
+通过第 $l$ 层的第 $k^{\prime}$ 个误差矩阵 $\boldsymbol{\delta}_{k^{\prime}}^{(l)}$ 计算 $\boldsymbol{\delta}_{k}^{(l-1)}$ 。由链式法则和式 (24.23) 可得:
+
+
+\begin{align*}
+\boldsymbol{\delta}_{k}^{(l-1)} & =\frac{\partial L}{\partial \boldsymbol{Z}_{k}^{(l-1)}}=\frac{\partial \boldsymbol{X}_{k}^{(l-1)}}{\partial \boldsymbol{Z}_{k}^{(l-1)}} \frac{\partial L}{\partial \boldsymbol{X}_{k}^{(l-1)}}=\frac{\partial a}{\partial \boldsymbol{Z}_{k}^{(l-1)}} \odot \sum_{k^{\prime}=1}^{K^{\prime}}\left(\operatorname{rot} 180\left(\boldsymbol{W}_{k, k^{\prime}}^{(l)}\right) * \frac{\partial L}{\partial \boldsymbol{Z}_{k^{\prime}}^{(l)}}\right) \\
+& =\frac{\partial a}{\partial \boldsymbol{Z}_{k}^{(l-1)} \odot \sum_{k^{\prime}=1}^{K^{\prime}}\left(\operatorname{rot} 180\left(\boldsymbol{W}_{k, k^{\prime}}^{(l)}\right) * \boldsymbol{\delta}_{k^{\prime}}^{(l)}\right)} \tag{24.26}
+\end{align*}
+
+
+这里 $\odot$ 表示矩阵的逐元素积或阿达玛积, $\operatorname{rot} 180()$ 表示矩阵 180 度旋转, $*$ 是对输入矩阵进行全填充后的卷积。根据式 $(24.26), \delta_{k}^{(l)}$ 从第 $l$ 层的神经元传递到第 $l-1$ 层的相连神经元,得到 $\boldsymbol{\delta}_{k}^{(l-1)}$ 。以上计算可以扩展到第 $l-1$ 层的所有 $K$ 个误差矩阵上。
+
+\section*{2. 汇聚层}
+设第 $l$ 层为汇聚层。由式 (24.17) 可知, 第 $l$ 层的第 $k$ 个输出矩阵 $\boldsymbol{X}_{k}^{(l)}$ 为
+
+$$
+\boldsymbol{X}_{k}^{(l)}=\boldsymbol{Z}_{k}^{(l)}=\operatorname{pooling}\left(\boldsymbol{X}_{k}^{(l-1)}\right)
+$$
+
+这里 $\boldsymbol{X}_{k}^{(l-1)}$ 是第 $l$ 层的第 $k$ 个输入矩阵。引入第 $l$ 层的第 $k$ 个净输入矩阵 $\boldsymbol{Z}_{k}^{(l)}$, 净输入 $\boldsymbol{Z}_{k}^{(l)}$和输出 $\boldsymbol{X}_{k}^{(l)}$ 之间是恒等变换。由此可以进行从第 $l-1$ 层到第 $l$ 层的正向转播, $\boldsymbol{X}_{k}^{(l-1)}$ 从第 $l-1$ 层的神经元传递到第 $l$ 层的相连神经元, 得到 $\boldsymbol{X}_{k}^{(l)}$ 。以上计算可以扩展到第 $l$ 层的所有 $K$ 个输出矩阵上。
+
+汇聚层没有参数, 所以在学习过程中没有参数更新。
+
+再考虑从第 $l$ 层到第 $l-1$ 层的误差反向传播。设第 $l$ 层的第 $k$ 个误差矩阵是
+
+$$
+\delta_{k}^{(l)}=\frac{\partial L}{\partial Z_{k}^{(l)}}
+$$
+
+第 $l-1$ 层的第 $k$ 个误差矩阵 $\boldsymbol{\delta}_{k}^{(l-1)}$ 是
+
+$$
+\delta_{k}^{(l-1)}=\frac{\partial L}{\partial Z_{k}^{(l-1)}}
+$$
+
+通过 $\boldsymbol{\delta}_{k}^{(l)}$ 计算 $\boldsymbol{\delta}_{k}^{(l-1)}$ 。由链式法则可得:
+
+$\delta_{k}^{(l-1)}=\frac{\partial L}{\partial \boldsymbol{Z}_{k}^{(l-1)}}=\frac{\partial \boldsymbol{X}_{k}^{(l-1)}}{\partial \boldsymbol{Z}_{k}^{(l-1)}} \frac{\partial L}{\partial \boldsymbol{X}_{k}^{(l-1)}}=\frac{\partial \boldsymbol{X}_{k}^{(l-1)}}{\partial \boldsymbol{Z}_{k}^{(l-1)}} \frac{\partial \boldsymbol{Z}_{k}^{(l)}}{\partial \boldsymbol{X}_{k}^{(l-1)}} \frac{\partial L}{\partial \boldsymbol{Z}_{k}^{(l)}}=\frac{\partial a}{\partial \boldsymbol{Z}_{k}^{(l-1)}} \odot$ up\_sample $\left(\boldsymbol{\delta}_{k}^{(l)}\right)$
+
+这里 $\odot$ 表示矩阵的逐元素积; up\_sample $\left(\boldsymbol{\delta}_{k}^{(l)}\right)$ 是误差矩阵 $\delta_{k}^{(l)}$ 的上采样, 是汇聚 (下采样)的反向运算。最大汇聚时, $\delta_{k}^{(l)}$ 从第 $l$ 层的神经元传递到第 $l-1$ 层的输出最大的相连神经元;平均汇聚时, $\delta_{k}^{(l)}$ 从第 $l$ 层的神经元平均分配到第 $l-1$ 层的相连神经元。以上计算可以扩展到第 $l-1$ 层的所有 $K$ 个误差矩阵上。
+
+\section*{3. 算法}
+算法 24.1 给出反向传播法的一次迭代的算法。不失一般性, 假设卷积神经网络全部由卷积层组成, 因为汇聚层和全连接层都可以看作是特殊的卷积层。网络有 $s$ 层, 正向传播各层的输出是张量 $\boldsymbol{X}^{(1)}, \boldsymbol{X}^{(2)}, \cdots, \boldsymbol{X}^{(s)}$, 反向传播各层传递的误差是张量 $\boldsymbol{\delta}^{(s)}, \cdots, \boldsymbol{\delta}^{(2)}, \boldsymbol{\delta}^{(1)}$ 。各层的参数是张量 $\boldsymbol{W}^{(1)}, \boldsymbol{W}^{(2)}, \cdots, \boldsymbol{W}^{(s)}$ 和 $\boldsymbol{b}^{(1)}, \boldsymbol{b}^{(2)}, \cdots, \boldsymbol{b}^{(s)}$ 。
+
+\section*{算法 24.1 (CNN 的反向传播算法)}
+输入: 神经网络 $f(\boldsymbol{X} ; \boldsymbol{\theta})$, 一个样本 $(\boldsymbol{X}, \boldsymbol{y})$ 。
+
+输出: 更新的参数 $\boldsymbol{\theta}$ 。
+
+参数: 学习率 $\eta$ 。
+
+\section*{\{}
+\begin{enumerate}
+  \item 正向传播, 得到各层输出 $\boldsymbol{X}^{(1)}, \boldsymbol{X}^{(2)}, \cdots, \boldsymbol{X}^{(s)}$
+\end{enumerate}
+
+$$
+\boldsymbol{X}^{(0)}=\boldsymbol{X}
+$$
+
+For $t=1,2, \cdots, s$, do \{
+
+$$
+\begin{gathered}
+\boldsymbol{Z}^{(t)}=\boldsymbol{W}^{(t)} * X^{(t-1)}+\boldsymbol{b}^{(t)} \\
+\boldsymbol{X}^{(t)}=a\left(\boldsymbol{Z}^{(t)}\right)
+\end{gathered}
+$$
+
+\}
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 反向传播, 得到各层误差 $\delta^{(s)}, \cdots, \delta^{(2)}, \delta^{(1)}$, 计算各层的梯度, 更新各层的参数计算输出层的误差
+\end{enumerate}
+
+$$
+\boldsymbol{\delta}^{(s)}=\nabla_{\boldsymbol{X}^{(s)}} L\left(\boldsymbol{X}^{(s)}, \boldsymbol{y}\right)
+$$
+
+For $t=s, \cdots, 2,1$, do \{
+
+$$
+\boldsymbol{\delta}^{(t)} \leftarrow \frac{\partial a}{\partial \boldsymbol{Z}^{(t)}} \odot \boldsymbol{\delta}^{(t)}
+$$
+
+计算第 $t$ 层的梯度
+
+$$
+\begin{gathered}
+\nabla_{\boldsymbol{W}^{(t)}} L=\boldsymbol{\delta}^{(t)} * \boldsymbol{X}^{(t-1)} \\
+\nabla_{\boldsymbol{b}^{(t)}} L=\boldsymbol{\delta}^{(t)}
+\end{gathered}
+$$
+
+根据梯度下降公式更新第 $t$ 层的参数
+
+$$
+\begin{aligned}
+\boldsymbol{W}^{(t)} & \leftarrow \boldsymbol{W}^{(t)}-\eta \nabla_{\boldsymbol{W}^{(t)}} L \\
+\boldsymbol{b}^{(t)} & \leftarrow \boldsymbol{b}^{(t)}-\eta \nabla_{\boldsymbol{b}^{(t)}} L
+\end{aligned}
+$$
+
+If $(t>1)\{$
+
+将第 $t$ 层的误差传到第 $t-1$ 层
+
+$$
+\boldsymbol{\delta}^{(t-1)}=\sum_{k^{\prime}} \operatorname{rot} 180\left(\boldsymbol{W}_{k^{\prime}}^{(t)}\right) * \boldsymbol{\delta}^{(t)}
+$$
+
+\}
+
+\}
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 返回更新的参数向量 $\boldsymbol{\theta}$
+\end{enumerate}
+
+\}
+
+\section*{24.3 图像分类中的应用}
+图像分类是将图片自动分配到已有类别的任务。ImageNet 是著名的图像分类比赛。本节介绍卷积神经网络在图像分类中的应用, 特别是有代表性的 AlexNet 和残差网络 ResNet。
+
+\subsection*{24.3.1 AlexNet}
+AlexNet 是一个深度卷积神经网络, 使用卷积神经网络的所有基本技术, 在 2012 年 ImageNet 图像分类竞赛中获得第一名, 大幅领先其他传统机器学习模型, 展现了深度学习的威力, 促进了后续的深度学习研究, 有力推动了深度学习的发展。
+
+图 24.18 显示 AlexNet 的架构, 有 5 个卷积层 (Conv)、 3 个汇聚层 (Pool)、2 个全连接层 (FC)、1 个输出层 (Softmax)。FC1 层使用一个与输入特征图同样大小的卷积核以起到全连接的作用。表 24.2 列出了卷积层、汇聚层、全连接层、输出层的超参数及输出特征图的大\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-19}
+
+图 24.18 AlexNet 的网络架构\\
+小, 其中 $F$ 表示卷积核或汇聚核的大小, $S$ 表示步幅, $P$ 表示填充, $W$ 表示权重矩阵的大小, $B$ 表示偏置向量的大小。
+
+表 24.2 AlexNet 的模型规模
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+ & 超参数 & 输出特征图大小 \\
+\hline
+输入 &  & $227 \times 227 \times 3$ \\
+\hline
+Conv1 & $F=11 \times 11 \times 3 \times 96, S=4, P=0$ & $55 \times 55 \times 96$ \\
+\hline
+Pool1 & $F=3 \times 3 \times 96, S=2$ & $27 \times 27 \times 96$ \\
+\hline
+Conv2 & $F=5 \times 5 \times 96 \times 256, S=1, P=2$ & $27 \times 27 \times 256$ \\
+\hline
+Pool2 & $F=3 \times 3 \times 256, S=2$ & $13 \times 13 \times 256$ \\
+\hline
+Cov3 & $F=3 \times 3 \times 256 \times 384, S=1, P=1$ & $13 \times 13 \times 384$ \\
+\hline
+Cov4 & $F=3 \times 3 \times 384 \times 384, S=1, P=1$ & $13 \times 13 \times 384$ \\
+\hline
+Cov5 & $F=3 \times 3 \times 384 \times 256, S=1, P=1$ & $13 \times 13 \times 256$ \\
+\hline
+Pool3 & $F=3 \times 3 \times 256, S=2$ & $6 \times 6 \times 256$ \\
+\hline
+FC1 & $W=4096 \times 4096, \quad B=4906$ & $4096 \times 1$ \\
+\hline
+FC2 & $W=4096 \times 4096, \quad B=4906$ & $4096 \times 1$ \\
+\hline
+Softmax & \multicolumn{2}{|c}{$W=4096 \times 1000$} \\
+\hline
+\end{tabular}
+\end{center}
+
+AlexNet 有以下特点: 激活函数使用整流线性函数 ReLU, 训练中使用暂退法 (dropout)防止过拟合, 使用数据增强的方法提高模型的准确率。受当时计算机能力的限制, 最初的 AlexNet 模型的实现采用了双数据流的设计, 目前的计算机实现这样规模的模型已经不是问题。
+
+\subsection*{24.3.2 残差网络}
+\section*{1. 基本想法}
+残差网络（residual network, ResNet）是一种使用残差连接技术的深度神经网络, 在 2015 年的 ImageNet 图像分类比赛中取得了第一名的好成绩。对于深度神经网络, 当层数增加时, 模型训练往往变得非常困难。除了梯度消失和梯度爆炸问题 (见第 23 章), 训练误差上升也是一个问题。残差网络是为解决这些问题而提出的通用深度学习技术。
+
+实验中观察到, 当把深度神经网络的层数增加到一定数量以后, 训练误差不会降低反而会上升。但是从理论上说, 如果学习 (优化) 算法的能力足够强, 当网络层数增加时, 训练误差至少应该保持不变。这是因为理论上存在等效的深度神经网络, 其前面几层与 “浅的” 神经网络完全相同, 后面几层只做恒等变换, 那么强的学习算法至少应该能找到这个模型。因此深度学习还有提升空间。残差网络通过学习残差来解决这个问题。
+
+假设要学习的真实模型是函数 $h(\boldsymbol{x})$ 。深度学习一般的想法是找到一个深度神经网络 $f(\boldsymbol{x})$, 直接近似真实模型 $h(\boldsymbol{x})$ 。另一方面, 真实模型也可以写作
+
+
+\begin{equation*}
+h(\boldsymbol{x})=\boldsymbol{x}+(h(\boldsymbol{x})-\boldsymbol{x}) \tag{24.28}
+\end{equation*}
+
+
+也就是恒等变换 $\boldsymbol{x}$ 和残差 $h(\boldsymbol{x})-\boldsymbol{x}$ 之和的形式。残差网络的想法是用一个神经网络 $f(\boldsymbol{x})$ 近似残差 $h(\boldsymbol{x})-\boldsymbol{x}$, 用 $\boldsymbol{x}+f(\boldsymbol{x})$ 近似真实模型 $h(\boldsymbol{x})$, 整个过程以递归的方式进行。\\
+残差网络进行以下递归计算:
+
+
+\begin{equation*}
+\boldsymbol{x}_{i}=\boldsymbol{x}_{i-1}+f_{i}\left(\boldsymbol{x}_{i-1}\right), \quad i=1,2, \cdots, n \tag{24.29}
+\end{equation*}
+
+
+其中, $\boldsymbol{x}_{i}$ 表示第 $i$ 次递归计算结果, 设 $\boldsymbol{x}_{0}=\boldsymbol{x} ; f_{i}(\boldsymbol{x})$ 表示第 $i$ 次计算的计算单元, 称为残差单元, 每一个残差单元都有相同的结构、不同的参数。
+
+考虑 $\boldsymbol{x}$ 到 $h(\boldsymbol{x})$ 的映射, 如果主体是恒等部分 $\boldsymbol{x}$ 的话, 那么残差部分 $h(\boldsymbol{x})-\boldsymbol{x}$ 应该更容易学习, 这样可以增加残差单元的个数 (网络的层数), 更好地对真实模型进行近似。而事实也证明了这个想法的正确性。
+
+\section*{2. 模型架构}
+残差网络可以是基于前馈神经网络的, 也可以是基于卷积神经网络的, 先考虑前者。残差网络由很多个残差单元 (residual unit) 串联组成 (见式 (24.29))。每一个残差单元相当于一般的前馈网络的两层, 每一层由线性变换和非线性变换组成, 还有一个残差连接 (residual connection), 如图 24.19 所示。这里为了简单, 省略仿射变换的偏置, 所以是线性变换。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-21}
+\end{center}
+
+图 24.19 残差单元的结构
+
+假设残差单元输入是向量 $\boldsymbol{x}$, 输出是向量 $\boldsymbol{y}$ 。首先, 在第一层通过基于权重矩阵 $\boldsymbol{W}_{1}$ 的线性变换将输入 $\boldsymbol{x}$ 转换为 $\boldsymbol{z}_{1}$ (式 (24.30)), 再通过非线性变换 relu 将 $\boldsymbol{z}_{1}$ 转换为 $\boldsymbol{x}_{1}$ (式 (24.31))。然后, 在第二层通过基于权重矩阵 $\boldsymbol{W}_{2}$ 的线性变换将 $\boldsymbol{x}_{1}$ 转换为 $\boldsymbol{z}_{2}$ (式 (24.32)), 求 $\boldsymbol{z}_{2}$ 与输入 $\boldsymbol{x}$ 之和, 再通过非线性变换 relu 对这个和进行转换得到输出 $\boldsymbol{y}$ (式 (24.33)), 其中 $\boldsymbol{z}_{2}$ 与 $\boldsymbol{x}$ 之和的计算通过残差连接实现。
+
+
+\begin{gather*}
+\boldsymbol{z}_{1}=\boldsymbol{W}_{1} \boldsymbol{x}  \tag{24.30}\\
+\boldsymbol{x}_{1}=\operatorname{relu}\left(\boldsymbol{z}_{1}\right)  \tag{24.31}\\
+\boldsymbol{z}_{2}=\boldsymbol{W}_{2} \boldsymbol{x}_{1}  \tag{24.32}\\
+\boldsymbol{y}=\operatorname{relu}\left(\boldsymbol{x}+\boldsymbol{z}_{2}\right) \tag{24.33}
+\end{gather*}
+
+
+可以看出残差单元的前一层半 (式 (24.30) 式 (24.33)) 通过前馈神经网络实现了残差单元的\\
+函数:
+
+
+\begin{equation*}
+\boldsymbol{f}(x)=\boldsymbol{W}_{2} \operatorname{relu}\left(\boldsymbol{W}_{1} x\right) \tag{24.34}
+\end{equation*}
+
+
+对输入 $\boldsymbol{x}$ 和残差 $f(\boldsymbol{x})$ 的和再通过 relu 就得到输出 $\boldsymbol{y}$ 。
+
+
+\begin{equation*}
+\boldsymbol{y}=\operatorname{relu}(\boldsymbol{x}+f(\boldsymbol{x})) \tag{24.35}
+\end{equation*}
+
+
+这里的实现是基本想法 (式 (24.29)) 的变种。后续残差网络有改进版, 更直接地实现了基本想法。
+
+当需要让输入 $\boldsymbol{x}$ 和输出 $\boldsymbol{y}$ 有不同的维度时, 不能简单进行输入和残差的求和。这时可以对输入 $\boldsymbol{x}$ 进行一个线性变换, 使用另一个权重矩阵 $\boldsymbol{W}_{3}$ :
+
+$$
+\boldsymbol{W}_{3} \boldsymbol{x}+f(\boldsymbol{x})
+$$
+
+\section*{3. 模型特点}
+残差网络可以展开成为多个神经网络模块的集成, 如图 24.20 所示。假设有由三个单元组成的残差神经网络, 输入是 $\boldsymbol{x}_{0}$, 输出是 $\boldsymbol{x}_{3}$ 。这个网络可以展开写作
+
+$$
+\begin{aligned}
+\boldsymbol{x}_{3} & =\boldsymbol{x}_{2}+f_{3}\left(\boldsymbol{x}_{2}\right)=\left(\boldsymbol{x}_{1}+f_{2}\left(\boldsymbol{x}_{1}\right)\right)+f_{3}\left(\boldsymbol{x}_{1}+f_{2}\left(\boldsymbol{x}_{1}\right)\right) \\
+& =\left(\boldsymbol{x}_{0}+f_{1}\left(\boldsymbol{x}_{0}\right)\right)+f_{2}\left(\boldsymbol{x}_{0}+f_{1}\left(\boldsymbol{x}_{0}\right)\right)+f_{3}\left[\left(\boldsymbol{x}_{0}+f_{1}\left(\boldsymbol{x}_{0}\right)\right)+f_{2}\left(\boldsymbol{x}_{0}+f_{1}\left(\boldsymbol{x}_{0}\right)\right)\right]
+\end{aligned}
+$$
+
+其中, $f_{1}, f_{2}, f_{3}$ 是式 $(24.34)$ 定义的残差单元函数。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-22}
+
+图 24.20 残差网络展开后成为神经网络的集成, 左侧是原始的残差网络, 右侧是展开后的神经网络集成, 圆表示加法
+
+可以看出, 展开的神经网络是由深度从 0 到 3 的神经网络模块组成的集成 (这里说的深度是指单元数而不是层数)。注意集成的模块之间残差单元函数存在共享, 从深层到底层共享次数指数级地增加。从输入到输出有 $2^{n}$ 个路径, 其中 $n$ 是残差单元个数。也就是说, 输出是输入的指数量级的不同变换的线性组合。
+
+总之, 残差网络有很强的表示和学习能力。可以利用很多个残差单元的串联连接, 构建很深的神经网络, 解决深度神经网络训练困难的问题, 包括有效地防止梯度消失和梯度爆炸。实际的实现中也使用批量归一化, 以应对内部协变量偏移。
+
+\section*{4. 图像分类}
+图像分类时残差网络 ResNet 使用卷积神经网络。每一个残差单元由两个卷积层及残差连接组成。输入是特征图 $\boldsymbol{X}$, 输出是特征图 $\boldsymbol{Y}$ 。首先, 在第一个卷积层通过卷积变换 $\boldsymbol{W}_{1}$ 将\\
+输入 $\boldsymbol{X}$ 转换为 $\boldsymbol{Z}_{1}$ (式 (24.36)), 再通过 relu 将 $\boldsymbol{Z}_{1}$ 转换为 $\boldsymbol{X}_{1}$ (式 (24.37))。然后, 在第二个卷积层通过卷积变换 $\boldsymbol{W}_{2}$ 将 $\boldsymbol{X}_{1}$ 转换为 $\boldsymbol{Z}_{2}$ (式 (24.38)), 求 $\boldsymbol{Z}_{2}$ 与输入 $\boldsymbol{X}$ 之和, 再通过 relu 对这个和进行转换得到输出 $\boldsymbol{Y}$ (式 (24.39), 其中 $\boldsymbol{Z}_{2}$ 与 $\boldsymbol{X}$ 之和的计算通过残差连接实现。
+
+
+\begin{gather*}
+\boldsymbol{Z}_{1}=\boldsymbol{W}_{1} * \boldsymbol{X}  \tag{24.36}\\
+\boldsymbol{X}_{1}=\operatorname{relu}\left(\boldsymbol{Z}_{1}\right)  \tag{24.37}\\
+\boldsymbol{Z}_{2}=\boldsymbol{W}_{2} * \boldsymbol{X}_{1}  \tag{24.38}\\
+\boldsymbol{Y}=\operatorname{relu}\left(\boldsymbol{X}+\boldsymbol{Z}_{2}\right) \tag{24.39}
+\end{gather*}
+
+
+ResNet 的层数可以很深, 有多个版本, 包括 ResNet-18、ResNet-34 和 ResNet-152 等,这里的数字表示卷积层加输出层的层数 (不包含汇聚层)。下面对 ResNet-18 做简单介绍。
+
+图 24.21 显示 ResNet-18 的架构, 有 17 个卷积层 (Conv)、2 个汇聚层 (Pool)、1 个输出层 (Softmax)。首先有 1 个卷积层和 1 个最大汇聚层对输入的图像数据进行处理; 之后有 16 个卷积层, 共有 8 个残差单元, 形成残差网络, 对图像数据进行处理; 最后有 1 个平均汇聚层和 1 个输出层给出最终预测结果。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_fc25db59b1a18f350d07g-23}
+
+图 24.21 ResNet-18 的架构 (见文前彩图)
+
+每一模块表示一层, 有色模块是残差网络的卷积层, 每一种颜色成一组, 每一组有两个残差单元。数字是核的大小和步幅
+
+8 个残差单元分 4 组, 每两个单元成为 1 组。在组内特征图的大小保持不变, 在相邻组之间特征图高度和宽度减半, 深度增倍。也就是说, 在组内进行了同规模采样, 在相邻组之间进行了下采样。特征表示的复杂度整体不变。残差单元中的卷积核大小都是 $3 \times 3$ 。进行同规模采样的卷积层的步幅是 1 , 进行下采样的卷积层的步幅是 2 。
+
+表 24.3 列出了卷积层、汇聚层、输出层的超参数及输出特征图的大小, 其中 $F$ 表示卷积\\
+核或汇聚核的大小, $S$ 表示步幅, $W$ 表示权重矩阵的大小。各层的填充的大小可以从数值推算, 予以省略。
+
+表 24.3 ResNet-18 的模型规模
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+ & 超参数 & 输出特征图大小 \\
+\hline
+输入 &  & $224 \times 224 \times 3$ \\
+\hline
+Conv1 & $F=7 \times 7 \times 3 \times 64, S=2$ & $112 \times 112 \times 64$ \\
+\hline
+Pool1, Max & $F=3 \times 3 \times 64, S=2$ & $56 \times 56 \times 64$ \\
+\hline
+Conv2.1, Conv2.2, Conv2.3, Conv2.4 & $F=3 \times 3 \times 56 \times 64, S=1$ & $56 \times 56 \times 64$ \\
+\hline
+Cov3.1, & $F=3 \times 3 \times 56 \times 128, S=2$ & $28 \times 28 \times 128$ \\
+\hline
+Conv3.2, Conv3.3, Conv3.4 & $F=3 \times 3 \times 28 \times 128, S=1$ & $28 \times 28 \times 128$ \\
+\hline
+Cov4.1, & $F=3 \times 3 \times 28 \times 256, S=2$ & $14 \times 14 \times 256$ \\
+\hline
+Conv4.2, Conv4.3, Conv4.4 & $F=3 \times 3 \times 14 \times 256, S=1$ & $14 \times 14 \times 256$ \\
+\hline
+Cov5.1, & $F=3 \times 3 \times 14 \times 512, S=2$ & $7 \times 7 \times 512$ \\
+\hline
+Conv5.2, Conv5.3, Conv5.4 & $F=3 \times 3 \times 7 \times 512, S=1$ & $7 \times 7 \times 512$ \\
+\hline
+Pool2, Mean & $F=7 \times 7 \times 512$ & $1 \times 1 \times 512$ \\
+\hline
+Softmax & $W=512 \times 1000$ & $1000 \times 1$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{本章概 要}
+\begin{enumerate}
+  \item 给定输入矩阵 $\boldsymbol{X}=\left[x_{i j}\right]_{I \times J}$, 核矩阵 $\boldsymbol{W}=\left[w_{m n}\right]_{M \times N}$ 。让核矩阵在输入矩阵上按顺序滑动, (二维) 卷积是定义在核矩阵与输入矩阵的子矩阵的内积, 产生输出矩阵 $\boldsymbol{Y}=\left[y_{k l}\right]_{K \times L^{\circ}}$ 。
+\end{enumerate}
+
+$$
+\boldsymbol{Y}=\boldsymbol{W} * \boldsymbol{X}
+$$
+
+其中, $\boldsymbol{Y}=\left[y_{k l}\right]_{K \times L}, y_{k l}=\sum_{m=1}^{M} \sum_{n=1}^{N} w_{m, n} x_{k+m-1, l+n-1}$ 。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 卷积运算的扩展可以通过增加步幅和填充。卷积运算依赖于卷积核的大小、填充的大小、步幅。卷积的输出矩阵的大小 $K \times L$ 满足
+\end{enumerate}
+
+$$
+K \times L=\left\lfloor\frac{I+2 P-M}{S}+1\right\rfloor \times\left\lfloor\frac{J+2 Q-N}{S}+1\right\rfloor
+$$
+
+其中, $I \times J$ 是输入矩阵的大小, $M \times N$ 是卷积核的大小, $P$ 和 $Q$ 是两个方向填充的大小, $S$ 是步幅的大小。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 卷积的输入和输出又称为特征图。二维卷积的输入和输出特征图是矩阵, 三维卷积的输入和输出特征图是张量。
+\end{enumerate}
+
+图像处理的红、绿、蓝三个通道的数据构成一个张量 (特征图)。三维卷积作用于这样的数据时, 首先使用三个不同的二维卷积核对三个通道的输入矩阵分别进行二维卷积运算, 然后将得到的三个输出矩阵相加, 最终得到一个三维卷积的输出矩阵。
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 给定输入矩阵 $\boldsymbol{X}=\left[x_{i j}\right]_{I \times J}, M \times N$ 虚设的核矩阵。让核矩阵在输入矩阵上滑动, 得到输入矩阵的子矩阵, (二维) 汇聚运算对子矩阵求最大值或平均值, 产生输出矩阵 $\boldsymbol{Y}=\left[y_{k l}\right]_{K \times L^{\circ}}$ 。
+\end{enumerate}
+
+$$
+\begin{gathered}
+y_{k l}=\max _{m \in\{1,2, \cdots, M\}, n \in\{1,2, \cdots N\}} x_{k+m-1, l+n-1} \\
+y_{k l}=\frac{1}{M N} \sum_{m=1}^{M} \sum_{n=1}^{N} x_{k+m-1, l+n-1}
+\end{gathered}
+$$
+
+汇聚运算也有填充和步幅。
+
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item 三维汇聚的输入和输出都是张量表示的特征图。三维汇聚对输入张量的各个矩阵分别进行计算, 再将结果排列起来, 产生输出张量。
+
+  \item 卷积神经网络是具有以下特点的神经网络。输入是张量表示的数据, 输出是标量, 表示分类或回归的预测。经过多个卷积层, 有时中间经过汇聚层, 最后经过全连接层。每层的输入是张量表示的特征图, 输出也是张量表示的特征图。
+
+\end{enumerate}
+
+卷积层进行基于卷积的仿射变换和基于激活函数的非线性变换。第 $l$ 层的卷积层计算如下:
+
+$$
+\begin{gathered}
+\boldsymbol{Z}^{(l)}=\boldsymbol{W}^{(l)} * \boldsymbol{X}^{(l-1)}+\boldsymbol{b}^{(l)} \\
+\boldsymbol{X}^{(l)}=a\left(\boldsymbol{Z}^{(l)}\right)
+\end{gathered}
+$$
+
+汇聚层进行汇聚运算。第 $l$ 层的汇聚层计算如下:
+
+$$
+\boldsymbol{X}^{(l)}=\operatorname{pooling}\left(\boldsymbol{X}^{(l-1)}\right)
+$$
+
+卷积神经网络被广泛应用于图像处理, 代表的模型有 LeNet、AlexNet、ResNet 等。
+
+\begin{enumerate}
+  \setcounter{enumi}{6}
+  \item 卷积神经网络的表示和学习效率比前馈神经网络高。首先层与层之间的连接是稀疏的, 其次同一层的卷积的参数是共享的, 这样大幅减少了参数的数量。
+\end{enumerate}
+
+卷积神经网络利用卷积运算实现了图像处理需要的特征的表示。前端的神经元表示的是局部的特征, 如物体的轮廓, 后端的神经元表示的是全局的特征, 如物体的部件。
+
+卷积神经网络近似拥有平移不变性, 不具有旋转不变性、缩放不变性。
+
+\begin{enumerate}
+  \setcounter{enumi}{7}
+  \item 卷积神经网络的学习算法也是反向传播算法。与前馈神经网络学习的反向传播算法相似, 不同点在于正向和反向传播基于卷积函数。对于每次迭代, 首先通过正向传播从前往后传递信号, 然后通过反向传播从后往前传递误差, 最后对每层的参数进行更新。
+\end{enumerate}
+
+在第 $l$ 层的卷积层, 正向传播:
+
+$$
+\begin{gathered}
+\boldsymbol{Z}_{k^{\prime}}^{(l)}=\sum_{k=1}^{K} \boldsymbol{W}_{k, k^{\prime}}^{(l)} * \boldsymbol{X}_{k}^{(l-1)}+\boldsymbol{b}_{k^{\prime}}^{(l)} \\
+\boldsymbol{X}_{k^{\prime}}^{(l)}=a\left(\boldsymbol{Z}_{k^{\prime}}^{(l)}\right)
+\end{gathered}
+$$
+
+反向传播:
+
+$$
+\boldsymbol{\delta}_{k}^{(l-1)}=\frac{\partial a}{\partial \boldsymbol{Z}_{k}^{(l-1)}} \odot \sum_{k^{\prime}=1}^{K^{\prime}}\left(\operatorname{rot} 180\left(\boldsymbol{W}_{k, k^{\prime}}^{(l)}\right) * \boldsymbol{\delta}_{k^{\prime}}^{(l)}\right)
+$$
+
+参数更新：
+
+$$
+\frac{\partial L}{\partial \boldsymbol{W}_{k, k^{\prime}}^{(l)}}=\delta_{k^{\prime}}^{(l)} * \boldsymbol{X}_{k}^{(l-1)}
+$$
+
+$$
+\frac{\partial L}{\partial b_{k^{\prime}}^{(l)}}=\delta_{k^{\prime}}^{(l)}
+$$
+
+在第 $l$ 层的汇聚层, 正向传播:
+
+$$
+\boldsymbol{X}_{k}^{(l)}=\operatorname{pooling}\left(\boldsymbol{X}_{k}^{(l-1)}\right)
+$$
+
+反向传播:
+
+$$
+\delta_{k}^{(l-1)}=\frac{\partial a}{\partial Z_{k}^{(l-1)}} \odot \text { up_sample }\left(\delta_{k}^{(l)}\right)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{8}
+  \item 残差网络是为了解决深度神经网络训练困难而提出的深度学习方法。假设要学习的真实模型是函数 $h(\boldsymbol{x})$, 也可以写作
+\end{enumerate}
+
+$$
+h(\boldsymbol{x})=\boldsymbol{x}+(h(\boldsymbol{x})-\boldsymbol{x})
+$$
+
+残差网络的想法是用一个神经网络 $f(\boldsymbol{x})$ 近似残差 $h(\boldsymbol{x})-\boldsymbol{x}$, 用 $\boldsymbol{x}+f(\boldsymbol{x})$ 近似真实模型 $h(\boldsymbol{x})$, 整个过程以递归的方式进行。
+
+$$
+\boldsymbol{x}_{i}=\boldsymbol{x}_{i-1}+f_{i}\left(\boldsymbol{x}_{i-1}\right), \quad i=1,2, \cdots, n
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{9}
+  \item 残差网络由很多个残差单元串联连接组成。每一个残差单元相当于一般的前馈网络的两层, 每一层由线性变换和非线性变换组成, 还有一个残差连接。
+\end{enumerate}
+
+残差单元的输入是向量 $\boldsymbol{x}$, 输出是向量 $\boldsymbol{y}$ 时, 整个单元的运算是
+
+$$
+\begin{gathered}
+f(\boldsymbol{x})=\boldsymbol{W}_{2} \operatorname{relu}\left(\boldsymbol{W}_{1} x\right) \\
+\boldsymbol{y}=\operatorname{relu}(\boldsymbol{x}+f(\boldsymbol{x}))
+\end{gathered}
+$$
+
+残差网络可以展开成多个神经网络模块的集成, 有很强的表示和学习能力。
+
+\section*{继续阅 读}
+进一步学习卷积神经网络可参考文献 [1] 文献 [4], 特别是文献 [2] 有关于卷积和互相关的详细介绍。也可以阅读原始论文, NeoCognitron 的论文是文献 [5], LeCun 等关于 CNN 的工作主要在文献 [6] 和文献 [7], AlexNet 的论文是文献 [8], ResNet 的最初论文和后续论文是文献 [9] 文献 [11]。
+
+\section*{习 题}
+24.1 设有输入矩阵 $\boldsymbol{X}=\left[x_{i j}\right]_{I \times J}$, 核矩阵 $\boldsymbol{W}=\left[w_{m n}\right]_{M \times N}$, 满足 $M \ll I, N \ll J$, 则称以下运算为二维数学卷积:
+
+$$
+\boldsymbol{Y}=\boldsymbol{W} \circledast \boldsymbol{X}
+$$
+
+产生输出矩阵 $\boldsymbol{Y}=\left[y_{k l}\right]_{K \times L}$, 其中,
+
+$$
+\begin{aligned}
+y_{k l} & =\sum_{m=1}^{M} \sum_{n=1}^{N} w_{m n} x_{i-m+1, j-n+1} \\
+K & =I-M+1, L=J-N+1
+\end{aligned}
+$$
+
+证明数学卷积和机器学习卷积有以下关系:
+
+$$
+\boldsymbol{W} \circledast \boldsymbol{X}=\operatorname{rot} 180(\boldsymbol{W}) * \boldsymbol{X}
+$$
+
+这里 $\circledast$ 表示数学卷积, $*$ 表示机器学习卷积, $\operatorname{rot} 180()$ 表示对矩阵的 180 度旋转。
+
+24.2 假设有矩阵
+
+$$
+\boldsymbol{A}=\left[\begin{array}{llll}
+3 & 2 & 0 & 1 \\
+0 & 2 & 1 & 2 \\
+2 & 0 & 0 & 3 \\
+2 & 3 & 1 & 2
+\end{array}\right], \quad \boldsymbol{B}=\left[\begin{array}{lll}
+2 & 1 & 2 \\
+0 & 0 & 3 \\
+0 & 0 & 2
+\end{array}\right]
+$$
+
+其中, $\boldsymbol{A}$ 是输入矩阵, $\boldsymbol{B}$ 是核矩阵, 可以求得数学卷积 $\boldsymbol{B} \circledast \boldsymbol{A}$ 是
+
+$$
+\boldsymbol{B} \circledast \boldsymbol{A}=\left[\begin{array}{cccccc}
+6 & 7 & 8 & 6 & 1 & 3 \\
+0 & 4 & 13 & 15 & 4 & 7 \\
+4 & 2 & 10 & 16 & 6 & 14 \\
+4 & 8 & 15 & 15 & 6 & 17 \\
+0 & 0 & 10 & 9 & 3 & 12 \\
+0 & 0 & 4 & 6 & 2 & 4
+\end{array}\right]
+$$
+
+试求数学卷积 $\boldsymbol{A} \circledast \boldsymbol{B}$, 并验证数学卷积满足交换律。
+
+24.3 验证机器学习卷积 (互相关) 不满足交换律。
+
+$24.4 \mathrm{CNN}$ 也可以用于一维数据的处理, 求图 24.22 所示的一维卷积。
+
+\begin{center}
+\begin{tabular}{|c|}
+\hline
+3 \\
+\hline
+0 \\
+\hline
+2 \\
+\hline
+-2 \\
+\hline
+2 \\
+\hline
+1 \\
+\hline
+2 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-27}
+\end{center}
+
+图 24.22
+
+24.5 通过例 24.2 验证卷积运算不具有旋转可变性。假设对图像数据进行 90 度顺时针和逆时针旋转。
+
+24.6 证明感受野的关系式 (24.19) 成立。
+
+24.7 设计一个基于 CNN 的自然语言句子分类模型。假设句子是单词序列, 每个单词用一个实数向量表示。
+
+24.8 设有输入矩阵 $\boldsymbol{X}$ 和核矩阵 $\boldsymbol{W}$ :
+
+$$
+\boldsymbol{X}=\left[x_{i j}\right]=\left[\begin{array}{ccccc}
+x_{11} & x_{12} & x_{13} & x_{14} & x_{15} \\
+x_{21} & x_{21} & x_{23} & x_{24} & x_{25} \\
+x_{31} & x_{32} & x_{33} & x_{34} & x_{35} \\
+x_{41} & x_{42} & x_{43} & x_{44} & x_{45}
+\end{array}\right], \quad \boldsymbol{W}=\left[w_{m n}\right]=\left[\begin{array}{ccc}
+w_{11} & w_{12} & w_{13} \\
+w_{21} & w_{22} & w_{23} \\
+w_{31} & w_{32} & w_{33}
+\end{array}\right]
+$$
+
+有卷积 $\boldsymbol{Y}=\boldsymbol{W} * \boldsymbol{X}$ :
+
+$$
+\boldsymbol{Y}=\left[y_{k l}\right]=\left[\begin{array}{lll}
+y_{11} & y_{12} & y_{13} \\
+y_{21} & y_{22} & y_{23} \\
+y_{31} & y_{32} & y_{33}
+\end{array}\right]
+$$
+
+求 $\frac{\partial \boldsymbol{Y}}{\partial \boldsymbol{W}}$ 和 $\frac{\partial \boldsymbol{Y}}{\partial \boldsymbol{X}}$, 并具体地写出 $\frac{\mathrm{d} y_{k l}}{\mathrm{~d} w_{m n}}$ 和 $\frac{\mathrm{d} y_{k l}}{\mathrm{~d} x_{i j}}$ 。
+
+24.9 设有输入矩阵 $\boldsymbol{X}$ 和核矩阵 $\boldsymbol{W}$ :
+
+$$
+\boldsymbol{X}=\left[\begin{array}{lll}
+x_{11} & x_{12} & x_{13} \\
+x_{21} & x_{22} & x_{23} \\
+x_{31} & x_{32} & x_{33}
+\end{array}\right], \quad \boldsymbol{W}=\left[\begin{array}{lll}
+w_{11} & w_{12} & w_{13} \\
+w_{21} & w_{22} & w_{23} \\
+w_{31} & w_{32} & w_{33}
+\end{array}\right]
+$$
+
+验证 $\operatorname{rot} 180(\boldsymbol{W}) * \boldsymbol{X}=\operatorname{rot} 180(\boldsymbol{X}) * \boldsymbol{W}$ 成立。
+
+24.10 解释残差网络为什么能防止梯度消失和梯度爆炸。
+
+\section*{参考文献}
+[1] GOODFELlow i, BENGIO Y, COURVILLE A. Deep learning[M]. MIT Press, 2016.
+
+[2] 邱锡鹏. 神经网络与深度学习 $[\mathrm{M}]$. 北京: 机械工业出版社, 2020.
+
+[3] 阿斯顿・张, 李沐, 扎卡里・立顿, 等. 动手学深度学习 $[\mathrm{M}$. 北京: 人民邮电出版社, 2019.
+
+[4] 斋藤康毅. 深度学习入门基于 Python 的理论与实现 $[\mathrm{M}]$. 陆宇杰, 译. 北京: 人民邮电出版社, 2018.
+
+[5] FUKUSHIMA K. Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position[J]. Biological Cybernetics, 1980, 36(4): 193-202.
+
+[6] LECUN Y, BOSER B, DENKER J S, et al. Backpropagation applied to handwritten zip code recognition[J]. Neural Computation, 1989, 1(4): 541-551.
+
+[7] LECUN Y, BOTTOU L, BENGIO Y, et al. Gradient-based learning applied to document recognition[J]. Proceedings of the IEEE, 1998, 86(11): 2278-2324.
+
+[8] KRIZHEVSKY A, SUTSKEVER I, HINTON G E. ImageNet classification with deep convolutional neural networks[J]. Advances in Neural Information Processing Systems, 2012: 10971105.
+
+[9] HE K, ZHANG X, REN S, et al. Deep residual learning for image recognition[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2016: 770-778.
+
+[10] HE K, ZHANG X, REN S, et al. Identity mappings in deep residual networks[C]//European Conference on Computer Vision. 2016: 630-645.
+
+[11] VEIT A, WILBER M, BELONGIE S. Residual networks behave like ensembles of relatively shallow networks $[\mathrm{C}] / /$ Proceedings of the 30th International Conference on Neural Information Processing System. 2016: 550-558.
+
+\section*{第 25 章 循环神经网络}
+循环神经网络 (recurrent neural network, RNN) 是对序列数据进行预测的神经网络。循环神经网络在序列数据的每一个位置上具有相同的结构 (因此是 “循环” 的), 也可以看作是在序列数据上展开的前馈神经网络。循环神经网络的核心是隐层的输出, 表示当前位置的状态, 描述序列数据的顺序依存关系。
+
+循环神经网络有多种类型, 包括长短期记忆 (long short term memory, LSTM) 网络、门控循环单元 (gated recurrent unit, GRU) 网络、深度循环神经网络、双向循环神经网络。循环神经网络的学习通常使用反向传播算法。循环神经网络的应用领域包括自然语言处理、语音处理、时间序列预测。在自然语言处理中用于分类、序列标注、语言模型等。
+
+Jordan 于 1986 年提出了最早的一种循环神经网络, Elman 于 1990 年提出了所谓简单循环神经网络, Hochreiter 和 Schmidhuber 于 1997 年提出了长短期记忆网络, Cho 等于 2014 年提出了门控循环单元网络。
+
+本章 25.1 节讲述简单循环神经网络, 25.2 节叙述其他常用的循环神经网络, 25.3 节介绍循环神经网络在自然语言处理中的应用。
+
+\section*{25.1 简单循环神经网络}
+循环神经网络是一系列神经网络的统一名称, 其主要特点是在序列数据上重复使用相同的结构, 对序列数据中的依存关系建模, 用于序列数据的预测。本节讲述简单循环神经网络。简单循环神经网络是最基本的模型, 大多数循环神经网络都是其扩展, 学习算法是反向传播。
+
+\subsection*{25.1.1 模型}
+\section*{1. 模型定义}
+考虑序列数据的预测问题。给定输入的实数向量序列 $x_{1}, x_{2}, \cdots, \boldsymbol{x}_{T}$; 在第 $t=$ $1,2, \cdots, T$ 个位置上 ${ }^{1}$, 对实数向量 $\boldsymbol{x}_{t}$ 进行预测, 给出概率分布 $\boldsymbol{p}_{t}$; 整体产生输出的概率向量序列 $\boldsymbol{p}_{1}, \boldsymbol{p}_{2}, \cdots, \boldsymbol{p}_{T}$ 。
+
+一个朴素的方法是用前馈神经网络完成这个任务。假设序列数据的长度固定, 将输入的
+\footnotetext{(1) 当数据是时间序列数据时称为第 $t=1,2, \cdots, T$ 个时刻。
+}
+实数向量序列拼接, 作为前馈神经网络的输入, 将输出的概率向量序列拼接, 作为前馈神经网络的输出。这个方法在序列数据预测, 特别是时间序列预测上存在两个问题。一个是序列长度问题。序列数据的长度通常是可变的, 而前馈神经网络的输入层的宽度是固定的, 需要对数据进行截断或补齐处理 (比如用 $O$ 向量补齐)。但无论如何, 不易处理任意长度的序列数据。另一个是局部特征的表示和学习问题。序列数据通常在不同位置上有相似的局部特征,而前馈神经网络对不同位置的局部特征是分开表示和学习的, 产生冗余, 会降低表示和学习的效率。
+
+循环神经网络的基本想法是: 在序列数据的每一个位置上重复使用相同的前馈神经网络, 并将相邻位置的神经网络连接起来; 用前馈神经网络隐层的输出表示当前位置的 “状态”,假设当前位置的状态依赖于当前位置的输入和之前位置的状态。这样就可以表示和学习序列数据中的局部和全局特征, 并解决以上两个问题。
+
+循环神经网络的基本模型是简单循环神经网络 (simple recurrent neural network, S-RNN)。下面给出定义。
+
+定义 25.1 (简单循环神经网络) 称以下的神经网络为简单循环神经网络。神经网络以序列数据 $x_{1}, x_{2}, \cdots, x_{T}$ 为输入, 每一项是一个实数向量。在每一个位置上重复使用同一个神经网络结构。在第 $t$ 个位置上 $(t=1,2, \cdots, T)$, 神经网络的隐层或中间层以 $\boldsymbol{x}_{\boldsymbol{t}}$ 和 $\boldsymbol{h}_{t-1}$ 为输入, 以 $\boldsymbol{h}_{t}$ 为输出，其间有以下关系成立:
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}=\tanh \left(\boldsymbol{U} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}\right) \tag{25.1}
+\end{equation*}
+
+
+其中, $\boldsymbol{x}_{t}$ 表示第 $t$ 个位置上的输入, 是一个实数向量 $\left(x_{t, 1}, x_{t, 2}, \cdots, x_{t, n}\right)^{\mathrm{T}} ; \boldsymbol{h}_{t-1}$ 表示第 $t-1$个位置的状态, 也是一个实数向量 $\left(h_{t-1,1}, h_{t-1,2}, \cdots, h_{t-1, m}\right)^{\mathrm{T}} ; \boldsymbol{h}_{t}$ 表示第 $t$ 个位置的状态 $\left(h_{t, 1}, h_{t, 2}, \cdots, h_{t, m}\right)^{\mathrm{T}}$, 也是一个实数向量; $\boldsymbol{U}, \boldsymbol{W}$ 是权重矩阵; $\boldsymbol{b}$ 是偏置向量。神经网络的输出层以 $h_{t}$ 为输入, $\boldsymbol{p}_{t}$ 为输出, 有以下关系成立:
+
+
+\begin{equation*}
+\boldsymbol{p}_{t}=\operatorname{softmax}\left(\boldsymbol{V} \cdot \boldsymbol{h}_{t}+\boldsymbol{c}\right) \tag{25.2}
+\end{equation*}
+
+
+其中, $\boldsymbol{p}_{t}$ 表示第 $t$ 个位置上的输出, 是一个概率向量 $\left(p_{t, 1}, p_{t, 2}, \cdots, p_{t, l}\right)^{\mathrm{T}}$, 满足 $p_{t, i} \geqslant 0$ $(i=1,2, \cdots, l), \sum_{i=1}^{l} p_{t, i}=1 ; \boldsymbol{V}$ 是权重矩阵; $\boldsymbol{c}$ 是偏置向量。神经网络输出序列数据 $\boldsymbol{p}_{1}, \boldsymbol{p}_{2}, \cdots, \boldsymbol{p}_{T}$, 每一项是一个概率向量。
+
+以上公式还可以写作
+
+
+\begin{gather*}
+\boldsymbol{r}_{\boldsymbol{t}}=\boldsymbol{U} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}  \tag{25.3}\\
+\boldsymbol{h}_{t}=\tanh \left(\boldsymbol{r}_{\boldsymbol{t}}\right)  \tag{25.4}\\
+\boldsymbol{z}_{t}=\boldsymbol{V} \cdot \boldsymbol{h}_{t}+\boldsymbol{c}  \tag{https://cdn.mathpix.com/cropped/2024_03_13_fc25db59b1a18f350d07g-31.jpg?height=164&width=302&top_left_y=7257&top_left_x=5219}\\
+\boldsymbol{p}_{t}=\operatorname{softmax}\left(\boldsymbol{z}_{t}\right) \tag{25.6}
+\end{gather*}
+
+
+其中, $\boldsymbol{r}_{\boldsymbol{t}}$ 是隐层的净输入向量, $z_{t}$ 是输出层的净输入向量。隐层的激活函数通常是双曲正切函数, 也可以是其他激活函数; 输出层的激活函数通常是软最大化函数 (见第 23 章)。\\
+这里神经网络在每一个位置都产生输出, 也可以只在最后一个位置产生输出, 是一种特殊情况。通常假定 $h_{0}=\boldsymbol{O}$, 即 $\boldsymbol{h}_{0}$ 是每一个元素为 0 的向量。
+
+图 25.1 给出简单循环神经网络 S-RNN 的架构。可以看作是在序列数据上展开的 (unfolded) 前馈神经网络, 其中参数在各个位置共享。图 25.2 给出 S-RNN 的折叠 (folded)形式。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-32(1)}
+\end{center}
+
+图 25.1 简单循环神经网络架构 (展开形式)
+
+偏置向量被省去
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-32}
+\end{center}
+
+图 25.2 简单循环神经网络架构 (折叠形式)
+
+偏置向量被省去
+
+\section*{2. 模型特点}
+循环神经网络 (1)的定义中不仅涉及输入的空间和输出的空间, 而且涉及状态的空间, 并且状态的空间起着重要作用。这一点与一般的前馈神经网络不同。S-RNN 对依次给定的输入的实数向量序列 $\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{T}$, 首先依次生成状态的实数向量序列 $\boldsymbol{h}_{1}, \boldsymbol{h}_{2}, \cdots, \boldsymbol{h}_{T}$, 然后再依次生成输出的概率向量序列 $\boldsymbol{p}_{1}, \boldsymbol{p}_{2}, \cdots, \boldsymbol{p}_{T}$ 。在这个过程中, 起核心作用的是式 (25.1) 的非线性变换, 意味着当前位置的状态 $\boldsymbol{h}_{t}$ 由当前位置的输入 $\boldsymbol{x}_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$ 决定。按顺序反向递归, 可以看出每一个位置的状态表示的是到这个位置为止的序列数据的局部特征及全局特征, 也称作短距离依存关系和长距离依存关系。
+
+循环神经网络是自回归模型 (auto-regressive model), 也就是说, 在序列数据的每一个位置上的预测只使用之前位置的信息, 适用于时间序列的预测。循环神经网络的计算需要在序列数据上依次进行。循环神经网络的优点是可以处理任意长度的序列数据, 缺点是不能进行并行化处理以提高计算效率。
+
+循环神经网络具有强大的表示能力, 是动态系统 (dynamical system) 的通用模型。自然界和人工界随时间变化的动态系统有如下基本形式。
+
+(1) 这里讨论一般的循环神经网络, Jordan 类型的循环神经网络 (见习题 25.1) 有不同的特点。
+
+$$
+\begin{gathered}
+\boldsymbol{s}(t)=F(\boldsymbol{x}(t), \boldsymbol{s}(t-1)) \\
+\boldsymbol{y}(t)=G(\boldsymbol{s}(t))
+\end{gathered}
+$$
+
+这里 $\boldsymbol{s}(t)$ 表示系统在时刻 $t$ 的状态, $\boldsymbol{x}(t)$ 表示系统在时刻 $t$ 的输入, $\boldsymbol{s}(t-1)$ 表示系统在时刻 $(t-1)$ 的状态, $\boldsymbol{y}(t)$ 表示系统在时刻 $t$ 的输出, $F(\cdot)$ 表示系统的状态函数, $G(\cdot)$ 表示系统的输出函数。也就是说, 系统的当前状态由当前的输入和之前的状态决定, 而系统当前的输出由当前的状态决定。如果系统的初始状态以及在每一个时刻的输入依次确定, 那么系统的每一个时刻的状态也就依次确定, 每一个时刻的输出也依次确定。整个过程是一个确定性的过程, 由状态函数和输出函数决定。动态系统的核心是状态之间按时间顺序的依存关系。可以看出, 简单循环神经网络 S-RNN 是描述动态系统的非线性模型 (见式 (25.1) 和式 (25.2))。
+
+循环神经网络也是计算的通用模型, 可以模拟图灵机。理论证明, 图灵机可计算的任何函数都可以通过有限规模的循环网络来计算 ${ }^{[9]}$ 。也就是说, 循环神经网络可以计算任意可计算的函数, 这里说的函数可计算是指丘奇-图灵论题定义的函数可计算。
+
+\subsection*{25.1.2 学习算法}
+\section*{1. 反向传播算法}
+简单循环神经网络 S-RNN 的学习算法是反向传播算法。为了简单, 考虑根据一个样本进行参数更新的情况, 使用随机梯度下降法。
+
+假设要学习的循环神经网络是 $f(\boldsymbol{x} ; \boldsymbol{\theta})$, 参数是 $\boldsymbol{\theta}$ 。训练样本由输入序列 $\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{T}$和 (真值) 输出序列 $\boldsymbol{y}_{1}, \boldsymbol{y}_{2}, \cdots, \boldsymbol{y}_{T}$ 组成, 其中 $\boldsymbol{x}_{t}$ 是第 $t$ 个位置的输入实数向量 $(t=$ $1,2, \cdots, T), \boldsymbol{y}_{t}$ 是第 $t$ 个位置的 (真值) 输出独热向量, 表示这个位置的类别。
+
+计算给定输入序列 $\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{T}$ 条件下产生输出序列 $\boldsymbol{y}_{1}, \boldsymbol{y}_{2}, \cdots, \boldsymbol{y}_{T}$ 的条件概率:
+
+
+\begin{equation*}
+P\left(\boldsymbol{y}_{1}, \boldsymbol{y}_{2}, \cdots, \boldsymbol{y}_{T} \mid \boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{T}\right)=\prod_{t=1}^{T} P\left(\boldsymbol{y}_{t} \mid \boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{t}\right) \tag{25.7}
+\end{equation*}
+
+
+其中, 条件概率 $P\left(\boldsymbol{y}_{t} \mid \boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{t}\right)$ 由循环神经网络 $f(\boldsymbol{x} ; \boldsymbol{\theta})$ 计算得出。计算序列整体的交叉熵:
+
+
+\begin{equation*}
+L=\sum_{t=1}^{T} L_{t}=-\sum_{t=1}^{T} \log P\left(\boldsymbol{y}_{t} \mid \boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{t}\right) \tag{25.8}
+\end{equation*}
+
+
+目标是最小化交叉熵。通过随机梯度下降更新参数 $\boldsymbol{\theta}$ :
+
+
+\begin{equation*}
+\boldsymbol{\theta} \leftarrow \boldsymbol{\theta}-\eta \cdot \frac{\partial L}{\partial \boldsymbol{\theta}} \tag{25.9}
+\end{equation*}
+
+
+关键是计算梯度 $\frac{\partial L}{\partial \boldsymbol{\theta}}$ 。
+
+图 25.3 是表示损失函数及其梯度的计算图。S-RNN 的定义采用式 (25.3) 式 (25.6)。考虑梯度的反向传播, 关键是计算偏导数 $\frac{\partial L}{\partial z_{t}}$ 和 $\frac{\partial L}{\partial r_{t}}$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-34}
+\end{center}
+
+图 25.3 简单循环神经网络学习的计算图
+
+梯度的反向传播从结点 $L$ 开始。首先计算损失函数 $L$ 对各个位置上的损失 $L_{t}$ 的偏导数 $\frac{\partial L}{\partial L_{t}}$ :
+
+
+\begin{equation*}
+\frac{\partial L}{\partial L_{t}}=1, \quad t=1,2, \cdots, T \tag{25.10}
+\end{equation*}
+
+
+接着计算损失函数 $L$ 对各个位置上的输出层净输入 $z_{t}$ 的偏导数 $\frac{\partial L}{\partial z_{t}}$ (推导见附录 $\mathrm{F}$ ):
+
+
+\begin{equation*}
+\frac{\partial L}{\partial z_{t}}=\frac{\partial L}{\partial L_{t}} \frac{\partial L_{t}}{\partial z_{t}}=\boldsymbol{y}_{t}-\boldsymbol{p}_{t}, \quad t=1,2, \cdots, T \tag{25.11}
+\end{equation*}
+
+
+然后计算损失函数 $L$ 对各个位置上的隐层净输入 $r_{t}$ 的偏导数 $\frac{\partial L}{\partial r_{t}}$ 。注意隐层各个位置的净输入之间也有依存关系, 所以需要先计算第 $T$ 个位置的偏导数, 再依次计算第 $T-1$ 个到第 1 个位置的偏导数。第 $T$ 个位置的偏导数 $\frac{\partial L}{\partial r_{T}}$ 只需通过 $\frac{\partial L}{\partial z_{T}}$ 计算:
+
+
+\begin{equation*}
+\frac{\partial L}{\partial \boldsymbol{r}_{T}}=\frac{\partial \boldsymbol{z}_{T}}{\partial \boldsymbol{r}_{T}} \frac{\partial L}{\partial \boldsymbol{z}_{T}}=\frac{\partial \boldsymbol{h}_{T}}{\partial \boldsymbol{r}_{T}} \frac{\partial \boldsymbol{z}_{T}}{\partial \boldsymbol{h}_{T}} \frac{\partial L}{\partial \boldsymbol{z}_{T}}=\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{T}\right) \cdot \boldsymbol{V}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{z}_{T}} \tag{25.12}
+\end{equation*}
+
+
+第 $t$ 个位置的偏导数 $\frac{\partial L}{\partial \boldsymbol{r}_{t}}$ 需要通过 $\frac{\partial L}{\partial \boldsymbol{r}_{t+1}}$ 和 $\frac{\partial L}{\partial z_{t}}$ 计算:
+
+
+\begin{gather*}
+\frac{\partial L}{\partial r_{t}}=\frac{\partial \boldsymbol{r}_{t+1}}{\partial \boldsymbol{r}_{t}} \frac{\partial L}{\partial \boldsymbol{r}_{t+1}}+\frac{\partial z_{t}}{\partial \boldsymbol{r}_{t}} \frac{\partial L}{\partial z_{t}}=\frac{\partial \boldsymbol{h}_{t}}{\partial \boldsymbol{r}_{t}} \frac{\partial \boldsymbol{r}_{t+1}}{\partial \boldsymbol{h}_{t}} \frac{\partial L}{\partial \boldsymbol{r}_{t+1}}+\frac{\partial \boldsymbol{h}_{t}}{\partial \boldsymbol{r}_{t}} \frac{\partial \boldsymbol{z}_{t}}{\partial \boldsymbol{h}_{t}} \frac{\partial L}{\partial \boldsymbol{z}_{t}} \\
+=\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{U}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{r}_{t+1}}+\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{V}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{z}_{t}} \\
+t=T-1, \cdots, 2,1 \tag{25.13}
+\end{gather*}
+
+
+图 25.4 显示在神经网络上梯度反向传播的过程。梯度 $\frac{\partial L}{\partial r_{t}}$ 的计算从第 $T$ 个位置到第 1 个位置依次进行。因为与序列 (时间) 的顺序是相反的, 所以这个算法被称为随时间的反向传播算法 (back propagation through time, BPTT)。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-35}
+\end{center}
+
+图 25.4 简单循环神经网络上的反向传播 (见文前彩图)
+
+下面计算损失函数对各个参数的偏导数, 注意参数是在每一个位置共享的, 所以要对所有位置求和。
+
+
+\begin{gather*}
+\frac{\partial L}{\partial c}=\sum_{t=1}^{T} \frac{\partial z_{t}}{\partial c} \frac{\partial L}{\partial z_{t}}=\sum_{t=1}^{T} \frac{\partial L}{\partial z_{t}}  \tag{25.14}\\
+\frac{\partial L}{\partial \boldsymbol{V}}=\sum_{t=1}^{T} \frac{\partial z_{t}}{\partial \boldsymbol{V}} \frac{\partial L}{\partial z_{t}}=\sum_{t=1}^{T} \frac{\partial L}{\partial z_{t}} \cdot \boldsymbol{h}_{t}^{\mathrm{T}} \tag{25.15}
+\end{gather*}
+
+
+这里 $\frac{\partial h_{t}}{\partial V}, \frac{\partial Z_{t}}{\partial \boldsymbol{V}}$ 是张量。
+
+
+\begin{gather*}
+\frac{\partial L}{\partial \boldsymbol{b}}=\sum_{t=1}^{T} \frac{\partial \boldsymbol{r}_{t}}{\partial \boldsymbol{b}} \frac{\partial L}{\partial \boldsymbol{r}_{t}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}}  \tag{25.16}\\
+\frac{\partial L}{\partial \boldsymbol{U}}=\sum_{t=1}^{T} \frac{\partial \boldsymbol{r}_{t}}{\partial \boldsymbol{U}} \frac{\partial L}{\partial \boldsymbol{r}_{t}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}} \cdot \boldsymbol{h}_{t-1}^{\mathrm{T}} \tag{25.17}
+\end{gather*}
+
+
+这里 $\frac{\partial h_{t}}{\partial \boldsymbol{U}}, \frac{\partial \boldsymbol{r}_{t}}{\partial \boldsymbol{U}}$ 是张量。
+
+
+\begin{equation*}
+\frac{\partial L}{\partial \boldsymbol{W}}=\sum_{t=1}^{T} \frac{\partial \boldsymbol{r}_{t}}{\partial \boldsymbol{W}} \frac{\partial L}{\partial \boldsymbol{r}_{t}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}} \cdot \boldsymbol{x}_{t}^{\mathrm{T}} \tag{25.18}
+\end{equation*}
+
+
+这里 $\frac{\partial \boldsymbol{h}_{t}}{\partial \boldsymbol{W}}, \frac{\partial \boldsymbol{r}_{t}}{\partial \boldsymbol{W}}$ 是张量。之后根据式 (25.9) 更新参数, 完成一轮迭代。
+
+算法 25.1 给出具体算法。可以看出它是前馈神经网络的反馈向算法的推广。
+
+\section*{算法 25.1 (随时间的反向传播算法)}
+输入: 循环神经网络 $\boldsymbol{y}=f(\boldsymbol{x} ; \boldsymbol{\theta})$, 参数 $\boldsymbol{\theta}$, 样本 $\left(\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots, \boldsymbol{x}_{T}\right)$ 和 $\left(\boldsymbol{y}_{1}, \boldsymbol{y}_{2}, \cdots, \boldsymbol{y}_{T}\right)$ 。
+
+输出: 更新的参数 $\boldsymbol{\theta}$ 。
+
+超参数: 学习率 $\eta$ 。
+
+\{
+
+\begin{enumerate}
+  \item 正向传播, 得到各个位置的输出
+\end{enumerate}
+
+For $t=1,2, \cdots, T, \operatorname{do}\{$
+
+将信号从前向后传播, 计算隐层的输出 $\boldsymbol{h}_{t}$ 和输出层的输出 $\boldsymbol{p}_{t}$
+
+$$
+\begin{gathered}
+\boldsymbol{r}_{t}=\boldsymbol{U} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W} \cdot \boldsymbol{x}_{t}+\boldsymbol{b} \\
+\boldsymbol{h}_{t}=\tanh \left(\boldsymbol{r}_{t}\right) \\
+\boldsymbol{z}_{t}=\boldsymbol{V} \cdot \boldsymbol{h}_{t}+\boldsymbol{c} \\
+\boldsymbol{p}_{t}=\operatorname{softmax}\left(\boldsymbol{z}_{t}\right)
+\end{gathered}
+$$
+
+\}
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 反向传播, 得到各个位置的梯度
+\end{enumerate}
+
+For $t=T, \cdots, 2,1$, , do \{
+
+计算输出层的梯度 $\frac{\partial L}{\partial z_{t}}$
+
+$$
+\frac{\partial L}{\partial z_{t}}=\boldsymbol{y}_{t}-\boldsymbol{p}_{t}
+$$
+
+将梯度从后向前传播, 计算隐层的梯度 $\frac{\partial L}{\partial r_{t}}$
+
+If $(t<T)\{$
+
+$\frac{\partial L}{\partial \boldsymbol{r}_{t}}=\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{U}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{r}_{t+1}}+\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{V}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{z}_{t}}$
+
+\} else \{
+
+$$
+\frac{\partial L}{\partial \boldsymbol{r}_{T}}=\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{T}\right) \cdot \boldsymbol{V}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{z}_{T}}
+$$
+
+\}
+
+\}
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 进行参数更新
+\end{enumerate}
+
+计算梯度
+
+$$
+\begin{gathered}
+\frac{\partial L}{\partial c}=\sum_{t=1}^{T} \frac{\partial L}{\partial z_{t}} \\
+\frac{\partial L}{\partial \boldsymbol{V}}=\sum_{t=1}^{T} \frac{\partial L}{\partial z_{t}} \cdot \boldsymbol{h}_{t}^{\mathrm{T}} \\
+\frac{\partial L}{\partial b}=\sum_{t=1}^{T} \frac{\partial L}{\partial r_{t}} \\
+\frac{\partial L}{\partial \boldsymbol{U}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}} \cdot \boldsymbol{h}_{t-1}^{\mathrm{T}} \\
+\frac{\partial L}{\partial \boldsymbol{W}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}} \cdot \boldsymbol{x}_{t}^{\mathrm{T}}
+\end{gathered}
+$$
+
+根据梯度下降公式更新参数
+
+$$
+\begin{gathered}
+\boldsymbol{c} \leftarrow \boldsymbol{c}-\eta \frac{\partial L}{\partial \boldsymbol{c}} \\
+\boldsymbol{V} \leftarrow \boldsymbol{V}-\eta \frac{\partial L}{\partial \boldsymbol{V}} \\
+\boldsymbol{b} \leftarrow \boldsymbol{b}-\eta \frac{\partial L}{\partial \boldsymbol{b}} \\
+\boldsymbol{W} \leftarrow \boldsymbol{W}-\eta \frac{\partial L}{\partial \boldsymbol{W}} \\
+\boldsymbol{U} \leftarrow \boldsymbol{U}-\eta \frac{\partial L}{\partial \boldsymbol{U}}
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 返回更新的参数
+\end{enumerate}
+
+\}
+
+\section*{2. 梯度消失与爆炸}
+在循环神经网络的学习过程中, 会产生梯度消失和梯度爆炸。造成消失与爆炸的原因与前馈神经网络相同。反向传播的计算依赖以下矩阵的连乘, 有可能使得到的矩阵的一些元素趋近 0 或无穷大 (见第 23 章)。
+
+$$
+\boldsymbol{A}_{t}=\operatorname{diag}\left(\mathbf{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{U}^{\mathrm{T}}
+$$
+
+循环神经网络的梯度消失与梯度爆炸更严重, 因为矩阵的连乘接近矩阵的连续自乘, 而前馈神经网络一般不是。
+
+为避免梯度消失和梯度爆炸, 可以使用 LSTM 和 GRU。
+
+\section*{25.2 常用循环神经网络}
+本节讲述简单循环神经网络 S-RNN 的扩展, 包括 LSTM、GRU、深度循环神经网络、双向循环神经网络。这些循环神经网络又可以根据情况组合到一起, 形成更复杂的神经网络,学习算法也是反向传播。
+
+\subsection*{25.2.1 长短期记忆网络}
+\section*{1. 模型定义}
+S-RNN 的每一个位置的状态以递归方式计算:
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}=\tanh \left(\boldsymbol{U} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}\right), \quad t=1,2, \cdots, T \tag{25.19}
+\end{equation*}
+
+
+状态表示序列数据中的短距离和长距离依存关系。S-RNN 对短距离依存关系可以有效地表示和学习, 而对长距离依存关系的处理能力有限, 因为长距离依存关系在模型中会被逐渐
+
+“遗忘”。为了解决这个问题, 长短期记忆 (long short-term memory, LSTM) 被提出。LSTM 也能解决学习中的梯度消失和梯度爆炸问题。
+
+LSTM 的基本想法是记录并使用之前所有位置的状态, 以便更好地描述短距离和长距离依存关系。为此导入两个机制, 一个是记忆元 (memory cell), 另一个是门控 (gated control)。记忆元用于记录之前位置的状态信息。门控是指用门函数来控制状态信息的使用，有三个门, 包括遗忘门 (forget gate)、输入门 (input gate)、输出门 (output gate)。之所以称其为长 (的) 短期记忆, 是因为状态的表示包括对远距离的状态的 “记忆”。
+
+LSTM 和 GRU 又被称为门控循环神经网络 (gate controlled RNN)。这里门是一个向量, 每一维取值在 0 和 1 之间, 与其他向量进行逐元素积计算, 起到 “软的” 逻辑门电路的作用。当某一维取值是 1 的时候, 门是开放的; 取值是 0 的时候, 门是关闭的。门依赖于所在位置, 由所在位置的输入和之前位置的状态决定。
+
+在循环神经网络的每一个位置上, 有以当前位置的输入和之前位置的状态为输入、以当前位置的状态为输出的函数, 称为单元 (unit), 是核心处理模块。S-RNN 的单元就是由式 (25.19) 表示的函数。
+
+定义 25.2 (长短期记忆网络) 以下的循环神经网络称为长短期记忆网络。在循环网络的每一个位置上有状态和记忆元, 以及输入门、遗忘门、输出门, 构成一个单元。第 $t$ 个位置上 $(t=1,2, \cdots, T)$ 的单元是以当前位置的输入 $x_{t}$ 、之前位置的记忆元 $c_{t-1}$ 、之前位置的状态 $h_{t-1}$ 为输入, 以当前位置的状态 $h_{t}$ 和当前位置的记忆元 $c_{t}$ 为输出的函数, 由以下方式计算。
+
+
+\begin{gather*}
+\boldsymbol{i}_{t}=\sigma\left(\boldsymbol{U}_{i} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{\boldsymbol{i}} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{i}\right)  \tag{25.20}\\
+\boldsymbol{f}_{t}=\sigma\left(\boldsymbol{U}_{f} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{f} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{f}\right)  \tag{25.21}\\
+\boldsymbol{o}_{t}=\sigma\left(\boldsymbol{U}_{o} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{o} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{o}\right)  \tag{25.22}\\
+\tilde{\boldsymbol{c}}_{t}=\tanh \left(\boldsymbol{U}_{c} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{c} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{c}\right)  \tag{25.23}\\
+\boldsymbol{c}_{t}=\boldsymbol{i}_{t} \odot \tilde{\boldsymbol{c}}_{t}+\boldsymbol{f}_{t} \odot \boldsymbol{c}_{t-1}  \tag{25.24}\\
+\boldsymbol{h}_{t}=\boldsymbol{o}_{t} \odot \tanh \left(\boldsymbol{c}_{t}\right) \tag{25.25}
+\end{gather*}
+
+
+这里 $i_{t}$ 是输入门, $f_{t}$ 是遗忘门, $o_{t}$ 是输出门, $\tilde{c}_{t}$ 是中间结果。状态 $h_{t}$ 、记忆元 $c_{t}$ 、输入门 $i_{t}$ 、遗忘门 $f_{t}$ 、输出门 $o_{t}$ 都是向量, 其维度相同。
+
+首先说明 LSTM 网络的整体架构。如图 25.5 所示, LSTM 网络整体是一个循环神经网络。在每一个位置上有输入 $\boldsymbol{x}_{t}$ 、状态 $\boldsymbol{h}_{t}$ 、输出 $\boldsymbol{p}_{t}$, 特殊的还有记忆元 $\boldsymbol{c}_{\boldsymbol{t}}$ 。状态和记忆元的信息在 LSTM 单元之间传递。
+
+接着说明 LSTM 的单元结构。图 25.6 显示的是 LSTM 单元的结构。第 $t$ 个位置上的单元的输入是当前位置的数据 $\boldsymbol{x}_{t}$ 、之前位置的记忆元 $\boldsymbol{c}_{t-1}$ 和状态 $\boldsymbol{h}_{t-1}$, 输出是当前位置的状态 $h_{t}$ 和记忆元 $c_{t}$ 。内部有三个门和一个记忆元。遗忘门 $f_{t}$ 、输入门 $i_{t}$ 、输出门 $o_{t}$ 有相同的结构, 都是以当前位置的输入 $\boldsymbol{x}_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$ 为输入的函数, 相当于以 $\mathrm{S}$ 型函数为激活函数的一层神经网络 (式 (25.20) 式 (25.22))。遗忘门决定忘记之前位置的哪些信息,输入门决定从之前位置传入哪些信息, 输出门决定向下一个位置传出哪些信息。为了确定记忆元 $\boldsymbol{c}_{t}$ 和状态 $\boldsymbol{h}_{t}$, 首先计算中间结果 $\tilde{\boldsymbol{c}}_{t}$, 是以当前位置的输入 $\boldsymbol{x}_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-39(1)}
+\end{center}
+
+图 25.5 LSTM 的网络架构
+
+为输入的函数, 相当于以双曲正切函数为激活函数的一层神经网络 (式 (25.23))。然后计算当前位置的记忆元 $c_{t}$, 是中间结果 $\tilde{c}_{t}$ 和之前位置的记忆元 $c_{t-1}$ 的线性组合, 分别以输入门 $i_{t}$和遗忘门 $\boldsymbol{f}_{t}$ 为系数, 其中系数乘积是向量的逐元素积 (式 (25.24))。最后计算当前位置的状态 $h_{t}$, 是以记忆元 $c_{t}$ 为输入的双曲正切函数的输出, 并以输出门 $o_{t}$ 为系数 (式 (25.25))。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-39}
+\end{center}
+
+图 25.6 LSTM 单元结构
+
+\section*{2. 模型特点}
+LSTM 能更好地表示和学习长距离依存关系。经验上, 记忆元、输入门和遗忘门起着重要作用。
+
+当输入门和遗忘门满足 $i_{t}=1, f_{t}=0$ 时, 当前位置的记忆元 $c_{t}$ 只依赖于当前位置的输入 $x_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$, LSTM 是 S-RNN 的近似。当输入门和遗忘门满足 $i_{t}=O, f_{t}=1$ 时, 当前位置的记忆元 $c_{t}$ 只依赖于之前位置的记忆元 $c_{t-1}$, LSTM 将之前位置的记忆元复制到当前位置。
+
+当前位置的记忆元 $c_{t}$ 可以展开成以下形式 (将推导作为习题):
+
+
+\begin{equation*}
+\boldsymbol{c}_{t}=\boldsymbol{i}_{t} \odot \tilde{\boldsymbol{c}}_{t}+\boldsymbol{f}_{t} \odot \boldsymbol{c}_{t-1}=\sum_{i=1}^{t}\left(\prod_{j=i+1}^{t} \boldsymbol{f}_{j} \odot \boldsymbol{i}_{i}\right) \odot \tilde{\boldsymbol{c}}_{i}=\sum_{i=1}^{t} \boldsymbol{w}_{i}^{t} \odot \tilde{\boldsymbol{c}}_{i} \tag{25.26}
+\end{equation*}
+
+
+其中, $\boldsymbol{w}_{i}^{t}$ 表示计算得到的第 $t$ 个位置的权重。可以看出记忆元 $c_{t}$ 是之前所有位置的中间结果 $\tilde{\boldsymbol{c}}_{i}$ 的线性组合，而中间结果由所在位置的输入 $\boldsymbol{x}_{i}$ 和之前位置的状态 $\boldsymbol{h}_{i-1}$ 决定。所以，当前位置的记忆元以及状态由之前位置的状态综合决定。
+
+学习中由于位置之间的梯度传播不是通过矩阵的连乘而是通过矩阵连乘的线性组合, 所以可以避免梯度消失和梯度爆炸。
+
+\subsection*{25.2.2门控循环单元网络}
+\section*{1. 模型定义}
+门控循环单元 (GRU) 是对 LSTM 进行简化得到的模型。效果相当, 但计算效率更高。GRU 有两个门一一更新门 (update gate) 和重置门 (reset gate), 不使用记忆元。
+
+定义 25.3 (门控循环单元) 以下的循环神经网络称为门控循环单元网络。在循环网络的每一个位置上有状态及重置门、更新门, 构成一个单元。第 $t$ 个位置上 $(t=1,2, \cdots, T)$ 的单元是以当前位置的输入 $\boldsymbol{x}_{t}$, 之前位置的状态 $h_{t-1}$ 为输入, 以当前位置的状态 $h_{t}$ 为输出的函数，按以下方式计算。
+
+
+\begin{gather*}
+\boldsymbol{r}_{t}=\sigma\left(\boldsymbol{U}_{r} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{r} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{r}\right)  \tag{25.27}\\
+\boldsymbol{z}_{t}=\sigma\left(\boldsymbol{U}_{z} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{z} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{z}\right)  \tag{25.28}\\
+\tilde{\boldsymbol{h}}_{t}=\tanh \left(\boldsymbol{U}_{h} \cdot \boldsymbol{r}_{t} \odot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{h} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{h}\right)  \tag{25.29}\\
+\boldsymbol{h}_{t}=\left(\boldsymbol{1}-\boldsymbol{z}_{t}\right) \odot \tilde{\boldsymbol{h}}_{t}+\boldsymbol{z}_{t} \odot \boldsymbol{h}_{t-1} \tag{25.30}
+\end{gather*}
+
+
+这里 $\boldsymbol{r}_{t}$ 是重置门, $z_{t}$ 是更新门, $\tilde{h}_{t}$ 是中间结果。状态 $\boldsymbol{h}_{t}$ 、重置门 $i_{t}$ 、更新门 $\boldsymbol{f}_{t}$ 都是向量, 其维度相同。
+
+图 25.7 是 GRU 网络的架构图。整体是一个循环神经网络, 在每一个位置有输入 $\boldsymbol{x}_{t}$ 、状态 $\boldsymbol{h}_{t}$ 、输出 $\boldsymbol{p}_{t}$ 。状态信息在 GRU 单元之间传递。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_fc25db59b1a18f350d07g-40}
+\end{center}
+
+图 25.7 GRU 网络的架构图
+
+图 25.8 显示的是 GRU 单元的结构。第 $t$ 个位置上单元的输入是当前位置的数据 $\boldsymbol{x}_{t}$ 、之前位置的状态 $\boldsymbol{h}_{t-1}$, 输出是当前位置的状态 $\boldsymbol{h}_{t}$ 。重置门 $\boldsymbol{r}_{t}$ 、更新门 $\boldsymbol{z}_{t}$ 有相同的结构, 都是以当前位置的输入 $\boldsymbol{x}_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$ 为输入的函数 (式 (25.27) 和式 (25.28))。首先计算中间结果 $\tilde{\boldsymbol{h}}_{t}$, 是以当前位置的输入 $\boldsymbol{x}_{t}$ 、重置门 $\boldsymbol{r}_{t}$ 为系数的之前位置的状态 $\boldsymbol{h}_{t-1}$ 为输入的函数, 其中系数计算是向量的逐元素积 (式 (25.29))。然后计算当前位置的状态 $\boldsymbol{h}_{t}$, 是中间
+
+
+\end{document}

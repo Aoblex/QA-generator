@@ -1,0 +1,1880 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{CJKutf8}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\title{19.1.3 积分计算 }
+
+\author{}
+\date{}
+
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\begin{document}
+\begin{CJK*}{UTF8}{bsmi}
+\maketitle
+密度函数为 $p(x), f(x)$ 为定义在 $\mathcal{X}$ 上的函数, 目标是求函数 $f(x)$ 关于密度函数 $p(x)$ 的数学期望 $E_{p(x)}[f(x)]$ 。
+
+针对这个问题, 蒙特卡罗法按照概率分布 $p(x)$ 独立地抽取 $n$ 个样本 $x_{1}, x_{2}, \cdots, x_{n}$, 比如用以上的抽样方法, 之后计算函数 $f(x)$ 的样本均值 $\hat{f}_{n}$ :
+
+
+\begin{equation*}
+\hat{f}_{n}=\frac{1}{n} \sum_{i=1}^{n} f\left(x_{i}\right) \tag{19.1}
+\end{equation*}
+
+
+作为数学期望 $E_{p(x)}[f(x)]$ 的近似值。
+
+根据大数定律, 当样本容量增大时, 样本均值以概率 1 收玫于数学期望:
+
+
+\begin{equation*}
+\hat{f}_{n} \rightarrow E_{p(x)}[f(x)], \quad n \rightarrow \infty \tag{19.2}
+\end{equation*}
+
+
+这样就得到了数学期望的近似计算方法:
+
+
+\begin{equation*}
+E_{p(x)}[f(x)] \approx \frac{1}{n} \sum_{i=1}^{n} f\left(x_{i}\right) \tag{19.3}
+\end{equation*}
+
+
+一般的蒙特卡罗法也可以用于定积分的近似计算, 称为蒙特卡罗积分 (Monte Carlo integration）。假设有一个函数 $h(x)$, 目标是计算该函数的积分:
+
+$$
+\int_{\mathcal{X}} h(x) \mathrm{d} x
+$$
+
+如果能够将函数 $h(x)$ 分解成一个函数 $f(x)$ 和一个概率密度函数 $p(x)$ 的乘积的形式, 那么就有
+
+
+\begin{equation*}
+\int_{\mathcal{X}} h(x) \mathrm{d} x=\int_{\mathcal{X}} f(x) p(x) \mathrm{d} x=E_{p(x)}[f(x)] \tag{19.4}
+\end{equation*}
+
+
+于是函数 $h(x)$ 的积分可以表示为函数 $f(x)$ 关于概率密度函数 $p(x)$ 的数学期望。实际上, 给定一个概率密度函数 $p(x)$, 只要取 $f(x)=\frac{h(x)}{p(x)}$, 就可得式 (19.4)。就是说, 任何一个函数的积分都可以表示为某一个函数的数学期望的形式, 而函数的数学期望又可以通过函数的样本均值估计。于是, 就可以利用样本均值来近似计算积分, 这就是蒙特卡罗积分的基本想法。
+
+
+\begin{equation*}
+\int_{\mathcal{X}} h(x) \mathrm{d} x=E_{p(x)}[f(x)] \approx \frac{1}{n} \sum_{i=1}^{n} f\left(x_{i}\right) \tag{19.5}
+\end{equation*}
+
+
+例 $19.1^{1}$ 用蒙特卡罗积分法求 $\int_{0}^{1} \mathrm{e}^{-x^{2} / 2} \mathrm{~d} x$
+
+解 令 $f(x)=\mathrm{e}^{-x^{2} / 2}$,
+
+$$
+p(x)=1 \quad(0<x<1)
+$$
+
+也就是说, 假设随机变量 $x$ 在 $(0,1)$ 区间遵循均匀分布。\\
+使用蒙特卡罗积分法, 如图 19.2 所示, 在 $(0,1)$ 区间按照均匀分布抽取 10 个随机样本 $x_{1}, x_{2}, \cdots, x_{10}$ 。计算样本的函数均值 $\hat{f}_{10}$ :
+
+$$
+\hat{f}_{10}=\frac{1}{10} \sum_{i=1}^{10} \mathrm{e}^{-x_{i}^{2} / 2}=0.832
+$$
+
+也就是积分的近似。随机样本数越大, 计算就越精确。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-02}
+\end{center}
+
+图 19.2 蒙特卡罗积分例
+
+例 19.2 用蒙特卡罗积分法求 $\int_{-\infty}^{\infty} x \frac{1}{\sqrt{2 \pi}} \exp \left(\frac{-x^{2}}{2}\right) \mathrm{d} x$ 。
+
+解 令 $f(x)=x$,
+
+$$
+p(x)=\frac{1}{\sqrt{2 \pi}} \exp \left(\frac{-x^{2}}{2}\right)
+$$
+
+$p(x)$ 是标准正态分布的密度函数。
+
+使用蒙特卡罗积分法, 按照标准正态分布在区间 $(-\infty, \infty)$ 抽样 $x_{1}, x_{2}, \cdots, x_{n}$, 取其平均值, 就得到要求的积分值。当样本增大时, 积分值趋于 0 。
+
+本章介绍的马尔可夫链蒙特卡罗法也适合于概率密度函数复杂、不能直接抽样的情况,旨在解决一般的蒙特卡罗法, 如接受-拒绝抽样法、重要性抽样法, 抽样效率不高的问题。一般的蒙特卡罗法中的抽样样本是独立的, 而马尔可夫链蒙特卡罗法中的抽样样本不是独立的, 样本序列形成马尔可夫链。
+
+\section*{19.2 马尔可夫链}
+本节首先给出马尔可夫链的定义, 之后介绍马尔可夫链的一些性质。马尔可夫链蒙特卡罗法用到这些性质。
+
+\subsection*{19.2.1 基本定义}
+定义 19.1 (马尔可夫链) 考虑一个随机变量的序列 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 这里 $X_{t}$ 表示时刻 $t$ 的随机变量, $t=0,1,2, \cdots$ 。每个随机变量 $X_{t}(t=0,1,2, \cdots)$ 的取值集合相\\
+同, 称为状态空间, 表示为 $\mathcal{S}$ 。随机变量可以是离散的, 也可以是连续的。以上随机变量的序列构成随机过程 (stochastic process)。
+
+假设在时刻 0 的随机变量 $X_{0}$ 遵循概率分布 $P\left(X_{0}\right)=\pi_{0}$, 称为初始状态分布。在某个时刻 $t \geqslant 1$ 的随机变量 $X_{t}$ 与前一个时刻的随机变量 $X_{t-1}$ 之间有条件分布 $P\left(X_{t} \mid X_{t-1}\right)$, 如果 $X_{t}$ 只依赖于 $X_{t-1}$, 而不依赖于过去的随机变量 $\left\{X_{0}, X_{1}, \cdots, X_{t-2}\right\}$, 这一性质称为马尔可夫性, 即
+
+
+\begin{equation*}
+P\left(X_{t} \mid X_{0}, X_{1}, \cdots, X_{t-1}\right)=P\left(X_{t} \mid X_{t-1}\right), \quad t=1,2, \cdots \tag{19.6}
+\end{equation*}
+
+
+具有马尔可夫性的随机序列 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$ 称为马尔可夫链（Markov chain）或马尔可夫过程 (Markov process)。条件概率分布 $P\left(X_{t} \mid X_{t-1}\right)$ 称为马尔可夫链的转移概率分布。转移概率分布决定了马尔可夫链的特性。
+
+马尔可夫性的直观解释是 “未来只依赖于现在（假设现在已知）, 而与过去无关”。这个假设在许多应用中是合理的。
+
+若转移概率分布 $P\left(X_{t} \mid X_{t-1}\right)$ 与 $t$ 无关, 即
+
+
+\begin{equation*}
+P\left(X_{t+s} \mid X_{t-1+s}\right)=P\left(X_{t} \mid X_{t-1}\right), \quad t=1,2, \cdots, \quad s=1,2, \cdots \tag{19.7}
+\end{equation*}
+
+
+则称该马尔可夫链为时间齐次的马尔可夫链 (time homogenous Markov chain）。本书中提到的马尔可夫链都是时间齐次的。
+
+以上定义的是一阶马尔可夫链, 可以扩展到 $n$ 阶马尔可夫链, 满足 $n$ 阶马尔可夫性:
+
+
+\begin{equation*}
+P\left(X_{t} \mid X_{0} X_{1} \cdots X_{t-2} X_{t-1}\right)=P\left(X_{t} \mid X_{t-n} \cdots X_{t-2} X_{t-1}\right) \tag{19.8}
+\end{equation*}
+
+
+本书主要考虑一阶马尔可夫链。容易验证 $n$ 阶马尔可夫链可以转换为一阶马尔可夫链。
+
+\subsection*{19.2.2 离散状态马尔可夫链}
+\section*{1. 转移概率矩阵和状态分布}
+离散状态马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 随机变量 $X_{t}(t=0,1,2, \cdots)$ 定义在离散空间 $\mathcal{S}$, 转移概率分布可以由矩阵表示。
+
+若马尔可夫链在时刻 $(t-1)$ 处于状态 $j$, 在时刻 $t$ 移动到状态 $i$, 将转移概率记作
+
+
+\begin{equation*}
+p_{i j}=\left(X_{t}=i \mid X_{t-1}=j\right), \quad i=1,2, \cdots, \quad j=1,2, \cdots \tag{19.9}
+\end{equation*}
+
+
+满足
+
+$$
+p_{i j} \geqslant 0, \quad \sum_{i} p_{i j}=1
+$$
+
+马尔可夫链的转移概率 $p_{i j}$ 可以由矩阵表示, 即
+
+\[
+P=\left[\begin{array}{cccc}
+p_{11} & p_{12} & p_{13} & \cdots  \tag{19.10}\\
+p_{21} & p_{22} & p_{23} & \cdots \\
+p_{31} & p_{32} & p_{33} & \cdots \\
+\cdots & \cdots & \cdots & \cdots
+\end{array}\right]
+\]
+
+称为马尔可夫链的转移概率矩阵, 转移概率矩阵 $P$ 满足条件 $p_{i j} \geqslant 0, \sum_{i} p_{i j}=1$ 。满足这两个条件的矩阵称为随机矩阵 (stochastic matrix)。注意这里矩阵列元素之和为 1 。
+
+考虑马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$ 在时刻 $t(t=0,1,2, \cdots)$ 的概率分布, 称为时刻 $t$ 的状态分布, 记作
+
+\[
+\pi(t)=\left[\begin{array}{c}
+\pi_{1}(t)  \tag{19.11}\\
+\pi_{2}(t) \\
+\vdots
+\end{array}\right]
+\]
+
+其中, $\pi_{i}(t)$ 表示时刻 $t$ 状态为 $i$ 的概率 $P\left(X_{t}=i\right)$ :
+
+$$
+\pi_{i}(t)=P\left(X_{t}=i\right), \quad i=1,2, \cdots
+$$
+
+特别地, 马尔可夫链的初始状态分布可以表示为
+
+\[
+\pi(0)=\left[\begin{array}{c}
+\pi_{1}(0)  \tag{19.12}\\
+\pi_{2}(0) \\
+\vdots
+\end{array}\right]
+\]
+
+其中, $\pi_{i}(0)$ 表示时刻 0 状态为 $i$ 的概率 $P\left(X_{0}=i\right)$ 。通常初始分布 $\pi(0)$ 的向量只有一个分量是 1 , 其余分量都是 0 , 表示马尔可夫链从一个具体状态开始。
+
+有限离散状态的马尔可夫链可以由有向图表示。结点表示状态, 边表示状态之间的转移,边上的数值表示转移概率。从一个初始状态出发, 根据有向边上定义的概率在状态之间随机跳转 (或随机转移), 就可以产生状态的序列。马尔可夫链实际上是刻画随时间在状态之间转移的模型, 假设未来的转移状态只依赖于现在的状态, 而与过去的状态无关。
+
+下面通过一个简单的例子给出马尔可夫链的直观解释。假设观察某地的天气, 按日依次是 “晴、雨、晴、晴、晴、雨、晴…...”, 具有一定的规律。马尔可夫链可以刻画这个过程。假设天气的变化具有马尔可夫性, 即明天的天气只依赖于今天的天气, 而与昨天及以前的天气无关。这个假设经验上是合理的, 至少是现实情况的近似。具体地, 比如, 如果今天是晴天, 那么明天是晴天的概率是 0.9 , 是雨天的概率是 0.1 ; 如果今天是雨天, 那么明天是晴天的概率是 0.5 , 是雨天的概率也是 0.5 。 图 19.3 表示这个马尔可夫链。基于这个马尔可夫链, 从一个初始状态出发, 随时间在状态之间随机转移, 就可以产生天气的序列, 可以对天气进行预测。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-04}
+\end{center}
+
+图 19.3 马尔可夫链例\\
+下面看一个马尔可夫链应用的例子。自然语言处理、语音处理中经常用到语言模型 (language model), 是建立在词表上的 $n$ 阶马尔可夫链。比如, 在英语语音识别中, 语音模型产生出两个候选: “How to recognize speech” 与 “How to wreck a nice beach”, 要判断哪个可能性更大。显然从语义的角度前者的可能性更大, 语言模型可以帮助做出这个判断。
+
+将一个语句看作是一个单词的序列 $w_{1} w_{2} \cdots w_{s}$, 目标是计算其概率。同一个语句很少在语料中重复多次出现, 所以直接从语料中估计每个语句的概率是困难的。语言模型用局部的单词序列的概率组合计算出全局的单词序列的概率，可以很好地解决这个问题。
+
+假设每个单词只依赖于其前面出现的单词, 也就是说单词序列具有马尔可夫性, 那么可以定义一阶马尔可夫链, 即语言模型, 计算语句的概率。
+
+$$
+\begin{aligned}
+& P\left(w_{1} w_{2} \cdots w_{s}\right) \\
+= & P\left(w_{1}\right) P\left(w_{2} \mid w_{1}\right) P\left(w_{3} \mid w_{1} w_{2}\right) \cdots P\left(w_{i} \mid w_{1} w_{2} \cdots w_{i-1}\right) \cdots P\left(w_{s} \mid w_{1} w_{2} \cdots w_{s-1}\right) \\
+= & P\left(w_{1}\right) P\left(w_{2} \mid w_{1}\right) P\left(w_{3} \mid w_{2}\right) \cdots P\left(w_{i} \mid w_{i-1}\right) \cdots P\left(w_{s} \mid w_{s-1}\right)
+\end{aligned}
+$$
+
+这里第三个等式基于马尔可夫链假设。在这个马尔可夫链中, 状态空间为词表, 一个位置上单词的产生只依赖于前一个位置的单词，而不依赖于更前面的单词。以上是一阶马尔可夫链，一般可以扩展到 $n$ 阶马尔可夫链。
+
+语言模型的学习等价于确定马尔可夫链中的转移概率值, 如果有充分的语料, 转移概率可以直接从语料中估计。直观上, “wreck a nice” 出现之后, 下面出现 “beach” 的概率极低,所以第二个语句的概率应该更小, 从语言模型的角度看第一个语句的可能性更大。
+
+马尔可夫链 $X$ 在时刻 $t$ 的状态分布可以由在时刻 $(t-1)$ 的状态分布以及转移概率分布决定:
+
+
+\begin{equation*}
+\pi(t)=P \pi(t-1) \tag{19.13}
+\end{equation*}
+
+
+这是因为
+
+$$
+\begin{aligned}
+\pi_{i}(t) & =P\left(X_{t}=i\right) \\
+& =\sum_{m} P\left(X_{t}=i \mid X_{t-1}=m\right) P\left(X_{t-1}=m\right) \\
+& =\sum_{m} p_{i m} \pi_{m}(t-1)
+\end{aligned}
+$$
+
+马尔可夫链在时刻 $t$ 的状态分布可以通过递推得到。事实上, 由式 (19.13)
+
+$$
+\pi(t)=P \pi(t-1)=P[P \pi(t-2)]=P^{2} \pi(t-2)
+$$
+
+递推得到:
+
+
+\begin{equation*}
+\pi(t)=P^{t} \pi(0) \tag{19.14}
+\end{equation*}
+
+
+这里的 $P^{t}$ 称为 $t$ 步转移概率矩阵:
+
+$$
+P_{i j}^{t}=P\left(X_{t}=i \mid X_{0}=j\right)
+$$
+
+(1) 这两句英文的发音相近, 但后者语义不可解释。\\
+表示时刻 0 从状态 $j$ 出发、时刻 $t$ 达到状态 $i$ 的 $t$ 步转移概率。 $P^{t}$ 也是随机矩阵。式 (19.14)说明, 马尔可夫链的状态分布由初始分布和转移概率分布决定。
+
+对图 19.3 中的马尔可夫链, 转移矩阵为
+
+$$
+P=\left[\begin{array}{ll}
+0.9 & 0.5 \\
+0.1 & 0.5
+\end{array}\right]
+$$
+
+如果第一天是晴天, 其天气概率分布 (初始状态分布) 如下:
+
+$$
+\pi(0)=\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]
+$$
+
+根据这个马尔可夫链模型, 可以计算第二天、第三天及之后的天气概率分布 (状态分布)。
+
+$$
+\begin{aligned}
+& \pi(1)=P \pi(0)=\left[\begin{array}{ll}
+0.9 & 0.5 \\
+0.1 & 0.5
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]=\left[\begin{array}{l}
+0.9 \\
+0.1
+\end{array}\right] \\
+& \pi(2)=P^{2} \pi(0)=\left[\begin{array}{ll}
+0.9 & 0.5 \\
+0.1 & 0.5
+\end{array}\right]^{2}\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]=\left[\begin{array}{l}
+0.86 \\
+0.14
+\end{array}\right]
+\end{aligned}
+$$
+
+\section*{2. 平稳分布}
+定义 19.2 (平稳分布) 设有马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 其状态空间为 $\mathcal{S}$,转移概率矩阵为 $P=\left(p_{i j}\right)$, 如果存在状态空间 $\mathcal{S}$ 上的一个分布
+
+$$
+\pi=\left[\begin{array}{c}
+\pi_{1} \\
+\pi_{2} \\
+\vdots
+\end{array}\right]
+$$
+
+使得
+
+
+\begin{equation*}
+\pi=P \pi \tag{19.15}
+\end{equation*}
+
+
+则称 $\pi$ 为马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$ 的平稳分布。
+
+直观上, 如果马尔可夫链的平稳分布存在, 那么以该平稳分布作为初始分布, 面向未来进行随机状态转移, 之后任何一个时刻的状态分布都是该平稳分布。
+
+引理 19.1 给定一个马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 状态空间为 $\mathcal{S}$, 转移概率矩阵为 $P=\left(p_{i j}\right)$, 则分布 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 为 $X$ 的平稳分布的充分必要条件是 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 是下列方程组的解:
+
+
+\begin{align*}
+& x_{i}=\sum_{j} p_{i j} x_{j}, \quad i=1,2, \cdots  \tag{19.16}\\
+& x_{i} \geqslant 0, \quad i=1,2, \cdots  \tag{19.17}\\
+& \sum_{i} x_{i}=1 \tag{19.18}
+\end{align*}
+
+
+证明 必要性。假设 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 是平稳分布, 显然满足式 (19.17) 和式 (19.18), 且
+
+$$
+\pi_{i}=\sum_{j} p_{i j} \pi_{j}, \quad i=1,2, \cdots
+$$
+
+即 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 满足式 (19.16)。
+
+充分性。由式 (19.17) 和式 (19.18) 知 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 是一个概率分布。假设 $\pi=$ $\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 为 $X_{t}$ 的分布, 则
+
+$$
+P\left(X_{t}=i\right)=\pi_{i}=\sum_{j} p_{i j} \pi_{j}=\sum_{j} p_{i j} P\left(X_{t-1}=j\right), \quad i=1,2, \cdots
+$$
+
+$\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 也为 $X_{t-1}$ 的分布。事实上这对任意 $t$ 成立, 所以 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 是马尔可夫链的平稳分布。
+
+引理 19.1 给出一个求马尔可夫链平稳分布的方法。
+
+例 19.3 设有图 19.4 所示马尔可夫链, 其转移概率矩阵为
+
+$$
+P=\left[\begin{array}{ccc}
+1 / 2 & 1 / 2 & 1 / 4 \\
+1 / 4 & 0 & 1 / 4 \\
+1 / 4 & 1 / 2 & 1 / 2
+\end{array}\right]
+$$
+
+求其平稳分布。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-07}
+\end{center}
+
+图 19.4 马尔可夫链例
+
+解 设平稳分布为 $\pi=\left(x_{1}, x_{2}, x_{3}\right)^{\mathrm{T}}$, 则由式 (19.16) 式 (19.18) 有
+
+$$
+\begin{aligned}
+& x_{1}=\frac{1}{2} x_{1}+\frac{1}{2} x_{2}+\frac{1}{4} x_{3} \\
+& x_{2}=\frac{1}{4} x_{1}+\frac{1}{4} x_{3} \\
+& x_{3}=\frac{1}{4} x_{1}+\frac{1}{2} x_{2}+\frac{1}{2} x_{3} \\
+& x_{1}+x_{2}+x_{3}=1 \\
+& x_{i} \geqslant 0, \quad i=1,2,3
+\end{aligned}
+$$
+
+解方程组, 得到唯一的平稳分布:
+
+$$
+\pi=\left(\begin{array}{lll}
+2 / 5 & 1 / 5 & 2 / 5
+\end{array}\right)^{\mathrm{T}}
+$$
+
+例 19.4 设有图 19.5 所示马尔可夫链, 其转移概率分布如下, 求其平稳分布。
+
+$$
+\left[\begin{array}{lll}
+1 & 1 / 3 & 0 \\
+0 & 1 / 3 & 0 \\
+0 & 1 / 3 & 1
+\end{array}\right]
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-08}
+\end{center}
+
+图 19.5 马尔可夫链例
+
+解 这个马尔可夫链的平稳分布并不唯一, $\pi=\left(\begin{array}{lll}3 / 4 & 0 & 1 / 4\end{array}\right)^{\mathrm{T}}, \pi=\left(\begin{array}{lll}2 / 3 & 0 & 1 / 3\end{array}\right)^{\mathrm{T}}$ 等皆为其平稳分布。
+
+马尔可夫链可能存在唯一的平稳分布、无穷多个平稳分布或不存在平稳分布 ${ }^{1}$ 。
+
+\subsection*{19.2.3 连续状态马尔可夫链}
+连续状态马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 随机变量 $X_{t}(t=0,1,2, \cdots)$ 定义在连续状态空间 $\mathcal{S}$, 转移概率分布由概率转移核或转移核 (transition kernel) 表示。
+
+设 $\mathcal{S}$ 是连续状态空间, 对任意的 $x \in \mathcal{S}, A \subset \mathcal{S}$, 转移核 $P(x, A)$ 定义为
+
+
+\begin{equation*}
+P(x, A)=\int_{A} p(x, y) \mathrm{d} y \tag{19.19}
+\end{equation*}
+
+
+其中, $p(x, \cdot)$ 是概率密度函数, 满足 $p(x, \cdot) \geqslant 0 ; P(x, \mathcal{S})=\int_{\mathcal{S}} p(x, y) \mathrm{d} y=1$ 。转移核 $P(x, A)$ 表示从 $x \sim A$ 的转移概率:
+
+
+\begin{equation*}
+P\left(X_{t}=A \mid X_{t-1}=x\right)=P(x, A) \tag{19.20}
+\end{equation*}
+
+
+有时也将概率密度函数 $p(x, \cdot)$ 称为转移核。
+
+若马尔可夫链的状态空间 $\mathcal{S}$ 上的概率分布 $\pi(x)$ 满足条件
+
+
+\begin{equation*}
+\pi(y)=\int p(x, y) \pi(x) \mathrm{d} x, \quad \forall y \in \mathcal{S} \tag{19.21}
+\end{equation*}
+
+
+(1) 当离散状态马尔可夫链有无穷个状态时, 有可能没有平稳分布。\\
+则称分布 $\pi(x)$ 为该马尔可夫链的平稳分布。等价地,
+
+
+\begin{equation*}
+\pi(A)=\int P(x, A) \pi(x) \mathrm{d} x, \quad \forall A \subset \mathcal{S} \tag{19.22}
+\end{equation*}
+
+
+或简写为
+
+
+\begin{equation*}
+\pi=P \pi \tag{19.23}
+\end{equation*}
+
+
+\subsection*{19.2.4 马尔可夫链的性质}
+以下介绍离散状态马尔可夫链的性质, 可以自然推广到连续状态马尔可夫链。
+
+\section*{1. 不可约}
+定义 19.3 (不可约) 设有马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 状态空间为 $\mathcal{S}$, 对于任意状态 $i, j \in \mathcal{S}$, 如果存在一个时刻 $t(t>0)$ 满足
+
+
+\begin{equation*}
+P\left(X_{t}=i \mid X_{0}=j\right)>0 \tag{19.24}
+\end{equation*}
+
+
+也就是说, 时刻 0 从状态 $j$ 出发、时刻 $t$ 到达状态 $i$ 的概率大于 0 , 则称此马尔可夫链 $X$ 是不可约的 (irreducible), 否则称马尔可夫链是可约的 (reducible )。
+
+直观上, 一个不可约的马尔可夫链从任意状态出发, 当经过充分长时间后, 可以到达任意状态。例 19.3 中的马尔可夫链是不可约的, 例 19.5 中的马尔可夫链是可约的。
+
+例 19.5 图 19.6 所示马尔可夫链是可约的。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-09}
+\end{center}
+
+图 19.6 马尔可夫链例
+
+解 转移概率矩阵为
+
+$$
+\left[\begin{array}{ccc}
+0 & 1 / 2 & 0 \\
+1 & 0 & 0 \\
+0 & 1 / 2 & 1
+\end{array}\right]
+$$
+
+平稳分布 $\pi=\left(\begin{array}{lll}0 & 0 & 1\end{array}\right)^{\mathrm{T}}$ 。此马尔可夫链转移到状态 3 后, 就在该状态上循环跳转, 不能到达状态 1 和状态 2 , 最终停留在状态 3 。
+
+\section*{2. 非周期}
+定义 19.4 (非周期) 设有马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 状态空间为 $\mathcal{S}$, 对于任意状态 $i \in \mathcal{S}$, 如果时刻 0 从状态 $i$ 出发、时刻 $t$ 返回状态的所有时间长 $\left\{t: P\left(X_{t}=i \mid X_{0}=i\right)>0\right\}$\\
+的最大公约数是 1 , 则称此马尔可夫链 $X$ 是非周期的 (aperiodic), 否则称马尔可夫链是周期的 ( periodic)。
+
+直观上, 一个非周期性马尔可夫链不存在一个状态, 从这一个状态出发, 再返回到这个状态时所经历的时间长呈一定的周期性。例 19.3 中的马尔可夫链是非周期的, 例 19.6 中的马尔可夫链是周期的。
+
+例 19.6 图 19.7 所示的马尔可夫链是周期的。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-10}
+\end{center}
+
+图 19.7 马尔可夫链例
+
+解 转移概率矩阵为
+
+$$
+\left[\begin{array}{lll}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{array}\right]
+$$
+
+其平稳分布是 $\pi=\left(\begin{array}{lll}1 / 3 & 1 / 3 & 1 / 3\end{array}\right)^{\mathrm{T}}$ 。此马尔可夫链从每个状态出发返回该状态的时刻都是 3 的倍数, $\{3,6,9\}$, 具有周期性, 最终停留在每个状态的概率都为 $1 / 3$ 。
+
+\section*{定理 19.2 不可约且非周期的有限状态马尔可夫链有唯一平稳分布存在。}
+\section*{3. 正常返}
+定义 19.5 (正常返) 设有马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 状态空间为 $\mathcal{S}$, 对于任意状态 $i, j \in \mathcal{S}$, 定义概率 $p_{i j}^{t}$ 为时刻 0 从状态 $j$ 出发、时刻 $t$ 首次转移到状态 $i$ 的概率,即 $p_{i j}^{t}=P\left(X_{t}=i, X_{s} \neq i, s=1,2, \cdots, t-1 \mid X_{0}=j\right), t=1,2, \cdots$ 。若对所有状态 $i, j$ 都满足 $\lim _{t \rightarrow \infty} p_{i j}^{t}>0$, 则称马尔可夫链 $X$ 是正常返的 (positive recurrent)。
+
+直观上, 对于一个正常返的马尔可夫链中的任意一个状态, 从其他任意一个状态出发,当时间趋于无穷时, 首次转移到这个状态的概率不为 0 。例 19.7 中的马尔可夫链根据不同条件是正常返的或不是正常返的。
+
+例 19.7 对于图 19.8 所示无限状态马尔可夫链, 证明当 $p>q$ 时是正常返的, 当 $p \leqslant q$时不是正常返的。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-10(1)}
+\end{center}
+
+图 19.8 马尔可夫链例\\
+解 转移概率矩阵为
+
+$$
+\left[\begin{array}{ccccc}
+p & p & 0 & 0 & \\
+q & 0 & p & 0 & \\
+0 & q & 0 & p & \\
+0 & 0 & q & 0 & \\
+& \vdots & & & \ddots
+\end{array}\right]
+$$
+
+当 $p>q$ 时, 平稳分布是
+
+$$
+\pi_{i}=\left(\frac{q}{p}\right)^{i}\left(\frac{p-q}{p}\right), \quad i=1,2, \cdots
+$$
+
+当时间趋于无穷时, 转移到任何一个状态的概率不为 0 , 马尔可夫链是正常返的。
+
+当 $p \leqslant q$ 时, 不存在平稳分布, 马尔可夫链不是正常返的。
+
+定理 19.3 不可约、非周期且正常返的马尔可夫链有唯一平稳分布存在。
+
+\section*{4. 遍历定理}
+下面叙述马尔可夫链的遍历定理。
+
+定理 19.4 (遍历定理) 设有马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 状态空间为 $\mathcal{S}$, 若马尔可夫链 $X$ 是不可约、非周期且正常返的, 则该马尔可夫链有唯一平稳分布 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$, 并且转移概率的极限分布是马尔可夫链的平稳分布。
+
+
+\begin{equation*}
+\lim _{t \rightarrow \infty} P\left(X_{t}=i \mid X_{0}=j\right)=\pi_{i}, \quad i=1,2, \cdots, \quad j=1,2, \cdots \tag{19.25}
+\end{equation*}
+
+
+若 $f(X)$ 是定义在状态空间上的函数, $E_{\pi}[|f(X)|]<\infty$, 则
+
+
+\begin{equation*}
+P\left\{\hat{f}_{t} \rightarrow E_{\pi}[f(X)]\right\}=1 \tag{19.26}
+\end{equation*}
+
+
+其中,
+
+$$
+\hat{f}_{t}=\frac{1}{t} \sum_{s=1}^{t} f\left(x_{s}\right)
+$$
+
+$E_{\pi}[f(X)]=\sum_{i} f(i) \pi_{i}$ 是 $f(X)$ 关于平稳分布 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$ 的数学期望, 式 (19.26)表示
+
+
+\begin{equation*}
+\hat{f}_{t} \rightarrow E_{\pi}[f(X)], \quad t \rightarrow \infty \tag{19.27}
+\end{equation*}
+
+
+几乎处处成立或以概率 1 成立。
+
+遍历定理的直观解释: 对于满足相应条件的马尔可夫链, 当时间趋于无穷时, 马尔可夫链的状态分布趋近于平稳分布, 随机变量的函数的样本均值以概率 1 收玫于该函数的数学期望。样本均值可以认为是时间均值, 而数学期望是空间均值。遍历定理实际表述了遍历性的含义: 当时间趋于无穷时, 时间均值等于空间均值。遍历定理的三个条件: 不可约、非周期、正常返, 保证了当时间趋于无穷时达到任意一个状态的概率不为 0 。
+
+理论上并不知道经过多少次迭代, 马尔可夫链的状态分布才能接近于平稳分布, 在实际\\
+应用遍历定理时, 取一个足够大的整数 $m$, 经过 $m$ 次迭代之后认为状态分布就是平稳分布,这时计算从第 $m+1$ 次迭代到第 $n$ 次迭代的均值, 即
+
+
+\begin{equation*}
+\hat{E} f=\frac{1}{n-m} \sum_{i=m+1}^{n} f\left(x_{i}\right) \tag{19.28}
+\end{equation*}
+
+
+称为遍历均值。
+
+\section*{5. 可逆马尔可夫链}
+定义 19.6 (可逆马尔可夫链) 设有马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 状态空间为 $\mathcal{S}$, 转移概率矩阵为 $P$, 如果有状态分布 $\pi=\left(\pi_{1}, \pi_{2}, \cdots\right)^{\mathrm{T}}$, 对于任意状态 $i, j \in \mathcal{S}$, 对任意一个时刻 $t$ 满足
+
+
+\begin{equation*}
+P\left(X_{t}=i \mid X_{t-1}=j\right) \pi_{j}=P\left(X_{t-1}=j \mid X_{t}=i\right) \pi_{i}, \quad i, j=1,2, \cdots \tag{19.29}
+\end{equation*}
+
+
+或简写为
+
+
+\begin{equation*}
+p_{i j} \pi_{j}=p_{j i} \pi_{i}, \quad i, j=1,2, \cdots \tag{19.30}
+\end{equation*}
+
+
+则称此马尔可夫链 $X$ 为可逆马尔可夫链 (reversible Markov chain), 式 (19.30) 称为细致平衡方程 (detailed balance equation)。
+
+直观上, 如果有可逆的马尔可夫链, 那么以该马尔可夫链的平稳分布作为初始分布, 进行随机状态转移, 无论是面向未来还是面向过去, 任何一个时刻的状态分布都是该平稳分布。例 19.3 中的马尔可夫链是可逆的, 例 19.8 中的马尔可夫链是不可逆的。
+
+例 19.8 图 19.9 所示马尔可夫链是不可逆的。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-12}
+\end{center}
+
+图 19.9 马尔可夫链例
+
+解 转移概率矩阵为
+
+$$
+\left[\begin{array}{ccc}
+1 / 4 & 1 / 2 & 1 / 4 \\
+1 / 4 & 0 & 1 / 2 \\
+1 / 2 & 1 / 2 & 1 / 4
+\end{array}\right]
+$$
+
+平稳分布 $\pi=\left(\begin{array}{lll}8 / 25 & 7 / 25 & 2 / 5\end{array}\right)^{\mathrm{T}}$, 不满足细致平稳方程。
+
+定理 19.5 (细致平衡方程) 满足细致平衡方程的状态分布 $\boldsymbol{\pi}$ 就是该马尔可夫链的平稳分布。即
+
+$$
+P \pi=\pi
+$$
+
+证明 事实上,
+
+
+\begin{equation*}
+(P \pi)_{i}=\sum_{j} p_{i j} \pi_{j}=\sum_{j} p_{j i} \pi_{i}=\pi_{i} \sum_{j} p_{j i}=\pi_{i}, \quad i=1,2, \cdots \tag{19.31}
+\end{equation*}
+
+
+定理 19.5 说明, 可逆马尔可夫链一定有唯一平稳分布, 给出了一个马尔可夫链有平稳分布的充分条件 (不是必要条件)。也就是说, 可逆马尔可夫链满足遍历定理 19.4 的条件。
+
+\section*{19.3 马尔可夫链蒙特卡罗法}
+\subsection*{19.3.1 基本想法}
+假设目标是对一个概率分布进行随机抽样, 或者是求函数关于该概率分布的数学期望。可以采用传统的蒙特卡罗法, 如接受-拒绝法、重要性抽样法, 也可以使用马尔可夫链蒙特卡罗法。马尔可夫链蒙特卡罗法更适用于随机变量是多元的、密度函数是非标准形式的、随机变量各分量不独立等情况。
+
+假设多元随机变量 $x$ 满足 $x \in \mathcal{X}$, 其概率密度函数为 $p(x), f(x)$ 为定义在 $x \in \mathcal{X}$ 上的函数, 目标是获得概率分布 $p(x)$ 的样本集合, 以及求函数 $f(x)$ 的数学期望 $E_{p(x)}[f(x)]$ 。
+
+应用马尔可夫链蒙特卡罗法解决这个问题。基本想法是: 在随机变量 $x$ 的状态空间 $\mathcal{S}$ 上定义一个满足遍历定理的马尔可夫链 $X=\left\{X_{0}, X_{1}, \cdots, X_{t}, \cdots\right\}$, 使其平稳分布就是抽样的目标分布 $p(x)$ 。然后在这个马尔可夫链上进行随机游走, 每个时刻得到一个样本。根据遍历定理, 当时间趋于无穷时, 样本的分布趋近平稳分布, 样本的函数均值趋近函数的数学期望。所以, 当时间足够长时 (时刻大于某个正整数 $m$ ), 在之后的时间 (时刻小于等于某个正整数 $n, n>m)$ 里随机游走得到的样本集合 $\left\{x_{m+1}, x_{m+2}, \cdots, x_{n}\right\}$ 就是目标概率分布的抽样结果, 得到的函数均值 (遍历均值) 就是要计算的数学期望值:
+
+
+\begin{equation*}
+\hat{E} f=\frac{1}{n-m} \sum_{i=m+1}^{n} f\left(x_{i}\right) \tag{19.32}
+\end{equation*}
+
+
+到时刻 $m$ 为止的时间段称为燃烧期。
+
+如何构建具体的马尔可夫链成为这个方法的关键。连续变量的时候, 需要定义转移核函数; 离散变量的时候, 需要定义转移矩阵。一个方法是定义特殊的转移核函数或者转移矩阵, 构建可逆马尔可夫链, 这样可以保证遍历定理成立。常用的马尔可夫链蒙特卡罗法有 Metropolis-Hastings 算法、吉布斯抽样。
+
+由于这个马尔可夫链满足遍历定理, 随机游走的起始点并不影响得到的结果, 即从不同的起始点出发, 都会收玫到同一平稳分布。
+
+马尔可夫链蒙特卡罗法的收玫性的判断通常是经验性的, 比如, 在马尔可夫链上进行随机游走, 检验遍历均值是否收玫。具体地, 每隔一段时间取一次样本, 得到多个样本以后, 计算遍历均值, 当计算的均值稳定后, 认为马尔可夫链已经收玫。再比如, 在马尔可夫链上并行进行多个随机游走, 比较各个随机游走的遍历均值是否接近一致。\\
+对于马尔可夫链蒙特卡罗法中得到的样本序列, 相邻的样本点是相关的, 而不是独立的。因此, 在需要独立样本时, 可以在该样本序列中再次进行随机抽样, 比如每隔一段时间取一次样本, 将这样得到的子样本集合作为独立样本集合。
+
+马尔可夫链蒙特卡罗法比接受-拒绝法更容易实现, 因为只需要定义马尔可夫链, 而不需要定义建议分布。一般来说马尔可夫链蒙特卡罗法比接受-拒绝法效率更高, 没有大量被拒绝的样本, 虽然燃烧期的样本也要抛弃。
+
+\subsection*{19.3.2 基本步骤}
+根据上面的讨论, 可以将马尔可夫链蒙特卡罗法概括为以下三步:
+
+(1) 首先, 在随机变量 $x$ 的状态空间 $\mathcal{S}$ 上构造一个满足遍历定理的马尔可夫链, 使其平稳分布为目标分布 $p(x)$;
+
+（2）从状态空间的某一点 $x_{0}$ 出发, 用构造的马尔可夫链进行随机游走, 产生样本序列 $x_{0}, x_{1}, \cdots, x_{t}, \cdots ;$
+
+(3) 应用马尔可夫链的遍历定理, 确定正整数 $m$ 和 $n(m<n)$, 得到样本集合 $\left\{x_{m+1}, x_{m+2}, \cdots, x_{n}\right\}$, 求得函数 $f(x)$ 的均值（遍历均值）
+
+
+\begin{equation*}
+\hat{E} f=\frac{1}{n-m} \sum_{i=m+1}^{n} f\left(x_{i}\right) \tag{19.33}
+\end{equation*}
+
+
+就是马尔可夫链蒙特卡罗法的计算公式。
+
+这里有几个重要问题:
+
+（1）如何定义马尔可夫链, 保证马尔可夫链蒙特卡罗法的条件成立。
+
+(2) 如何确定收敛步数 $m$, 保证样本抽样的无偏性。
+
+(3) 如何确定迭代步数 $n$, 保证遍历均值计算的精度。
+
+\subsection*{19.3.3 马尔可夫链蒙特卡罗法与统计学习}
+马尔可夫链蒙特卡罗法在统计学习, 特别是贝叶斯学习中起着重要的作用, 这主要是因为马尔可夫链蒙特卡罗法可以用在概率模型的学习和推理上。
+
+假设观测数据由随机变量 $y \in \mathcal{Y}$ 表示, 模型由随机变量 $x \in \mathcal{X}$ 表示, 贝叶斯学习通过贝叶斯定理计算给定数据条件下模型的后验概率, 并选择后验概率最大的模型。后验概率为
+
+
+\begin{equation*}
+p(x \mid y)=\frac{p(x) p(y \mid x)}{\int_{\mathcal{X}} p\left(y \mid x^{\prime}\right) p\left(x^{\prime}\right) \mathrm{d} x^{\prime}} \tag{19.34}
+\end{equation*}
+
+
+贝叶斯学习中经常需要进行三种积分运算: 归范化 (normalization) 、边缘化 (marginalization）、数学期望（expectation）。
+
+后验概率计算中需要归范化计算:
+
+
+\begin{equation*}
+\int_{\mathcal{X}} p\left(y \mid x^{\prime}\right) p\left(x^{\prime}\right) \mathrm{d} x^{\prime} \tag{19.35}
+\end{equation*}
+
+
+如果有隐变量 $z \in \mathcal{Z}$, 后验概率的计算需要边缘化计算:
+
+
+\begin{equation*}
+p(x \mid y)=\int_{\mathcal{Z}} p(x, z \mid y) \mathrm{d} z \tag{19.36}
+\end{equation*}
+
+
+如果有一个函数 $f(x)$, 可以计算该函数关于后验概率分布的数学期望:
+
+
+\begin{equation*}
+E_{P(x \mid y)}[f(x)]=\int_{\mathcal{X}} f(x) p(x \mid y) \mathrm{d} x \tag{19.37}
+\end{equation*}
+
+
+当观测数据和模型都很复杂的时候, 以上的积分计算变得困难。马尔可夫链蒙特卡罗法为这些计算提供了一个通用的有效解决方案。
+
+\subsection*{19.4 Metropolis-Hastings 算法}
+本节叙述 Metropolis-Hastings 算法, 该算法是马尔可夫链蒙特卡罗法的代表算法。
+
+\subsection*{19.4.1 基本原理}
+\section*{1. 马尔可夫链}
+假设要抽样的概率分布为 $p(x)$ 。Metropolis-Hastings 算法采用转移核为 $p\left(x, x^{\prime}\right)$ 的马尔可夫链:
+
+
+\begin{equation*}
+p\left(x, x^{\prime}\right)=q\left(x, x^{\prime}\right) \alpha\left(x, x^{\prime}\right) \tag{19.38}
+\end{equation*}
+
+
+其中, $q\left(x, x^{\prime}\right)$ 和 $\alpha\left(x, x^{\prime}\right)$ 分别称为建议分布 (proposal distribution) 和接受分布 (acceptance distribution）。
+
+建议分布 $q\left(x, x^{\prime}\right)$ 是另一个马尔可夫链的转移核, 并且 $q\left(x, x^{\prime}\right)$ 是不可约的, 即其概率值恒不为 0 , 同时是一个容易抽样的分布。接受分布 $\alpha\left(x, x^{\prime}\right)$ 是
+
+
+\begin{equation*}
+\alpha\left(x, x^{\prime}\right)=\min \left\{1, \frac{p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)}{p(x) q\left(x, x^{\prime}\right)}\right\} \tag{19.39}
+\end{equation*}
+
+
+这时, 转移核 $p\left(x, x^{\prime}\right)$ 可以写成
+
+\[
+p\left(x, x^{\prime}\right)= \begin{cases}q\left(x, x^{\prime}\right), & p\left(x^{\prime}\right) q\left(x^{\prime}, x\right) \geqslant p(x) q\left(x, x^{\prime}\right)  \tag{19.40}\\ q\left(x^{\prime}, x\right) \frac{p\left(x^{\prime}\right)}{p(x)}, & p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)<p(x) q\left(x, x^{\prime}\right)\end{cases}
+\]
+
+转移核为 $p\left(x, x^{\prime}\right)$ 的马尔可夫链上的随机游走以以下方式进行。如果在时刻 $(t-1)$ 处于状态 $x$, 即 $x_{t-1}=x$, 则先按建议分布 $q\left(x, x^{\prime}\right)$ 抽样产生一个候选状态 $x^{\prime}$, 然后按照接受分布 $\alpha\left(x, x^{\prime}\right)$ 抽样决定是否接受状态 $x^{\prime}$ 。以概率 $\alpha\left(x, x^{\prime}\right)$ 接受 $x^{\prime}$, 决定时刻 $t$ 转移到状态 $x^{\prime}$, 而以概率 $1-\alpha\left(x, x^{\prime}\right)$ 拒绝 $x^{\prime}$, 决定时刻 $t$ 仍停留在状态 $x$ 。具体地, 从区间 $(0,1)$ 上的均匀分布中抽取一个随机数 $u$, 决定时刻 $t$ 的状态。
+
+$$
+x_{t}= \begin{cases}x^{\prime}, & u \leqslant \alpha\left(x, x^{\prime}\right) \\ x, & u>\alpha\left(x, x^{\prime}\right)\end{cases}
+$$
+
+可以证明, 转移核为 $p\left(x, x^{\prime}\right)$ 的马尔可夫链是可逆马尔可夫链 (满足遍历定理), 其平稳分布就是 $p(x)$, 即要抽样的目标分布。也就是说这是马尔可夫链蒙特卡罗法的一个具体实现。
+
+定理 19.6 由转移核 (19.38) (19.40) 构成的马尔可夫链是可逆的, 即
+
+
+\begin{equation*}
+p(x) p\left(x, x^{\prime}\right)=p\left(x^{\prime}\right) p\left(x^{\prime}, x\right) \tag{19.41}
+\end{equation*}
+
+
+并且 $p(x)$ 是该马尔可夫链的平稳分布。
+
+证明 若 $x=x^{\prime}$, 则式 (19.41) 显然成立。
+
+设 $x \neq x^{\prime}$, 则
+
+$$
+\begin{aligned}
+p(x) p\left(x, x^{\prime}\right) & =p(x) q\left(x, x^{\prime}\right) \min \left\{1, \frac{p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)}{p(x) q\left(x, x^{\prime}\right)}\right\} \\
+& =\min \left\{p(x) q\left(x, x^{\prime}\right), p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)\right\} \\
+& =p\left(x^{\prime}\right) q\left(x^{\prime}, x\right) \min \left\{\frac{p(x) q\left(x, x^{\prime}\right)}{p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)}, 1\right\} \\
+& =p\left(x^{\prime}\right) p\left(x^{\prime}, x\right)
+\end{aligned}
+$$
+
+式 (19.41) 成立。
+
+由式 (19.41) 知:
+
+$$
+\begin{aligned}
+\int p(x) p\left(x, x^{\prime}\right) \mathrm{d} x & =\int p\left(x^{\prime}\right) p\left(x^{\prime}, x\right) \mathrm{d} x \\
+& =p\left(x^{\prime}\right) \int p\left(x^{\prime}, x\right) \mathrm{d} x \\
+& =p\left(x^{\prime}\right)
+\end{aligned}
+$$
+
+根据平稳分布的定义 (式 (19.21)), $p(x)$ 是马尔可夫链的平稳分布。
+
+\section*{2. 建议分布}
+建议分布 $q\left(x, x^{\prime}\right)$ 有多种可能的形式, 这里介绍两种常用形式。
+
+第一种形式: 假设建议分布是对称的, 即对任意的 $x$ 和 $x^{\prime}$ 有
+
+
+\begin{equation*}
+q\left(x, x^{\prime}\right)=q\left(x^{\prime}, x\right) \tag{19.42}
+\end{equation*}
+
+
+这样的建议分布称为 Metropolis 选择, 也是 Metropolis-Hastings 算法最初采用的建议分布。这时, 接受分布 $\alpha\left(x, x^{\prime}\right)$ 简化为
+
+
+\begin{equation*}
+\alpha\left(x, x^{\prime}\right)=\min \left\{1, \frac{p\left(x^{\prime}\right)}{p(x)}\right\} \tag{19.43}
+\end{equation*}
+
+
+Metropolis 选择的一个特例是 $q\left(x, x^{\prime}\right)$ 取条件概率分布 $p\left(x^{\prime} \mid x\right)$, 定义为多元正态分布,其均值是 $x$, 其协方差矩阵是常数矩阵。
+
+Metropolis 选择的另一个特例是令 $q\left(x, x^{\prime}\right)=q\left(\left|x-x^{\prime}\right|\right)$, 这时算法称为随机游走 Metropolis 算法。例如，
+
+$$
+q\left(x, x^{\prime}\right) \propto \exp \left[-\frac{\left(x^{\prime}-x\right)^{2}}{2}\right]
+$$
+
+Metropolis 选择的特点是当 $x^{\prime}$ 与 $x$ 接近时, $q\left(x, x^{\prime}\right)$ 的概率值高, 否则 $q\left(x, x^{\prime}\right)$ 的概率值低。状态转移在附近点的可能性更大。
+
+第二种形式称为独立抽样。假设 $q\left(x, x^{\prime}\right)$ 与当前状态 $x$ 无关, 即 $q\left(x, x^{\prime}\right)=q\left(x^{\prime}\right)$ 。建议分布的计算按照 $q\left(x^{\prime}\right)$ 独立抽样进行。此时, 接受分布 $\alpha\left(x, x^{\prime}\right)$ 可以写成
+
+
+\begin{equation*}
+\alpha\left(x, x^{\prime}\right)=\min \left\{1, \frac{w\left(x^{\prime}\right)}{w(x)}\right\} \tag{19.44}
+\end{equation*}
+
+
+其中, $w\left(x^{\prime}\right)=p\left(x^{\prime}\right) / q\left(x^{\prime}\right), w(x)=p(x) / q(x)$ 。
+
+独立抽样实现简单, 但可能收玫速度慢, 通常选择接近目标分布 $p(x)$ 的分布作为建议分布 $q(x)$ 。
+
+\section*{3. 满条件分布}
+马尔可夫链蒙特卡罗法的目标分布通常是多元联合概率分布 $p(x)=p\left(x_{1}, x_{2}, \cdots, x_{k}\right)$,其中 $x=\left(x_{1}, x_{2}, \cdots, x_{k}\right)^{\mathrm{T}}$ 为 $k$ 维随机变量。如果条件概率分布 $p\left(x_{I} \mid x_{-I}\right)$ 中所有 $k$ 个变量全部出现, 其中 $x_{I}=\left\{x_{i}, i \in I\right\}, x_{-I}=\left\{x_{i}, i \notin I\right\}, I \subseteq K=\{1,2, \cdots, k\}$, 那么称这种条件概率分布为满条件分布 (full conditional distribution)。
+
+满条件分布有以下性质: 对任意的 $x \in \mathcal{X}$ 和任意的 $I \subseteq K$ ，有
+
+
+\begin{equation*}
+p\left(x_{I} \mid x_{-I}\right)=\frac{p(x)}{\int p(x) \mathrm{d} x_{I}} \propto p(x) \tag{19.45}
+\end{equation*}
+
+
+而且, 对任意的 $x, x^{\prime} \in \mathcal{X}$ 和任意的 $I \subseteq K$, 有
+
+
+\begin{equation*}
+\frac{p\left(x_{I}^{\prime} \mid x_{-I}^{\prime}\right)}{p\left(x_{I} \mid x_{-I}\right)}=\frac{p\left(x^{\prime}\right)}{p(x)} \tag{19.46}
+\end{equation*}
+
+
+Metropolis-Hastings 算法中, 可以利用性质 (19.46) 简化计算, 提高计算效率。具体地,通过满条件分布概率的比 $\frac{p\left(x_{I}^{\prime} \mid x_{-I}^{\prime}\right)}{p\left(x_{I} \mid x_{-I}\right)}$ 计算联合概率的比 $\frac{p\left(x^{\prime}\right)}{p(x)}$, 而前者更容易计算。
+
+例 19.9 设 $x_{1}$ 和 $x_{2}$ 的联合概率分布的密度函数为
+
+$$
+p\left(x_{1}, x_{2}\right) \propto \exp \left[-\frac{1}{2}\left(x_{1}-1\right)^{2}\left(x_{2}-1\right)^{2}\right]
+$$
+
+求其满条件分布。
+
+解 由满条件分布的定义有
+
+$$
+\begin{aligned}
+p\left(x_{1} \mid x_{2}\right) & \propto p\left(x_{1}, x_{2}\right) \\
+& \propto \exp \left[-\frac{1}{2}\left(x_{1}-1\right)^{2}\left(x_{2}-1\right)^{2}\right] \\
+& \propto N\left(1,\left(x_{2}-1\right)^{-2}\right)
+\end{aligned}
+$$
+
+这里 $N\left(1,\left(x_{2}-1\right)^{-2}\right)$ 是均值为 1 、方差为 $\left(x_{2}-1\right)^{-2}$ 的正态分布, 这时 $x_{1}$ 是变量, $x_{2}$ 是参数。同样可得:
+
+$$
+\begin{aligned}
+p\left(x_{2} \mid x_{1}\right) & \propto p\left(x_{1}, x_{2}\right) \\
+& \propto \exp \left[-\frac{1}{2}\left(x_{2}-1\right)^{2}\left(x_{1}-1\right)^{2}\right] \\
+& \propto N\left(1,\left(x_{1}-1\right)^{-2}\right)
+\end{aligned}
+$$
+
+\subsection*{19.4.2 Metropolis-Hastings 算法}
+\section*{算法 19.2 (Metropolis-Hastings 算法)}
+输入: 抽样的目标分布的密度函数 $p(x)$, 函数 $f(x)$ 。
+
+输出: $p(x)$ 的随机样本 $x_{m+1}, x_{m+2}, \cdots, x_{n}$, 函数样本均值 $f_{m n}$ 。
+
+参数: 收玫步数 $m$, 迭代步数 $n$ 。
+
+(1) 任意选择一个初始值 $x_{0}$ 。
+
+(2) 对 $i=1,2, \cdots, n$ 循环执行:
+
+（a）设状态 $x_{i-1}=x$ ，按照建议分布 $q\left(x, x^{\prime}\right)$ 随机抽取一个候选状态 $x^{\prime}$ 。
+
+(b) 计算接受概率:
+
+$$
+\alpha\left(x, x^{\prime}\right)=\min \left\{1, \frac{p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)}{p(x) q\left(x, x^{\prime}\right)}\right\}
+$$
+
+(c) 从区间 $(0,1)$ 中按均匀分布随机抽取一个数 $u$ 。若 $u \leqslant \alpha\left(x, x^{\prime}\right)$, 则状态 $x_{i}=x^{\prime}$;否则, 状态 $x_{i}=x$ 。
+
+(3) 得到样本集合 $\left\{x_{m+1}, x_{m+2}, \cdots, x_{n}\right\}$, 计算
+
+$$
+f_{m n}=\frac{1}{n-m} \sum_{i=m+1}^{n} f\left(x_{i}\right)
+$$
+
+\subsection*{19.4.3 单分量 Metropolis-Hastings 算法}
+在 Metropolis-Hastings 算法中, 通常需要对多元变量分布进行抽样。有时对多元变量分布的抽样是困难的, 可以对多元变量的每一变量的条件分布依次分别进行抽样, 从而实现对整个多元变量的一次抽样, 这就是单分量 Metropolis-Hastings (single-component Metropolis-Hastings）算法。
+
+假设马尔可夫链的状态由 $k$ 维随机变量表示:
+
+$$
+x=\left(x_{1}, x_{2}, \cdots, x_{k}\right)^{\mathrm{T}}
+$$
+
+其中, $x_{j}$ 表示随机变量 $x$ 的第 $j$ 个分量, $j=1,2, \cdots, k$, 而 $x^{(i)}$ 表示马尔可夫链在时刻 $i$ 的状态
+
+$$
+x^{(i)}=\left(x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{k}^{(i)}\right)^{\mathrm{T}}, \quad i=1,2, \cdots, n
+$$
+
+其中, $x_{j}^{(i)}$ 是随机变量 $x^{(i)}$ 的第 $j$ 个分量, $j=1,2, \cdots, k$ 。\\
+为了生成容量为 $n$ 的样本集合 $\left\{x^{(1)}, x^{(2)}, \cdots, x^{(n)}\right\}$, 单分量 Metropolis-Hastings 算法由下面的 $k$ 步迭代实现 Metropolis-Hastings 算法的一次迭代。
+
+设在第 $(i-1)$ 次迭代结束时分量 $x_{j}$ 的取值为 $x_{j}^{(i-1)}$, 在第 $i$ 次迭代的第 $j$ 步, 对分量 $x_{j}$根据 Metropolis-Hastings 算法更新, 得到其新的取值 $x_{j}^{(i)}$ 。首先, 由建议分布 $q\left(x_{j}^{(i-1)}, x_{j} \mid x_{-j}^{(i)}\right)$抽样产生分量 $x_{j}$ 的候选值 $x_{j}^{\prime(i)}$, 这里 $x_{-j}^{(i)}$ 表示在第 $i$ 次迭代的第 $(j-1)$ 步后的 $x^{(i)}$ 除去 $x_{j}^{(i-1)}$ 的所有值, 即
+
+$$
+x_{-j}^{(i)}=\left(x_{1}^{(i)}, \cdots, x_{j-1}^{(i)}, x_{j+1}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right)^{\mathrm{T}}
+$$
+
+其中分量 $1,2, \cdots, j-1$ 已经更新。然后, 按照接受概率
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-19}
+\end{center}
+
+抽样决定是否接受候选值 $x^{\prime}(i)$ 。如果 $x^{\prime}{ }_{j}^{(i)}$ 被接受, 则令 $x_{j}^{(i)}={x^{\prime}}_{j}^{(i)}$; 否则, 令 $x_{j}^{(i)}=x_{j}^{(i-1)}$ 。其余分量在第 $j$ 步不改变。马尔可夫链的转移概率为
+
+
+\begin{equation*}
+p\left(x_{j}^{(i-1)},{x^{\prime}}_{j}^{(i)} \mid x_{-j}^{(i)}\right)=\alpha\left(x_{j}^{(i-1)},{x^{\prime}}_{j}^{(i)} \mid x_{-j}^{(i)}\right) q\left(x_{j}^{(i-1)},{x^{\prime}}_{j}^{(i)} \mid x_{-j}^{(i)}\right) \tag{19.48}
+\end{equation*}
+
+
+图 19.10 示意了单分量 Metropolis-Hastings 算法的迭代过程。目标是对含有两个变量的随机变量 $x$ 进行抽样。如果变量 $x_{1}$ 或 $x_{2}$ 更新, 那么在水平或垂直方向产生一个移动, 连续水平移动和垂直移动产生一个新的样本点。注意由于建议分布可能不被接受, Metropolis-Hastings 算法可能在一些相邻的时刻不产生移动。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-19(1)}
+\end{center}
+
+图 19.10 单分量 Metropolis-Hastings 算法例
+
+\section*{19.5 吉布斯抽样}
+本节叙述马尔可夫链蒙特卡罗法的常用算法吉布斯抽样, 可以认为是 MetropolisHastings 算法的特殊情况, 但是更容易实现, 因而被广泛使用。
+
+\section*{19.5 .1 基本原理}
+吉布斯抽样 (Gibbs sampling) 用于多元变量联合分布的抽样和估计 (1)。其基本做法是:
+\footnotetext{(1) 吉布斯抽样以统计力学奠基人吉布斯 (Josiah Willard Gibbs) 命名, 将该算法与统计力学进行类比。
+}
+从联合概率分布定义满条件概率分布, 依次对满条件概率分布进行抽样, 得到样本的序列。可以证明这样的抽样过程是在一个马尔可夫链上的随机游走, 每一个样本对应着马尔可夫链的状态, 平稳分布就是目标的联合分布。整体成为一个马尔可夫链蒙特卡罗法, 燃烧期之后的样本就是联合分布的随机样本。
+
+假设多元变量的联合概率分布为 $p(x)=p\left(x_{1}, x_{2}, \cdots, x_{k}\right)$ 。吉布斯抽样从一个初始样本 $x^{(0)}=\left(x_{1}^{(0)}, x_{2}^{(0)}, \cdots, x_{k}^{(0)}\right)^{\mathrm{T}}$ 出发, 不断进行迭代, 每一次迭代得到联合分布的一个样本 $x^{(i)}=\left(x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{k}^{(i)}\right)^{\mathrm{T}}$ 。最终得到样本序列 $\left\{x^{(0)}, x^{(1)}, \cdots, x^{(n)}\right\}$ 。
+
+在每次迭代中, 依次对 $k$ 个随机变量中的一个变量进行随机抽样。如果在第 $i$ 次迭代中,对第 $j$ 个变量进行随机抽样, 那么抽样的分布是满条件概率分布 $p\left(x_{j} \mid x_{-j}^{(i)}\right)$, 这里 $x_{-j}^{(i)}$ 表示第 $i$ 次迭代中变量 $j$ 以外的其他变量。
+
+设在第 $(i-1)$ 步得到样本 $\left(x_{1}^{(i-1)}, x_{2}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right)^{\mathrm{T}}$, 在第 $i$ 步, 首先对第一个变量按照以下满条件概率分布随机抽样:
+
+$$
+p\left(x_{1} \mid x_{2}^{(t-1)}, \cdots, x_{k}^{(t-1)}\right)
+$$
+
+得到 $x_{1}^{(i)}$, 之后依次对第 $j$ 个变量按照以下满条件概率分布随机抽样:
+
+$$
+p\left(x_{j} \mid x_{1}^{(i)}, \cdots, x_{j-1}^{(i)}, x_{j+1}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right), \quad j=2,3, \cdots, k-1
+$$
+
+得到 $x_{j}^{(i)}$, 最后对第 $k$ 个变量按照以下满条件概率分布随机抽样:
+
+$$
+p\left(x_{k} \mid x_{1}^{(i)}, \cdots, x_{k-1}^{(i)}\right)
+$$
+
+得到 $x_{k}^{(i)}$, 于是得到整体样本 $x^{(i)}=\left(x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{k}^{(i)}\right)^{\mathrm{T}}$ 。
+
+吉布斯抽样是单分量 Metropolis-Hastings 算法的特殊情况。定义建议分布是当前变量 $x_{j}, j=1,2, \cdots, k$ 的满条件概率分布:
+
+
+\begin{equation*}
+q\left(x, x^{\prime}\right)=p\left(x_{j}^{\prime} \mid x_{-j}\right) \tag{19.49}
+\end{equation*}
+
+
+这时, 接受概率 $\alpha=1$,
+
+
+\begin{align*}
+\alpha\left(x, x^{\prime}\right) & =\min \left\{1, \frac{p\left(x^{\prime}\right) q\left(x^{\prime}, x\right)}{p(x) q\left(x, x^{\prime}\right)}\right\} \\
+& =\min \left\{1, \frac{p\left(x^{\prime}{ }_{-j}\right) p\left(x^{\prime}{ }_{j} \mid x^{\prime}{ }_{-j}\right) p\left(x_{j} \mid x^{\prime}{ }_{-j}\right)}{p\left(x_{-j}\right) p\left(x_{j} \mid x_{-j}\right) p\left(x^{\prime}{ }_{j} \mid x_{-j}\right)}\right\}=1 \tag{19.50}
+\end{align*}
+
+
+这里用到 $p\left(x_{-j}\right)=p\left(x^{\prime}{ }_{-j}\right)$ 和 $p\left(\cdot \mid x_{-j}\right)=p\left(\cdot \mid x^{\prime}{ }_{-j}\right)$ 。
+
+转移核就是满条件概率分布:
+
+
+\begin{equation*}
+p\left(x, x^{\prime}\right)=p\left(x^{\prime}{ }_{j} \mid x_{-j}\right) \tag{19.51}
+\end{equation*}
+
+
+也就是说依次按照单变量的满条件概率分布 $p\left(x^{\prime}{ }_{j} \mid x_{-j}\right)$ 进行随机抽样, 就能实现单分量 Metropolis-Hastings 算法。吉布斯抽样对每次抽样的结果都接受, 没有拒绝, 这一点和一般的 Metropolis-Hastings 算法不同。
+
+这里, 假设满条件概率分布 $p\left(x^{\prime}{ }_{j} \mid x_{-j}\right)$ 不为 0 , 即马尔可夫链是不可约的。
+
+\subsection*{19.5.2 吉布斯抽样算法}
+\section*{算法 19.3 (吉布斯抽样)}
+输入: 目标概率分布的密度函数 $p(x)$, 函数 $f(x)$ 。
+
+输出: $p(x)$ 的随机样本 $x_{m+1}, x_{m+2}, \cdots, x_{n}$, 函数样本均值 $f_{m n}$ 。
+
+参数: 收玫步数 $m$, 迭代步数 $n$ 。
+
+(1) 初始化。给出初始样本 $x^{(0)}=\left(x_{1}^{(0)}, x_{2}^{(0)}, \cdots, x_{k}^{(0)}\right)^{\mathrm{T}}$ 。
+
+(2) 对 $i$ 循环执行:
+
+设第 $(i-1)$ 次迭代结束时的样本为 $x^{(i-1)}=\left(x_{1}^{(i-1)}, x_{2}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right)^{\mathrm{T}}$, 则第 $i$ 次迭代进行如下几步操作:
+
+$\left\{\begin{array}{l}(1) \text { 由满条件分布 } p\left(x_{1} \mid x_{2}^{(i-1)}, x_{3}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right) \text { 抽取 } x_{1}^{(i)} \text {; } \\ \vdots \\ (\mathrm{j}) \text { 由满条件分布 } p\left(x_{j} \mid x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{j-1}^{(i)}, x_{j+1}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right) \text { 抽取 } x_{j}^{(i)} \text {; } \\ \vdots \\ \text { (k) 由满条件分布 } p\left(x_{k} \mid x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{k-1}^{(i)}\right) \text { 抽取 } x_{k}^{(i)} ;\end{array}\right.$
+
+得到第 $i$ 次迭代值 $x^{(i)}=\left(x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{k}^{(i)}\right)^{\mathrm{T}}$ 。
+
+(3) 得到样本集合
+
+$$
+\left\{x^{(m+1)}, x^{(m+2)}, \cdots, x^{(n)}\right\}
+$$
+
+(4) 计算
+
+$$
+f_{m n}=\frac{1}{n-m} \sum_{i=m+1}^{n} f\left(x^{(i)}\right)
+$$
+
+例 19.10 用吉布斯抽样从以下二元正态分布中抽取随机样本。
+
+$$
+\begin{gathered}
+x=\left(x_{1}, x_{2}\right)^{\mathrm{T}} \sim p\left(x_{1}, x_{2}\right) \\
+p\left(x_{1}, x_{2}\right)=N(0, \Sigma), \quad \Sigma=\left[\begin{array}{ll}
+1 & \rho \\
+\rho & 1
+\end{array}\right]
+\end{gathered}
+$$
+
+解 条件概率分布为一元正态分布:
+
+$$
+\begin{aligned}
+& p\left(x_{1} \mid x_{2}\right)=N\left(\rho x_{2}, 1-\rho^{2}\right) \\
+& p\left(x_{2} \mid x_{1}\right)=N\left(\rho x_{1}, 1-\rho^{2}\right)
+\end{aligned}
+$$
+
+假设初始样本为 $x^{(0)}=\left(x_{1}^{(0)}, x_{2}^{(0)}\right)$, 通过吉布斯抽样, 可以得到以下样本序列:
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+\hline
+迭代次数 & 对 $x_{1}$ 抽样 & 对 $x_{2}$ 抽样 & 产生样本 \\
+\hline
+1 & $x_{1} \sim N\left(\rho x_{2}^{(0)}, 1-\rho^{2}\right)$, 得到 $x_{1}^{(1)}$ & $x_{2} \sim N\left(\rho x_{1}^{(1)}, 1-\rho^{2}\right)$, 得到 $x_{2}^{(1)}$ & $x^{(1)}=\left(x_{1}^{(1)}, x_{2}^{(1)}\right)^{\mathrm{T}}$ \\
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+$i$ & $x_{1} \sim N\left(\rho x_{2}^{(t-1)}, 1-\rho^{2}\right)$, 得到 $x_{1}^{(t)}$ & $x_{2} \sim N\left(\rho x_{1}^{(t)}, 1-\rho^{2}\right)$, 得到 $x_{2}^{(t)}$ & $x^{(t)}=\left(x_{1}^{(t)}, x_{2}^{(t)}\right)^{\mathrm{T}}$ \\
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+\hline
+\end{tabular}
+\end{center}
+
+得到的样本集合 $\left\{x^{(m+1)}, x^{(m+2)}, \cdots, x^{(n)}\right\}, m<n$ 就是二元正态分布的随机抽样。图 19.11 示意了吉布斯抽样的过程。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-22(1)}
+\end{center}
+
+图 19.11 吉布斯抽样例
+
+单分量 Metropolis-Hastings 算法和吉布斯抽样的不同之处在于, 在前者算法中, 抽样会在样本点之间移动, 但其间可能在某一些样本点上停留 (由于抽样被拒绝); 而在后者算法中，抽样会在样本点之间持续移动。
+
+吉布斯抽样适合于满条件概率分布容易抽样的情况, 而单分量 Metropolis-Hastings 算法适合于满条件概率分布不容易抽样的情况, 这时使用容易抽样的条件分布作建议分布。
+
+\subsection*{19.5.3 抽样计算}
+吉布斯抽样中需要对满条件概率分布进行重复多次抽样, 可以利用概率分布的性质提高抽样的效率。下面以贝叶斯学习为例介绍这个技巧。
+
+设 $y$ 表示观测数据, $\alpha, \theta, z$ 分别表示超参数、模型参数、未观测数据, $x=(\alpha, \theta, z)$, 如图 19.12 所示。贝叶斯学习的目的是估计后验概率分布 $p(x \mid y)$, 求后验概率最大的模型。
+
+
+\begin{equation*}
+p(x \mid y)=p(\alpha, \theta, z \mid y) \propto p(z, y \mid \theta) p(\theta \mid \alpha) p(\alpha) \tag{19.52}
+\end{equation*}
+
+
+式中 $p(\alpha)$ 是超参数分布, $p(\theta \mid \alpha)$ 是先验分布, $p(z, y \mid \theta)$ 是完全数据的分布。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-22}
+\end{center}
+
+图 19.12 贝叶斯学习的图模型表示
+
+现在用吉布斯抽样估计 $p(x \mid y)$, 其中 $y$ 已知, $x=(\alpha, \theta, z)$ 未知。吉布斯抽样中各个变量 $\alpha, \theta, z$ 的满条件分布有以下关系:
+
+
+\begin{align*}
+& p\left(\alpha_{i} \mid \alpha_{-i}, \theta, z, y\right) \propto p(\theta \mid \alpha) p(\alpha)  \tag{19.53}\\
+& p\left(\theta_{j} \mid \theta_{-j}, \alpha, z, y\right) \propto p(z, y \mid \theta) p(\theta \mid \alpha) \tag{19.54}
+\end{align*}
+
+
+
+\begin{equation*}
+p\left(z_{k} \mid z_{-k}, \alpha, \theta, y\right) \propto p(z, y \mid \theta) \tag{19.55}
+\end{equation*}
+
+
+其中, $\alpha_{-i}$ 表示变量 $\alpha_{i}$ 以外的所有变量, $\theta_{-j}$ 和 $z_{-k}$ 类似。满条件概率分布与若干条件概率分布的乘积成正比, 各个条件概率分布只由少量的相关变量组成 (图模型中相邻结点表示的变量)。所以, 依满条件概率分布的抽样可以通过依这些条件概率分布的乘积的抽样进行。这样可以大幅减少抽样的计算复杂度, 因为计算只涉及部分变量。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 蒙特卡罗法是通过基于概率模型的抽样进行数值近似计算的方法, 蒙特卡罗法可以用于概率分布的抽样、概率分布数学期望的估计、定积分的近似计算。
+\end{enumerate}
+
+随机抽样是蒙特卡罗法的一种应用, 有直接抽样法、接受-拒绝抽样法等。接受-拒绝法的基本想法是找一个容易抽样的建议分布, 其密度函数的数倍大于等于想要抽样的概率分布的密度函数。按照建议分布随机抽样得到样本, 再按照要抽样的概率分布与建议分布的倍数的比例随机决定接受或拒绝该样本, 循环执行以上过程。
+
+数学期望估计是蒙特卡罗法的另一种应用, 按照概率分布 $p(x)$ 抽取随机变量 $x$ 的 $n$ 个独立样本, 根据大数定律, 当样本容量增大时, 函数的样本均值以概率 1 收玫于函数的数学期望:
+
+$$
+\hat{f}_{n} \rightarrow E_{p(x)}[f(x)], \quad n \rightarrow \infty
+$$
+
+计算样本均值 $\hat{f}_{n}$, 作为数学期望 $E_{p(x)}[f(x)]$ 的估计值。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 马尔可夫链是具有马尔可夫性的随机过程:
+\end{enumerate}
+
+$$
+P\left(X_{t} \mid X_{0} X_{1} \cdots X_{t-1}\right)=P\left(X_{t} \mid X_{t-1}\right), \quad t=1,2, \cdots
+$$
+
+通常考虑时间齐次马尔可夫链。有离散状态马尔可夫链和连续状态马尔可夫链, 分别由概率转移矩阵 $P$ 和概率转移核 $p(x, y)$ 定义。
+
+满足 $\pi=P \pi$ 或 $\pi(y)=\int p(x, y) \pi(x) \mathrm{d} x$ 的状态分布称为马尔可夫链的平稳分布。
+
+马尔可夫链有不可约性、非周期性、正常返等性质。一个马尔可夫链若是不可约、非周期、正常返的, 则该马尔可夫链满足遍历定理。当时间趋于无穷时, 马尔可夫链的状态分布趋近于平稳分布, 函数的样本平均依概率收玫于该函数的数学期望。
+
+$$
+\begin{aligned}
+& \lim _{t \rightarrow \infty} P\left(X_{t}=i \mid X_{0}=j\right)=\pi_{i}, \quad i=1,2, \cdots, \quad j=1,2, \cdots \\
+& \hat{f}_{t} \rightarrow E_{\pi}[f(X)], \quad t \rightarrow \infty
+\end{aligned}
+$$
+
+可逆马尔可夫链是满足遍历定理的充分条件。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 马尔可夫链蒙特卡罗法是以马尔可夫链为概率模型的蒙特卡罗积分方法, 其基本想法如下:
+\end{enumerate}
+
+（1）在随机变量 $x$ 的状态空间 $\mathcal{X}$ 上构造一个满足遍历定理条件的马尔可夫链, 其平稳分布为目标分布 $p(x)$;
+
+（2）由状态空间的某一点 $X_{0}$ 出发, 用所构造的马尔可夫链进行随机游走, 产生样本序列 $X_{1}, X_{2}, \cdots, X_{t}, \cdots$;
+
+(3) 应用马尔可夫链遍历定理, 确定正整数 $m$ 和 $n(m<n)$, 得到样本集合 $\left\{x_{m+1}, x_{m+2}, \cdots\right.$, $\left.x_{n}\right\}$, 进行函数 $f(x)$ 的均值（遍历均值）估计:
+
+$$
+\hat{E} f=\frac{1}{n-m} \sum_{i=m+1}^{n} f\left(x_{i}\right)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item Metropolis-Hastings 算法是最基本的马尔可夫链蒙特卡罗法。假设目标是对概率分布 $p(x)$ 进行抽样, 构造建议分布 $q\left(x, x^{\prime}\right)$, 定义接受分布 $\alpha\left(x, x^{\prime}\right)$ 。进行随机游走, 假设当前处于状态 $x$, 按照建议分布 $q\left(x, x^{\prime}\right)$ 随机抽样, 按照概率 $\alpha\left(x, x^{\prime}\right)$ 接受抽样, 转移到状态 $x^{\prime}$,按照概率 $1-\alpha\left(x, x^{\prime}\right)$ 拒绝抽样, 停留在状态 $x$, 持续以上操作, 得到一系列样本。这样的随机游走是根据转移核为 $p\left(x, x^{\prime}\right)=q\left(x, x^{\prime}\right) \alpha\left(x, x^{\prime}\right)$ 的可逆马尔可夫链（满足遍历定理条件）进行的, 其平稳分布就是要抽样的目标分布 $p(x)$ 。
+
+  \item 吉布斯抽样 (Gibbs sampling) 用于多元联合分布的抽样和估计, 是单分量 MetropolisHastings 算法的特殊情况。这时建议分布为满条件概率分布
+
+\end{enumerate}
+
+$$
+q\left(x, x^{\prime}\right)=p\left(x_{j}^{\prime} \mid x_{-j}\right)
+$$
+
+吉布斯抽样的基本做法是：从联合分布定义满条件概率分布, 依次从满条件概率分布进行抽样, 得到联合分布的随机样本。假设多元联合概率分布为 $p(x)=p\left(x_{1}, x_{2}, \cdots, x_{k}\right)$, 吉布斯抽样从一个初始样本 $x^{(0)}=\left(x_{1}^{(0)}, x_{2}^{(0)}, \cdots, x_{k}^{(0)}\right)^{\mathrm{T}}$ 出发, 不断进行迭代, 每一次迭代得到联合分布的一个样本 $x^{(i)}=\left(x_{1}^{(i)}, x_{2}^{(i)}, \cdots, x_{k}^{(i)}\right)^{\mathrm{T}}$ 。在第 $i$ 次迭代中, 依次对第 $j$ 个变量按照满条件概率分布随机抽样 $p\left(x_{j} \mid x_{1}^{(i)}, \cdots, x_{j-1}^{(i)}, x_{j+1}^{(i-1)}, \cdots, x_{k}^{(i-1)}\right), j=1,2, \cdots, k$, 得到 $x_{j}^{(i)}$ 。最终得到样本序列 $\left\{x^{(0)}, x^{(1)}, \cdots, x^{(n)}\right\}$ 。
+
+\section*{继续阅 读}
+马尔可夫链的介绍可见文献 [1]。Metropolis-Hastings 算法和吉布斯抽样的原始论文分别是文献 [2] 和文献 [3]。随机抽样的介绍见文献 [4]。马尔可夫链蒙特卡罗法的介绍可以参阅文献 [4] 文献 [8], 也可以观看 YouTube 上的视频: Mathematicalmonk, Markov Chain Monte Carlo (MCMC) Introduction。
+
+\section*{习 题}
+19.1 用蒙特卡罗积分法求
+
+$$
+\int_{-\infty}^{\infty} x^{2} \exp \left(-\frac{x^{2}}{2}\right) \mathrm{d} x
+$$
+
+19.2 证明如果马尔可夫链是不可约的, 且有一个状态是非周期的, 则其他所有状态也是非周期的，即这个马尔可夫链是非周期的。
+
+19.3 验证具有以下转移概率矩阵的马尔可夫链是可约的, 但是非周期的。
+
+$$
+P=\left[\begin{array}{cccc}
+1 / 2 & 1 / 2 & 0 & 0 \\
+1 / 2 & 0 & 1 / 2 & 0 \\
+0 & 1 / 2 & 0 & 0 \\
+0 & 0 & 1 / 2 & 1
+\end{array}\right]
+$$
+
+19.4 验证具有以下转移概率矩阵的马尔可夫链是不可约的, 但是周期性的。
+
+$$
+P=\left[\begin{array}{cccc}
+0 & 1 / 2 & 0 & 0 \\
+1 & 0 & 1 / 2 & 0 \\
+0 & 1 / 2 & 0 & 1 \\
+0 & 0 & 1 / 2 & 0
+\end{array}\right]
+$$
+
+19.5 证明可逆马尔可夫链一定是不可约的。
+
+19.6 从一般的 Metropolis-Hastings 算法推导出单分量 Metropolis-Hastings 算法。
+
+19.7 假设进行伯努利实验, 后验概率为 $P(\theta \mid y)$, 其中变量 $y \in\{0,1\}$ 表示实验可能的结果, 变量 $\theta$ 表示结果为 1 的概率。再假设先验概率 $P(\theta)$ 遵循 Beta 分布 $B(\alpha, \beta)$, 其中 $\alpha=1, \beta=1$; 似然函数 $P(y \mid \theta)$ 遵循二项分布 $\operatorname{Bin}(n, k, \theta)$, 其中 $n=10, k=4$, 即实验进行 10 次其中结果为 1 的次数为 4 。试用 Metropolis-Hastings 算法求后验概率分布 $P(\theta \mid y) \propto P(\theta) P(y \mid \theta)$ 的均值和方差。(提示: 可采用 Metropolis 选择, 即假设建议分布是对称的)
+
+19.8 设某试验可能有五种结果, 其出现的概率分别为
+
+$$
+\frac{\theta}{4}+\frac{1}{8}, \quad \frac{\theta}{4}, \quad \frac{\eta}{4}, \quad \frac{\eta}{4}+\frac{3}{8}, \quad \frac{1}{2}(1-\theta-\eta)
+$$
+
+模型含有两个参数 $\theta$ 和 $\eta$, 都介于 0 和 1 之间。现有 22 次试验结果的观测值为
+
+$$
+y=\left(y_{1}, y_{2}, y_{3}, y_{4}, y_{5}\right)=(14,1,1,1,5)
+$$
+
+其中, $y_{i}$ 表示 22 次试验中第 $i$ 个结果出现的次数, $i=1,2, \cdots, 5$ 。试用吉布斯抽样估计参数 $\theta$ 和 $\eta$ 的均值和方差。
+
+\section*{参考文献}
+[1] SERFOZO R. Basics of applied stochastic processes[M]. Springer, 2009.
+
+[2] METROPolis N, ROSENBLUTH A W, ROSENBLUTH M N, et al. Equation of state calculations by fast computing machines[J]. The Journal of Chemical Physics, 1953, 21(6): 1087-1092.
+
+[3] GEMAN S, GEMAN D. Stochastic relaxation, Gibbs distribution and the Bayesian restoration of images[J]. IEEE Transactions on Pattern Analysis and Machine Intelligence, 1984, 6: 721741 .
+
+[4] BISHOP C M. Pattern recognition and machine learning[M]. Springer, 2006.
+
+[5] GILKS W R, RICHARDSON S, SPIEGELHALTER, D J. Introducing Markov chain Monte Carlo[M]. Markov Chain Monte Carlo in Practice, 1996.
+
+[6] ANDRIEU C, DE FREITAS N, DOUCET A, et al. An introduction to MCMC for machine learning $[\mathrm{J}]$. Machine Learning, 2003, 50(1-2): 5-43.
+
+[7] HOFF P. A first course in Bayesian statistical methods[M]. Springer, 2009.
+
+[8] 苏诗松, 王静龙, 幞晓龙. 高等数理统计 [M]. 北京: 高等教育出版社, 1998.
+
+\section*{第 20 章 潜在狄利克雷分配}
+潜在狄利克雷分配 (latent Dirichlet allocation, LDA) 作为基于贝叶斯学习的话题模型,是潜在语义分析、概率潜在语义分析的扩展, 于 2002 年由 Blei 等提出。LDA 在文本数据挖掘、图像处理、生物信息处理等领域被广泛使用。
+
+LDA 模型是文本集合的生成概率模型。假设每个文本由话题的一个多项分布表示, 每个话题由单词的一个多项分布表示, 特别假设文本的话题分布的先验分布是狄利克雷分布, 话题的单词分布的先验分布也是狄利克雷分布。先验分布的导入使 LDA 能够更好地应对话题模型学习中的过拟合现象。
+
+LDA 的文本集合的生成过程如下: 首先随机生成一个文本的话题分布, 之后在该文本的每个位置, 依据该文本的话题分布随机生成一个话题, 然后在该位置依据该话题的单词分布随机生成一个单词, 直至文本的最后一个位置, 生成整个文本。重复以上过程生成所有文本。
+
+LDA 模型是含有隐变量的概率图模型。模型中, 每个话题的单词分布、每个文本的话题分布和文本的每个位置的话题是隐变量, 文本的每个位置的单词是观测变量。LDA 模型的学习与推理无法直接求解, 通常使用吉布斯抽样 (Gibbs sampling) 和变分 EM 算法 (variational EM algorithm），前者是蒙特卡罗法，而后者是近似算法。
+
+本章 20.1 节介绍狄利克雷分布, 20.2 节阐述潜在狄利克雷分配模型, 20.3 节和 20.4 节叙述模型的算法, 包括吉布斯抽样和变分 EM 算法。
+
+\section*{20.1 狄利克雷分布}
+\subsection*{20.1.1 分布定义}
+首先介绍作为 LDA 模型基础的多项分布和狄利克雷分布。
+
+\section*{1. 多项分布}
+多项分布 (multinomial distribution) 是一种多元离散随机变量的概率分布, 是二项分布 (binomial distribution) 的扩展。
+
+假设重复进行 $n$ 次独立随机试验, 每次试验可能出现的结果有 $k$ 种, 第 $i$ 种结果出现的概率为 $p_{i}$, 第 $i$ 种结果出现的次数为 $n_{i}$ 。如果用随机变量 $X=\left(X_{1}, X_{2}, \cdots, X_{k}\right)$ 表示试验所有可能结果的次数, 其中 $X_{i}$ 表示第 $i$ 种结果出现的次数, 那么随机变量 $X$ 服从多项分布。\\
+定义 20.1 (多项分布) 若多元离散随机变量 $X=\left(X_{1}, X_{2}, \cdots, X_{k}\right)$ 的概率质量函数为
+
+
+\begin{align*}
+P\left(X_{1}=n_{1}, X_{2}=n_{2}, \cdots, X_{k}=n_{k}\right) & =\frac{n !}{n_{1} ! n_{2} ! \cdots n_{k} !} p_{1}^{n_{1}} p_{2}^{n_{2}} \cdots p_{k}^{n_{k}} \\
+& =\frac{n !}{\prod_{i=1}^{k} n_{i} !} \prod_{i=1}^{k} p_{i}^{n_{i}} \tag{20.1}
+\end{align*}
+
+
+其中, $p=\left(p_{1}, p_{2}, \cdots, p_{k}\right), p_{i} \geqslant 0, i=1,2, \cdots, k, \sum_{i=1}^{k} p_{i}=1, \sum_{i=1}^{k} n_{i}=n$, 则称随机变量 $X$服从参数为 $(n, p)$ 的多项分布, 记作 $X \sim \operatorname{Mult}(n, p)$ 。
+
+当试验的次数 $n$ 为 1 时, 多项分布变成类别分布 (categorical distribution)。类别分布表示试验可能出现的 $k$ 种结果的概率。显然多项分布包含类别分布。
+
+\section*{2. 狄利克雷分布}
+狄利克雷分布 (Dirichlet distribution) 是一种多元连续随机变量的概率分布, 是贝塔分布 (beta distribution) 的扩展。在贝叶斯学习中, 狄利克雷分布常作为多项分布的先验分布使用。
+
+定义 20.2 (狄利克雷分布) 若多元连续随机变量 $\theta=\left(\theta_{1}, \theta_{2}, \cdots, \theta_{k}\right)$ 的概率密度函数为
+
+
+\begin{equation*}
+p(\theta \mid \alpha)=\frac{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)}{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1} \tag{20.2}
+\end{equation*}
+
+
+其中, $\sum_{i=1}^{k} \theta_{i}=1, \theta_{i} \geqslant 0, \alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{k}\right), \alpha_{i}>0, i=1,2, \cdots, k$, 则称随机变量 $\theta$ 服从参数为 $\alpha$ 的狄利克雷分布, 记作 $\theta \sim \operatorname{Dir}(\alpha)$ 。
+
+式中 $\Gamma(s)$ 是伽马函数, 定义为
+
+$$
+\Gamma(s)=\int_{0}^{\infty} x^{s-1} \mathrm{e}^{-x} \mathrm{~d} x, \quad s>0
+$$
+
+具有性质
+
+$$
+\Gamma(s+1)=s \Gamma(s)
+$$
+
+当 $s$ 是自然数时, 有
+
+$$
+\Gamma(s+1)=s !
+$$
+
+由于满足条件
+
+$$
+\theta_{i} \geqslant 0, \quad \sum_{i=1}^{k} \theta_{i}=1
+$$
+
+所以狄利克雷分布 $\theta$ 存在于 $(k-1)$ 维单纯形上。图 20.1 为二维单纯形上的狄利克雷分布 (详见文前彩图)。 $\theta_{1}+\theta_{2}+\theta_{3}=1, \theta_{1}, \theta_{2}, \theta_{3} \geqslant 0$ 。图中狄利克雷分布的参数为 $\alpha=(3,3,3)$, $\alpha=(7,7,7), \alpha=(20,20,20), \alpha=(2,6,11), \alpha=(14,9,5), \alpha=(6,2,6)$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-29}
+\end{center}
+
+图 20.1 狄利克雷分布例 (见文前彩图)
+
+令
+
+
+\begin{equation*}
+\mathrm{B}(\alpha)=\frac{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)}{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)} \tag{20.3}
+\end{equation*}
+
+
+则狄利克雷分布的密度函数可以写成
+
+
+\begin{equation*}
+p(\theta \mid \alpha)=\frac{1}{\mathrm{~B}(\alpha)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1} \tag{20.4}
+\end{equation*}
+
+
+$\mathrm{B}(\alpha)$ 是规范化因子, 称为多元贝塔函数 (或扩展的贝塔函数)。由密度函数的性质
+
+$$
+\int \frac{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)}{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1} \mathrm{~d} \theta=\frac{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)}{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)} \int \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1} \mathrm{~d} \theta=1
+$$
+
+得:
+
+
+\begin{equation*}
+\mathrm{B}(\alpha)=\int \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1} \mathrm{~d} \theta \tag{20.5}
+\end{equation*}
+
+
+所以式 (20.5) 是多元贝塔函数的积分表示。
+
+\section*{3. 二项分布和贝塔分布}
+二项分布是多项分布的特殊情况，贝塔分布是狄利克雷分布的特殊情况。
+
+二项分布是指如下概率分布。 $X$ 为离散随机变量, 取值为 $m$, 其概率质量函数为
+
+\[
+P(X=m)=\left(\begin{array}{c}
+n  \tag{20.6}\\
+m
+\end{array}\right) p^{m}(1-p)^{n-m}, \quad m=0,1,2, \cdots, n
+\]
+
+其中, $n$ 和 $p(0 \leqslant p \leqslant 1)$ 是参数。
+
+贝塔分布是指如下概率分布, $X$ 为连续随机变量, 取值范围为 $[0,1]$, 其概率密度函数为
+
+\[
+p(x)= \begin{cases}\frac{1}{\mathrm{~B}(s, t)} x^{s-1}(1-x)^{t-1}, & 0 \leqslant x \leqslant 1  \tag{20.7}\\ 0, & \text { 其他 }\end{cases}
+\]
+
+其中, $s>0$ 和 $t>0$ 是参数, $\mathrm{B}(s, t)=\frac{\Gamma(s) \Gamma(t)}{\Gamma(s+t)}$ 是贝塔函数, 定义为
+
+
+\begin{equation*}
+\mathrm{B}(s, t)=\int_{0}^{1} x^{s-1}(1-x)^{t-1} \mathrm{~d} x \tag{20.8}
+\end{equation*}
+
+
+当 $s, t$ 是自然数时,
+
+
+\begin{equation*}
+\mathrm{B}(s, t)=\frac{(s-1) !(t-1) !}{(s+t-1) !} \tag{20.9}
+\end{equation*}
+
+
+当 $n$ 为 1 时, 二项分布变成伯努利分布 (Bernoulli distribution）或 0-1 分布。伯努利分布表示试验可能出现的两种结果的概率。显然二项分布包含伯努利分布。图 20.2 给出几种概率分布的关系。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-30}
+\end{center}
+
+图 20.2 概率分布之间的关系
+
+\subsection*{20.1.2 共轭先验}
+狄利克雷分布有一些重要性质: (1)狄利克雷分布属于指数分布族; (2)狄利克雷分布是多项分布的共轭先验（conjugate prior）。
+
+贝叶斯学习中常使用共轭分布。如果后验分布与先验分布属于同类, 则先验分布与后验分布称为共轭分布 (conjugate distributions), 先验分布称为共轭先验（conjugate prior）。如果多项分布的先验分布是狄利克雷分布, 则其后验分布也为狄利克雷分布, 两者构成共轭分布。作为先验分布的狄利克雷分布的参数又称为超参数。使用共轭分布的好处是便于从先验分布计算后验分布。\\
+设 $\mathcal{W}=\left\{w_{1}, w_{2}, \cdots, w_{k}\right\}$ 是由 $k$ 个元素组成的集合。随机变量 $X$ 服从 $\mathcal{W}$ 上的多项分布, $X \sim \operatorname{Mult}(n, \theta)$, 其中 $n=\left(n_{1}, n_{2}, \cdots, n_{k}\right)$ 和 $\theta=\left(\theta_{1}, \theta_{2}, \cdots, \theta_{k}\right)$ 是参数。参数 $n$ 为从 $\mathcal{W}$ 中重复独立抽取样本的次数, $n_{i}$ 为样本中 $w_{i}$ 出现的次数 $(i=1,2, \cdots, k)$; 参数 $\theta_{i}$ 为 $w_{i}$出现的概率 $(i=1,2, \cdots, k)$ 。
+
+将样本数据表示为 $D$, 目标是计算在样本数据 $D$ 给定条件下参数 $\theta$ 的后验概率 $p(\theta \mid D)$ 。对于给定的样本数据 $D$, 似然函数是
+
+
+\begin{equation*}
+p(D \mid \theta)=\theta_{1}^{n_{1}} \theta_{2}^{n_{2}} \cdots \theta_{k}^{n_{k}}=\prod_{i=1}^{k} \theta_{i}^{n_{i}} \tag{20.10}
+\end{equation*}
+
+
+假设随机变量 $\theta$ 服从狄利克雷分布 $p(\theta \mid \alpha)$, 其中 $\alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{k}\right)$ 为参数, 则 $\theta$ 的先验分布为
+
+
+\begin{equation*}
+p(\theta \mid \alpha)=\frac{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)}{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1}=\frac{1}{\mathrm{~B}(\alpha)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1}=\operatorname{Dir}(\theta \mid \alpha), \quad \alpha_{i}>0 \tag{20.11}
+\end{equation*}
+
+
+根据贝叶斯规则, 在给定样本数据 $D$ 和参数 $\alpha$ 的条件下, $\theta$ 的后验概率分布是
+
+
+\begin{align*}
+p(\theta \mid D, \alpha) & =\frac{p(D \mid \theta) p(\theta \mid \alpha)}{p(D \mid \alpha)} \\
+& =\frac{\prod_{i=1}^{k} \theta_{i}^{n_{i}} \frac{1}{\mathrm{~B}(\alpha)} \theta_{i}^{\alpha_{i}-1}}{\int \prod_{i=1}^{k} \theta_{i}^{n_{i}} \frac{1}{\mathrm{~B}(\alpha)} \theta_{i}^{\alpha_{i}-1} \mathrm{~d} \theta} \\
+& =\frac{1}{\mathrm{~B}(\alpha+n)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}+n_{i}-1} \\
+& =\operatorname{Dir}(\theta \mid \alpha+n) \tag{20.12}
+\end{align*}
+
+
+可以看出先验分布 (20.11) 和后验分布 (20.12) 都是狄利克雷分布, 两者有不同的参数,所以狄利克雷分布是多项分布的共轭先验。狄利克雷后验分布的参数等于狄利克雷先验分布参数 $\alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{k}\right)$ 加上多项分布的观测计数 $n=\left(n_{1}, n_{2}, \cdots, n_{k}\right)$, 好像试验之前就已经观察到计数 $\alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{k}\right)$, 因此也把 $\alpha$ 叫做先验伪计数（prior pseudo-counts）。
+
+\section*{20.2 潜在狄利克雷分配模型}
+\subsection*{20.2.1 基本想法}
+潜在狄利克雷分配 (LDA) 是文本集合的生成概率模型。模型假设话题由单词的多项分\\
+布表示, 文本由话题的多项分布表示, 单词分布和话题分布的先验分布都是狄利克雷分布。文本内容的不同是由于它们的话题分布不同。(严格意义上说, 这里的多项分布都是类别分布, 在机器学习与自然语言处理中, 有时对两者不作严格区分)
+
+LDA 模型表示文本集合的自动生成过程: 首先, 基于单词分布的先验分布（狄利克雷分布) 生成多个单词分布, 即决定多个话题内容; 然后, 基于话题分布的先验分布（狄利克雷分布）生成多个话题分布, 即决定多个文本内容; 最后, 基于每一个话题分布生成话题序列, 针对每一个话题, 基于话题的单词分布生成单词, 整体构成一个单词序列, 即生成文本,重复这个过程生成所有文本。文本的单词序列是观测变量, 文本的话题序列是隐变量, 文本的话题分布和话题的单词分布也是隐变量。图 20.3 示意了 LDA 的文本生成过程 (详见文前彩图)。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-32}
+\end{center}
+
+图 $20.3 \mathrm{LDA}$ 的文本生成过程 (见文前彩图)
+
+LDA 模型是概率图模型, 其特点是以狄利克雷分布为多项分布的先验分布, 学习就是给定文本集合, 通过后验概率分布的估计, 推断模型的所有参数。利用 LDA 进行话题分析就是对给定文本集合, 学习到每个文本的话题分布, 以及每个话题的单词分布。
+
+可以认为 LDA 是 PLSA（概率潜在语义分析）的扩展, 相同点是两者都假设话题是单词的多项分布, 文本是话题的多项分布。不同点是 LDA 使用狄利克雷分布作为先验分布, 而 PLSA 不使用先验分布 (或者说假设先验分布是均匀分布), 两者对文本生成过程有不同假设; 学习过程 LDA 基于贝叶斯学习, 而 PLSA 基于极大似然估计。LDA 的优点是使用先验概率分布, 可以防止学习过程中产生的过拟合 (over-fitting)。
+
+\subsection*{20.2.2 模型定义}
+本书采用常用 LDA 模型的定义, 与原始文献中提出的模型略有不同。
+
+\section*{1. 模型要素}
+潜在狄利克雷分配 (LDA) 使用三个集合: 一是单词集合 $W=\left\{w_{1}, w_{2}, \cdots, w_{v}, \cdots, w_{V}\right\}$,其中 $w_{v}$ 是第 $v$ 个单词, $v=1,2, \cdots, V, V$ 是单词的个数。二是文本集合 $D=\left\{w_{1}, w_{2}, \cdots\right.$, $\left.w_{m}, \cdots, w_{M}\right\}$, 其中 $w_{m}$ 是第 $m$ 个文本, $m=1,2, \cdots, M, M$ 是文本的个数。文本 $w_{m}$是一个单词序列 $w_{m}=\left(w_{m 1}, w_{m 2}, \cdots, w_{m n}, \cdots, w_{m N_{m}}\right)$, 其中 $w_{m n}$ 是文本 $w_{m}$ 的第 $n$ 个单词, $n=1,2, \cdots, N_{m}, N_{m}$ 是文本 $w_{m}$ 中单词的个数。三是话题集合 $Z=\left\{z_{1}, z_{2}, \cdots\right.$, $\left.z_{k}, \cdots, z_{K}\right\}$, 其中 $z_{k}$ 是第 $k$ 个话题, $k=1,2, \cdots, K, K$ 是话题的个数。
+
+每一个话题 $z_{k}$ 由一个单词的条件概率分布 $p\left(w \mid z_{k}\right)$ 决定, $w \in W$ 。分布 $p\left(w \mid z_{k}\right)$ 服从多项分布 (严格意义上类别分布), 其参数为 $\varphi_{k}$ 。参数 $\varphi_{k}$ 服从狄利克雷分布 (先验分布), 其超参数为 $\beta$ 。参数 $\varphi_{k}$ 是一个 $V$ 维向量 $\varphi_{k}=\left(\varphi_{k 1}, \varphi_{k 2}, \cdots, \varphi_{k V}\right)$, 其中 $\varphi_{k v}$ 表示话题 $z_{k}$ 生成单词 $w_{v}$ 的概率。所有话题的参数向量构成一个 $K \times V$ 矩阵 $\varphi=\left\{\varphi_{k}\right\}_{k=1}^{K}$ 。超参数 $\beta$ 也是一个 $V$ 维向量 $\beta=\left(\beta_{1}, \beta_{2}, \cdots, \beta_{V}\right)$ 。
+
+每一个文本 $w_{m}$ 由一个话题的条件概率分布 $p\left(z \mid w_{m}\right)$ 决定, $z \in Z$ 。分布 $p\left(z \mid w_{m}\right)$ 服从多项分布 (严格意义上类别分布), 其参数为 $\theta_{m}$ 。参数 $\theta_{m}$ 服从狄利克雷分布 (先验分布), 其超参数为 $\alpha$ 。参数 $\theta_{m}$ 是一个 $K$ 维向量 $\theta_{m}=\left(\theta_{m 1}, \theta_{m 2}, \cdots, \theta_{m K}\right)$, 其中 $\theta_{m k}$ 表示文本 $w_{m}$生成话题 $z_{k}$ 的概率。所有文本的参数向量构成一个 $M \times K$ 矩阵 $\theta=\left\{\theta_{m}\right\}_{m=1}^{M}$ 。超参数 $\alpha$ 也是一个 $K$ 维向量 $\alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{K}\right)$ 。
+
+每一个文本 $w_{m}$ 中的每一个单词 $w_{m n}$ 由该文本的话题分布 $p\left(z \mid w_{m}\right)$ 以及所有话题的单词分布 $p\left(w \mid z_{k}\right)$ 决定。
+
+\section*{2. 生成过程}
+给定单词集合 $W$, 文本集合 $D$, 话题集合 $Z$, 狄利克雷分布的超参数 $\alpha$ 和 $\beta$, LDA 文本集合的生成过程如下:
+
+(1) 生成话题的单词分布
+
+随机生成 $K$ 个话题的单词分布。具体过程如下: 按照狄利克雷分布 $\operatorname{Dir}(\beta)$ 随机生成一个参数向量 $\varphi_{k}, \varphi_{k} \sim \operatorname{Dir}(\beta)$, 作为话题 $z_{k}$ 的单词分布 $p\left(w \mid z_{k}\right), w \in W, k=1,2, \cdots, K$ 。
+
+(2) 生成文本的话题分布
+
+随机生成 $M$ 个文本的话题分布。具体过程如下: 按照狄利克雷分布 $\operatorname{Dir}(\alpha)$ 随机生成一个参数向量 $\theta_{m}, \theta_{m} \sim \operatorname{Dir}(\alpha)$, 作为文本 $w_{m}$ 的话题分布 $p\left(z \mid w_{m}\right), m=1,2, \cdots, M$ 。
+
+(3) 生成文本的单词序列
+
+随机生成 $M$ 个文本的 $N_{m}$ 个单词。文本 $w_{m}(m=1,2, \cdots, M)$ 的单词 $w_{m n}(n=$ $\left.1,2, \cdots, N_{m}\right)$ 的生成过程如下:
+
+(a) 首先按照多项分布 $\operatorname{Mult}\left(\theta_{m}\right)$ 随机生成一个话题 $z_{m n}, z_{m n} \sim \operatorname{Mult}\left(\theta_{m}\right)$ 。
+
+(b) 然后按照多项分布 $\operatorname{Mult}\left(\varphi_{z_{m n}}\right)$ 随机生成一个单词 $w_{m n}, w_{m n} \sim \operatorname{Mult}\left(\varphi_{z_{m n}}\right)$ 。文本 $w_{m}$ 本身是单词序列 $w_{m}=\left(w_{m 1}, w_{m 2}, \cdots, w_{m N_{m}}\right)$, 对应着隐式的话题序列 $z_{m}=$ $\left(z_{m 1}, z_{m 2}, \cdots, z_{m N_{m}}\right)$ 。
+
+总结 LDA 生成文本的算法如下。
+
+\section*{算法 20.1 (LDA 的文本生成算法)}
+(1) 对于话题 $z_{k}(k=1,2, \cdots, K)$ :
+
+生成多项分布参数 $\varphi_{k} \sim \operatorname{Dir}(\beta)$, 作为话题的单词分布 $p\left(w \mid z_{k}\right)$;
+
+(2) 对于文本 $w_{m}(m=1,2, \cdots, M)$ :
+
+生成多项分布参数 $\theta_{m} \sim \operatorname{Dir}(\alpha)$, 作为文本的话题分布 $p\left(z \mid w_{m}\right)$;
+
+(3) 对于文本 $w_{m}$ 的单词 $w_{m n}\left(m=1,2, \cdots, M, n=1,2, \cdots, N_{m}\right)$ :
+
+(a) 生成话题 $z_{m n} \sim \operatorname{Mult}\left(\theta_{m}\right)$, 作为单词对应的话题;
+
+(b) 生成单词 $w_{m n} \sim \operatorname{Mult}\left(\varphi_{z_{m n}}\right)$ 。
+
+LDA 的文本生成过程中, 假定话题个数 $K$ 给定, 实际通常通过实验选定。狄利克雷分布的超参数 $\alpha$ 和 $\beta$ 通常也是事先给定的。在没有其他先验知识的情况下, 可以假设向量 $\alpha$和 $\beta$ 的所有分量均为 1 , 这时的文本的话题分布 $\theta_{m}$ 是对称的, 话题的单词分布 $\varphi_{k}$ 也是对称的。
+
+\subsection*{20.2.3 概率图模型}
+LDA 模型本质是一种概率图模型 (probabilistic graphical model)。图 20.4 为 LDA 作为概率图模型的板块表示 (plate notation)。图中结点表示随机变量, 实心结点是观测变量,空心结点是隐变量; 有向边表示概率依存关系; 矩形 (板块) 表示重复, 板块内数字表示重复的次数。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-34}
+\end{center}
+
+图 20.4 LDA 的板块表示
+
+对于图 20.4 中的 LDA 板块表示, 结点 $\alpha$ 和 $\beta$ 是模型的超参数, 结点 $\varphi_{k}$ 表示话题的单词分布的参数, 结点 $\theta_{m}$ 表示文本的话题分布的参数, 结点 $z_{m n}$ 表示话题, 结点 $w_{m n}$ 表示单词。结点 $\beta$ 指向结点 $\varphi_{k}$, 重复 $K$ 次, 表示根据超参数 $\beta$ 生成 $K$ 个话题的单词分布的参数 $\varphi_{k}$; 结点 $\alpha$ 指向结点 $\theta_{m}$, 重复 $M$ 次, 表示根据超参数 $\alpha$ 生成 $M$ 个文本的话题分布的参数 $\theta_{m}$; 结点 $\theta_{m}$ 指向结点 $z_{m n}$, 重复 $N_{m}$ 次, 表示根据文本的话题分布 $\theta_{m}$ 生成 $N_{m}$ 个话题 $z_{m n}$; 结点 $z_{m n}$ 指向结点 $w_{m n}$, 同时 $K$ 个结点 $\varphi_{k}$ 也指向结点 $w_{m n}$, 表示根据话题 $z_{m n}$ 以及 $K$ 个话题的单词分布 $\varphi_{k}$ 生成单词 $w_{m n}$ 。
+
+板块表示的优点是简洁, 板块表示展开之后, 成为普通的有向图表示 (图 20.5)。有向图中结点表示随机变量, 有向边表示概率依存关系。可以看出 LDA 是相同随机变量被重复多次使用的概率图模型。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_f9cfd3d77aa90e83e0d5g-35}
+\end{center}
+
+图 $20.5 \mathrm{LDA}$ 的展开图模型表示
+
+\subsection*{20.2.4 随机变量序列的可交换性}
+一个有限的随机变量序列是可交换的 (exchangeable), 是指随机变量的联合概率分布对随机变量的排列不变。
+
+
+\begin{equation*}
+P\left(x_{1}, x_{2}, \cdots, x_{N}\right)=P\left(x_{\pi(1)}, x_{\pi(2)}, \cdots, x_{\pi(N)}\right) \tag{20.13}
+\end{equation*}
+
+
+这里 $\pi(1), \pi(2), \cdots, \pi(N)$ 代表自然数 $1,2, \cdots, N$ 的任意一个排列。一个无限的随机变量序列是无限可交换 (infinitely exchangeable) 的, 是指它的任意一个有限子序列都是可交换的。
+
+如果一个随机变量序列 $X_{1}, X_{2}, \cdots, X_{N}, \cdots$ 是独立同分布的, 那么它们是无限可交换的。反之不然。
+
+随机变量序列可交换的假设在贝叶斯学习中经常使用。根据 De Finetti 定理, 任意一个无限可交换的随机变量序列对一个随机参数是条件独立同分布的。即任意一个无限可交换的随机变量序列 $X_{1}, X_{2}, \cdots, X_{i}, \cdots$ 的基于一个随机参数 $Y$ 的条件概率等于基于这个随机参数 $Y$ 的各个随机变量 $X_{1}, X_{2}, \cdots, X_{i}, \cdots$ 的条件概率的乘积。
+
+
+\begin{equation*}
+P\left(X_{1}, X_{2}, \cdots, X_{i}, \cdots \mid Y\right)=P\left(X_{1} \mid Y\right) P\left(X_{2} \mid Y\right) \cdots P\left(X_{i} \mid Y\right) \cdots \tag{20.14}
+\end{equation*}
+
+
+LDA 假设文本由无限可交换的话题序列组成。由 De Finetti 定理知, 实际是假设文本中的话题对一个随机参数是条件独立同分布的。所以在参数给定的条件下, 文本中话题的顺序可以忽略。作为对比, 概率潜在语义模型假设文本中的话题是独立同分布的, 文本中的话题的顺序也可以忽略。
+
+\section*{20.2 .5 概率公式}
+LDA 模型整体是由观测变量和隐变量组成的联合概率分布, 可以表示为
+
+
+\begin{equation*}
+p(w, z, \theta, \varphi \mid \alpha, \beta)=\prod_{k=1}^{K} p\left(\varphi_{k} \mid \beta\right) \prod_{m=1}^{M} p\left(\theta_{m} \mid \alpha\right) \prod_{n=1}^{N_{m}} p\left(z_{m n} \mid \theta_{m}\right) p\left(w_{m n} \mid z_{m n}, \varphi\right) \tag{20.15}
+\end{equation*}
+
+
+其中, 观测变量 $w$ 表示所有文本中的单词序列, 隐变量 $z$ 表示所有文本中的话题序列, 隐变量 $\theta$ 表示所有文本的话题分布的参数, 隐变量 $\varphi$ 表示所有话题的单词分布的参数, $\alpha$ 和 $\beta$ 是超参数。式中 $p\left(\varphi_{k} \mid \beta\right)$ 表示超参数 $\beta$ 给定条件下第 $k$ 个话题的单词分布的参数 $\varphi_{k}$ 的生成概率, $p\left(\theta_{m} \mid \alpha\right)$ 表示超参数 $\alpha$ 给定条件下第 $m$ 个文本的话题分布的参数 $\theta_{m}$ 的生成概率, $p\left(z_{m n} \mid \theta_{m}\right)$ 表示第 $m$ 个文本的话题分布 $\theta_{m}$ 给定条件下文本的第 $n$ 个位置的话题 $z_{m n}$ 的生成概率, $p\left(w_{m n} \mid z_{m n}, \varphi\right)$ 表示在第 $m$ 个文本的第 $n$ 个位置的话题 $z_{m n}$ 及所有话题的单词分布的参数 $\varphi$ 给定条件下第 $m$ 个文本的第 $n$ 个位置的单词 $w_{m n}$ 的生成概率。参见图 20.5。
+
+第 $m$ 个文本的联合概率分布可以表示为
+
+
+\begin{equation*}
+p\left(w_{m}, z_{m}, \theta_{m}, \varphi \mid \alpha, \beta\right)=\prod_{k=1}^{K} p\left(\varphi_{k} \mid \beta\right) p\left(\theta_{m} \mid \alpha\right) \prod_{n=1}^{N_{m}} p\left(z_{m n} \mid \theta_{m}\right) p\left(w_{m n} \mid z_{m n}, \varphi\right) \tag{20.16}
+\end{equation*}
+
+
+其中, $w_{m}$ 表示该文本中的单词序列, $z_{m}$ 表示该文本的话题序列, $\theta_{m}$ 表示该文本的话题分布参数。
+
+LDA 模型的联合分布含有隐变量, 对隐变量进行积分得到边缘分布。
+
+参数 $\theta_{m}$ 和 $\varphi$ 给定条件下第 $m$ 个文本的生成概率是
+
+
+\begin{equation*}
+p\left(w_{m} \mid \theta_{m}, \varphi\right)=\prod_{n=1}^{N_{m}}\left[\sum_{k=1}^{K} p\left(z_{m n}=k \mid \theta_{m}\right) p\left(w_{m n} \mid \varphi_{k}\right)\right] \tag{20.17}
+\end{equation*}
+
+
+超参数 $\alpha$ 和 $\beta$ 给定条件下第 $m$ 个文本的生成概率是
+
+
+\begin{equation*}
+p\left(w_{m} \mid \alpha, \beta\right)=\prod_{k=1}^{K} \int p\left(\varphi_{k} \mid \beta\right)\left\{\int p\left(\theta_{m} \mid \alpha\right) \prod_{n=1}^{N_{m}}\left[\sum_{l=1}^{K} p\left(z_{m n}=l \mid \theta_{m}\right) p\left(w_{m n} \mid \varphi_{l}\right)\right] \mathrm{d} \theta_{m}\right\} \mathrm{d} \varphi_{k} \tag{20.18}
+\end{equation*}
+
+
+超参数 $\alpha$ 和 $\beta$ 给定条件下所有文本的生成概率是
+
+
+\begin{equation*}
+p(w \mid \alpha, \beta)=\prod_{k=1}^{K} \int p\left(\varphi_{k} \mid \beta\right)\left\{\prod_{m=1}^{M} \int p\left(\theta_{m} \mid \alpha\right) \prod_{n=1}^{N_{m}}\left[\sum_{l=1}^{K} p\left(z_{m n}=l \mid \theta_{m}\right) p\left(w_{m n} \mid \varphi_{l}\right)\right] \mathrm{d} \theta_{m}\right\} \mathrm{d} \varphi_{k} \tag{20.19}
+\end{equation*}
+
+
+\subsection*{20.3 LDA 的吉布斯抽样算法}
+潜在狄利克雷分配 (LDA) 的学习 (参数估计) 是一个复杂的最优化问题, 很难精确求解,只能近似求解。常用的近似求解方法有吉布斯抽样 (Gibbs sampling) 和变分推理 (variational inference）。本节讲述吉布斯抽样, 20.4 节讲述变分推理算法。吉布斯抽样的优点是实现简单, 缺点是迭代次数可能较多。
+
+\subsection*{20.3.1 基本想法}
+对于 LDA 模型的学习, 给定文本 (单词序列) 的集合 $D=\left\{w_{1}, \cdots, w_{m}, \cdots, w_{M}\right\}$, 其中\\
+$w_{m}$ 是第 $m$ 个文本 (单词序列), $w_{m}=\left(w_{m 1}, \cdots, w_{m n}, \cdots, w_{m N_{m}}\right.$ ), 以 $w$ 表示文本集合的单词序列, 即 $w=\left(w_{11}, w_{12}, \cdots, w_{1 N_{1}}, w_{21}, w_{22}, \cdots, w_{2 N_{2}}, \cdots, w_{M 1}, w_{M 2}, \cdots, w_{M N_{M}}\right)$ (参考图 20.5); 超参数 $\alpha$ 和 $\beta$ 已知。目标是要推断: (1)话题序列的集合 $z=\left\{z_{1}, \cdots, z_{m}, \cdots, z_{M}\right\}$的后验概率分布, 其中 $z_{m}$ 是第 $m$ 个文本的话题序列, $z_{m}=\left(z_{m 1}, \cdots, z_{m n}, \cdots, z_{m N_{m}}\right)$; (2)参数 $\theta=\left\{\theta_{1}, \cdots, \theta_{m}, \cdots, \theta_{M}\right\}$, 其中 $\theta_{m}$ 是文本 $w_{m}$ 的话题分布的参数; (3)参数 $\varphi=$ $\left\{\varphi_{1}, \cdots, \varphi_{k}, \cdots, \varphi_{K}\right\}$, 其中 $\varphi_{k}$ 是话题 $z_{k}$ 的单词分布的参数。也就是说, 要对联合概率分布 $p(w, z, \theta, \varphi \mid \alpha, \beta)$ 进行估计, 其中 $w$ 是观测变量, 而 $z, \theta, \varphi$ 是隐变量。
+
+第 19 章讲述了吉布斯抽样, 这是一种常用的马尔可夫链蒙特卡罗法。为了估计多元随机变量 $x$ 的联合分布 $p(x)$, 吉布斯抽样法选择 $x$ 的一个分量, 固定其他分量, 按照其条件概率分布进行随机抽样, 依次循环对每一个分量执行这个操作, 得到联合分布 $p(x)$ 的一个随机样本, 重复这个过程, 在燃烧期之后, 得到联合概率分布 $p(x)$ 的样本集合。
+
+LDA 模型的学习通常采用收缩的吉布斯抽样 (collapsed Gibbs sampling) 方法 ${ }^{1}$, 基本想法是: 通过对隐变量 $\theta$ 和 $\varphi$ 积分, 得到边缘概率分布 $p(w, z \mid \alpha, \beta)$ (也是联合分布), 其中变量 $w$ 是可观测的, 变量 $z$ 是不可观测的; 对后验概率分布 $p(z \mid w, \alpha, \beta)$ 进行吉布斯抽样, 得到分布 $p(z \mid w, \alpha, \beta)$ 的样本集合; 再利用这个样本集合对参数 $\theta$ 和 $\varphi$ 进行估计, 最终得到 LDA 模型 $p(w, z, \theta, \varphi \mid \alpha, \beta)$ 的所有参数估计。
+
+\subsection*{20.3.2 算法的主要部分}
+根据上面的分析, 问题转化为对后验概率分布 $p(z \mid w, \alpha, \beta)$ 的吉布斯抽样, 该分布表示在所有文本的单词序列给定条件下所有可能话题序列的条件概率。这里先给出该分布的表达式, 之后给出该分布的满条件分布表达式。
+
+\section*{1. 抽样分布的表达式}
+首先有关系
+
+
+\begin{equation*}
+p(z \mid w, \alpha, \beta)=\frac{p(w, z \mid \alpha, \beta)}{p(w \mid \alpha, \beta)} \propto p(w, z \mid \alpha, \beta) \tag{20.20}
+\end{equation*}
+
+
+这里变量 $w, \alpha$ 和 $\beta$ 已知, 分母相同, 可以不予考虑。联合分布 $p(w, z \mid \alpha, \beta)$ 的表达式可以进一步分解为
+
+
+\begin{equation*}
+p(w, z \mid \alpha, \beta)=p(w \mid z, \alpha, \beta) p(z \mid \alpha, \beta)=p(w \mid z, \beta) p(z \mid \alpha) \tag{20.21}
+\end{equation*}
+
+
+两个因子可以分别处理。
+
+推导第一个因子 $p(w \mid z, \beta)$ 的表达式。首先
+
+
+\begin{equation*}
+p(w \mid z, \varphi)=\prod_{k=1}^{K} \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}} \tag{20.22}
+\end{equation*}
+
+
+其中, $\varphi_{k v}$ 是第 $k$ 个话题生成单词集合第 $v$ 个单词的概率, $n_{k v}$ 是数据中第 $k$ 个话题生成第 $v$ 个单词的次数。于是
+
+(1) 原理上也可以考虑整体吉布斯抽样 (full Gibbs sampling), 但算法更加复杂。
+
+
+\begin{align*}
+p(w \mid z, \beta) & =\int p(w \mid z, \varphi) p(\varphi \mid \beta) \mathrm{d} \varphi \\
+& =\int \prod_{k=1}^{K} \frac{1}{\mathrm{~B}(\beta)} \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}+\beta_{v}-1} \mathrm{~d} \varphi \\
+& =\prod_{k=1}^{K} \frac{1}{\mathrm{~B}(\beta)} \int \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}+\beta_{v}-1} \mathrm{~d} \varphi \\
+& =\prod_{k=1}^{K} \frac{\mathrm{B}\left(n_{k}+\beta\right)}{\mathrm{B}(\beta)} \tag{20.23}
+\end{align*}
+
+
+其中, $n_{k}=\left\{n_{k 1}, n_{k 2}, \cdots, n_{k V}\right\}$ 。
+
+第二个因子 $p(z \mid \alpha)$ 的表达式可以类似推导。首先
+
+
+\begin{equation*}
+p(z \mid \theta)=\prod_{m=1}^{M} \prod_{k=1}^{K} \theta_{m k}^{n_{m k}} \tag{20.24}
+\end{equation*}
+
+
+其中, $\theta_{m k}$ 是第 $m$ 个文本生成第 $k$ 个话题的概率, $n_{m k}$ 是数据中第 $m$ 个文本生成第 $k$ 个话题的次数。于是
+
+
+\begin{align*}
+p(z \mid \alpha) & =\int p(z \mid \theta) p(\theta \mid \alpha) \mathrm{d} \theta \\
+& =\int \prod_{m=1}^{M} \frac{1}{\mathrm{~B}(\alpha)} \prod_{k=1}^{K} \theta_{m k}^{n_{m k}+\alpha_{k}-1} \mathrm{~d} \theta \\
+& =\prod_{m=1}^{M} \frac{1}{\mathrm{~B}(\alpha)} \int \prod_{k=1}^{K} \theta_{m k}^{n_{m k}+\alpha_{k}-1} \mathrm{~d} \theta \\
+& =\prod_{m=1}^{M} \frac{\mathrm{B}\left(n_{m}+\alpha\right)}{\mathrm{B}(\alpha)} \tag{20.25}
+\end{align*}
+
+
+其中, $n_{m}=\left\{n_{m 1}, n_{m 2}, \cdots, n_{m K}\right\}$ 。由式 (20.23) 和式 (20.25) 得:
+
+
+\begin{equation*}
+p(z, w \mid \alpha, \beta)=\prod_{k=1}^{K} \frac{\mathrm{B}\left(n_{k}+\beta\right)}{\mathrm{B}(\beta)} \cdot \prod_{m=1}^{M} \frac{\mathrm{B}\left(n_{m}+\alpha\right)}{\mathrm{B}(\alpha)} \tag{20.26}
+\end{equation*}
+
+
+故由式 (20.20) 和式 (20.26) 得收缩的吉布斯抽样分布的公式:
+
+
+\begin{equation*}
+p(z \mid w, \alpha, \beta) \propto \prod_{k=1}^{K} \frac{\mathrm{B}\left(n_{k}+\beta\right)}{\mathrm{B}(\beta)} \cdot \prod_{m=1}^{M} \frac{\mathrm{B}\left(n_{m}+\alpha\right)}{\mathrm{B}(\alpha)} \tag{20.27}
+\end{equation*}
+
+
+\section*{2. 满条件分布的表达式}
+分布 $p(z \mid w, \alpha, \beta)$ 的满条件分布可以写成
+
+
+\begin{equation*}
+p\left(z_{i} \mid z_{-i}, w, \alpha, \beta\right)=\frac{1}{Z_{z_{i}}} p(z \mid w, \alpha, \beta) \tag{20.28}
+\end{equation*}
+
+
+这里 $w_{i}$ 表示所有文本的单词序列的第 $i$ 个位置的单词, $z_{i}$ 表示单词 $w_{i}$ 对应的话题, $i=$ $(m, n), i=1,2, \cdots, I, z_{-i}=\left\{z_{j}: j \neq i\right\}, Z_{z_{i}}$ 表示分布 $p(z \mid w, \alpha, \beta)$ 对变量 $z_{i}$ 的边缘化因子。式 (20.28) 是在所有文本单词序列、其他位置话题序列给定条件下第 $i$ 个位置的话题的条件概率分布。由式 (20.27) 和式 (20.28) 可以推出:
+
+
+\begin{equation*}
+p\left(z_{i} \mid z_{-i}, w, \alpha, \beta\right) \propto \frac{n_{k v}+\beta_{v}}{\sum_{v=1}^{V}\left(n_{k v}+\beta_{v}\right)} \cdot \frac{n_{m k}+\alpha_{k}}{\sum_{k=1}^{K}\left(n_{m k}+\alpha_{k}\right)} \tag{20.29}
+\end{equation*}
+
+
+其中, 第 $m$ 个文本的第 $n$ 个位置的单词 $w_{i}$ 是单词集合的第 $v$ 个单词, 其话题 $z_{i}$ 是话题集合的第 $k$ 个话题; $n_{k v}$ 表示第 $k$ 个话题中第 $v$ 个单词的计数, 但减去当前单词的计数; $n_{m k}$ 表示第 $m$ 个文本中第 $k$ 个话题的计数, 但减去当前单词的话题的计数。
+
+\subsection*{20.3.3 算法的后处理}
+通过吉布斯抽样得到的分布 $p(z \mid w, \alpha, \beta)$ 的样本可以得到变量 $z$ 的分配值, 也可以估计变量 $\theta$ 和 $\varphi$ 。
+
+\section*{1. 参数 $\theta=\left\{\theta_{m}\right\}$ 的估计}
+根据 LDA 模型的定义, 后验概率满足
+
+
+\begin{equation*}
+p\left(\theta_{m} \mid z_{m}, \alpha\right)=\frac{1}{Z_{\theta_{m}}} \prod_{n=1}^{N_{m}} p\left(z_{m n} \mid \theta_{m}\right) p\left(\theta_{m} \mid \alpha\right)=\operatorname{Dir}\left(\theta_{m} \mid n_{m}+\alpha\right) \tag{20.30}
+\end{equation*}
+
+
+这里 $n_{m}=\left\{n_{m 1}, n_{m 2}, \cdots, n_{m K}\right\}$ 是第 $m$ 个文本的话题的计数, $Z_{\theta_{m}}$ 表示分布 $p\left(\theta_{m}, z_{m} \mid \alpha\right)$对变量 $\theta_{m}$ 的边缘化因子。于是得到参数 $\theta=\left\{\theta_{m}\right\}$ 的估计式:
+
+
+\begin{equation*}
+\theta_{m k}=\frac{n_{m k}+\alpha_{k}}{\sum_{k=1}^{K}\left(n_{m k}+\alpha_{k}\right)}, \quad m=1,2, \cdots, M, \quad k=1,2, \cdots, K \tag{20.31}
+\end{equation*}
+
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 参数 $\varphi=\left\{\varphi_{k}\right\}$ 的估计
+\end{enumerate}
+
+后验概率满足
+
+
+\begin{equation*}
+p\left(\varphi_{k} \mid w, z, \beta\right)=\frac{1}{Z_{\varphi_{k}}} \prod_{i=1}^{I} p\left(w_{i} \mid \varphi_{k}\right) p\left(\varphi_{k} \mid \beta\right)=\operatorname{Dir}\left(\varphi_{k} \mid n_{k}+\beta\right) \tag{20.32}
+\end{equation*}
+
+
+这里 $n_{k}=\left\{n_{k 1}, n_{k 2}, \cdots, n_{k V}\right\}$ 是第 $k$ 个话题的单词的计数, $Z_{\varphi_{k}}$ 表示分布 $p\left(\varphi_{k}, w \mid z, \beta\right)$ 对变量 $\varphi_{k}$ 的边缘化因子, $I$ 是文本集合单词序列 $w$ 的单词总数。于是得到参数的估计式:
+
+
+\begin{equation*}
+\varphi_{k v}=\frac{n_{k v}+\beta_{v}}{\sum_{v=1}^{V}\left(n_{k v}+\beta_{v}\right)}, \quad k=1,2, \cdots, K, \quad v=1,2, \cdots, V \tag{20.33}
+\end{equation*}
+
+
+\subsection*{20.3.4 算法}
+总结 LDA 的吉布斯抽样的具体算法。
+
+对给定的所有文本的单词序列 $w$, 每个位置上随机指派一个话题, 整体构成所有文本的话题序列 $z$ 。然后循环执行以下操作。
+
+在每一个位置上计算在该位置上的话题的满条件概率分布, 然后进行随机抽样, 得到该位置的新的话题, 分派给这个位置。
+
+$$
+p\left(z_{i} \mid z_{-i}, w, \alpha, \beta\right) \propto \frac{n_{k v}+\beta_{v}}{\sum_{v=1}^{V}\left(n_{k v}+\beta_{v}\right)} \cdot \frac{n_{m k}+\alpha_{k}}{\sum_{k=1}^{K}\left(n_{m k}+\alpha_{k}\right)}
+$$
+
+这个条件概率分布由两个因子组成, 第一个因子表示话题生成该位置的单词的概率, 第二个因子表示该位置的文本生成话题的概率。
+
+整体准备两个计数矩阵: 话题-单词矩阵 $N_{K \times V}=\left[n_{k v}\right]$ 和文本-话题矩阵 $N_{M \times K}=$ $\left[n_{m k}\right]$ 。在每一个位置, 对两个矩阵中该位置的已有话题的计数减 1 , 计算满条件概率分布, 然后进行抽样, 得到该位置的新话题, 之后对两个矩阵中该位置的新话题的计数加 1 。计算移到下一个位置。
+
+在燃烧期之后得到的所有文本的话题序列就是条件概率分布 $p(z \mid w, \alpha, \beta)$ 的样本。
+
+\section*{算法 20.2 (LDA 吉布斯抽样算法)}
+输入: 文本的单词序列 $w=\left\{w_{1}, w_{2}, \cdots, w_{m}, \cdots, w_{M}\right\}, w_{m}=\left(w_{m 1}, w_{m 2}, \cdots, w_{m n}, \cdots\right.$, $\left.w_{m_{N_{m}}}\right)$ 。
+
+输出: 文本的话题序列 $z=\left\{z_{1}, z_{2}, \cdots, z_{m}, \cdots, z_{M}\right\}, z_{m}=\left(z_{m 1}, z_{m 2}, \cdots, z_{m n}, \cdots, z_{m_{N_{m}}}\right)$的后验概率分布 $p(z \mid w, \alpha, \beta)$ 的样本计数, 模型的参数 $\varphi$ 和 $\theta$ 的估计值。
+
+参数: 超参数 $\alpha$ 和 $\beta$, 话题个数 $K$ 。
+
+(1) 设所有计数矩阵的元素 $n_{m k}, n_{k v}$, 计数向量的元素 $n_{m}, n_{k}$ 初值为 0 。
+
+(2) 对所有文本 $w_{m}, m=1,2, \cdots, M$, 对第 $m$ 个文本中的所有单词 $w_{m n}, n=1,2, \cdots$, $N_{m}$, 抽样话题 $z_{m n}=z_{k} \sim \operatorname{Mult}\left(\frac{1}{K}\right)$; 增加文本-话题计数 $n_{m k}=n_{m k}+1$, 增加文本-话题和计数 $n_{m}=n_{m}+1$, 增加话题-单词计数 $n_{k v}=n_{k v}+1$, 增加话题-单词和计数 $n_{k}=n_{k}+1$ 。
+
+(3) 循环执行以下操作, 直到进入燃烧期。对所有文本 $w_{m}, m=1,2, \cdots, M$, 对第 $m$个文本中的所有单词 $w_{m n}, n=1,2, \cdots, N_{m}$ :
+
+(a) 当前的单词 $w_{m n}$ 是第 $v$ 个单词, 话题指派 $z_{m n}$ 是第 $k$ 个话题; 减少计数 $n_{m k}=n_{m k}-1, n_{m}=n_{m}-1, n_{k v}=n_{k v}-1, n_{k}=n_{k}-1 ;$
+
+（b）按照满条件分布进行抽样:
+
+$$
+p\left(z_{i} \mid z_{-i}, w, \alpha, \beta\right) \propto \frac{n_{k v}+\beta_{v}}{\sum_{v=1}^{V}\left(n_{k v}+\beta_{v}\right)} \cdot \frac{n_{m k}+\alpha_{k}}{\sum_{k=1}^{K}\left(n_{m k}+\alpha_{k}\right)}
+$$
+
+得到新的第 $k^{\prime}$ 个话题, 分配给 $z_{m n}$;
+
+
+\end{CJK*}
+\end{document}

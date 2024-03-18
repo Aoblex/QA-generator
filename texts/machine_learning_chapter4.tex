@@ -1,0 +1,2100 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan,}
+\urlstyle{same}
+
+\title{算法 7.1 (线性可分支持向量机学习算法—— 最大间隔法) }
+
+\author{}
+\date{}
+
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\begin{document}
+\maketitle
+即我们希望最大化超平面 $(w, b)$ 关于训练数据集的几何间隔 $\gamma$, 约束条件表示的是超平面 $(w, b)$ 关于每个训练样本点的几何间隔至少是 $\gamma$ 。
+
+考虑几何间隔和函数间隔的关系式 (7.8), 可将这个问题改写为
+
+\[
+\begin{array}{ll}
+\max _{w, b} & \frac{\hat{\gamma}}{\|w\|} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right) \geqslant \hat{\gamma}, \quad i=1,2, \cdots, N \tag{7.12}
+\end{array}
+\]
+
+函数间隔 $\hat{\gamma}$ 的取值并不影响最优化问题的解。事实上, 假设将 $w$ 和 $b$ 按比例改变为 $\lambda w$和 $\lambda b$, 这时函数间隔成为 $\lambda \hat{\gamma}$ 。函数间隔的这一改变对上面最优化问题的不等式约束没有影响, 对目标函数的优化也没有影响, 也就是说, 它产生一个等价的最优化问题。这样, 就可以取 $\hat{\gamma}=1$ 。将 $\hat{\gamma}=1$ 代入上面的最优化问题, 注意到最大化 $\frac{1}{\|w\|}$ 和最小化 $\frac{1}{2}\|w\|^{2}$ 是等价的,于是就得到下面的线性可分支持向量机学习的最优化问题:
+
+\[
+\begin{array}{ll}
+\min _{w, b} & \frac{1}{2}\|w\|^{2} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right)-1 \geqslant 0, \quad i=1,2, \cdots, N \tag{7.14}
+\end{array}
+\]
+
+这是一个凸二次规划 (convex quadratic programming) 问题。
+
+凸优化问题是指约束最优化问题:
+
+\[
+\begin{array}{ll}
+\min _{w} & f(w) \\
+\text { s.t. } & g_{i}(w) \leqslant 0, \quad i=1,2, \cdots, k \\
+& h_{i}(w)=0, \quad i=1,2, \cdots, l \tag{7.17}
+\end{array}
+\]
+
+其中, 目标函数 $f(w)$ 和约束函数 $g_{i}(w)$ 都是 $\boldsymbol{R}^{n}$ 上的连续可微的凸函数, 约束函数 $h_{i}(w)$ 是 $R^{n}$ 上的仿射函数 ${ }^{1}$ 。
+
+当目标函数 $f(w)$ 是二次函数且约束函数 $g_{i}(w)$ 是仿射函数时, 上述凸最优化问题成为凸二次规划问题。
+
+如果求出了约束最优化问题 (7.13) (7.14) 的解 $w^{*}, b^{*}$, 那么就可以得到最大间隔分离超平面 $w^{*} \cdot x+b^{*}=0$ 及分类决策函数 $f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)$, 即线性可分支持向量机模型。
+
+综上所述, 就有下面的线性可分支持向量机的学习算法——最大间隔法 (maximum margin method）。
+
+输入: 线性可分训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}$, $y_{i} \in \mathcal{Y}=\{-1,+1\}, i=1,2, \cdots, N$ 。
+
+输出: 最大间隔分离超平面和分类决策函数。
+
+（1）构造并求解约束最优化问题:
+
+$$
+\begin{array}{ll}
+\min _{w, b} & \frac{1}{2}\|w\|^{2} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right)-1 \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+$$
+\footnotetext{(1) $f(x)$ 称为仿射函数, 如果它满足 $f(x)=a \cdot x+b, a \in \boldsymbol{R}^{n}, b \in \boldsymbol{R}, x \in \boldsymbol{R}^{n}$ 。
+}
+求得最优解 $w^{*}, b^{*}$ 。
+
+(2) 由此得到分离超平面:
+
+$$
+w^{*} \cdot x+b^{*}=0
+$$
+
+分类决策函数:
+
+$$
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)
+$$
+
+\section*{2. 最大间隔分离超平面的存在唯一性}
+线性可分训练数据集的最大间隔分离超平面是存在且唯一的。
+
+定理 7.1 (最大间隔分离超平面的存在唯一性) 若训练数据集 $T$ 线性可分, 则可将训练数据集中的样本点完全正确分开的最大间隔分离超平面存在且唯一。
+
+\section*{证明 （1）存在性}
+由于训练数据集线性可分, 所以算法 7.1 中的最优化问题 (7.13) (7.14) 一定存在可行解。又由于目标函数有下界, 所以最优化问题 (7.13) (7.14) 必有解, 记作 $\left(w^{*}, b^{*}\right)$ 。由于训练数据集中既有正类点又有负类点, 所以 $(w, b)=(0, b)$ 不是最优化的可行解, 因而最优解 $\left(w^{*}, b^{*}\right)$ 必满足 $w^{*} \neq 0$ 。由此得知分离超平面的存在性。
+
+(2) 唯一性
+
+首先证明最优化问题 (7.13) (7.14) 解中 $w^{*}$ 的唯一性。假设问题 $(7.13) \sim(7.14)$ 存在两个最优解 $\left(w_{1}^{*}, b_{1}^{*}\right)$ 和 $\left(w_{2}^{*}, b_{2}^{*}\right)$ 。显然 $\left\|w_{1}^{*}\right\|=\left\|w_{2}^{*}\right\|=c$, 其中 $c$ 是一个常数。令 $w=\frac{w_{1}^{*}+w_{2}^{*}}{2}, b=$ $\frac{b_{1}^{*}+b_{2}^{*}}{2}$, 易知 $(w, b)$ 是问题 (7.13) (7.14) 的可行解, 从而有
+
+$$
+c \leqslant\|w\| \leqslant \frac{1}{2}\left\|w_{1}^{*}\right\|+\frac{1}{2}\left\|w_{2}^{*}\right\|=c
+$$
+
+上式表明, 式中的不等号可变为等号, 即 $\|w\|=\frac{1}{2}\left\|w_{1}^{*}\right\|+\frac{1}{2}\left\|w_{2}^{*}\right\|$, 从而有 $w_{1}^{*}=\lambda w_{2}^{*},|\lambda|=1$ 。若 $\lambda=-1$, 则 $w=0,(w, b)$ 不是问题 (7.13) (7.14) 的可行解, 矛盾。因此必有 $\lambda=1$, 即
+
+$$
+w_{1}^{*}=w_{2}^{*}
+$$
+
+由此可以把两个最优解 $\left(w_{1}^{*}, b_{1}^{*}\right)$ 和 $\left(w_{2}^{*}, b_{2}^{*}\right)$ 分别写成 $\left(w^{*}, b_{1}^{*}\right)$ 和 $\left(w^{*}, b_{2}^{*}\right)$ 。再证明 $b_{1}^{*}=b_{2}^{*}$ 。设 $x_{1}^{\prime}$ 和 $x_{2}^{\prime}$ 是集合 $\left\{x_{i} \mid y_{i}=+1\right\}$ 中分别对应于 $\left(w^{*}, b_{1}^{*}\right)$ 和 $\left(w^{*}, b_{2}^{*}\right)$ 使得问题的不等式等号成立的点, $x_{1}^{\prime \prime}$ 和 $x_{2}^{\prime \prime}$ 是集合 $\left\{x_{i} \mid y_{i}=-1\right\}$ 中分别对应于 $\left(w^{*}, b_{1}^{*}\right)$ 和 $\left(w^{*}, b_{2}^{*}\right)$ 使得问题的不等式等号成立的点, 则由 $b_{1}^{*}=-\frac{1}{2}\left(w^{*} \cdot x_{1}^{\prime}+w^{*} \cdot x_{1}^{\prime \prime}\right), b_{2}^{*}=-\frac{1}{2}\left(w^{*} \cdot x_{2}^{\prime}+w^{*} \cdot x_{2}^{\prime \prime}\right)$, 得:
+
+$$
+b_{1}^{*}-b_{2}^{*}=-\frac{1}{2}\left[w^{*} \cdot\left(x_{1}^{\prime}-x_{2}^{\prime}\right)+w^{*} \cdot\left(x_{1}^{\prime \prime}-x_{2}^{\prime \prime}\right)\right]
+$$
+
+又因为
+
+$$
+\begin{aligned}
+& w^{*} \cdot x_{2}^{\prime}+b_{1}^{*} \geqslant 1=w^{*} \cdot x_{1}^{\prime}+b_{1}^{*} \\
+& w^{*} \cdot x_{1}^{\prime}+b_{2}^{*} \geqslant 1=w^{*} \cdot x_{2}^{\prime}+b_{2}^{*}
+\end{aligned}
+$$
+
+所以, $w^{*} \cdot\left(x_{1}^{\prime}-x_{2}^{\prime}\right)=0$ 。同理有 $w^{*} \cdot\left(x_{1}^{\prime \prime}-x_{2}^{\prime \prime}\right)=0$ 。因此,
+
+$$
+b_{1}^{*}-b_{2}^{*}=0
+$$
+
+由 $w_{1}^{*}=w_{2}^{*}$ 和 $b_{1}^{*}=b_{2}^{*}$ 可知, 两个最优解 $\left(w_{1}^{*}, b_{1}^{*}\right)$ 和 $\left(w_{2}^{*}, b_{2}^{*}\right)$ 是相同的, 解的唯一性得证。
+
+由问题 (7.13) (7.14) 解的唯一性即得分离超平面是唯一的。
+
+(3) 分离超平面能将训练数据集中的两类点完全正确地分开。
+
+由解满足问题的约束条件即可得知。
+
+\section*{3. 支持向量和间隔边界}
+在线性可分情况下, 训练数据集的样本点中与分离超平面距离最近的样本点的实例称为支持向量（support vector）。支持向量是使约束条件式 (7.14) 等号成立的点, 即
+
+$$
+y_{i}\left(w \cdot x_{i}+b\right)-1=0
+$$
+
+对 $y_{i}=+1$ 的正例点, 支持向量在超平面
+
+$$
+H_{1}: w \cdot x+b=1
+$$
+
+上, 对 $y_{i}=-1$ 的负例点, 支持向量在超平面
+
+$$
+H_{2}: w \cdot x+b=-1
+$$
+
+上。如图 7.3 所示, 在 $H_{1}$ 和 $H_{2}$ 上的点就是支持向量。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_bf4132265b7e92ddc9cdg-03}
+\end{center}
+
+图 7.3 支持向量
+
+注意到 $H_{1}$ 和 $H_{2}$ 平行, 并且没有实例点落在它们中间。在 $H_{1}$ 与 $H_{2}$ 之间形成一条长带, 分离超平面与它们平行且位于它们中央。长带的宽度, 即 $H_{1}$ 与 $H_{2}$ 之间的距离称为间隔 (margin)。间隔依赖于分离超平面的法向量 $w$, 等于 $\frac{2}{\|w\|} \circ H_{1}$ 和 $H_{2}$ 称为间隔边界。
+
+在决定分离超平面时只有支持向量起作用, 而其他实例点并不起作用。如果移动支持向量, 将改变所求的解; 但是如果在间隔边界以外移动其他实例点, 甚至去掉这些点, 则解是不会改变的。由于支持向量在确定分离超平面中起着决定性作用, 所以将这种分类模型称为支持向量机。支持向量的个数一般很少, 所以支持向量机由很少的 “重要的” 训练样本确定。
+
+例 7.1 数据与例 2.1 相同。已知一个如图 7.4 所示的训练数据集, 其正例点是 $x_{1}=$ $(3,3)^{\mathrm{T}}, x_{2}=(4,3)^{\mathrm{T}}$, 负例点是 $x_{3}=(1,1)^{\mathrm{T}}$, 试求最大间隔分离超平面。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_bf4132265b7e92ddc9cdg-04}
+\end{center}
+
+图 7.4 间隔最大分离超平面示例
+
+解 按照算法 7.1 , 根据训练数据集构造约束最优化问题:
+
+$$
+\begin{array}{cl}
+\min _{w, b} & \frac{1}{2}\left(w_{1}^{2}+w_{2}^{2}\right) \\
+\text { s.t. } & 3 w_{1}+3 w_{2}+b \geqslant 1 \\
+& 4 w_{1}+3 w_{2}+b \geqslant 1 \\
+& -w_{1}-w_{2}-b \geqslant 1
+\end{array}
+$$
+
+求得此最优化问题的解 $w_{1}=w_{2}=\frac{1}{2}, b=-2$ 。于是最大间隔分离超平面为
+
+$$
+\frac{1}{2} x^{(1)}+\frac{1}{2} x^{(2)}-2=0
+$$
+
+其中, $x_{1}=(3,3)^{\mathrm{T}}$ 与 $x_{3}=(1,1)^{\mathrm{T}}$ 为支持向量。
+
+\section*{7.1 .4 学习的对偶算法}
+为了求解线性可分支持向量机的最优化问题 (7.13) (7.14), 将它作为原始最优化问题,应用拉格朗日对偶性 (参阅附录 C), 通过求解对偶问题 (dual problem) 得到原始问题 (primal problem) 的最优解, 这就是线性可分支持向量机的对偶算法（dual algorithm）。这样做的优点如下: 一是对偶问题往往更容易求解; 二是自然引入核函数, 进而推广到非线性分类问题。
+
+首先构建拉格朗日函数 (Lagrange function)。为此, 对每一个不等式约束 (7.14) 引入拉格朗日乘子 (Lagrange multiplier) $\alpha_{i} \geqslant 0, i=1,2, \cdots, N$, 定义拉格朗日函数:
+
+
+\begin{equation*}
+L(w, b, \alpha)=\frac{1}{2}\|w\|^{2}-\sum_{i=1}^{N} \alpha_{i} y_{i}\left(w \cdot x_{i}+b\right)+\sum_{i=1}^{N} \alpha_{i} \tag{7.18}
+\end{equation*}
+
+
+其中, $\alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{N}\right)^{\mathrm{T}}$ 为拉格朗日乘子向量。
+
+根据拉格朗日对偶性, 原始问题的对偶问题是极大极小问题:
+
+$$
+\max _{\alpha} \min _{w, b} L(w, b, \alpha)
+$$
+
+所以, 为了得到对偶问题的解, 需要先求 $L(w, b, \alpha)$ 对 $w, b$ 的极小, 再求对 $\alpha$ 的极大。
+
+(1) 求 $\min _{w, b} L(w, b, \alpha)$
+
+将拉格朗日函数 $L(w, b, \alpha)$ 分别对 $w, b$ 求偏导数并令其等于 0 :
+
+$$
+\begin{aligned}
+& \nabla_{w} L(w, b, \alpha)=w-\sum_{i=1}^{N} \alpha_{i} y_{i} x_{i}=0 \\
+& \nabla_{b} L(w, b, \alpha)=-\sum_{i=1}^{N} \alpha_{i} y_{i}=0
+\end{aligned}
+$$
+
+得:
+
+
+\begin{gather*}
+w=\sum_{i=1}^{N} \alpha_{i} y_{i} x_{i}  \tag{7.19}\\
+\sum_{i=1}^{N} \alpha_{i} y_{i}=0 \tag{7.20}
+\end{gather*}
+
+
+将式 (7.19) 代入拉格朗日函数 (式 (7.18)), 并利用式 (7.20), 即得:
+
+$$
+\begin{aligned}
+L(w, b, \alpha) & =\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} y_{i}\left[\left(\sum_{j=1}^{N} \alpha_{j} y_{j} x_{j}\right) \cdot x_{i}+b\right]+\sum_{i=1}^{N} \alpha_{i} \\
+& =-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)+\sum_{i=1}^{N} \alpha_{i}
+\end{aligned}
+$$
+
+即
+
+$$
+\min _{w, b} L(w, b, \alpha)=-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)+\sum_{i=1}^{N} \alpha_{i}
+$$
+
+(2) 求 $\min _{w, b} L(w, b, \alpha)$ 对 $\alpha$ 的极大, 即对偶问题
+
+\[
+\begin{array}{ll}
+\max _{\alpha} & -\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)+\sum_{i=1}^{N} \alpha_{i}  \tag{7.21}\\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& \alpha_{i} \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+\]
+
+将式 (7.21) 的目标函数由求极大转换成求极小, 就得到下面与之等价的对偶最优化问题:
+
+\[
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& \alpha_{i} \geqslant 0, \quad i=1,2, \cdots, N \tag{7.24}
+\end{array}
+\]
+
+考虑原始最优化问题 (7.13) (7.14) 和对偶最优化问题 (7.22) (7.24), 原始问题满足定理 C. 2 的条件, 所以存在 $w^{*}, \alpha^{*}, \beta^{*}$, 使 $w^{*}$ 是原始问题的解, $\alpha^{*}, \beta^{*}$ 是对偶问题的解。这意味着求解原始问题 (7.13) (7.14) 可以转换为求解对偶问题 (7.22) (7.24)。
+
+对线性可分训练数据集, 假设对偶最优化问题 (7.22) (7.24) 对 $\alpha$ 的解为 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots\right.$, $\left.\alpha_{N}^{*}\right)^{\mathrm{T}}$, 可以由 $\alpha^{*}$ 求得原始最优化问题 (7.13) (7.14) 对 $(w, b)$ 的解 $w^{*}, b^{*}$ 。有下面的定理。
+
+定理 7.2 设 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots, \alpha_{l}^{*}\right)^{\mathrm{T}}$ 是对偶最优化问题 (7.22) (7.24) 的解, 则存在下标 $j$, 使得 $\alpha_{j}^{*}>0$, 并可按下式求得原始最优化问题 (7.13) (7.14) 的解 $w^{*}, b^{*}$ :
+
+
+\begin{gather*}
+w^{*}=\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} x_{i}  \tag{7.25}\\
+b^{*}=y_{j}-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x_{i} \cdot x_{j}\right) \tag{7.26}
+\end{gather*}
+
+
+证明 根据定理 C.3, KKT 条件成立, 即得:
+
+
+\begin{align*}
+& \nabla_{w} L\left(w^{*}, b^{*}, \alpha^{*}\right)=w^{*}-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} x_{i}=0  \tag{7.27}\\
+& \nabla_{b} L\left(w^{*}, b^{*}, \alpha^{*}\right)=-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}=0 \\
+& \alpha_{i}^{*}\left(y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1\right)=0, \quad i=1,2, \cdots, N \\
+& y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1 \geqslant 0, \quad i=1,2, \cdots, N \\
+& \alpha_{i}^{*} \geqslant 0, \quad i=1,2, \cdots, N
+\end{align*}
+
+
+由此得:
+
+$$
+w^{*}=\sum_{i} \alpha_{i}^{*} y_{i} x_{i}
+$$
+
+其中至少有一个 $\alpha_{j}^{*}>0$ (用反证法, 假设 $\alpha^{*}=0$, 由式 (7.27) 可知 $w^{*}=0$, 而 $w^{*}=0$ 不是原始最优化问题 (7.13) (7.14) 的解, 产生矛盾), 对此 $j$ 有
+
+
+\begin{equation*}
+y_{j}\left(w^{*} \cdot x_{j}+b^{*}\right)-1=0 \tag{7.28}
+\end{equation*}
+
+
+将式 (7.25) 代入式 (7.28) 并注意到 $y_{j}^{2}=1$, 即得:
+
+$$
+b^{*}=y_{j}-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x_{i} \cdot x_{j}\right)
+$$
+
+由此定理可知, 分离超平面可以写成
+
+
+\begin{equation*}
+\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x \cdot x_{i}\right)+b^{*}=0 \tag{7.29}
+\end{equation*}
+
+
+分类决策函数可以写成
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left[\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x \cdot x_{i}\right)+b^{*}\right] \tag{7.30}
+\end{equation*}
+
+
+这就是说, 分类决策函数只依赖于输入 $x$ 和训练样本输入的内积。式 (7.30) 称为线性可分支持向量机的对偶形式。
+
+综上所述, 对于给定的线性可分训练数据集, 可以首先求对偶问题 $(7.22) \sim(7.24)$ 的解 $\alpha^{*}$, 再利用式 (7.25) 和式 (7.26) 求得原始问题的解 $w^{*}, b^{*}$, 从而得到分离超平面及分类决策函数。这种算法称为线性可分支持向量机的对偶学习算法, 是线性可分支持向量机学习的基本算法。
+
+\section*{算法 7.2 (线性可分支持向量机学习算法)}
+输入: 线性可分训练集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中 $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in$ $\mathcal{Y}=\{-1,+1\}, i=1,2, \cdots, N$ 。
+
+输出: 分离超平面和分类决策函数。
+
+（1）构造并求解约束最优化问题:
+
+$$
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& \alpha_{i} \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+求得最优解 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots, \alpha_{N}^{*}\right)^{\mathrm{T}}$ 。
+
+(2) 计算
+
+$$
+w^{*}=\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} x_{i}
+$$
+
+并选择 $\alpha^{*}$ 的一个正分量 $\alpha_{j}^{*}>0$, 计算
+
+$$
+b^{*}=y_{j}-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x_{i} \cdot x_{j}\right)
+$$
+
+(3) 求得分离超平面:
+
+$$
+w^{*} \cdot x+b^{*}=0
+$$
+
+分类决策函数:
+
+$$
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)
+$$
+
+在线性可分支持向量机中, 由式 (7.25)、式 (7.26) 可知, $w^{*}$ 和 $b^{*}$ 只依赖于训练数据中对应于 $\alpha_{i}^{*}>0$ 的样本点 $\left(x_{i}, y_{i}\right)$, 而其他样本点对 $w^{*}$ 和 $b^{*}$ 没有影响。我们将训练数据中对应于 $\alpha_{i}^{*}>0$ 的实例点 $x_{i} \in \boldsymbol{R}^{n}$ 称为支持向量。
+
+定义 7.4 (支持向量) 考虑原始最优化问题 (7.13) (7.14) 及对偶最优化问题 (7.22) (7.24), 将训练数据集中对应于 $\alpha_{i}^{*}>0$ 的样本点 $\left(x_{i}, y_{i}\right)$ 的实例 $x_{i} \in \boldsymbol{R}^{n}$ 称为支持向量。\\
+根据这一定义, 支持向量一定在间隔边界上。由 KKT 互补条件可知:
+
+$$
+\alpha_{i}^{*}\left(y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1\right)=0, \quad i=1,2, \cdots, N
+$$
+
+对应于 $\alpha_{i}^{*}>0$ 的实例 $x_{i}$, 有
+
+$$
+y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1=0
+$$
+
+或
+
+$$
+w^{*} \cdot x_{i}+b^{*}= \pm 1
+$$
+
+即 $x_{i}$ 一定在间隔边界上。这里的支持向量的定义与前面给出的支持向量的定义是一致的。
+
+例 7.2 训练数据与例 7.1 相同。如图 7.4 所示, 正例点是 $x_{1}=(3,3)^{\mathrm{T}}, x_{2}=(4,3)^{\mathrm{T}}$, 负例点是 $x_{3}=(1,1)^{\mathrm{T}}$, 试用算法 7.2 求线性可分支持向量机。
+
+解 根据所给数据, 对偶问题是
+
+$$
+\begin{aligned}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+& =\frac{1}{2}\left(18 \alpha_{1}^{2}+25 \alpha_{2}^{2}+2 \alpha_{3}^{2}+42 \alpha_{1} \alpha_{2}-12 \alpha_{1} \alpha_{3}-14 \alpha_{2} \alpha_{3}\right)-\alpha_{1}-\alpha_{2}-\alpha_{3}
+\end{aligned}
+$$
+
+s.t. $\alpha_{1}+\alpha_{2}-\alpha_{3}=0$
+
+$$
+\alpha_{i} \geqslant 0, \quad i=1,2,3
+$$
+
+解这一最优化问题。将 $\alpha_{3}=\alpha_{1}+\alpha_{2}$ 代入目标函数并记为
+
+$$
+s\left(\alpha_{1}, \alpha_{2}\right)=4 \alpha_{1}^{2}+\frac{13}{2} \alpha_{2}^{2}+10 \alpha_{1} \alpha_{2}-2 \alpha_{1}-2 \alpha_{2}
+$$
+
+对 $\alpha_{1}, \alpha_{2}$ 求偏导数并令其为 0 , 易知 $s\left(\alpha_{1}, \alpha_{2}\right)$ 在点 $\left(\frac{3}{2},-1\right)^{\mathrm{T}}$ 取极值, 但该点不满足约束条件 $\alpha_{2} \geqslant 0$, 所以最小值应在边界上达到。
+
+当 $\alpha_{1}=0$ 时, 最小值 $s\left(0, \frac{2}{13}\right)=-\frac{2}{13}$; 当 $\alpha_{2}=0$ 时, 最小值 $s\left(\frac{1}{4}, 0\right)=-\frac{1}{4}$ 。于是 $s\left(\alpha_{1}, \alpha_{2}\right)$ 在 $\alpha_{1}=\frac{1}{4}, \alpha_{2}=0$ 达到最小, 此时 $\alpha_{3}=\alpha_{1}+\alpha_{2}=\frac{1}{4}$ 。
+
+这样, $\alpha_{1}^{*}=\alpha_{3}^{*}=\frac{1}{4}$ 对应的实例点 $x_{1}, x_{3}$ 是支持向量。根据式 (7.25) 和式 (7.26) 计算得:
+
+$$
+\begin{gathered}
+w_{1}^{*}=w_{2}^{*}=\frac{1}{2} \\
+b^{*}=-2
+\end{gathered}
+$$
+
+分离超平面为
+
+$$
+\frac{1}{2} x^{(1)}+\frac{1}{2} x^{(2)}-2=0
+$$
+
+分类决策函数为
+
+$$
+f(x)=\operatorname{sign}\left(\frac{1}{2} x^{(1)}+\frac{1}{2} x^{(2)}-2\right)
+$$
+
+对于线性可分问题，上述线性可分支持向量机的学习（硬间隔最大化）算法是完美的。但是, 训练数据集线性可分是理想的情形。在现实问题中, 训练数据集往往是线性不可分的, 即在样本中出现噪声或特异点。此时, 有更一般的学习算法。
+
+\section*{7.2 线性支持向量机与软间隔最大化}
+\section*{7.2 .1 线性支持向量机}
+线性可分问题的支持向量机学习方法对线性不可分训练数据是不适用的, 因为这时上述方法中的不等式约束并不能都成立。怎么才能将它扩展到线性不可分问题呢? 这就需要修改硬间隔最大化, 使其成为软间隔最大化。
+
+假设给定一个特征空间上的训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{+1,-1\}, i=1,2, \cdots, N, x_{i}$ 为第 $i$ 个特征向量, $y_{i}$ 为 $x_{i}$ 的类标记。再假设训练数据集不是线性可分的。通常情况是, 训练数据中有一些特异点 (outlier),将这些特异点除去后, 剩下大部分的样本点组成的集合是线性可分的。
+
+线性不可分意味着某些样本点 $\left(x_{i}, y_{i}\right)$ 不能满足函数间隔大于等于 1 的约束条件 (7.14)。为了解决这个问题, 可以对每个样本点 $\left(x_{i}, y_{i}\right)$ 引进一个松弛变量 $\xi_{i} \geqslant 0$, 使函数间隔加上松弛变量大于等于 1 。这样, 约束条件变为
+
+$$
+y_{i}\left(w \cdot x_{i}+b\right) \geqslant 1-\xi_{i}
+$$
+
+同时, 对每个松弛变量 $\xi_{i}$, 支付一个代价 $\xi_{i}$ 。目标函数由原来的 $\frac{1}{2}\|w\|^{2}$ 变成
+
+
+\begin{equation*}
+\frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i} \tag{7.31}
+\end{equation*}
+
+
+这里, $C>0$ 称为惩罚参数, 一般由应用问题决定, $C$ 值大时对误分类的惩罚增大, $C$ 值小时对误分类的惩罚减小。最小化目标函数 (7.31) 包含两层含义: 使 $\frac{1}{2}\|w\|^{2}$ 尽量小即间隔尽量大, 同时使误分类点的个数尽量少, $C$ 是调和二者的系数。
+
+有了上面的思路, 可以和训练数据集线性可分时一样来考虑训练数据集线性不可分时的线性支持向量机学习问题。相应于硬间隔最大化, 它称为软间隔最大化。
+
+线性不可分的线性支持向量机的学习问题变成如下凸二次规划 (convex quadratic programming) 问题 (原始问题):
+
+\[
+\begin{array}{ll}
+\min _{w, b, \xi} & \frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right) \geqslant 1-\xi_{i}, \quad i=1,2, \cdots, N \\
+& \xi_{i} \geqslant 0, \quad i=1,2, \cdots, N \tag{7.34}
+\end{array}
+\]
+
+原始问题 $(7.32) \sim(7.34)$ 是一个凸二次规划问题, 因而关于 $(w, b, \xi)$ 的解是存在的。可以证明 $w$ 的解是唯一的, 但 $b$ 的解可能不唯一, 而是存在于一个区间 [11]。
+
+设原始问题 (7.32) (7.34) 的解是 $w^{*}, b^{*}$, 于是可以得到分离超平面 $w^{*} \cdot x+b^{*}=0$ 及分类决策函数 $f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)$ 。称这样的模型为训练样本线性不可分时的线性支持向量机，简称为线性支持向量机。显然，线性支持向量机包含线性可分支持向量机。由于现实中训练数据集往往是线性不可分的，线性支持向量机具有更广的适用性。
+
+下面给出线性支持向量机的定义。
+
+定义 7.5 （线性支持向量机）对于给定的线性不可分的训练数据集，通过求解凸二次规划问题, 即软间隔最大化问题 (7.32) (7.34), 得到的分离超平面为
+
+
+\begin{equation*}
+w^{*} \cdot x+b^{*}=0 \tag{7.35}
+\end{equation*}
+
+
+以及相应的分类决策函数
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right) \tag{7.36}
+\end{equation*}
+
+
+称为线性支持向量机。
+
+\section*{7.2 .2 学习的对偶算法}
+原始问题即式 (7.32) 式 (7.34) 的对偶问题是
+
+\[
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2, \cdots, N \tag{7.39}
+\end{array}
+\]
+
+原始最优化问题即式 (7.32) 式 (7.34) 的拉格朗日函数是
+
+
+\begin{equation*}
+L(w, b, \xi, \alpha, \mu) \equiv \frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i}-\sum_{i=1}^{N} \alpha_{i}\left[y_{i}\left(w \cdot x_{i}+b\right)-1+\xi_{i}\right]-\sum_{i=1}^{N} \mu_{i} \xi_{i} \tag{7.40}
+\end{equation*}
+
+
+其中, $\alpha_{i} \geqslant 0, \mu_{i} \geqslant 0$ 。
+
+对偶问题是拉格朗日函数的极大极小问题。首先求 $L(w, b, \xi, \alpha, \mu)$ 对 $w, b, \xi$ 的极小, 由
+
+$$
+\begin{aligned}
+& \nabla_{w} L(w, b, \xi, \alpha, \mu)=w-\sum_{i=1}^{N} \alpha_{i} y_{i} x_{i}=0 \\
+& \nabla_{b} L(w, b, \xi, \alpha, \mu)=-\sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& \nabla_{\xi_{i}} L(w, b, \xi, \alpha, \mu)=C-\alpha_{i}-\mu_{i}=0
+\end{aligned}
+$$
+
+得:
+
+
+\begin{gather*}
+w=\sum_{i=1}^{N} \alpha_{i} y_{i} x_{i}  \tag{7.41}\\
+\sum_{i=1}^{N} \alpha_{i} y_{i}=0  \tag{7.42}\\
+C-\alpha_{i}-\mu_{i}=0 \tag{7.43}
+\end{gather*}
+
+
+将式 (7.41) 式 (7.43) 代入式 (7.40), 得:
+
+$$
+\min _{w, b, \xi} L(w, b, \xi, \alpha, \mu)=-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)+\sum_{i=1}^{N} \alpha_{i}
+$$
+
+再对 $\min _{w, b, \xi} L(w, b, \xi, \alpha, \mu)$ 求 $\alpha$ 的极大, 即得对偶问题:
+
+\[
+\begin{array}{ll}
+\max _{\alpha} & -\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)+\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& C-\alpha_{i}-\mu_{i}=0 \\
+& \alpha_{i} \geqslant 0 \\
+& \mu_{i} \geqslant 0, \quad i=1,2, \cdots, N \tag{7.48}
+\end{array}
+\]
+
+将对偶最优化问题 (7.44) (7.48) 进行变换: 利用等式约束 (7.46) 消去 $\mu_{i}$, 从而只留下变量 $\alpha_{i}$, 并将约束 $(7.46) \sim(7.48)$ 写成
+
+
+\begin{equation*}
+0 \leqslant \alpha_{i} \leqslant C \tag{7.49}
+\end{equation*}
+
+
+再将对目标函数求极大转换为求极小, 于是得到对偶问题 (7.37) (7.39)。
+
+可以通过求解对偶问题而得到原始问题的解, 进而确定分离超平面和决策函数。为此,就可以以定理的形式叙述原始问题的最优解和对偶问题的最优解的关系。
+
+定理 7.3 设 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots, \alpha_{N}^{*}\right)^{\mathrm{T}}$ 是对偶问题 (7.37) (7.39) 的一个解, 若存在 $\alpha^{*}$的一个分量 $\alpha_{j}^{*}, 0<\alpha_{j}^{*}<C$, 则原始问题 (7.32) (7.34) 的解 $w^{*}, b^{*}$ 可按下式求得:
+
+
+\begin{gather*}
+w^{*}=\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} x_{i}  \tag{7.50}\\
+b^{*}=y_{j}-\sum_{i=1}^{N} y_{i} \alpha_{i}^{*}\left(x_{i} \cdot x_{j}\right) \tag{7.51}
+\end{gather*}
+
+
+证明 原始问题是凸二次规划问题, 解满足 KKT 条件, 即得:
+
+
+\begin{gather*}
+\nabla_{w} L\left(w^{*}, b^{*}, \xi^{*}, \alpha^{*}, \mu^{*}\right)=w^{*}-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} x_{i}=0  \tag{7.52}\\
+\nabla_{b} L\left(w^{*}, b^{*}, \xi^{*}, \alpha^{*}, \mu^{*}\right)=-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}=0 \\
+\nabla_{\xi} L\left(w^{*}, b^{*}, \xi^{*}, \alpha^{*}, \mu^{*}\right)=C-\alpha^{*}-\mu^{*}=0 \\
+\alpha_{i}^{*}\left(y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1+\xi_{i}^{*}\right)=0  \tag{7.53}\\
+\mu_{i}^{*} \xi_{i}^{*}=0  \tag{7.54}\\
+y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1+\xi_{i}^{*} \geqslant 0 \\
+\xi_{i}^{*} \geqslant 0 \\
+\alpha_{i}^{*} \geqslant 0 \\
+i=1,2, \cdots, N
+\end{gather*}
+
+
+由式 (7.52) 易知式 (7.50) 成立。再由式 (7.53) 式 (7.54) 可知, 若存在 $\alpha_{j}^{*}, 0<\alpha_{j}^{*}<C$,则 $y_{i}\left(w^{*} \cdot x_{i}+b^{*}\right)-1=0$ 。由此即得式 $(7.51)$ 。
+
+由此定理可知, 分离超平面可以写成
+
+
+\begin{equation*}
+\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x \cdot x_{i}\right)+b^{*}=0 \tag{7.55}
+\end{equation*}
+
+
+分类决策函数可以写成
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left[\sum_{i=1}^{N} \alpha_{i}^{*} y_{i}\left(x \cdot x_{i}\right)+b^{*}\right] \tag{7.56}
+\end{equation*}
+
+
+式 (7.56) 为线性支持向量机的对偶形式。
+
+综合前面的结果, 有下面的算法。
+
+\section*{算法 7.3 (线性支持向量机学习算法)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=$ $\{-1,+1\}, i=1,2, \cdots, N$ 。
+
+输出: 分离超平面和分类决策函数。
+
+(1) 选择惩罚参数 $C>0$, 构造并求解凸二次规划问题:
+
+$$
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+求得最优解 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots, \alpha_{N}^{*}\right)^{\mathrm{T}}$ 。
+
+(2) 计算 $w^{*}=\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} x_{i}$ 。
+
+选择 $\alpha^{*}$ 的一个分量 $\alpha_{j}^{*}$ 满足条件 $0<\alpha_{j}^{*}<C$, 计算
+
+$$
+b^{*}=y_{j}-\sum_{i=1}^{N} y_{i} \alpha_{i}^{*}\left(x_{i} \cdot x_{j}\right)
+$$
+
+(3) 求得分离超平面:
+
+$$
+w^{*} \cdot x+b^{*}=0
+$$
+
+分类决策函数:
+
+$$
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)
+$$
+
+步骤 (2) 中, 对任一满足条件 $0<\alpha_{j}^{*}<C$ 的 $\alpha_{j}^{*}$, 按式 (7.51) 都可求出 $b^{*}$, 从理论上, 原始问题 (7.32) (7.34) 对 $b$ 的解可能不唯一 [11], 然而在实际应用中, 往往只会出现算法叙述的情况。
+
+\section*{7.2 .3 支持向量}
+在线性不可分的情况下, 将对偶问题 (7.37) (7.39) 的解 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots, \alpha_{N}^{*}\right)^{\mathrm{T}}$ 中对应于 $\alpha_{i}^{*}>0$ 的样本点 $\left(x_{i}, y_{i}\right)$ 的实例 $x_{i}$ 称为支持向量 (软间隔的支持向量)。如图 7.5 所示,这时的支持向量要比线性可分时的情况复杂一些。图中, 分离超平面由实线表示, 间隔边界由虚线表示, 正例点由 “○” 表示, 负例点由 “ $\times$ ” 表示。图中还标出了实例 $x_{i}$ 到间隔边界的距离 $\frac{\xi_{i}}{\|w\|^{\circ}}$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_bf4132265b7e92ddc9cdg-13}
+\end{center}
+
+图 7.5 软间隔的支持向量
+
+软间隔的支持向量 $x_{i}$ 或者在间隔边界上, 或者在间隔边界与分离超平面之间, 或者在分离超平面误分一侧。若 $\alpha_{i}^{*}<C$, 则 $\xi_{i}=0$, 支持向量 $x_{i}$ 恰好落在间隔边界上; 若 $\alpha_{i}^{*}=C, 0<\xi_{i}<1$, 则分类正确, $x_{i}$ 在间隔边界与分离超平面之间; 若 $\alpha_{i}^{*}=C, \xi_{i}=1$, 则 $x_{i}$ 在分离超平面上; 若 $\alpha_{i}^{*}=C, \xi_{i}>1$, 则 $x_{i}$ 位于分离超平面误分一侧。
+
+\section*{7.2 .4 合页损失函数}
+对于线性支持向量机学习来说, 其模型为分离超平面 $w^{*} \cdot x+b^{*}=0$ 及决策函数 $f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)$, 其学习策略为软间隔最大化, 学习算法为凸二次规划。
+
+线性支持向量机学习还有另外一种解释, 就是最小化以下目标函数:
+
+
+\begin{equation*}
+\sum_{i=1}^{N}\left[1-y_{i}\left(w \cdot x_{i}+b\right)\right]_{+}+\lambda\|w\|^{2} \tag{7.57}
+\end{equation*}
+
+
+目标函数的第 1 项是经验损失或经验风险, 函数
+
+
+\begin{equation*}
+L(y(w \cdot x+b))=[1-y(w \cdot x+b)]_{+} \tag{7.58}
+\end{equation*}
+
+
+称为合页损失函数 (hinge loss function)。下标 “ + ” 表示以下取正值的函数:
+
+\[
+[z]_{+}= \begin{cases}z, & z>0  \tag{7.59}\\ 0, & z \leqslant 0\end{cases}
+\]
+
+这就是说, 当样本点 $\left(x_{i}, y_{i}\right)$ 被正确分类且函数间隔 (确信度) $y_{i}\left(w \cdot x_{i}+b\right)$ 大于 1 时, 损失是 0 , 否则损失是 $1-y_{i}\left(w \cdot x_{i}+b\right)$ 。注意到在图 7.5 中的实例点 $x_{4}$ 被正确分类, 但损失不是 0 。目标函数的第 2 项是系数为 $\lambda$ 的 $w$ 的 $L_{2}$ 范数, 是正则化项。
+
+定理 7.4 线性支持向量机原始最优化问题
+
+\[
+\begin{array}{ll}
+\min _{w, b, \xi} & \frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right) \geqslant 1-\xi_{i}, \quad i=1,2, \cdots, N \\
+& \xi_{i} \geqslant 0, \quad i=1,2, \cdots, N \tag{7.62}
+\end{array}
+\]
+
+等价于最优化问题
+
+
+\begin{equation*}
+\min _{w, b} \sum_{i=1}^{N}\left[1-y_{i}\left(w \cdot x_{i}+b\right)\right]_{+}+\lambda\|w\|^{2} \tag{7.63}
+\end{equation*}
+
+
+证明 可将最优化问题 (7.63) 写成问题 (7.60) (7.62)。令
+
+
+\begin{equation*}
+\left[1-y_{i}\left(w \cdot x_{i}+b\right)\right]_{+}=\xi_{i} \tag{7.64}
+\end{equation*}
+
+
+则 $\xi_{i} \geqslant 0$, 式 (7.62) 成立。由式 (7.64) 可知, 当 $1-y_{i}\left(w \cdot x_{i}+b\right)>0$ 时, 有 $y_{i}\left(w \cdot x_{i}+b\right)=$ $1-\xi_{i}$; 当 $1-y_{i}\left(w \cdot x_{i}+b\right) \leqslant 0$ 时, $\xi_{i}=0$, 有 $y_{i}\left(w \cdot x_{i}+b\right) \geqslant 1-\xi_{i}$ 。故式 (7.61) 成立。于是 $w, b, \xi_{i}$ 满足约束条件 (7.61) (7.62), 所以最优化问题 (7.63) 可写成
+
+$$
+\min _{w, b} \sum_{i=1}^{N} \xi_{i}+\lambda\|w\|^{2}
+$$
+
+若取 $\lambda=\frac{1}{2 C}$, 则
+
+$$
+\min _{w, b} \frac{1}{C}\left(\frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i}\right)
+$$
+
+与式 $(7.60)$ 等价。
+
+反之, 也可将最优化问题 (7.60) (7.62) 表示成问题 (7.63)。
+
+合页损失函数的图形如图 7.6 所示, 横轴是函数间隔 $y(w \cdot x+b)$, 纵轴是损失。由于函数形状像一个合页, 故名合页损失函数。图中还画出 0-1 损失函数, 可以认为它是二类分类问题的真正的损失函数, 而合页损失函数是 0-1 损失函数的上界。由于 $0-1$ 损失函数不是连续可导的, 直接优化由其构成的目标函数比较困难, 可以认为线性支持向量机是优化由 0-1 损失函数的上界 (合页损失函数) 构成的目标函数。这时的上界损失函数又称为代理损失函数 (surrogate loss function)。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_bf4132265b7e92ddc9cdg-15}
+\end{center}
+
+图 7.6 合页损失函数
+
+图 7.6 中虚线显示的是感知机的损失函数 $\left[-y_{i}\left(w \cdot x_{i}+b\right)\right]_{+}$。这时, 当样本点 $\left(x_{i}, y_{i}\right)$ 被正确分类时, 损失是 0 , 否则损失是 $-y_{i}\left(w \cdot x_{i}+b\right)$ 。相比之下, 合页损失函数不仅要分类正确, 而且确信度足够高时损失才是 0 。也就是说, 合页损失函数对学习有更高的要求。
+
+\section*{7.3 非线性支持向量机与核函数}
+对于解线性分类问题，线性分类支持向量机是一种非常有效的方法。但是，有时分类问题是非线性的, 这时可以使用非线性支持向量机。本节叙述非线性支持向量机, 其主要特点是利用核技巧（kernel trick）。为此, 先要介绍核技巧。核技巧不仅应用于支持向量机, 而且应用于其他统计学习问题。
+
+\subsection*{7.3.1 核技巧}
+\section*{1. 非线性分类问题}
+非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。先看一个例子:如图 7.7 左图, 是一个分类问题, 图中 “ - ”表示正实例点, “ $x$ ” 表示负实例点。由图可见, 无法用直线 (线性模型) 将正负实例正确分开，但可以用一条椭圆曲线 (非线性模型) 将它们正确分开。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_bf4132265b7e92ddc9cdg-16}
+
+图 7.7 非线性分类问题与核技巧示例
+
+一般来说, 对给定的一个训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中, 实例 $x_{i}$ 属于输入空间, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}$, 对应的标记有两类 $y_{i} \in \mathcal{Y}=\{-1,+1\}, i=1,2, \cdots, N$ 。如果能用 $\boldsymbol{R}^{n}$ 中的一个超曲面将正负例正确分开，则称这个问题为非线性可分问题。
+
+非线性问题往往不好求解，所以希望能用解线性分类问题的方法解决这个问题。所采取的方法是进行一个非线性变换, 将非线性问题变换为线性问题, 通过解变换后的线性问题的方法求解原来的非线性问题。对图 7.7 所示的例子, 通过变换, 将左图中椭圆变换成右图中的直线，将非线性分类问题变换为线性分类问题。
+
+设原空间为 $\mathcal{X} \subset \boldsymbol{R}^{2}, x=\left(x^{(1)}, x^{(2)}\right)^{\mathrm{T}} \in \mathcal{X}$ ，新空间为 $\mathcal{Z} \subset \boldsymbol{R}^{2}, z=\left(z^{(1)}, z^{(2)}\right)^{\mathrm{T}} \in \mathcal{Z}$ ，定义从原空间到新空间的变换 (映射):
+
+$$
+z=\phi(x)=\left(\left(x^{(1)}\right)^{2},\left(x^{(2)}\right)^{2}\right)^{\mathrm{T}}
+$$
+
+经过变换 $z=\phi(x)$, 原空间 $\mathcal{X} \subset R^{2}$ 变换为新空间 $\mathcal{Z} \subset \boldsymbol{R}^{2}$, 原空间中的点相应地变换为新空间中的点，原空间中的椭圆
+
+$$
+w_{1}\left(x^{(1)}\right)^{2}+w_{2}\left(x^{(2)}\right)^{2}+b=0
+$$
+
+变换成为新空间中的直线
+
+$$
+w_{1} z^{(1)}+w_{2} z^{(2)}+b=0
+$$
+
+在变换后的新空间里, 直线 $w_{1} z^{(1)}+w_{2} z^{(2)}+b=0$ 可以将变换后的正负实例点正确分开。这样，原空间的非线性可分问题就变成了新空问的线性可分问题。
+
+上面的例子说明，用线性分类方法求解非线性分类问题分为两步：首先使用一个变换将原空间的数据映射到新空间, 然后在新空间里用线性分类学习方法从训练数据中学习分类模型。核技巧就属于这样的方法。
+
+核技巧应用到支持向量机的基本想法就是通过一个非线性变换将输入空间（欧氏空间 $\boldsymbol{R}^{n}$ 或离散集合) 对应于一个特征空间（希尔伯特空间 $\mathcal{H}$ )，使得在输入空间 $\boldsymbol{R}^{n}$ 中的超曲面模型对应于特征空间 $\mathcal{H}$ 中的超平面模型（支持向量机）。这样，分类问题的学习任务通过在特征空间中求解线性支持向量机就可以完成。
+
+\section*{2. 核函数的定义}
+定义 7.6 (核函数) 设 $\mathcal{X}$ 是输入空间（欧氏空间 $\boldsymbol{R}^{n}$ 的子集或离散集合），又设 $\mathcal{H}$ 为特征空间 (希尔伯特空间)，如果存在一个从 $\mathcal{X}$ 到 $\mathcal{H}$ 的映射
+
+
+\begin{equation*}
+\phi(x): \mathcal{X} \rightarrow \mathcal{H} \tag{7.65}
+\end{equation*}
+
+
+使得对所有 $x, z \in \mathcal{X}$, 函数 $K(x, z)$ 满足条件
+
+
+\begin{equation*}
+K(x, z)=\phi(x) \cdot \phi(z) \tag{7.66}
+\end{equation*}
+
+
+则称 $K(x, z)$ 为核函数, $\phi(x)$ 为映射函数, 式中 $\phi(x) \cdot \phi(z)$ 为 $\phi(x)$ 和 $\phi(z)$ 的内积。
+
+核技巧的想法是: 在学习与预测中只定义核函数 $K(x, z)$, 而不显式地定义映射函数 $\phi$ 。通常, 直接计算 $K(x, z)$ 比较容易, 而通过 $\phi(x)$ 和 $\phi(z)$ 计算 $K(x, z)$ 并不容易。注意, $\phi$ 是输入空间 $\boldsymbol{R}^{n}$ 到特征空间 $\mathcal{H}$ 的映射, 特征空间 $\mathcal{H}$ 一般是高维的, 甚至是无穷维的。可以看到, 对于给定的核 $K(x, z)$, 特征空间 $\mathcal{H}$ 和映射函数 $\phi$ 的取法并不唯一, 可以取不同的特征空间，即便是在同一特征空间里也可以取不同的映射。
+
+下面举一个简单的例子来说明核函数和映射函数的关系。
+
+例 7.3 假设输入空间是 $\boldsymbol{R}^{2}$, 核函数是 $K(x, z)=(x \cdot z)^{2}$, 试找出其相关的特征空间 $\mathcal{H}$和映射 $\phi(x): \boldsymbol{R}^{2} \rightarrow \mathcal{H}$ 。
+
+解 取特征空间 $\mathcal{H}=\boldsymbol{R}^{3}$, 记 $x=\left(x^{(1)}, x^{(2)}\right)^{\mathrm{T}}, z=\left(z^{(1)}, z^{(2)}\right)^{\mathrm{T}}$, 由于
+
+$$
+(x \cdot z)^{2}=\left(x^{(1)} z^{(1)}+x^{(2)} z^{(2)}\right)^{2}=\left(x^{(1)} z^{(1)}\right)^{2}+2 x^{(1)} z^{(1)} x^{(2)} z^{(2)}+\left(x^{(2)} z^{(2)}\right)^{2}
+$$
+
+所以可以取映射
+
+$$
+\phi(x)=\left(\left(x^{(1)}\right)^{2}, \sqrt{2} x^{(1)} x^{(2)},\left(x^{(2)}\right)^{2}\right)^{\mathrm{T}}
+$$
+
+容易验证 $\phi(x) \cdot \phi(z)=(x \cdot z)^{2}=K(x, z)$ 。
+
+仍取 $\mathcal{H}=R^{3}$ 以及
+
+$$
+\phi(x)=\frac{1}{\sqrt{2}}\left(\left(x^{(1)}\right)^{2}-\left(x^{(2)}\right)^{2}, 2 x^{(1)} x^{(2)},\left(x^{(1)}\right)^{2}+\left(x^{(2)}\right)^{2}\right)^{\mathrm{T}}
+$$
+
+同样有 $\phi(x) \cdot \phi(z)=(x \cdot z)^{2}=K(x, z)$ 。
+
+还可以取 $\mathcal{H}=\boldsymbol{R}^{4}$ 和
+
+$$
+\phi(x)=\left(\left(x^{(1)}\right)^{2}, x^{(1)} x^{(2)}, x^{(1)} x^{(2)},\left(x^{(2)}\right)^{2}\right)^{\mathrm{T}}
+$$
+
+\section*{3. 核技巧在支持向量机中的应用}
+我们注意到在线性支持向量机的对偶问题中, 无论是目标函数还是决策函数 (分离超平面)都只涉及输入实例与实例之间的内积。对偶问题的目标函数 (7.37) 中的内积 $x_{i} \cdot x_{j}$ 可以用核函数 $K\left(x_{i}, x_{j}\right)=\phi\left(x_{i}\right) \cdot \phi\left(x_{j}\right)$ 来代替, 此时对偶问题的目标函数成为
+
+
+\begin{equation*}
+W(\alpha)=\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j} K\left(x_{i}, x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \tag{7.67}
+\end{equation*}
+
+
+同样, 分类决策函数中的内积也可以用核函数代替, 而分类决策函数式成为
+
+
+\begin{align*}
+f(x) & =\operatorname{sign}\left(\sum_{i=1}^{N_{s}} a_{i}^{*} y_{i} \phi\left(x_{i}\right) \cdot \phi(x)+b^{*}\right) \\
+& =\operatorname{sign}\left(\sum_{i=1}^{N_{s}} a_{i}^{*} y_{i} K\left(x_{i}, x\right)+b^{*}\right) \tag{7.68}
+\end{align*}
+
+
+这等价于经过映射函数 $\phi$ 将原来的输入空间变换到一个新的特征空间, 将输入空间中的内积 $x_{i} \cdot x_{j}$ 变换为特征空间中的内积 $\phi\left(x_{i}\right) \cdot \phi\left(x_{j}\right)$, 在新的特征空间里从训练样本中学习线性支持向量机。当映射函数是非线性函数时，学习到的含有核函数的支持向量机是非线性分类模型。
+
+也就是说，在核函数 $K(x, z)$ 给定的条件下，可以利用解线性分类问题的方法求解非线性分类问题的支持向量机。学习是隐式地在特征空间进行的, 不需要显式地定义特征空间和映射函数。这样的技巧称为核技巧, 它是巧妙地利用线性分类学习方法与核函数解决非线性问题的技术。在实际应用中, 往往依赖领域知识直接选择核函数, 核函数选择的有效性需要通过实验验证。
+
+\subsection*{7.3.2 正定核}
+已知映射函数 $\phi$, 可以通过 $\phi(x)$ 和 $\phi(z)$ 的内积求得核函数 $K(x, z)$ 。不用构造映射 $\phi(x)$能否直接判断一个给定的函数 $K(x, z)$ 是不是核函数? 或者说, 函数 $K(x, z)$ 满足什么条件才能成为核函数?
+
+本节叙述正定核的充要条件。通常所说的核函数就是正定核函数 (positive definite kernel function）。为证明此定理, 先介绍有关的预备知识。
+
+假设 $K(x, z)$ 是定义在 $\mathcal{X} \times \mathcal{X}$ 上的对称函数, 并且对任意的 $x_{1}, x_{2}, \cdots, x_{m} \in \mathcal{X}, K(x, z)$关于 $x_{1}, x_{2}, \cdots, x_{m}$ 的 Gram 矩阵是半正定的。可以依据函数 $K(x, z)$, 构成一个希尔伯特空间 (Hilbert space), 其步骤是: 首先定义映射 $\phi$ 并构成向量空间 $\mathcal{S}$, 然后在 $\mathcal{S}$ 上定义内积构成内积空间，最后将 $\mathcal{S}$ 完备化构成希尔伯特空间。
+
+\section*{1. 定义映射, 构成向量空间 $\mathcal{S}$}
+先定义映射
+
+
+\begin{equation*}
+\phi: x \rightarrow K(\bullet, x) \tag{7.69}
+\end{equation*}
+
+
+根据这一映射，对任意 $x_{i} \in \mathcal{X}, \alpha_{i} \in \boldsymbol{R}, i=1,2, \cdots, m$, 定义线性组合
+
+
+\begin{equation*}
+f(\cdot)=\sum_{i=1}^{m} \alpha_{i} K\left(\cdot, x_{i}\right) \tag{7.70}
+\end{equation*}
+
+
+考虑由线性组合为元素的集合 $\mathcal{S}$ 。由于集合 $\mathcal{S}$ 对加法和数乘运算是封闭的，所以 $\mathcal{S}$ 构成一个向量空间。
+
+\section*{2. 在 $\mathcal{S}$ 上定义内积, 使其成为内积空间}
+在 $\mathcal{S}$ 上定义一个运算 $*$ : 对任意 $f, g \in \mathcal{S}$, 有
+
+
+\begin{align*}
+& f(\cdot)=\sum_{i=1}^{m} \alpha_{i} K\left(\cdot, x_{i}\right)  \tag{7.71}\\
+& g(\cdot)=\sum_{j=1}^{l} \beta_{j} K\left(\cdot, z_{j}\right) \tag{7.72}
+\end{align*}
+
+
+定义运算 $*:$
+
+
+\begin{equation*}
+f * g=\sum_{i=1}^{m} \sum_{j=1}^{l} \alpha_{i} \beta_{j} K\left(x_{i}, z_{j}\right) \tag{7.73}
+\end{equation*}
+
+
+证明运算 $*$ 是空间 $\mathcal{S}$ 的内积。为此要证明:
+
+(1) $(c f) * g=c(f * g), c \in \boldsymbol{R}$
+
+(2) $(f+g) * h=f * h+g * h, h \in \mathcal{S}$
+
+(3) $f * g=g * f$
+
+(4) $f * f \geqslant 0$
+
+
+\begin{equation*}
+f * f=0 \Leftrightarrow f=0 \tag{7.77}
+\end{equation*}
+
+
+其中, 步骤 (1) 步骤 (3) 由式 (7.70) 式 (7.72) 及 $K(x, z)$ 的对称性容易得到。现证明步骤 (4) 之式 (7.77)。由式 (7.70) 及式 (7.73) 可得:
+
+$$
+f * f=\sum_{i, j=1}^{m} \alpha_{i} \alpha_{j} K\left(x_{i}, x_{j}\right)
+$$
+
+由 Gram 矩阵的半正定性知上式右端非负, 即 $f * f \geqslant 0$ 。
+
+再证明步骤 (4) 之式 (7.78)。充分性显然。为证必要性, 首先证明不等式:
+
+
+\begin{equation*}
+|f * g|^{2} \leqslant(f * f)(g * g) \tag{7.79}
+\end{equation*}
+
+
+设 $f, g \in \mathcal{S}, \lambda \in \boldsymbol{R}$, 则 $f+\lambda g \in \mathcal{S}$, 于是,
+
+$$
+\begin{gathered}
+(f+\lambda g) *(f+\lambda g) \geqslant 0 \\
+f * f+2 \lambda(f * g)+\lambda^{2}(g * g) \geqslant 0
+\end{gathered}
+$$
+
+其左端是 $\lambda$ 的二次三项式, 非负, 其判别式小于等于 0 , 即
+
+$$
+(f * g)^{2}-(f * f)(g * g) \leqslant 0
+$$
+
+于是式 (7.79) 得证。现证明若 $f * f=0$, 则 $f=0$ 。事实上, 若
+
+$$
+f(\cdot)=\sum_{i=1}^{m} \alpha_{i} K\left(\cdot, x_{i}\right)
+$$
+
+则按运算 $*$ 的定义式 (7.73), 对任意的 $x \in \mathcal{X}$, 有
+
+$$
+K(\cdot, x) * f=\sum_{i=1}^{m} \alpha_{i} K\left(x, x_{i}\right)=f(x)
+$$
+
+于是,
+
+
+\begin{equation*}
+|f(x)|^{2}=|K(\bullet, x) * f|^{2} \tag{7.80}
+\end{equation*}
+
+
+由式 (7.79) 和式 (7.77) 有
+
+$$
+\begin{aligned}
+|K(\cdot, x) * f|^{2} & \leqslant(K(\cdot, x) * K(\cdot, x))(f * f) \\
+& =K(x, x)(f * f)
+\end{aligned}
+$$
+
+由式 $(7.80)$ 有
+
+$$
+|f(x)|^{2} \leqslant K(x, x)(f * f)
+$$
+
+此式表明, 当 $f * f=0$ 时, 对任意的 $x$ 都有 $|f(x)|=0$ 。
+
+至此，证明了 $*$ 为向量空间 $\mathcal{S}$ 的内积，赋予内积的向量空间为内积空间。因此 $\mathcal{S}$ 是一个内积空间。既然 $*$ 为 $\mathcal{S}$ 的内积运算, 那么仍然用 - 表示, 即若
+
+$$
+f(\cdot)=\sum_{i=1}^{m} \alpha_{i} K\left(\cdot, x_{i}\right), \quad g(\cdot)=\sum_{i=1}^{l} \beta_{j} K\left(\cdot, z_{j}\right)
+$$
+
+则
+
+
+\begin{equation*}
+f \cdot g=\sum_{i=1}^{m} \sum_{j=1}^{l} \alpha_{i} \beta_{j} K\left(x_{i}, z_{j}\right) \tag{7.81}
+\end{equation*}
+
+
+\section*{3. 将内积空间 $\mathcal{S}$ 完备化为希尔伯特空间}
+现在将内积空间 $\mathcal{S}$ 完备化。由式 (7.81) 定义的内积可以得到范数
+
+
+\begin{equation*}
+\|f\|=\sqrt{f \cdot f} \tag{7.82}
+\end{equation*}
+
+
+因此, $\mathcal{S}$ 是一个赋范向量空间。根据泛函分析理论，对于不完备的赋范向量空间 $\mathcal{S}$ ，一定可以使之完备化, 得到完备的赋范向量空间 $\mathcal{H}$ 。对于一个内积空间, 当作为一个赋范向量空间是完备的时候, 就是希尔伯特空间。这样, 就得到了希尔伯特空间 $\mathcal{H}$ 。这一希尔伯特空间 $\mathcal{H}$ 称为再生核希尔伯特空间 (reproducing kernel Hilbert space, RKHS）。这是由于核 $K$ 具有再生性, 即满足
+
+
+\begin{equation*}
+K(\bullet, x) \cdot f=f(x) \tag{7.83}
+\end{equation*}
+
+
+及
+
+
+\begin{equation*}
+K(\bullet, x) \cdot K(\cdot, z)=K(x, z) \tag{7.84}
+\end{equation*}
+
+
+称为再生核。
+
+\section*{4. 正定核的充要条件}
+定理 7.5 (正定核的充要条件) 设 $K: \mathcal{X} \times \mathcal{X} \rightarrow \boldsymbol{R}$ 是对称函数, 则 $K(x, z)$ 为正定核函数的充要条件是对任意 $x_{i} \in \mathcal{X}, i=1,2, \cdots, m, K(x, z)$ 对应的 Gram 矩阵
+
+
+\begin{equation*}
+K=\left[K\left(x_{i}, x_{j}\right)\right]_{m \times m} \tag{7.85}
+\end{equation*}
+
+
+是半正定矩阵。
+
+证明 必要性。由于 $K(x, z)$ 是 $\mathcal{X} \times \mathcal{X}$ 上的正定核, 所以存在从 $\mathcal{X}$ 到希尔伯特空间 $\mathcal{H}$的映射 $\phi$, 使得
+
+$$
+K(x, z)=\phi(x) \cdot \phi(z)
+$$
+
+于是, 对任意 $x_{1}, x_{2}, \cdots, x_{m}$, 构造 $K(x, z)$ 关于 $x_{1}, x_{2}, \cdots, x_{m}$ 的 Gram 矩阵:
+
+$$
+\left[K_{i j}\right]_{m \times m}=\left[K\left(x_{i}, x_{j}\right)\right]_{m \times m}
+$$
+
+对任意 $c_{1}, c_{2}, \cdots, c_{m} \in \boldsymbol{R}$, 有
+
+$$
+\begin{aligned}
+\sum_{i, j=1}^{m} c_{i} c_{j} K\left(x_{i}, x_{j}\right) & =\sum_{i, j=1}^{m} c_{i} c_{j}\left(\phi\left(x_{i}\right) \cdot \phi\left(x_{j}\right)\right) \\
+& =\left(\sum_{i} c_{i} \phi\left(x_{i}\right)\right) \cdot\left(\sum_{j} c_{j} \phi\left(x_{j}\right)\right) \\
+& =\left\|\sum_{i} c_{i} \phi\left(x_{i}\right)\right\|^{2} \geqslant 0
+\end{aligned}
+$$
+
+表明 $K(x, z)$ 关于 $x_{1}, x_{2}, \cdots, x_{m}$ 的 Gram 矩阵是半正定的。
+
+充分性。对任意 $x_{1}, x_{2}, \cdots, x_{m} \in \mathcal{X}$, 已知对称函数 $K(x, z)$ 关于 $x_{1}, x_{2}, \cdots, x_{m}$ 的 Gram 矩阵是半正定的。根据前面的结果, 对给定的 $K(x, z)$, 可以构造从 $\mathcal{X}$ 到某个希尔伯特空间 $\mathcal{H}$ 的映射:
+
+
+\begin{equation*}
+\phi: x \rightarrow K(\bullet, x) \tag{7.86}
+\end{equation*}
+
+
+由式 (7.83) 可知:
+
+$$
+K(\bullet, x) \cdot f=f(x)
+$$
+
+并且
+
+$$
+K(\bullet, x) \cdot K(\bullet, z)=K(x, z)
+$$
+
+由式 (7.86) 即得:
+
+$$
+K(x, z)=\phi(x) \cdot \phi(z)
+$$
+
+表明 $K(x, z)$ 是 $\mathcal{X} \times \mathcal{X}$ 上的核函数。
+
+定理给出了正定核的充要条件, 因此可以作为正定核, 即核函数的另一定义。
+
+定义 7.7 (正定核的等价定义) 设 $\mathcal{X} \subset \boldsymbol{R}^{n}, K(x, z)$ 是定义在 $\mathcal{X} \times \mathcal{X}$ 上的对称函数,如果对任意 $x_{i} \in \mathcal{X}, i=1,2, \cdots, m, K(x, z)$ 对应的 Gram 矩阵
+
+
+\begin{equation*}
+K=\left[K\left(x_{i}, x_{j}\right)\right]_{m \times m} \tag{7.87}
+\end{equation*}
+
+
+是半正定矩阵, 则称 $K(x, z)$ 是正定核。
+
+这一定义在构造核函数时很有用。但对于一个具体函数 $K(x, z)$ 来说, 检验它是否为正定核函数并不容易, 因为要求对任意有限输入集 $\left\{x_{1}, x_{2}, \cdots, x_{m}\right\}$ 验证 $K$ 对应的 Gram 矩阵是否为半正定的。在实际问题中往往应用已有的核函数。另外, 由 Mercer 定理可以得到 Mercer 核 (Mercer kernel) ${ }^{[11]}$, 正定核比 Mercer 核更具一般性。下面介绍一些常用的核函数。
+
+\subsection*{7.3.3 常用核函数}
+\begin{enumerate}
+  \item 多项式核函数 (polynomial kernel function)
+\end{enumerate}
+
+
+\begin{equation*}
+K(x, z)=(x \cdot z+1)^{p} \tag{7.88}
+\end{equation*}
+
+
+对应的支持向量机是一个 $p$ 次多项式分类器。在此情形下, 分类决策函数成为
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left[\sum_{i=1}^{N_{s}} a_{i}^{*} y_{i}\left(x_{i} \cdot x+1\right)^{p}+b^{*}\right] \tag{7.89}
+\end{equation*}
+
+
+\section*{2. 高斯核函数 (Gaussian kernel function)}
+
+\begin{equation*}
+K(x, z)=\exp \left(-\frac{\|x-z\|^{2}}{2 \sigma^{2}}\right) \tag{7.90}
+\end{equation*}
+
+
+对应的支持向量机是高斯径向基函数（radial basis function）分类器。在此情形下, 分类决策函数成为
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left[\sum_{i=1}^{N_{s}} a_{i}^{*} y_{i} \exp \left(-\frac{\left\|x-x_{i}\right\|^{2}}{2 \sigma^{2}}\right)+b^{*}\right] \tag{7.91}
+\end{equation*}
+
+
+\section*{3. 字符串核函数 (string kernel function)}
+核函数不仅可以定义在欧氏空间上, 还可以定义在离散数据的集合上。比如, 字符串核是定义在字符串集合上的核函数。字符串核函数在文本分类、信息检索、生物信息学等方面都有应用。
+
+考虑一个有限字符表 $\Sigma$ 。字符串 $s$ 是从 $\Sigma$ 中取出的有限个字符的序列, 包括空字符串。字符串 $s$ 的长度用 $|s|$ 表示, 它的元素记作 $s(1) s(2) \cdots s(|s|)$ 。两个字符串 $s$ 和 $t$ 的连接记作 $s t$ 。所有长度为 $n$ 的字符串的集合记作 $\Sigma^{n}$, 所有字符串的集合记作 $\Sigma^{*}=\bigcup_{n=0}^{\infty} \Sigma^{n}$ 。
+
+考虑字符串 $s$ 的子串 $u$ 。给定一个指标序列 $i=\left(i_{1}, i_{2}, \cdots, i_{|u|}\right), 1 \leqslant i_{1}<i_{2}<\cdots<$ $i_{|u|} \leqslant|s|, s$ 的子串定义为 $u=s(i)=s\left(i_{1}\right) s\left(i_{2}\right) \cdots s\left(i_{|u|}\right)$, 其长度记作 $l(i)=i_{|u|}-i_{1}+1$ 。如果 $i$ 是连续的, 则 $l(i)=|u|$; 否则, $l(i)>|u|$ 。
+
+假设 $\mathcal{S}$ 是长度大于或等于 $n$ 的字符串的集合, $s$ 是 $\mathcal{S}$ 的元素。现在建立字符串集合 $\mathcal{S}$到特征空间 $\mathcal{H}_{n}=R^{\Sigma^{n}}$ 的映射 $\phi_{n}(s) \circ R^{\Sigma^{n}}$ 表示定义在 $\Sigma^{n}$ 上的实数空间, 其每一维对应一个字符串 $u \in \Sigma^{n}$, 映射 $\phi_{n}(s)$ 将字符串 $s$ 对应于空间 $R^{\Sigma^{n}}$ 的一个向量, 其在 $u$ 维上的取值为
+
+
+\begin{equation*}
+\left[\phi_{n}(s)\right]_{u}=\sum_{i: s(i)=u} \lambda^{l(i)} \tag{7.92}
+\end{equation*}
+
+
+这里, $0<\lambda \leqslant 1$ 是一个衰减参数, $l(i)$ 表示字符串 $i$ 的长度, 求和在 $s$ 中所有与 $u$ 相同的子串上进行。
+
+例如, 假设 $\Sigma$ 为英文字符集, $n$ 为 $3, \mathcal{S}$ 为长度大于或等于 3 的字符串的集合。考虑将字符集 $\mathcal{S}$ 映射到特征空间 $H_{3}$ 。 $H_{3}$ 的一维对应于字符串 asd。这时, 字符串 “Nasdaq” 与 “lass das” 在这一维上的值分别是 $\left[\phi_{3} \text { (Nasdaq) }\right]_{\text {asd }}=\lambda^{3}$ 和 $\left[\phi_{3} \text { (lass } \square \text { das) }\right]_{\text {asd }}=2 \lambda^{5}$ ( $\square$ 为空格)。在第 1 个字符串里, asd 是连续的子串。在第 2 个字符串里, asd 是长度为 5 的不连续子串,共出现两次。\\
+两个字符串 $s$ 和 $t$ 上的字符串核函数是基于映射 $\phi_{n}$ 的特征空间中的内积:
+
+
+\begin{align*}
+k_{n}(s, t) & =\sum_{u \in \Sigma^{n}}\left[\phi_{n}(s)\right]_{u}\left[\phi_{n}(t)\right]_{u} \\
+& =\sum_{u \in \Sigma^{n}} \sum_{(i, j): s(i)=t(j)=u} \lambda^{l(i)} \lambda^{l(j)} \tag{7.93}
+\end{align*}
+
+
+字符串核函数 $k_{n}(s, t)$ 给出了字符串 $s$ 和 $t$ 中长度等于 $n$ 的所有子串组成的特征向量的余弦相似度 (cosine similarity)。直观上, 两个字符串相同的子串越多, 它们就越相似, 字符串核函数的值就越大。字符串核函数可以由动态规划快速地计算。
+
+\subsection*{7.3.4 非线性支持向量分类机}
+如上所述，利用核技巧，可以将线性分类的学习方法应用到非线性分类问题中去。将线性支持向量机扩展到非线性支持向量机，只需将线性支持向量机对偶形式中的内积换成核函数。
+
+定义 7.8 (非线性支持向量机) 从非线性分类训练集，通过核函数与软间隔最大化或凸二次规划 $(7.95) \sim(7.97)$ 学习得到的分类决策函数
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left(\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} K\left(x, x_{i}\right)+b^{*}\right) \tag{7.94}
+\end{equation*}
+
+
+称为非线性支持向量机, $K(x, z)$ 是正定核函数。
+
+下面叙述非线性支持向量机学习算法。
+
+\section*{算法 7.4 (非线性支持向量机学习算法)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中 $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=$ $\{-1,+1\}, i=1,2, \cdots, N$ 。
+
+输出: 分类决策函数。
+
+(1) 选取适当的核函数 $K(x, z)$ 和适当的参数 $C$, 构造并求解最优化问题
+
+\[
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j} K\left(x_{i}, x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2, \cdots, N \tag{7.97}
+\end{array}
+\]
+
+求得最优解 $\alpha^{*}=\left(\alpha_{1}^{*}, \alpha_{2}^{*}, \cdots, \alpha_{N}^{*}\right)^{\mathrm{T}}$ 。
+
+(2) 选择 $\alpha^{*}$ 的一个正分量 $0<\alpha_{j}^{*}<C$, 计算
+
+$$
+b^{*}=y_{j}-\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} K\left(x_{i}, x_{j}\right)
+$$
+
+（3）构造决策函数:
+
+$$
+f(x)=\operatorname{sign}\left(\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} K\left(x, x_{i}\right)+b^{*}\right)
+$$
+
+当 $K(x, z)$ 是正定核函数时, 问题 $(7.95) \sim(7.97)$ 是凸二次规划问题, 解是存在的。
+
+\section*{7.4 序列最小最优化算法}
+本节讨论支持向量机学习的实现问题。我们知道, 支持向量机的学习问题可以形式化为求解凸二次规划问题。这样的凸二次规划问题具有全局最优解, 并且有许多最优化算法可以用于这一问题的求解。但是当训练样本容量很大时, 这些算法往往变得非常低效, 以致无法使用。所以, 如何高效地实现支持向量机学习就成为一个重要的问题。目前人们已提出许多快速实现算法。本节讲述其中的序列最小最优化 (sequential minimal optimization, SMO) 算法, 这种算法于 1998 年由 Platt 提出。
+
+SMO 算法要解如下凸二次规划的对偶问题:
+
+\[
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j} K\left(x_{i}, x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2, \cdots, N \tag{7.100}
+\end{array}
+\]
+
+在这个问题中, 变量是拉格朗日乘子, 一个变量 $\alpha_{i}$ 对应于一个样本点 $\left(x_{i}, y_{i}\right)$; 变量的总数等于训练样本容量 $N$ 。
+
+SMO 算法是一种启发式算法, 其基本思路是: 如果所有变量的解都满足此最优化问题的 KKT 条件 (Karush-Kuhn-Tucker conditions), 那么这个最优化问题的解就得到了。因为 KKT 条件是该最优化问题的充分必要条件。否则, 选择两个变量, 固定其他变量, 针对这两个变量构建一个二次规划问题。这个二次规划问题关于这两个变量的解应该更接近原始二次规划问题的解, 因为这会使得原始二次规划问题的目标函数值变得更小。重要的是, 这时子问题可以通过解析方法求解, 这样就可以大大提高整个算法的计算速度。子问题有两个变量,一个是违反 KKT 条件最严重的那一个, 另一个由约束条件自动确定。如此, SMO 算法将原问题不断分解为子问题并对子问题求解, 进而达到求解原问题的目的。
+
+注意, 子问题的两个变量中只有一个是自由变量。假设 $\alpha_{1}, \alpha_{2}$ 为两个变量, $\alpha_{3}, \alpha_{4}, \cdots, \alpha_{N}$固定, 那么由等式约束 (7.99) 可知:
+
+$$
+\alpha_{1}=-y_{1} \sum_{i=2}^{N} \alpha_{i} y_{i}
+$$
+
+如果 $\alpha_{2}$ 确定, 那么 $\alpha_{1}$ 也随之确定, 所以子问题中同时更新两个变量。
+
+整个 SMO 算法包括两个部分: 求解两个变量二次规划的解析方法和选择变量的启发式方法。
+
+\subsection*{7.4.1 两个变量二次规划的求解方法}
+不失一般性, 假设选择的两个变量是 $\alpha_{1}, \alpha_{2}$, 其他变量 $\alpha_{i}(i=3,4, \cdots, N)$ 是固定的。于是 SMO 的最优化问题 (7.98) (7.100) 的子问题可以写成
+
+$$
+\begin{aligned}
+& \min _{\alpha_{1}, \alpha_{2}} \quad W\left(\alpha_{1}, \alpha_{2}\right)=\frac{1}{2} K_{11} \alpha_{1}^{2}+\frac{1}{2} K_{22} \alpha_{2}^{2}+y_{1} y_{2} K_{12} \alpha_{1} \alpha_{2}- \\
+& \left(\alpha_{1}+\alpha_{2}\right)+y_{1} \alpha_{1} \sum_{i=3}^{N} y_{i} \alpha_{i} K_{i 1}+y_{2} \alpha_{2} \sum_{i=3}^{N} y_{i} \alpha_{i} K_{i 2} \\
+& \text { s.t. } \quad \alpha_{1} y_{1}+\alpha_{2} y_{2}=-\sum_{i=3}^{N} y_{i} \alpha_{i}=\varsigma \\
+& 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2
+\end{aligned}
+$$
+
+其中, $K_{i j}=K\left(x_{i}, x_{j}\right), i, j=1,2, \cdots, N, \varsigma$ 是常数, 目标函数式 (7.101) 中省略了不含 $\alpha_{1}, \alpha_{2}$的常数项。
+
+为了求解两个变量的二次规划问题 (7.101) (7.103), 首先分析约束条件, 然后在此约束条件下求极小。
+
+由于只有两个变量 $\left(\alpha_{1}, \alpha_{2}\right)$, 约束可以用二维空间中的图形表示 (如图 7.8 所示)。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_bf4132265b7e92ddc9cdg-25(2)}
+\end{center}
+
+(a)
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_bf4132265b7e92ddc9cdg-25(1)}
+\end{center}
+
+(b)
+
+图 7.8 二变量优化问题图示
+
+不等式约束 $(7.103)$ 使得 $\left(\alpha_{1}, \alpha_{2}\right)$ 在盒子 $[0, C] \times[0, C]$ 内, 等式约束 $(7.102)$ 使 $\left(\alpha_{1}, \alpha_{2}\right)$在平行于盒子 $[0, C] \times[0, C]$ 的对角线的直线上, 因此要求的是目标函数在一条平行于对角线的线段上的最优值。这使得两个变量的最优化问题成为实质上的单变量的最优化问题, 不妨考虑为变量 $\alpha_{2}$ 的最优化问题。
+
+假设问题 (7.101) (7.103) 的初始可行解为 $\alpha_{1}^{\text {old }}, \alpha_{2}^{\text {old }}$, 最优解为 $\alpha_{1}^{\text {new }}, \alpha_{2}^{\text {new }}$, 并且假设在
+
+\includegraphics[max width=\textwidth, center]{2024_03_13_bf4132265b7e92ddc9cdg-25}\\
+以最优值 $\alpha_{2}^{\text {new }}$ 的取值范围必须满足条件
+
+$$
+L \leqslant \alpha_{2}^{\text {new }} \leqslant H
+$$
+
+其中, $L$ 与 $H$ 是 $\alpha_{2}^{\text {new }}$ 所在的对角线段端点的界。如果 $y_{1} \neq y_{2}$ (如图 7.8(a) 所示), 则
+
+$$
+L=\max \left(0, \alpha_{2}^{\text {old }}-\alpha_{1}^{\text {old }}\right), \quad H=\min \left(C, C+\alpha_{2}^{\text {old }}-\alpha_{1}^{\text {old }}\right)
+$$
+
+如果 $y_{1}=y_{2}$ (如图 7.8(b) 所示), 则
+
+$$
+L=\max \left(0, \alpha_{2}^{\text {old }}+\alpha_{1}^{\text {old }}-C\right), \quad H=\min \left(C, \alpha_{2}^{\text {old }}+\alpha_{1}^{\text {old }}\right)
+$$
+
+下面, 首先求沿着约束方向未经剪辑即未考虑不等式约束 (7.103) 时 $\alpha_{2}$ 的最优解 $\alpha_{2}^{\text {new,unc }}$, 然后再求剪辑后 $\alpha_{2}$ 的解 $\alpha_{2}^{\text {new }}$ 。我们用定理来叙述这个结果。为了叙述简单, 记
+
+
+\begin{equation*}
+g(x)=\sum_{i=1}^{N} \alpha_{i} y_{i} K\left(x_{i}, x\right)+b \tag{7.104}
+\end{equation*}
+
+
+令
+
+
+\begin{equation*}
+E_{i}=g\left(x_{i}\right)-y_{i}=\left(\sum_{j=1}^{N} \alpha_{j} y_{j} K\left(x_{j}, x_{i}\right)+b\right)-y_{i}, \quad i=1,2 \tag{7.105}
+\end{equation*}
+
+
+当 $i=1,2$ 时, $E_{i}$ 为函数 $g(x)$ 对输入 $x_{i}$ 的预测值与真实输出 $y_{i}$ 之差。
+
+定理 7.6 最优化问题 (7.101) (7.103) 沿着约束方向未经剪辑时的解是
+
+
+\begin{equation*}
+\alpha_{2}^{\text {new,unc }}=\alpha_{2}^{\text {old }}+\frac{y_{2}\left(E_{1}-E_{2}\right)}{\eta} \tag{7.106}
+\end{equation*}
+
+
+其中，
+
+
+\begin{equation*}
+\eta=K_{11}+K_{22}-2 K_{12}=\left\|\Phi\left(x_{1}\right)-\Phi\left(x_{2}\right)\right\|^{2} \tag{7.107}
+\end{equation*}
+
+
+$\Phi(x)$ 是输入空间到特征空间的映射, $E_{i}, i=1,2$, 由式 (7.105) 给出。
+
+经剪辑后 $\alpha_{2}$ 的解是
+
+\[
+\alpha_{2}^{\text {new }}= \begin{cases}H, & \alpha_{2}^{\text {new, unc }}>H  \tag{7.108}\\ \alpha_{2}^{\text {new,unc }}, & L \leqslant \alpha_{2}^{\text {new,unc }} \leqslant H \\ L, & \alpha_{2}^{\text {new,unc }}<L\end{cases}
+\]
+
+由 $\alpha_{2}^{\text {new }}$ 求得 $\alpha_{1}^{\text {new }}$ 是
+
+
+\begin{equation*}
+\alpha_{1}^{\text {new }}=\alpha_{1}^{\text {old }}+y_{1} y_{2}\left(\alpha_{2}^{\text {old }}-\alpha_{2}^{\text {new }}\right) \tag{7.109}
+\end{equation*}
+
+
+证明 引入记号
+
+$$
+v_{i}=\sum_{j=3}^{N} \alpha_{j} y_{j} K\left(x_{i}, x_{j}\right)=g\left(x_{i}\right)-\sum_{j=1}^{2} \alpha_{j} y_{j} K\left(x_{i}, x_{j}\right)-b, \quad i=1,2
+$$
+
+目标函数可写成
+
+
+\begin{align*}
+W\left(\alpha_{1}, \alpha_{2}\right)= & \frac{1}{2} K_{11} \alpha_{1}^{2}+\frac{1}{2} K_{22} \alpha_{2}^{2}+y_{1} y_{2} K_{12} \alpha_{1} \alpha_{2}- \\
+& \left(\alpha_{1}+\alpha_{2}\right)+y_{1} v_{1} \alpha_{1}+y_{2} v_{2} \alpha_{2} \tag{7.110}
+\end{align*}
+
+
+由 $\alpha_{1} y_{1}=\varsigma-\alpha_{2} y_{2}$ 及 $y_{i}^{2}=1$, 可将 $\alpha_{1}$ 表示为
+
+$$
+\alpha_{1}=\left(\varsigma-y_{2} \alpha_{2}\right) y_{1}
+$$
+
+代入式 (7.110), 得到只是 $\alpha_{2}$ 的函数的目标函数:
+
+$$
+\begin{aligned}
+W\left(\alpha_{2}\right)= & \frac{1}{2} K_{11}\left(\varsigma-\alpha_{2} y_{2}\right)^{2}+\frac{1}{2} K_{22} \alpha_{2}^{2}+y_{2} K_{12}\left(\varsigma-\alpha_{2} y_{2}\right) \alpha_{2}- \\
+& \left(\varsigma-\alpha_{2} y_{2}\right) y_{1}-\alpha_{2}+v_{1}\left(\varsigma-\alpha_{2} y_{2}\right)+y_{2} v_{2} \alpha_{2}
+\end{aligned}
+$$
+
+对 $\alpha_{2}$ 求导数:
+
+$$
+\begin{aligned}
+\frac{\partial W}{\partial \alpha_{2}}= & K_{11} \alpha_{2}+K_{22} \alpha_{2}-2 K_{12} \alpha_{2}- \\
+& K_{11} \varsigma y_{2}+K_{12} \varsigma y_{2}+y_{1} y_{2}-1-v_{1} y_{2}+y_{2} v_{2}
+\end{aligned}
+$$
+
+令其为 0 , 得到:
+
+$$
+\begin{aligned}
+\left(K_{11}+K_{22}-2 K_{12}\right) \alpha_{2}= & y_{2}\left(y_{2}-y_{1}+\varsigma K_{11}-\varsigma K_{12}+v_{1}-v_{2}\right) \\
+= & y_{2}\left[y_{2}-y_{1}+\varsigma K_{11}-\varsigma K_{12}+\left(g\left(x_{1}\right)-\sum_{j=1}^{2} y_{j} \alpha_{j} K_{1 j}-b\right)-\right. \\
+& \left.\left(g\left(x_{2}\right)-\sum_{j=1}^{2} y_{j} \alpha_{j} K_{2 j}-b\right)\right]
+\end{aligned}
+$$
+
+将 $\varsigma=\alpha_{1}^{\text {old }} y_{1}+\alpha_{2}^{\text {old }} y_{2}$ 代入, 得到:
+
+$$
+\begin{aligned}
+\left(K_{11}+K_{22}-2 K_{12}\right) \alpha_{2}^{\text {new,unc }} & =y_{2}\left[\left(K_{11}+K_{22}-2 K_{12}\right) \alpha_{2}^{\text {old }} y_{2}+y_{2}-y_{1}+g\left(x_{1}\right)-g\left(x_{2}\right)\right] \\
+& =\left(K_{11}+K_{22}-2 K_{12}\right) \alpha_{2}^{\text {old }}+y_{2}\left(E_{1}-E_{2}\right)
+\end{aligned}
+$$
+
+将 $\eta=K_{11}+K_{22}-2 K_{12}$ 代入, 于是得到:
+
+$$
+\alpha_{2}^{\text {new,unc }}=\alpha_{2}^{\text {old }}+\frac{y_{2}\left(E_{1}-E_{2}\right)}{\eta}
+$$
+
+要使其满足不等式约束必须将其限制在区间 $[L, H]$ 内, 从而得到 $\alpha_{2}^{\text {new }}$ 的表达式 (7.108)。由等式约束 (7.102) 得到 $\alpha_{1}^{\text {new }}$ 的表达式 (7.109), 于是得到最优化问题 (7.101) (7.103) 的解 $\left(\alpha_{1}^{\text {new }}, \alpha_{2}^{\text {new }}\right)$ 。
+
+\section*{7.4 .2 变量的选择方法}
+SMO 算法在每个子问题中选择两个变量优化, 其中至少一个变量是违反 KKT 条件的。
+
+\section*{1. 第 1 个变量的选择}
+SMO 称选择第 1 个变量的过程为外层循环。外层循环在训练样本中选取违反 KKT 条件最严重的样本点, 并将其对应的变量作为第 1 个变量。具体地, 检验训练样本点 $\left(x_{i}, y_{i}\right)$ 是否满足 KKT 条件, 即
+
+
+\begin{equation*}
+\alpha_{i}=0 \Leftrightarrow y_{i} g\left(x_{i}\right) \geqslant 1 \tag{7.111}
+\end{equation*}
+
+
+\[
+\begin{array}{r}
+0<\alpha_{i}<C \Leftrightarrow y_{i} g\left(x_{i}\right)=1 \\
+\alpha_{i}=C \Leftrightarrow y_{i} g\left(x_{i}\right) \leqslant 1 \tag{7.113}
+\end{array}
+\]
+
+其中, $g\left(x_{i}\right)=\sum_{j=1}^{N} \alpha_{j} y_{j} K\left(x_{i}, x_{j}\right)+b$ 。
+
+该检验是在 $\varepsilon$ 范围内进行的。在检验过程中, 外层循环首先遍历所有满足条件 $0<\alpha_{i}<$ $C$ 的样本点, 即在间隔边界上的支持向量点, 检验它们是否满足 KKT 条件。如果这些样本点都满足 KKT 条件, 那么遍历整个训练集, 检验它们是否满足 KKT 条件。
+
+\section*{2. 第 2 个变量的选择}
+SMO 称选择第 2 个变量的过程为内层循环。假设在外层循环中已经找到第 1 个变量 $\alpha_{1}$,现在要在内层循环中找第 2 个变量 $\alpha_{2}$ 。第 2 个变量选择的标准是希望能使 $\alpha_{2}$ 有足够大的变化。
+
+由式 (7.106) 和式 (7.108) 可知, $\alpha_{2}^{\text {new }}$ 是依赖于 $\left|E_{1}-E_{2}\right|$ 的, 为了加快计算速度, 一种简单的做法是选择 $\alpha_{2}$, 使其对应的 $\left|E_{1}-E_{2}\right|$ 最大。因为 $\alpha_{1}$ 已定, $E_{1}$ 也确定了。如果 $E_{1}$ 是正的, 那么选择最小的 $E_{i}$ 作为 $E_{2}$; 如果 $E_{1}$ 是负的, 那么选择最大的 $E_{i}$ 作为 $E_{2}$ 。为了节省计算时间, 将所有 $E_{i}$ 值保存在一个列表中。
+
+在特殊情况下, 如果内层循环通过以上方法选择的 $\alpha_{2}$ 不能使目标函数有足够的下降, 那么采用以下启发式规则继续选择 $\alpha_{2}$ 。遍历在间隔边界上的支持向量点, 依次将其对应的变量作为 $\alpha_{2}$ 试用, 直到目标函数有足够的下降。若找不到合适的 $\alpha_{2}$, 那么遍历训练数据集; 若仍找不到合适的 $\alpha_{2}$, 则放弃第 1 个 $\alpha_{1}$, 再通过外层循环寻求另外的 $\alpha_{1}$ 。
+
+\section*{3. 计算阈值 $b$ 和差值 $E_{i}$}
+在每次完成两个变量的优化后, 都要重新计算阈值 $b$ 。当 $0<\alpha_{1}^{\text {new }}<C$ 时, 由 KKT 条件 (7.112) 可知:
+
+$$
+\sum_{i=1}^{N} \alpha_{i} y_{i} K_{i 1}+b=y_{1}
+$$
+
+于是,
+
+
+\begin{equation*}
+b_{1}^{\text {new }}=y_{1}-\sum_{i=3}^{N} \alpha_{i} y_{i} K_{i 1}-\alpha_{1}^{\text {new }} y_{1} K_{11}-\alpha_{2}^{\text {new }} y_{2} K_{21} \tag{7.114}
+\end{equation*}
+
+
+由 $E_{1}$ 的定义式 (7.105) 有
+
+$$
+E_{1}=\sum_{i=3}^{N} \alpha_{i} y_{i} K_{i 1}+\alpha_{1}^{\text {old }} y_{1} K_{11}+\alpha_{2}^{\text {old }} y_{2} K_{21}+b^{\text {old }}-y_{1}
+$$
+
+式 (7.114) 的前两项可写成
+
+$$
+y_{1}-\sum_{i=3}^{N} \alpha_{i} y_{i} K_{i 1}=-E_{1}+\alpha_{1}^{\text {old }} y_{1} K_{11}+\alpha_{2}^{\text {old }} y_{2} K_{21}+b^{\text {old }}
+$$
+
+代入式 (7.114), 可得:
+
+
+\begin{equation*}
+b_{1}^{\text {new }}=-E_{1}-y_{1} K_{11}\left(\alpha_{1}^{\text {new }}-\alpha_{1}^{\text {old }}\right)-y_{2} K_{21}\left(\alpha_{2}^{\text {new }}-\alpha_{2}^{\text {old }}\right)+b^{\text {old }} \tag{7.115}
+\end{equation*}
+
+
+同样, 如果 $0<\alpha_{2}^{\text {new }}<C$, 那么,
+
+
+\begin{equation*}
+b_{2}^{\text {new }}=-E_{2}-y_{1} K_{12}\left(\alpha_{1}^{\text {new }}-\alpha_{1}^{\text {old }}\right)-y_{2} K_{22}\left(\alpha_{2}^{\text {new }}-\alpha_{2}^{\text {old }}\right)+b^{\text {old }} \tag{7.116}
+\end{equation*}
+
+
+如果 $\alpha_{1}^{\text {new }}, \alpha_{2}^{\text {new }}$ 同时满足条件 $0<\alpha_{i}^{\text {new }}<C, i=1,2$, 那么 $b_{1}^{\text {new }}=b_{2}^{\text {new }}$ 。如果 $\alpha_{1}^{\text {new }}, \alpha_{2}^{\text {new }}$ 是 0 或者 $C$, 那么 $b_{1}^{\text {new }}$ 和 $b_{2}^{\text {new }}$ 以及它们之间的数都是符合 KKT 条件的阈值, 这时选择它们的中点作为 $b^{\text {new }}$ 。
+
+在每次完成两个变量的优化之后, 还必须更新对应的 $E_{i}$ 值, 并将它们保存在列表中。 $E_{i}$值的更新要用到 $b^{\text {new }}$ 值, 以及所有支持向量对应的 $\alpha_{j}$ :
+
+
+\begin{equation*}
+E_{i}^{\text {new }}=\sum_{S} y_{j} \alpha_{j} K\left(x_{i}, x_{j}\right)+b^{\text {new }}-y_{i} \tag{7.117}
+\end{equation*}
+
+
+其中, $S$ 是所有支持向量 $x_{j}$ 的集合。
+
+\subsection*{7.4.3 SMO 算法}
+\section*{算法 7.5 (SMO 算法)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=$ $\{-1,+1\}, i=1,2, \cdots, N$, 精度 $\varepsilon$ 。
+
+输出: 近似解 $\hat{\alpha}$ 。
+
+(1) 取初值 $\alpha^{(0)}=0$, 令 $k=0$;
+
+(2) 选取优化变量 $\alpha_{1}^{(k)}, \alpha_{2}^{(k)}$, 解析求解两个变量的最优化问题 (7.101) (7.103), 求得最优解 $\alpha_{1}^{(k+1)}, \alpha_{2}^{(k+1)}$, 更新 $\alpha$ 为 $\alpha^{(k+1)}$;
+
+(3) 若在精度 $\varepsilon$ 范围内满足停机条件:
+
+$$
+\begin{gathered}
+\sum_{i=1}^{N} \alpha_{i} y_{i}=0, \quad 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2, \cdots, N \\
+y_{i} \cdot g\left(x_{i}\right) \begin{cases}\geqslant 1, & \left\{x_{i} \mid \alpha_{i}=0\right\} \\
+=1, & \left\{x_{i} \mid 0<\alpha_{i}<C\right\} \\
+\leqslant 1, & \left\{x_{i} \mid \alpha_{i}=C\right\}\end{cases}
+\end{gathered}
+$$
+
+其中,
+
+$$
+g\left(x_{i}\right)=\sum_{j=1}^{N} \alpha_{j} y_{j} K\left(x_{j}, x_{i}\right)+b
+$$
+
+则转步骤 (4); 否则令 $k=k+1$, 转步骤 $(2)$;
+
+(4) 取 $\hat{\alpha}=\alpha^{(k+1)}$ 。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 支持向量机最简单的情况是线性可分支持向量机或硬间隔支持向量机, 构建它的条件是训练数据线性可分。其学习策略是最大间隔法, 可以表示为凸二次规划问题, 其原始最优化问题为
+\end{enumerate}
+
+$$
+\begin{array}{ll}
+\min _{w, b} & \frac{1}{2}\|w\|^{2} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right)-1 \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+求得最优化问题的解为 $w^{*}, b^{*}$, 得到线性可分支持向量机, 分离超平面是
+
+$$
+w^{*} \cdot x+b^{*}=0
+$$
+
+分类决策函数是
+
+$$
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)
+$$
+
+最大间隔法中，函数间隔与几何间隔是重要的概念。
+
+线性可分支持向量机的最优解存在且唯一。位于间隔边界上的实例点为支持向量。最优分离超平面由支持向量完全决定。
+
+二次规划问题的对偶问题是
+
+$$
+\begin{array}{ll}
+\min & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& \alpha_{i} \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+通常, 通过求解对偶问题学习线性可分支持向量机, 即首先求解对偶问题的最优值 $\alpha^{*}$,然后求最优值 $w^{*}$ 和 $b^{*}$, 得出分离超平面和分类决策函数。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 现实中训练数据是线性可分的情形较少, 训练数据往往是近似线性可分的, 这时使用线性支持向量机或软间隔支持向量机。线性支持向量机是最基本的支持向量机。
+\end{enumerate}
+
+对于噪声或例外, 通过引入松驰变量 $\xi_{i}$, 使其 “可分”, 得到线性支持向量机学习的凸二次规划问题，其原始最优化问题是
+
+$$
+\begin{array}{ll}
+\min _{w, b, \xi} & \frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right) \geqslant 1-\xi_{i}, \quad i=1,2, \cdots, N \\
+& \xi_{i} \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+求解原始最优化问题的解 $w^{*}, b^{*}$, 得到线性支持向量机，其分离超平面为
+
+$$
+w^{*} \cdot x+b^{*}=0
+$$
+
+分类决策函数为
+
+$$
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right)
+$$
+
+线性支持向量机的解 $w^{*}$ 唯一但 $b^{*}$ 不一定唯一。
+
+对偶问题是
+
+$$
+\begin{array}{ll}
+\min _{\alpha} & \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_{i} y_{j}\left(x_{i} \cdot x_{j}\right)-\sum_{i=1}^{N} \alpha_{i} \\
+\text { s.t. } & \sum_{i=1}^{N} \alpha_{i} y_{i}=0 \\
+& 0 \leqslant \alpha_{i} \leqslant C, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+线性支持向量机的对偶学习算法首先求解对偶问题得到最优解 $\alpha^{*}$, 然后求原始问题最优解 $w^{*}$ 和 $b^{*}$, 得出分离超平面和分类决策函数。
+
+对偶问题的解 $\alpha^{*}$ 中满足 $\alpha_{i}^{*}>0$ 的实例点 $x_{i}$ 称为支持向量。支持向量可在间隔边界上,也可在间隔边界与分离超平面之间, 或者在分离超平面误分一侧。最优分离超平面由支持向量完全决定。
+
+线性支持向量机学习等价于最小化二阶范数正则化的合页函数
+
+$$
+\sum_{i=1}^{N}\left[1-y_{i}\left(w \cdot x_{i}+b\right)\right]_{+}+\lambda\|w\|^{2}
+$$
+
+\section*{3. 非线性支持向量机}
+对于输入空间中的非线性分类问题，可以通过非线性变换将它转化为某个高维特征空间中的线性分类问题, 在高维特征空间中学习线性支持向量机。由于在线性支持向量机学习的对偶问题里, 目标函数和分类决策函数都只涉及实例与实例之间的内积, 所以不需要显式地指定非线性变换, 而是用核函数来替换当中的内积。核函数表示通过一个非线性转换后的两个实例间的内积。具体地, $K(x, z)$ 是一个核函数或正定核, 意味着存在一个从输入空间 $\mathcal{X}$到特征空间 $\mathcal{H}$ 的映射 $\phi(x): \mathcal{X} \rightarrow \mathcal{H}$ ，对任意 $x, z \in \mathcal{X}$ ，有
+
+$$
+K(x, z)=\phi(x) \cdot \phi(z)
+$$
+
+对称函数 $K(x, z)$ 为正定核的充要条件如下: 对任意 $x_{i} \in \mathcal{X}, i=1,2, \cdots, m$ ( $m$ 为任意正整数), 对称函数 $K(x, z)$ 对应的 Gram 矩阵是半正定的。
+
+所以, 在线性支持向量机学习的对偶问题中, 用核函数 $K(x, z)$ 替代内积, 求解得到的就是非线性支持向量机:
+
+$$
+f(x)=\operatorname{sign}\left(\sum_{i=1}^{N} \alpha_{i}^{*} y_{i} K\left(x, x_{i}\right)+b^{*}\right)
+$$
+
+\section*{4. SMO 算法}
+SMO 算法是支持向量机学习的一种快速算法, 其特点是不断地将原二次规划问题分解为只有两个变量的二次规划子问题, 并对子问题进行解析求解, 直到所有变量满足 KKT 条件为止。这样通过启发式的方法得到原二次规划问题的最优解。因为子问题有解析解, 所以每次计算子问题都很快，虽然计算子问题次数很多，但在总体上还是高效的。
+
+\section*{继续阅读}
+线性支持向量机 (软间隔) 由 Cortes 与 Vapnik 提出 ${ }^{[1]}$ 。同时, Boser, Guyon 与 Vapnik 又引入核技巧，提出非线性支持向量机 ${ }^{[2]}$ 。Drucker 等人将其扩展到支持向量回归 ${ }^{[3]}$ 。Vapnik Vladimir 在他的统计学习理论 ${ }^{[4]}$ 一书中对支持向量机的泛化能力进行了论述。
+
+Platt 提出了支持向量机的快速学习算法 SMO ${ }^{[5]}$, Joachims 实现的 SVM Light, 以及 Chang 与 Lin 实现的 LIBSVM 软件包被广泛使用。(1)
+
+原始的支持向量机是二类分类模型, 又被推广到多类分类支持向量机 [6-7], 以及用于结构预测的结构支持向量机 ${ }^{[8]}$ 。
+
+关于支持向量机的文献很多。支持向量机的介绍可参见文献 [9] 文献 [12]。核方法被认为是比支持向量机更具一般性的机器学习方法, 核方法的介绍可参见文献 [13] 文献 [15]。
+
+\section*{习 题}
+7.1 比较感知机的对偶形式与线性可分支持向量机的对偶形式。
+
+7.2 已知正例点 $x_{1}=(1,2)^{\mathrm{T}}, x_{2}=(2,3)^{\mathrm{T}}, x_{3}=(3,3)^{\mathrm{T}}$, 负例点 $x_{4}=(2,1)^{\mathrm{T}}, x_{5}=$ $(3,2)^{\mathrm{T}}$, 试求最大间隔分离超平面和分类决策函数, 并在图上画出分离超平面、间隔边界及支持向量。
+
+7.3 线性支持向量机还可以定义为以下形式:
+
+$$
+\begin{array}{ll}
+\min _{w, b, \xi} & \frac{1}{2}\|w\|^{2}+C \sum_{i=1}^{N} \xi_{i}^{2} \\
+\text { s.t. } & y_{i}\left(w \cdot x_{i}+b\right) \geqslant 1-\xi_{i}, \quad i=1,2, \cdots, N \\
+& \xi_{i} \geqslant 0, \quad i=1,2, \cdots, N
+\end{array}
+$$
+
+试求其对偶形式。
+
+7.4 证明内积的正整数幂函数
+
+$$
+K(x, z)=(x \cdot z)^{p}
+$$
+
+是正定核函数, 这里 $p$ 是正整数, $x, z \in \boldsymbol{R}^{n}$ 。
+
+\section*{参考文献}
+[1] CORTES C, VAPNIK V. Support-vector networks[J]. Machine Learning, 1995, 20(3): 273-297.
+
+[2] BOSER B E, GUYON I M, VAPNIK V N. A training algorithm for optimal margin classifiers[C]//Proceedings of the 5th Annual ACM Workshop on COLT. Pittsburgh, PA, 1992: $144-152$.
+
+(1) SVM Light: \href{http://svmlight.joachims.org/}{http://svmlight.joachims.org/}. LIBSVM: \href{http://www.csie.ntu.edu.tw/}{http://www.csie.ntu.edu.tw/} cjlin/libsvm/。
+
+[3] DRUCKER H, BURGES C J C, KAUFMAN L, et al. Support vector regression machines[C]// Advances in Neural Information Processing Systems 9. MIT Press, 1996: 155-161.
+
+[4] VAPNIK V N. The nature of statistical learning theory[M]. 张学工, 译. Berlin: Springer, 1995.
+
+[5] PLATT J C. Fast training of support vector machines using sequential minimal optimization[Z/OL]. \href{http://research.microsoft.com/apps/pubs/?id=68391}{http://research.microsoft.com/apps/pubs/?id=68391}.
+
+[6] WESTON J A E, WATKINS C. Support vector machines for multi-class pattern recognition[C]//Proceedings of the 7th European Symposium on Articial Neural Networks. 1999.
+
+[7] CRAMMER K, SINGER Y. On the algorithmic implementation of multiclass kernel-based machines[J]. Journal of Machine Learning Research, 2001, 2: 265-292.
+
+[8] TSOCHANTARIDIS I, JOACHIMS T, HOFMANN T, et al. Large margin methods for structured and interdependent output variables[J]. JMLR, 2005, 6: 1453-1484.
+
+[9] BURGES J C. A tutorial on support vector machines for pattern recognition[J]. Data mining and knowledge discovery, 1998, 2: 121-167.
+
+[10] CRISTIANINI N, SHAWE-TAYLOR J. An introduction to support vector machines and other kernel-based learning methods[M]. 李国正, 王猛, 曾华军, 译. Cambridge University Press, 2000.
+
+[11] 邓乃扬, 田英杰. 数据挖掘中的新方法—— 支持向量机 [M]. 北京: 科学出版社, 2004 .
+
+[12] 邓乃扬, 田英杰. 支持向量机 —— 理论, 算法与拓展 [M]. 北京: 科学出版社, 2009.
+
+[13] SCHOLKPF B, SMOLA A J. Learning with kernels: support vector machines, regularization, optimization, and beyond[M]. MIT Press, 2002.
+
+[14] HERBRICH R. Learning kernel classifiers: theory and algorithms[M]. MIT Press, 2002.
+
+[15] HOFMANN T, SCHOLKOPF B, SMOLA A J. Kernel methods in machine learning[J]. The Annals of Statistics, 2008, 36(3): 1171-1220.
+
+\section*{第 8 章 Boosting}
+Boosting是一种常用的机器学习方法, 应用广泛且有效。在分类问题中, 它通过改变训练样本的权重学习多个分类器, 并将这些分类器进行线性组合, 提高分类的性能。
+
+本章首先介绍 Boosting 的思路和代表性的 Boosting 算法 AdaBoost; 然后通过训练误差分析探讨 AdaBoost 为什么能够提高学习精度, 并且从前向分步加法模型的角度解释 AdaBoost; 最后叙述 Boosting 更具体的实例——提升树（Boosting tree）。AdaBoost 算法是在 1995 年由 Freund 和 Schapire 提出的, 提升树是 2000 年由 Friedman 等人提出的。
+
+\subsection*{8.1 AdaBoost 算法}
+\subsection*{8.1.1 Boosting 的基本思路}
+Boosting 基于这样一种思想: 对于一个复杂任务来说, 将多个专家的判断进行适当的综合所得出的判断要比其中任何一个专家单独的判断好。实际上，就是 “三个臭皮匠顶个诸葛亮” 的道理。
+
+历史上, Kearns 和 Valiant 首先提出了 “强可学习” (strongly learnable) 和 “弱可学习” (weakly learnable) 的概念。指出: 在概率近似正确 (probably approximately correct, PAC) 学习的框架中, 对于一个概念 (一个类), 如果存在一个多项式的学习算法能够学习它, 并且正确率很高, 那么就称这个概念是强可学习的; 如果存在一个多项式的学习算法能够学习它,学习的正确率仅比随机猜测略好, 那么就称这个概念是弱可学习的。非常有趣的是 Schapire 后来证明强可学习与弱可学习是等价的, 也就是说, 在 PAC 学习的框架下, 一个概念是强可学习的充分必要条件是这个概念是弱可学习的。
+
+这样一来, 问题便成为, 在学习中, 如果已经发现了 “弱学习算法”, 那么能否将它提升 (boost) 为 “强学习算法”。大家知道, 发现弱学习算法通常要比发现强学习算法容易得多。那么如何具体实施提升, 便成为开发 Boosting 时所要解决的问题。关于 Boosting 的研究很多, 有很多算法被提出, 最具代表性的是 AdaBoost 算法（AdaBoost algorithm）。
+
+对于分类问题而言, 给定一个训练样本集, 求比较粗䊁的分类规则 (弱分类器) 要比求精确的分类规则 (强分类器) 容易得多。Boosting 就是从弱学习算法出发, 反复学习, 得到一系列弱分类器 (又称为基本分类器), 然后组合这些弱分类器, 构成一个强分类器。大多数的 Boosting 都是改变训练数据的概率分布 (训练数据的权值分布), 针对不同的训练数据分布调用弱学习算法学习一系列弱分类器。\\
+这样, 对 Boosting 来说, 有两个问题需要回答: 一是在每一轮如何改变训练数据的权值或概率分布; 二是如何将弱分类器组合成一个强分类器。关于第 1 个问题, AdaBoost 的做法是提高那些被前一轮弱分类器错误分类样本的权值, 而降低那些被正确分类样本的权值。这样一来, 那些没有得到正确分类的数据, 由于其权值的加大而受到后一轮的弱分类器的更大关注。于是, 分类问题被一系列的弱分类器 “分而治之”。至于第 2 个问题, 即弱分类器的组合, AdaBoost 采取加权多数表决的方法。具体地, 加大分类误差率小的弱分类器的权值,使其在表决中起较大的作用; 减小分类误差率大的弱分类器的权值, 使其在表决中起较小的作用。
+
+AdaBoost 的巧妙之处就在于它将这些想法自然且有效地实现在一种算法里。
+
+\subsection*{8.1.2 AdaBoost 算法}
+现在叙述 AdaBoost 算法。假设给定一个二类分类的训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, 每个样本点由实例与标记组成。实例 $x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}$, 标记 $y_{i} \in \mathcal{Y}=\{-1,+1\}, \mathcal{X}$ 是实例空间, $\mathcal{Y}$ 是标记集合。AdaBoost 利用以下算法, 从训练数据中学习一系列弱分类器或基本分类器, 并将这些弱分类器线性组合成为一个强分类器。
+
+\section*{算法 8.1 (AdaBoost)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中 $x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=$ $\{-1,+1\}$; 弱学习算法。
+
+输出: 最终分类器 $G(x)$ 。
+
+(1) 初始化训练数据的权值分布
+
+$$
+D_{1}=\left(w_{11}, \cdots, w_{1 i}, \cdots, w_{1 N}\right), \quad w_{1 i}=\frac{1}{N}, \quad i=1,2, \cdots, N
+$$
+
+(2) 对 $m=1,2, \cdots, M$,
+
+(a) 使用具有权值分布 $D_{m}$ 的训练数据集学习, 得到基本分类器:
+
+$$
+G_{m}(x): \mathcal{X} \rightarrow\{-1,+1\}
+$$
+
+(b) 计算 $G_{m}(x)$ 在训练数据集上的分类误差率:
+
+
+\begin{equation*}
+e_{m}=\sum_{i=1}^{N} P\left(G_{m}\left(x_{i}\right) \neq y_{i}\right)=\sum_{i=1}^{N} w_{m i} I\left(G_{m}\left(x_{i}\right) \neq y_{i}\right) \tag{8.1}
+\end{equation*}
+
+
+(c) 计算 $G_{m}(x)$ 的系数:
+
+
+\begin{equation*}
+\alpha_{m}=\frac{1}{2} \log \frac{1-e_{m}}{e_{m}} \tag{8.2}
+\end{equation*}
+
+
+这里的对数是自然对数。
+
+(d) 更新训练数据集的权值分布:
+
+
+\begin{equation*}
+D_{m+1}=\left(w_{m+1,1}, \cdots, w_{m+1, i}, \cdots, w_{m+1, N}\right) \tag{8.3}
+\end{equation*}
+
+
+
+\begin{equation*}
+w_{m+1, i}=\frac{w_{m i}}{Z_{m}} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right), \quad i=1,2, \cdots, N \tag{8.4}
+\end{equation*}
+
+
+这里, $Z_{m}$ 是规范化因子, 且
+
+
+\begin{equation*}
+Z_{m}=\sum_{i=1}^{N} w_{m i} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right) \tag{8.5}
+\end{equation*}
+
+
+它使 $D_{m+1}$ 成为一个概率分布。
+
+（3）构建基本分类器的线性组合
+
+
+\begin{equation*}
+f(x)=\sum_{m=1}^{M} \alpha_{m} G_{m}(x) \tag{8.6}
+\end{equation*}
+
+
+得到最终分类器:
+
+
+\begin{align*}
+G(x) & =\operatorname{sign}(f(x)) \\
+& =\operatorname{sign}\left(\sum_{m=1}^{M} \alpha_{m} G_{m}(x)\right) \tag{8.7}
+\end{align*}
+
+
+对 AdaBoost 算法作如下说明:
+
+(1) 步骤 (1) 假设训练数据集具有均匀的权值分布, 即每个训练样本在基本分类器的学习中作用相同, 这一假设保证第 1 步能够在原始数据上学习基本分类器 $G_{1}(x)$ 。
+
+(2) 步骤 (2) 中 AdaBoost 反复学习基本分类器, 在每一轮 $m=1,2, \cdots, M$ 顺次地执行下列操作:
+
+(a) 使用当前分布 $D_{m}$ 加权的训练数据集学习基本分类器 $G_{m}(x)$ 。
+
+(b) 计算基本分类器 $G_{m}(x)$ 在加权训练数据集上的分类误差率:
+
+
+\begin{align*}
+e_{m} & =\sum_{i=1}^{N} P\left(G_{m}\left(x_{i}\right) \neq y_{i}\right) \\
+& =\sum_{G_{m}\left(x_{i}\right) \neq y_{i}} w_{m i} \tag{8.8}
+\end{align*}
+
+
+这里, $w_{m i}$ 表示第 $m$ 轮中第 $i$ 个实例的权值, $\sum_{i=1}^{N} w_{m i}=1$ 。这表明, $G_{m}(x)$ 在加权的训练数据集上的分类误差率是被 $G_{m}(x)$ 误分类样本的权值之和, 由此可以看出数据权值分布 $D_{m}$与基本分类器 $G_{m}(x)$ 的分类误差率的关系。
+
+(c) 计算基本分类器 $G_{m}(x)$ 的系数 $\alpha_{m} \circ \alpha_{m}$ 表示 $G_{m}(x)$ 在最终分类器中的重要性。由式 (8.2) 可知, 当 $e_{m} \leqslant \frac{1}{2}$ 时, $\alpha_{m} \geqslant 0$, 并且 $\alpha_{m}$ 随着 $e_{m}$ 的减小而增大, 所以分类误差率越小的基本分类器在最终分类器中的作用越大。
+
+(d) 更新训练数据的权值分布为下一轮作准备。式 (8.4) 可以写成
+
+$$
+w_{m+1, i}= \begin{cases}\frac{w_{m i}}{Z_{m}} \mathrm{e}^{-\alpha_{m}}, & G_{m}\left(x_{i}\right)=y_{i} \\ \frac{w_{m i}}{Z_{m}} \mathrm{e}^{\alpha_{m}}, & G_{m}\left(x_{i}\right) \neq y_{i}\end{cases}
+$$
+
+由此可知, 被基本分类器 $G_{m}(x)$ 误分类样本的权值得以扩大, 而被正确分类样本的权值得以
+
+缩小。两相比较, 由式 (8.2) 知误分类样本的权值被放大 $\mathrm{e}^{2 \alpha_{m}}=\frac{1-e_{m}}{e_{m}}$ 倍。因此, 误分类样本在下一轮学习中起更大的作用。不改变所给的训练数据, 而不断改变训练数据权值的分布,使得训练数据在基本分类器的学习中起不同的作用, 这是 AdaBoost 的一个特点。
+
+（3）步骤 (3) 中线性组合 $f(x)$ 实现 $M$ 个基本分类器的加权表决。系数 $\alpha_{m}$ 表示了基本分类器 $G_{m}(x)$ 的重要性, 这里, 所有 $\alpha_{m}$ 之和并不为 $1 \circ f(x)$ 的符号决定实例 $x$ 的类, $f(x)$的绝对值表示分类的确信度。利用基本分类器的线性组合构建最终分类器是 AdaBoost 的另一特点。
+
+\subsection*{8.1.3 AdaBoost 的例子 (1)}
+例 8.1 给定如表 8.1 所示训练数据。假设弱分类器由 $x<v$ 或 $x>v$ 产生, 其阈值 $v$ 使该分类器在训练数据集上分类误差率最低。试用 AdaBoost 算法学习一个强分类器。
+
+表 8.1 训练数据表
+
+\begin{center}
+\begin{tabular}{ccccccccccc}
+\hline
+序号 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+$x$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+$y$ & 1 & 1 & 1 & -1 & -1 & -1 & 1 & 1 & 1 & -1 \\
+\hline
+\end{tabular}
+\end{center}
+
+解 初始化数据权值分布:
+
+$$
+\begin{aligned}
+D_{1} & =\left(w_{11}, w_{12}, \cdots, w_{110}\right) \\
+w_{1 i} & =0.1, \quad i=1,2, \cdots, 10
+\end{aligned}
+$$
+
+对 $m=1$,
+
+(a) 在权值分布为 $D_{1}$ 的训练数据上, 阈值 $v$ 取 2.5 时分类误差率最低, 故基本分类器为
+
+$$
+G_{1}(x)= \begin{cases}1, & x<2.5 \\ -1, & x>2.5\end{cases}
+$$
+
+(b) $G_{1}(x)$ 在训练数据集上的误差率 $e_{1}=P\left(G_{1}\left(x_{i}\right) \neq y_{i}\right)=0.3$ 。
+
+(c) 计算 $G_{1}(x)$ 的系数: $\alpha_{1}=\frac{1}{2} \log \frac{1-e_{1}}{e_{1}}=0.4236$ 。
+
+(d) 更新训练数据的权值分布:
+
+$$
+\begin{aligned}
+D_{2}= & \left(w_{21}, \cdots, w_{2 i}, \cdots, w_{210}\right) \\
+w_{2 i}= & \frac{w_{1 i}}{Z_{1}} \exp \left(-\alpha_{1} y_{i} G_{1}\left(x_{i}\right)\right), \quad i=1,2, \cdots, 10 \\
+D_{2}= & (0.07143,0.07143,0.07143,0.07143,0.07143,0.07143, \\
+& 0.16667,0.16667,0.16667,0.07143)
+\end{aligned}
+$$
+
+$$
+f_{1}(x)=0.4236 G_{1}(x)
+$$
+
+分类器 $\operatorname{sign}\left(f_{1}(x)\right)$ 在训练数据集上有 3 个误分类点。
+
+(1) 例题来源于 \href{http://www.csie.edu.tw}{http://www.csie.edu.tw}。\\
+对 $m=2$,
+
+(a) 在权值分布为 $D_{2}$ 的训练数据上, 阈值 $v$ 是 8.5 时分类误差率最低, 基本分类器为
+
+$$
+G_{2}(x)= \begin{cases}1, & x<8.5 \\ -1, & x>8.5\end{cases}
+$$
+
+(b) $G_{2}(x)$ 在训练数据集上的误差率 $e_{2}=0.2143$ 。
+
+(c) 计算 $\alpha_{2}=0.6496$ 。
+
+(d) 更新训练数据权值分布:
+
+$$
+\begin{aligned}
+D_{3}= & (0.0455,0.0455,0.0455,0.1667,0.1667,0.1667, \\
+& 0.1060,0.1060,0.1060,0.0455) \\
+f_{2}(x)= & 0.4236 G_{1}(x)+0.6496 G_{2}(x)
+\end{aligned}
+$$
+
+分类器 $\operatorname{sign}\left(f_{2}(x)\right)$ 在训练数据集上有 3 个误分类点。
+
+对 $m=3$,
+
+(a) 在权值分布为 $D_{3}$ 的训练数据上, 阈值 $v$ 是 5.5 时分类误差率最低, 基本分类器为
+
+$$
+G_{3}(x)= \begin{cases}1, & x>5.5 \\ -1, & x<5.5\end{cases}
+$$
+
+(b) $G_{3}(x)$ 在训练数据集上的误差率 $e_{3}=0.1820$ 。
+
+(c) 计算 $\alpha_{3}=0.7514$ 。
+
+(d) 更新训练数据的权值分布:
+
+$$
+D_{4}=(0.125,0.125,0.125,0.102,0.102,0.102,0.065,0.065,0.065,0.125)
+$$
+
+于是得到:
+
+$$
+f_{3}(x)=0.4236 G_{1}(x)+0.6496 G_{2}(x)+0.7514 G_{3}(x)
+$$
+
+分类器 $\operatorname{sign}\left(f_{3}(x)\right)$ 在训练数据集上的误分类点个数为 0 。
+
+于是最终分类器为
+
+$$
+G(x)=\operatorname{sign}\left(f_{3}(x)\right)=\operatorname{sign}\left(0.4236 G_{1}(x)+0.6496 G_{2}(x)+0.7514 G_{3}(x)\right)
+$$
+
+\subsection*{8.2 AdaBoost 算法的训练误差分析}
+AdaBoost 最基本的性质是它能在学习过程中不断减少训练误差, 即在训练数据集上的分类误差率。关于这个问题有下面的定理。
+
+定理 8.1 (AdaBoost 的训练误差界) AdaBoost 算法最终分类器的训练误差界为
+
+
+\begin{equation*}
+\frac{1}{N} \sum_{i=1}^{N} I\left(G\left(x_{i}\right) \neq y_{i}\right) \leqslant \frac{1}{N} \sum_{i} \exp \left(-y_{i} f\left(x_{i}\right)\right)=\prod_{m} Z_{m} \tag{8.9}
+\end{equation*}
+
+
+这里, $G(x), f(x)$ 和 $Z_{m}$ 分别由式 (8.7)、式 (8.6) 和式 (8.5) 给出。\\
+证明 当 $G\left(x_{i}\right) \neq y_{i}$ 时, $y_{i} f\left(x_{i}\right)<0$, 因而 $\exp \left(-y_{i} f\left(x_{i}\right)\right) \geqslant 1$ 。由此直接推导出前半部分。后半部分的推导要用到 $Z_{m}$ 的定义式 (8.5) 及式 (8.4) 的变形:
+
+$$
+w_{m i} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right)=Z_{m} w_{m+1, i}
+$$
+
+现推导如下:
+
+$$
+\begin{aligned}
+\frac{1}{N} \sum_{i} \exp \left(-y_{i} f\left(x_{i}\right)\right) & =\frac{1}{N} \sum_{i} \exp \left(-\sum_{m=1}^{M} \alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right) \\
+& =\sum_{i} w_{1 i} \prod_{m=1}^{M} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right) \\
+& =Z_{1} \sum_{i} w_{2 i} \prod_{m=2}^{M} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right) \\
+& =Z_{1} Z_{2} \sum_{i} w_{3 i} \prod_{m=3}^{M} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right) \\
+& \vdots \\
+& =Z_{1} Z_{2} \cdots Z_{M-1} \sum_{i} w_{M i} \exp \left(-\alpha_{M} y_{i} G_{M}\left(x_{i}\right)\right) \\
+& =\prod_{m=1}^{M} Z_{m}
+\end{aligned}
+$$
+
+这一定理说明, 可以在每一轮选取适当的 $G_{m}$ 使得 $Z_{m}$ 最小, 从而使训练误差下降最快。对二类分类问题, 有如下结果。
+
+定理 8.2 (二类分类问题 AdaBoost 的训练误差界)
+
+
+\begin{align*}
+\prod_{m=1}^{M} Z_{m} & =\prod_{m=1}^{M} 2 \sqrt{e_{m}\left(1-e_{m}\right)} \\
+& =\prod_{m=1}^{M} \sqrt{1-4 \gamma_{m}^{2}} \\
+& \leqslant \exp \left(-2 \sum_{m=1}^{M} \gamma_{m}^{2}\right) \tag{8.10}
+\end{align*}
+
+
+这里, $\gamma_{m}=\frac{1}{2}-e_{m}$ 。
+
+证明 由 $Z_{m}$ 的定义式 (8.5) 及式 (8.8) 得:
+
+
+\begin{align*}
+Z_{m} & =\sum_{i=1}^{N} w_{m i} \exp \left(-\alpha_{m} y_{i} G_{m}\left(x_{i}\right)\right) \\
+& =\sum_{y_{i}=G_{m}\left(x_{i}\right)} w_{m i} \mathrm{e}^{-\alpha_{m}}+\sum_{y_{i} \neq G_{m}\left(x_{i}\right)} w_{m i} \mathrm{e}^{\alpha_{m}} \\
+& =\left(1-e_{m}\right) \mathrm{e}^{-\alpha_{m}}+e_{m} \mathrm{e}^{\alpha_{m}} \\
+& =2 \sqrt{e_{m}\left(1-e_{m}\right)} \\
+& =\sqrt{1-4 \gamma_{m}^{2}} \tag{8.11}
+\end{align*}
+
+
+至于不等式
+
+$$
+\prod_{m=1}^{M} \sqrt{1-4 \gamma_{m}^{2}} \leqslant \exp \left(-2 \sum_{m=1}^{M} \gamma_{m}^{2}\right)
+$$
+
+则可先由 $\mathrm{e}^{x}$ 和 $\sqrt{1-x}$ 在点 $x=0$ 的泰勒展开式推出不等式 $\sqrt{1-4 \gamma_{m}^{2}} \leqslant \exp \left(-2 \gamma_{m}^{2}\right)$, 进而得到。
+
+推论 8.1 如果存在 $\gamma>0$, 对所有 $m$ 有 $\gamma_{m} \geqslant \gamma$, 则
+
+
+\begin{equation*}
+\frac{1}{N} \sum_{i=1}^{N} I\left(G\left(x_{i}\right) \neq y_{i}\right) \leqslant \exp \left(-2 M \gamma^{2}\right) \tag{8.12}
+\end{equation*}
+
+
+这表明在此条件下 AdaBoost 的训练误差是以指数速率下降的。这一性质当然是很有吸引力的。
+
+注意, AdaBoost 算法不需要知道下界 $\gamma$, 这正是 Freund 与 Schapire 设计 Ada-Boost 时所考虑的。与一些早期的 Boosting 不同, AdaBoost 具有适应性, 即它能适应弱分类器各自的训练误差率。这也是它的名称 (适应的提升) 的由来, Ada 是 Adaptive 的简写。
+
+\subsection*{8.3 AdaBoost 算法的解释}
+AdaBoost 算法还有另一个解释, 即可以认为 AdaBoost 算法是模型为加法模型、损失函数为指数函数、学习算法为前向分步算法时的二类分类学习方法。
+
+\subsection*{8.3.1 前向分步算法}
+考虑加法模型 (additive model)
+
+
+\begin{equation*}
+f(x)=\sum_{m=1}^{M} \beta_{m} b\left(x ; \gamma_{m}\right) \tag{8.13}
+\end{equation*}
+
+
+其中, $b\left(x ; \gamma_{m}\right)$ 为基函数, $\gamma_{m}$ 为基函数的参数, $\beta_{m}$ 为基函数的系数。显然, 式 (8.6) 是一个加法模型。
+
+在给定训练数据及损失函数 $L(y, f(x))$ 的条件下, 学习加法模型 $f(x)$ 成为经验风险极小化即损失函数极小化问题:
+
+
+\begin{equation*}
+\min _{\beta_{m}, \gamma_{m}} \sum_{i=1}^{N} L\left(y_{i}, \sum_{m=1}^{M} \beta_{m} b\left(x_{i} ; \gamma_{m}\right)\right) \tag{8.14}
+\end{equation*}
+
+
+通常这是一个复杂的优化问题。前向分步算法 (forward stagewise algorithm) 求解这一优化问题的想法是: 因为学习的是加法模型, 如果能够从前向后, 每一步只学习一个基函数及其系数, 逐步逼近优化目标函数式 (8.14), 那么就可以简化优化的复杂度。具体地, 每步只需优化如下损失函数:
+
+
+\begin{equation*}
+\min _{\beta, \gamma} \sum_{i=1}^{N} L\left(y_{i}, \beta b\left(x_{i} ; \gamma\right)\right) \tag{8.15}
+\end{equation*}
+
+
+
+\end{document}

@@ -1,0 +1,1673 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\title{1.4.2 过拟合与模型选择 }
+
+\author{}
+\date{}
+
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\begin{document}
+\maketitle
+当假设空间含有不同复杂度 (例如, 不同的参数个数) 的模型时, 就要面临模型选择 (model selection) 的问题。我们希望选择或学习一个合适的模型。如果在假设空间中存在 “真” 模型, 那么所选择的模型应该逼近真模型。具体地, 所选择的模型要与真模型的参数个数相同, 所选择的模型的参数向量与真模型的参数向量相近。
+
+如果一味追求提高对训练数据的预测能力, 所选模型的复杂度则往往会比真模型更高。这种现象称为过拟合 (over-fitting)。过拟合是指学习时选择的模型所包含的参数过多, 以至出现这一模型对已知数据预测得很好, 但对未知数据预测得很差的现象。可以说模型选择旨在避免过拟合并提高模型的预测能力。
+
+下面, 以多项式函数拟合问题为例, 说明过拟合与模型选择。这是一个回归问题。
+
+例 1.1 假设给定一个训练数据集 ${ }^{1}$ :
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \boldsymbol{R}$ 是输入 $x$ 的观测值, $y_{i} \in \boldsymbol{R}$ 是相应的输出 $y$ 的观测值, $i=1,2, \cdots, N$ 。多项式函数拟合的任务是假设给定数据由 $M$ 次多项式函数生成, 选择最有可能产生这些数据的 $M$ 次多项式函数, 即在 $M$ 次多项式函数中选择一个对已知数据以及未知数据都有很好预测能力的函数。
+
+假设给定如图 1.8 所示的 10 个数据点, 用 $0 \sim 9$ 次多项式函数对数据进行拟合。图中画出了需要用多项式函数曲线拟合的数据。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_c4e863166a24653ffd7cg-01}
+
+图 $1.8 M$ 次多项式函数拟合问题的例子
+
+设 $M$ 次多项式为
+
+
+\begin{equation*}
+f_{M}(x, w)=w_{0}+w_{1} x+w_{2} x^{2}+\cdots+w_{M} x^{M}=\sum_{j=0}^{M} w_{j} x^{j} \tag{1.22}
+\end{equation*}
+
+
+(1) 本例来自参考文献 [2]。\\
+其中 $x$ 是单变量输入, $w_{0}, w_{1}, \cdots, w_{M}$ 是 $M+1$ 个参数。
+
+解决这一问题的方法可以是这样的: 首先确定模型的复杂度, 即确定多项式的次数; 然后在给定的模型复杂度下, 按照经验风险最小化的策略求解参数, 即多项式的系数。具体地,求以下经验风险最小化:
+
+
+\begin{equation*}
+L(w)=\frac{1}{2} \sum_{i=1}^{N}\left(f\left(x_{i}, w\right)-y_{i}\right)^{2} \tag{1.23}
+\end{equation*}
+
+
+这时, 损失函数为平方损失, 系数 $\frac{1}{2}$ 是为了计算方便。
+
+这是一个简单的最优化问题。将模型与训练数据代入式 (1.23) 中, 有
+
+$$
+L(w)=\frac{1}{2} \sum_{i=1}^{N}\left(\sum_{j=0}^{M} w_{j} x_{i}^{j}-y_{i}\right)^{2}
+$$
+
+这一问题可用最小二乘法求得拟合多项式系数的唯一解, 记作 $w_{0}^{*}, w_{1}^{*}, \cdots, w_{M}^{*}$ 。求解过程这里不予叙述, 读者可参阅有关材料。
+
+图 1.8 给出了 $M=0, M=1, M=3$ 及 $M=9$ 时多项式函数拟合的情况。如果 $M=0$,多项式曲线是一个常数, 数据拟合效果很差。如果 $M=1$, 多项式曲线是一条直线, 数据拟合效果也很差。相反, 如果 $M=9$, 多项式曲线通过每个数据点, 训练误差为 0 。从对给定训练数据拟合的角度来说, 效果是最好的。但是, 因为训练数据本身存在噪声, 这种拟合曲线对未知数据的预测能力往往并不是最好的, 在实际学习中并不可取。这时过拟合现象就会发生。这就是说, 模型选择时, 不仅要考虑对已知数据的预测能力, 而且还要考虑对未知数据的预测能力。当 $M=3$ 时, 多项式曲线对训练数据拟合效果足够好, 模型也比较简单, 是一个较好的选择。
+
+在多项式函数拟合中可以看到, 随着多项式次数 (模型复杂度) 的增加, 训练误差会减小, 直至趋向于 0 , 但是测试误差却不如此, 它会随着多项式次数 (模型复杂度) 的增加先减小而后增大。而最终的目的是使测试误差达到最小。这样, 在多项式函数拟合中, 就要选择合适的多项式次数, 以达到这一目的。这一结论对一般的模型选择也是成立的。
+
+图 1.9 描述了训练误差和测试误差与模型复杂度之间的关系。当模型复杂度增大时, 训练误差会逐渐减小并趋向于 0 ; 而测试误差会先减小, 达到最小值后又增大。当选择的模型复
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-02}
+\end{center}
+
+图 1.9 训练误差和测试误差与模型复杂度的关系\\
+杂度过大时, 过拟合现象就会发生。这样, 在学习时就要防止过拟合, 进行最优的模型选择,即选择复杂度适当的模型, 以达到使测试误差最小的学习目的。下面介绍两种常用的模型选择方法: 正则化与交叉验证。
+
+\section*{1.5 正则化与交叉验证}
+\subsection*{1.5.1 正则化}
+模型选择的典型方法是正则化（regularization）。正则化是结构风险最小化策略的实现,是在经验风险上加一个正则化项（regularizer）或罚项（penalty term）。正则化项一般是模型复杂度的单调递增函数, 模型越复杂, 正则化值就越大。比如, 正则化项可以是模型参数向量的范数。
+
+正则化一般具有如下形式:
+
+
+\begin{equation*}
+\min _{f \in \mathcal{F}} \frac{1}{N} \sum_{i=1}^{N} L\left(y_{i}, f\left(x_{i}\right)\right)+\lambda J(f) \tag{1.24}
+\end{equation*}
+
+
+其中, 第 1 项是经验风险, 第 2 项是正则化项, $\lambda \geqslant 0$ 为调整两者之间关系的系数。
+
+正则化项可以取不同的形式。例如, 在回归问题中, 损失函数是平方损失, 正则化项可以是参数向量的 $L_{2}$ 范数:
+
+
+\begin{equation*}
+L(w)=\frac{1}{N} \sum_{i=1}^{N}\left(f\left(x_{i} ; w\right)-y_{i}\right)^{2}+\frac{\lambda}{2}\|w\|^{2} \tag{1.25}
+\end{equation*}
+
+
+这里, $\|w\|$ 表示参数向量 $w$ 的 $L_{2}$ 范数。
+
+正则化项也可以是参数向量的 $L_{1}$ 范数:
+
+
+\begin{equation*}
+L(w)=\frac{1}{N} \sum_{i=1}^{N}\left(f\left(x_{i} ; w\right)-y_{i}\right)^{2}+\lambda\|w\|_{1} \tag{1.26}
+\end{equation*}
+
+
+这里, $\|w\|_{1}$ 表示参数向量 $w$ 的 $L_{1}$ 范数。
+
+第 1 项的经验风险较小的模型可能较复杂 (有多个非零参数), 这时第 2 项的模型复杂度会较大。正则化的作用是选择经验风险与模型复杂度同时较小的模型。
+
+正则化符合奥卡姆剃刀 (Occam's razor) 原理。奥卡姆剃刀原理应用于模型选择时变为以下想法: 在所有可能选择的模型中, 能够很好地解释已知数据并且十分简单才是最好的模型, 也就是应该选择的模型。从贝叶斯估计的角度来看, 正则化项对应于模型的先验概率。可以假设复杂的模型有较小的先验概率, 简单的模型有较大的先验概率。
+
+\subsection*{1.5.2 交叉验证}
+另一种常用的模型选择方法是交叉验证（cross validation）。\\
+如果给定的样本数据充足, 进行模型选择的一种简单方法是随机地将数据集切分成三部分, 分别为训练集 (training set) 、验证集（validation set）和测试集（test set）。训练集用来训练模型, 验证集用于模型的选择, 而测试集用于最终对学习方法的评估。在学习到的不同复杂度的模型中, 选择对验证集有最小预测误差的模型。由于验证集有足够多的数据, 用它对模型进行选择也是有效的。
+
+但是, 在许多实际应用中数据是不充足的。为了选择好的模型, 可以采用交叉验证方法。交叉验证的基本想法是重复地使用数据, 把给定的数据进行切分, 将切分的数据集组合为训练集与测试集, 在此基础上反复地进行训练、测试以及模型选择。
+
+\section*{1. 简单交叉验证}
+简单交叉验证方法是: 首先随机地将已给数据分为两部分, 一部分作为训练集, 另一部分作为测试集 (例如, $70 \%$ 的数据为训练集, $30 \%$ 的数据为测试集); 然后用训练集在各种条件下 (例如, 不同的参数个数) 训练模型, 从而得到不同的模型; 在测试集上评价各个模型的测试误差, 选出测试误差最小的模型。
+
+\section*{2. $S$ 折交叉验证}
+应用最多的是 $S$ 折交叉验证 ( $S$-fold cross validation), 方法如下: 首先随机地将已给数据切分为 $S$ 个互不相交、大小相同的子集; 然后利用 $S-1$ 个子集的数据训练模型, 利用余下的子集测试模型; 将这一过程对可能的 $S$ 种选择重复进行; 最后选出 $S$ 次评测中平均测试误差最小的模型。
+
+\section*{3. 留一交叉验证}
+$S$ 折交叉验证的特殊情形是 $S=N$, 称为留一交叉验证 (leave-one-out cross validation),往往在数据缺乏的情况下使用。这里, $N$ 是给定数据集的容量。
+
+\section*{1.6 泛化能力}
+\subsection*{1.6.1 泛化误差}
+学习方法的泛化能力 (generalization ability) 是指由该方法学习到的模型对未知数据的预测能力, 是学习方法本质上重要的性质。现实中采用最多的办法是通过测试误差来评价学习方法的泛化能力。但这种评价是依赖于测试数据集的。因为测试数据集是有限的, 很有可能由此得到的评价结果是不可靠的。机器学习理论试图从理论上对学习方法的泛化能力进行分析。
+
+首先给出泛化误差的定义。如果学到的模型是 $\hat{f}$, 那么用这个模型对未知数据预测的误差即为泛化误差（generalization error）:
+
+
+\begin{align*}
+R_{\exp }(\hat{f}) & =E_{P}[L(Y, \hat{f}(X))] \\
+& =\int_{\mathcal{X} \times \mathcal{Y}} L(y, \hat{f}(x)) P(x, y) \mathrm{d} x \mathrm{~d} y \tag{1.27}
+\end{align*}
+
+
+泛化误差反映了学习方法的泛化能力, 如果一种方法学习的模型比另一种方法学习的模型具有更小的泛化误差, 那么这种方法就更有效。事实上, 泛化误差就是所学习到的模型的期望风险。
+
+\subsection*{1.6.2 泛化误差上界}
+学习方法的泛化能力分析往往是通过研究泛化误差的概率上界进行的, 简称为泛化误差上界 (generalization error bound)。具体来说, 就是通过比较两种学习方法的泛化误差上界的大小来比较它们的优劣。泛化误差上界通常具有以下性质: 它是样本容量的函数, 当样本容量增加时, 泛化误差上界趋于 0 ; 它是假设空间容量 (capacity) 的函数, 假设空间容量越大, 模型就越难学, 泛化误差上界就越大。
+
+下面给出一个简单的泛化误差上界的例子: 二类分类问题的泛化误差上界。
+
+考虑二类分类问题。已知训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}, N$ 是样本容量, $T$ 是从联合概率分布 $P(X, Y)$ 独立同分布产生的, $X \in \boldsymbol{R}^{n}, Y \in\{-1,+1\}$ 。假设空间是函数的有限集合 $\mathcal{F}=\left\{f_{1}, f_{2}, \cdots, f_{d}\right\}, d$ 是函数个数。设 $f$ 是从 $\mathcal{F}$ 中选取的函数。损失函数是 0-1 损失。关于 $f$ 的期望风险和经验风险分别是
+
+
+\begin{gather*}
+R(f)=E[L(Y, f(X))]  \tag{1.28}\\
+\hat{R}(f)=\frac{1}{N} \sum_{i=1}^{N} L\left(y_{i}, f\left(x_{i}\right)\right) \tag{1.29}
+\end{gather*}
+
+
+经验风险最小化函数是
+
+
+\begin{equation*}
+f_{N}=\arg \min _{f \in \mathcal{F}} \hat{R}(f) \tag{1.30}
+\end{equation*}
+
+
+$f_{N}$ 依赖训练数据集的样本容量 $N$ 。人们更关心的是 $f_{N}$ 的泛化能力
+
+
+\begin{equation*}
+R\left(f_{N}\right)=E\left[L\left(Y, f_{N}(X)\right)\right] \tag{1.31}
+\end{equation*}
+
+
+下面讨论从有限集合 $\mathcal{F}=\left\{f_{1}, f_{2}, \cdots, f_{d}\right\}$ 中任意选出的函数 $f$ 的泛化误差上界。
+
+定理 1.1 (泛化误差上界) 对二类分类问题，当假设空间是有限个函数的集合 $\mathcal{F}=$ $\left\{f_{1}, f_{2}, \cdots, f_{d}\right\}$ 时, 对任意一个函数 $f \in \mathcal{F}$, 至少以概率 $1-\delta, 0<\delta<1$, 以下不等式成立:
+
+
+\begin{equation*}
+R(f) \leqslant \hat{R}(f)+\varepsilon(d, N, \delta) \tag{1.32}
+\end{equation*}
+
+
+其中,
+
+
+\begin{equation*}
+\varepsilon(d, N, \delta)=\sqrt{\frac{1}{2 N}\left(\log d+\log \frac{1}{\delta}\right)} \tag{1.33}
+\end{equation*}
+
+
+不等式 (1.32) 左端 $R(f)$ 是泛化误差, 右端即为泛化误差上界。在泛化误差上界中, 第 1 项是训练误差, 训练误差越小, 泛化误差也越小。第 2 项 $\varepsilon(d, N, \delta)$ 是 $N$ 的单调递减函数,当 $N$ 趋于无穷时趋于 0 ; 同时它也是 $\sqrt{\log d}$ 阶的函数, 假设空间 $\mathcal{F}$ 包含的函数越多, 其值越大。\\
+证明 在证明中要用到 Hoeffding 不等式, 先叙述如下。
+
+设 $X_{1}, X_{2}, \cdots, X_{N}$ 是独立随机变量, 且 $X_{i} \in\left[a_{i}, b_{i}\right], i=1,2, \cdots, N ; \bar{X}$ 是 $X_{1}, X_{2}, \cdots, X_{N}$的经验均值, 即 $\bar{X}=\frac{1}{N} \sum_{i=1}^{N} X_{i}$, 则对任意 $t>0$, 以下不等式成立:
+
+
+\begin{align*}
+& P(\bar{X}-E(\bar{X}) \geqslant t) \leqslant \exp \left[-\frac{2 N^{2} t^{2}}{\sum_{i=1}^{N}\left(b_{i}-a_{i}\right)^{2}}\right]  \tag{1.34}\\
+& P(E(\bar{X})-\bar{X} \geqslant t) \leqslant \exp \left[-\frac{2 N^{2} t^{2}}{\sum_{i=1}^{N}\left(b_{i}-a_{i}\right)^{2}}\right] \tag{1.35}
+\end{align*}
+
+
+Hoeffding 不等式的证明省略, 这里用来推导泛化误差上界。
+
+对任意函数 $f \in \mathcal{F}, \hat{R}(f)$ 是 $N$ 个独立的随机变量 $L(Y, f(X))$ 的样本均值, $R(f)$ 是随机变量 $L(Y, f(X))$ 的期望值。如果损失函数取值于区间 $[0,1]$, 即对所有 $i,\left[a_{i}, b_{i}\right]=[0,1]$, 那么由 Hoeffding 不等式 (1.35) 不难得知, 对 $\varepsilon>0$, 以下不等式成立:
+
+
+\begin{equation*}
+P(R(f)-\hat{R}(f) \geqslant \varepsilon) \leqslant \exp \left(-2 N \varepsilon^{2}\right) \tag{1.36}
+\end{equation*}
+
+
+由于 $\mathcal{F}=\left\{f_{1}, f_{2}, \cdots, f_{d}\right\}$ 是一个有限集合, 故
+
+$$
+\begin{aligned}
+P(\exists f \in \mathcal{F}: R(f)-\hat{R}(f) \geqslant \varepsilon) & =P\left(\bigcup_{f \in \mathcal{F}}\{R(f)-\hat{R}(f) \geqslant \varepsilon\}\right) \\
+& \leqslant \sum_{f \in \mathcal{F}} P(R(f)-\hat{R}(f) \geqslant \varepsilon) \\
+& \leqslant d \exp \left(-2 N \varepsilon^{2}\right)
+\end{aligned}
+$$
+
+或者等价地, 对任意 $f \in \mathcal{F}$, 有
+
+
+\begin{equation*}
+P(R(f)-\hat{R}(f)<\varepsilon) \geqslant 1-d \exp \left(-2 N \varepsilon^{2}\right) \tag{1.37}
+\end{equation*}
+
+
+令
+
+
+\begin{equation*}
+\delta=d \exp \left(-2 N \varepsilon^{2}\right) \tag{1.38}
+\end{equation*}
+
+
+则
+
+$$
+P(R(f)<\hat{R}(f)+\varepsilon) \geqslant 1-\delta
+$$
+
+即至少以概率 $1-\delta$ 有 $R(f)<\hat{R}(f)+\varepsilon$, 其中 $\varepsilon$ 由式 (1.38) 得到, 即为式 (1.33)。
+
+从泛化误差上界可知:
+
+
+\begin{equation*}
+R\left(f_{N}\right) \leqslant \hat{R}\left(f_{N}\right)+\varepsilon(d, N, \delta) \tag{1.39}
+\end{equation*}
+
+
+其中, $\varepsilon(d, N, \delta)$ 由式 (1.33) 定义, $f_{N}$ 由式 (1.30) 定义。\\
+以上讨论的只是假设空间包含有限个函数情况下的泛化误差上界, 对一般的假设空间要找到泛化误差上界就没有这么简单, 这里不作介绍。
+
+\section*{1.7 生成模型与判别模型}
+监督学习的任务就是学习一个模型, 应用这一模型, 对给定的输入预测相应的输出。这个模型的一般形式为决策函数:
+
+$$
+Y=f(X)
+$$
+
+或者条件概率分布:
+
+$$
+P(Y \mid X)
+$$
+
+监督学习方法又可以分为生成方法 (generative approach) 和判别方法 (discrimina-tive approach)。所学到的模型分别称为生成模型 (generative model) 和判别模型 (discriminative model）。
+
+生成方法原理上由数据学习联合概率分布 $P(X, Y)$, 然后求出条件概率分布 $P(Y \mid X)$ 作为预测的模型, 即生成模型:
+
+
+\begin{equation*}
+P(Y \mid X)=\frac{P(X, Y)}{P(X)} \tag{1.40}
+\end{equation*}
+
+
+这样的方法之所以称为生成方法, 是因为模型表示了给定输入 $X$ 产生输出 $Y$ 的生成关系。典型的生成模型有朴素贝叶斯法和隐马尔可夫模型, 将在后面章节进行相关讲述。
+
+判别方法由数据直接学习决策函数 $f(X)$ 或者条件概率分布 $P(Y \mid X)$ 作为预测的模型,即判别模型。判别方法关心的是对给定的输入 $X$, 应该预测什么样的输出 $Y$ 。典型的判别模型包括: $k$ 近邻法、感知机、逻辑斯谛回归模型、最大摘模型、支持向量机、提升方法和条件随机场等, 将在后面章节讲述。
+
+在监督学习中, 生成方法和判别方法各有优缺点, 适合于不同条件下的学习问题。
+
+生成方法的特点: 生成方法可以还原出联合概率分布 $P(X, Y)$, 而判别方法不能; 生成方法的学习收玫速度更快, 即当样本容量增加的时候, 学到的模型可以更快地收玫于真实模型; 当存在隐变量时, 仍可以用生成方法学习, 此时判别方法就不能用。
+
+判别方法的特点: 判别方法直接学习的是条件概率分布 $P(Y \mid X)$ 或决策函数 $f(X)$, 直接面对预测, 往往学习的精确率更高; 由于直接学习 $P(Y \mid X)$ 或 $f(X)$, 可以对数据进行各种程度上的抽象、定义特征并使用特征, 因此可以简化学习问题。
+
+\section*{1.8 监督学习应用}
+监督学习的应用主要在三个方面: 分类问题、标注问题和回归问题。
+
+\subsection*{1.8.1 分类问题}
+分类是监督学习的一个核心问题。在监督学习中, 当输出变量 $Y$ 取有限个离散值时, 预\\
+测问题便成为分类问题。这时, 输入变量 $X$ 可以是离散的, 也可以是连续的。监督学习从数据中学习一个分类模型或分类决策函数, 称为分类器 (classifier)。分类器对新的输入进行输出的预测, 称为分类 (classification)。可能的输出称为类别 (class)。分类的类别为多个时,称为多类分类问题。本书主要讨论二类分类问题。
+
+分类问题包括学习和分类两个过程。在学习过程中, 根据已知的训练数据集利用有效的学习方法学习一个分类器; 在分类过程中, 利用学习的分类器对新的输入实例进行分类。分类问题可用图 1.10 描述。图中 $\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)$ 是训练数据集, 学习系统由训练数据学习一个分类器 $P(Y \mid X)$ 或 $Y=f(X)$; 分类系统通过学到的分类器 $P(Y \mid X)$ 或 $Y=f(X)$ 对新的输入实例 $x_{N+1}$ 进行分类, 即预测其输出的类标记 $y_{N+1}$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-08}
+\end{center}
+
+图 1.10 分类问题
+
+评价分类器性能的指标一般是分类精确率 (accuracy), 其定义是: 对于给定的测试数据集, 分类器正确分类的样本数与总样本数之比。也就是损失函数是 0-1 损失时测试数据集上的精确率 (见式 (1.21))。
+
+对于二类分类问题, 常用的评价指标是准确率 (precision) 与召回率 (recall)。通常以关注的类为正类, 其他类为负类, 分类器在测试数据集上的预测或正确或不正确, 4 种情况出现的总数分别记作:
+
+$\mathrm{TP}$ —— 将正类预测为正类数;
+
+$\mathrm{FN}$ - 将正类预测为负类数;
+
+$\mathrm{FP}$ 一 将负类预测为正类数;
+
+$\mathrm{TN}$ — 将负类预测为负类数。
+
+准确率定义为
+
+
+\begin{equation*}
+P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}} \tag{1.41}
+\end{equation*}
+
+
+召回率定义为
+
+
+\begin{equation*}
+R=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}} \tag{1.42}
+\end{equation*}
+
+
+此外, 还有 $F_{1}$, 是准确率和召回率的调和均值, 即
+
+
+\begin{gather*}
+\frac{2}{F_{1}}=\frac{1}{P}+\frac{1}{R}  \tag{1.43}\\
+F_{1}=\frac{2 \mathrm{TP}}{2 \mathrm{TP}+\mathrm{FP}+\mathrm{FN}} \tag{1.44}
+\end{gather*}
+
+
+准确率和召回率都高时, $F_{1}$ 值也会高。
+
+许多机器学习方法可以用于分类, 包括 $k$ 近邻法、感知机、朴素贝叶斯法、决策树、决策列表、逻辑斯谛回归模型、支持向量机、提升方法、贝叶斯网络、神经网络、Winnow 等。本书将讲述其中一些主要方法。
+
+分类在于根据其特性将数据 “分门别类”, 所以在许多领域都有广泛的应用。例如, 在银行业务中, 可以构建一个客户分类模型, 对客户按照贷款风险的大小进行分类; 在网络安全领域, 可以利用日志数据的分类对非法入侵进行检测; 在图像处理中, 分类可以用来检测图像中是否有人脸出现; 在手写识别中, 分类可以用于识别手写的数字; 在互联网搜索中, 网页的分类可以帮助网页的抓取、索引与排序。
+
+举一个分类应用的例子一一 文本分类 (text classification)。这里的文本可以是新闻报道、网页、电子邮件、学术论文等。类别往往是关于文本内容的, 如政治、经济、体育等; 也有关于文本特点的, 如正面意见、反面意见; 还可以根据应用确定, 如垃圾邮件、非垃圾邮件等。文本分类是根据文本的特征将其划分到已有的类中。输入是文本的特征向量, 输出是文本的类别。通常把文本中的单词定义为特征, 每个单词对应一个特征。单词的特征可以是二值的, 如果单词在文本中出现则取值是 1 , 否则是 0 ; 也可以是多值的, 表示单词在文本中出现的频率。直观地, 如果 “股票” “银行” “货币” 这些词出现很多, 这个文本可能属于经济类;如果 “网球” “比赛” “运动员” 这些词频繁出现, 这个文本可能属于体育类。
+
+\subsection*{1.8.2 标注问题}
+标注 (tagging) 也是一个监督学习问题。可以认为标注问题是分类问题的一个推广, 标注问题又是更复杂的结构预测 (structure prediction) 问题的简单形式。标注问题的输入是一个观测序列, 输出是一个标记序列或状态序列。标注问题的目标在于学习一个模型, 使它能够对观测序列给出标记序列作为预测。注意, 可能的标记个数是有限的, 但其组合所成的标记序列的个数是依序列长度呈指数级增长的。
+
+标注问题分为学习和标注两个过程 (如图 1.11 所示)。首先给定一个训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+这里, $x_{i}=\left(x_{i}^{(1)}, x_{i}^{(2)}, \cdots, x_{i}^{(n)}\right)^{\mathrm{T}}, i=1,2, \cdots, N$, 是输入观测序列; $y_{i}=\left(y_{i}^{(1)}, y_{i}^{(2)}, \cdots, y_{i}^{(n)}\right)^{\mathrm{T}}$是相应的输出标记序列; $n$ 是序列的长度, 对不同样本可以有不同的值。学习系统基于训练数据集构建一个模型, 表示为条件概率分布:
+
+$$
+P\left(Y^{(1)}, Y^{(2)}, \cdots, Y^{(n)} \mid X^{(1)}, X^{(2)}, \cdots, X^{(n)}\right)
+$$
+
+这里, 每一个 $X^{(i)}(i=1,2, \cdots, n)$ 取值为所有可能的观测, 每一个 $Y^{(i)}(i=1,2, \cdots, n)$ 取值为所有可能的标记, 一般 $n \ll N$ 。标注系统按照学习得到的条件概率分布模型, 对新的输入观测序列找到相应的输出标记序列。具体地, 对一个观测序列 $x_{N+1}=\left(x_{N+1}^{(1)}, x_{N+1}^{(2)}, \cdots, x_{N+1}^{(n)}\right)^{\mathrm{T}}$,找到使条件概率 $P\left(\left(y_{N+1}^{(1)}, y_{N+1}^{(2)}, \cdots, y_{N+1}^{(n)}\right)^{\mathrm{T}} \mid\left(x_{N+1}^{(1)}, x_{N+1}^{(2)}, \cdots, x_{N+1}^{(n)}\right)^{\mathrm{T}}\right)$ 最大的标记序列 $y_{N+1}=\left(y_{N+1}^{(1)}, y_{N+1}^{(2)}, \cdots, y_{N+1}^{(n)}\right)^{\mathrm{T}}$ 。
+
+评价标注模型的指标与评价分类模型的指标一样, 常用的有标注精确率、准确率和召回率。其定义与分类模型相同。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-10}
+\end{center}
+
+图 1.11 标注问题
+
+标注常用的机器学习方法有隐马尔可夫模型、条件随机场。
+
+标注问题在信息抽取、自然语言处理等领域被广泛应用，是这些领域的基本问题。例如，自然语言处理中的词性标注 (part of speech tagging) 就是一个典型的标注问题: 给定一个由单词组成的句子, 对这个句子中的每一个单词进行词性标注, 即对一个单词序列预测其对应的词性标记序列。
+
+举一个信息抽取的例子。从英文文章中抽取基本名词短语 (base noun phrase)。为此, 要对文章进行标注。英文单词是一个观测, 英文句子是一个观测序列, 标记表示名词短语的 “开始”、“结束” 或 “其他” (分别以 B, E, O 表示), 标记序列表示英文句子中基本名词短语的所在位置。信息抽取时, 将标记 “开始” 到标记 “结束” 的单词作为名词短语。例如, 给出以下的观测序列, 即英文句子, 标注系统产生相应的标记序列, 即给出句子中的基本名词短语。
+
+输入: At Microsoft Research, we have an insatiable curiosity and the desire to create new technology that will help define the computing experience.
+
+输出: At/O Microsoft/B Research/E, we/O have/O an/O insatiable/B curiosity/E and/ $\mathrm{O}$ the/O desire/ $\mathrm{BE}$ to/O create/O new/B technology/ $\mathrm{E}$ that/O will/O help/O define/ $\mathrm{O}$ the/O computing/B experience/E.
+
+\subsection*{1.8.3回归问题}
+回归 (regression) 是监督学习的另一个重要问题。回归用于预测输入变量 (自变量) 和输出变量 (因变量) 之间的关系, 特别是当输入变量的值发生变化时, 输出变量的值随之发生的变化。回归模型正是表示从输入变量到输出变量之间映射的函数。回归问题的学习等价于函数拟合: 选择一条函数曲线使其很好地拟合已知数据且很好地预测未知数据 (参照 1.4 .2 节)。
+
+回归问题分为学习和预测两个过程 (如图 1.12 所示)。首先给定一个训练数据集:
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+这里, $x_{i} \in \boldsymbol{R}^{n}$ 是输入, $y \in \boldsymbol{R}$ 是对应的输出， $i=1,2, \cdots, N$ 。学习系统基于训练数据构建一个模型, 即函数 $Y=f(X)$; 对新的输入 $x_{N+1}$, 预测系统根据学习的模型 $Y=f(X)$ 确定相应的输出 $y_{N+1}$ 。
+
+回归问题按照输入变量的个数, 分为一元回归和多元回归; 按照输入变量和输出变量之间关系的类型即模型的类型，分为线性回归和非线性回归。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-11}
+\end{center}
+
+图 1.12 回归问题
+
+回归学习最常用的损失函数是平方损失函数, 在此情况下, 回归问题可以由著名的最小二乘法 (least squares) 求解。
+
+许多领域的任务都可以形式化为回归问题, 比如, 回归可以用于商务领域, 作为市场趋势预测、产品质量管理、客户满意度调查、投资风险分析的工具。作为例子, 简单介绍股价预测问题。假设知道某一公司在过去不同时间点 (比如, 每天) 的市场上的股票价格 (比如, 股票平均价格), 以及在各个时间点之前可能影响该公司股价的信息 (比如, 该公司前一周的营业额、利润)。目标是从过去的数据学习一个模型, 使它可以基于当前的信息预测该公司下一个时间点的股票价格。可以将这个问题作为回归问题解决。具体地, 将影响股价的信息视为自变量 (输入的特征), 而将股价视为因变量 (输出的值)。将过去的数据作为训练数据就可以学习一个回归模型, 并对未来的股价进行预测。可以看出这是一个困难的预测问题, 因为影响股价的因素非常多, 我们未必能判断出哪些信息 (输入的特征) 有用并能得到这些信息。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 机器学习或统计机器学习是关于计算机基于数据构建概率统计模型并运用模型对数据进行分析与预测的一门学科。机器学习包括监督学习、无监督学习和强化学习。
+
+  \item 机器学习方法三要素—模型、策略、算法, 对理解机器学习方法起到提纲挈领的作用。
+
+  \item 本书第 1 篇主要讨论监督学习, 监督学习可以概括如下: 从给定的有限训练数据出发, 假设数据是独立同分布的, 而且假设模型属于某个假设空间, 应用某一评价准则, 从假设空间中选取一个最优的模型, 使它对已给训练数据及未知测试数据在给定评价标准意义下有最准确的预测。
+
+  \item 机器学习中, 进行模型选择或者说提高学习的泛化能力是一个重要问题。如果只考虑减少训练误差, 就可能产生过拟合现象。模型选择的方法有正则化与交叉验证。学习方法泛化能力的分析是机器学习理论研究的重要课题。
+
+  \item 分类问题、标注问题和回归问题都是监督学习的重要问题。本书第 1 篇介绍的机器学习方法包括感知机、 $k$ 近邻法、朴素贝叶斯法、决策树、逻辑斯谛回归与最大熵模型、支持向量机、Boosting、EM 算法、隐马尔可夫模型和条件随机场。这些方法是主要的分类、标注以及回归方法。它们又可以归类为生成方法与判别方法。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+关于机器学习或机器学习方法一般介绍的书籍可以参阅文献 [1] ～文献 [8]。
+
+\section*{习 题}
+1.1 说明伯努利模型的极大似然估计以及贝叶斯估计中的机器学习方法三要素。伯努利模型是定义在取值为 0 与 1 的随机变量上的概率分布。假设观测到伯努利模型 $n$ 次独立的数据生成结果, 其中 $k$ 次的结果为 1 , 这时可以用极大似然估计或贝叶斯估计来估计结果为 1 的概率。
+
+1.2 通过经验风险最小化推导极大似然估计。证明模型是条件概率分布, 当损失函数是对数损失函数时, 经验风险最小化等价于极大似然估计。
+
+\section*{参考文献}
+[1] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 旨红英, 等译. Springer, 2001.
+
+[2] BISHOP M. Pattern recognition and machine learning[M]. Springer, 2006.
+
+[3] DAPHNE K, NIR F. Probabilistic graphical models: principles and techniques[M]. MIT Press, 2009.
+
+[4] IAN G, YOSHUA B, AARON C, et al. Deep learning[M]. MIT Press, 2016.
+
+[5] TOM M M. Machine learning[M]. 曾华军, 张银奎, 等译. McGraw-Hill Companies, Inc. 1997.
+
+[6] DAVID B. Bayesian reasoning and machine learning[M]. Cambridge University Press, 2012.
+
+[7] RICHARD S S, ANDREW G B. Reinforcement learning: an introduction[M]. MIT Press, 1998.
+
+[8] 周志华. 机器学习 $[M]$. 北京: 清华大学出版社, 2016.
+
+\section*{第 2 章 感 知 机}
+感知机 (perceptron) 是二类分类的线性分类模型, 其输入为实例的特征向量, 输出为实例的类别, 取 +1 和 -1 二值。感知机对应于输入空间（特征空间）中将实例划分为正负两类的分离超平面, 属于判别模型。感知机学习旨在求出将训练数据进行线性划分的分离超平面,为此, 导入基于误分类的损失函数, 利用梯度下降法对损失函数进行极小化, 求得感知机模型。感知机学习算法具有简单而易于实现的优点, 分为原始形式和对偶形式。感知机预测是用学习得到的感知机模型对新的输入实例进行分类。感知机在 1957 年由 Rosenblatt 提出,是神经网络与支持向量机的基础。
+
+本章首先介绍感知机模型; 然后叙述感知机的学习策略, 特别是损失函数; 最后介绍感知机学习算法, 包括原始形式和对偶形式, 并证明算法的收玫性。
+
+\section*{2.1 感知机模型}
+定义 2.1 (感知机) 假设输入空间 (特征空间) 是 $\mathcal{X} \subseteq \boldsymbol{R}^{n}$, 输出空间是 $\mathcal{Y}=\{+1,-1\}$ 。输入 $x \in \mathcal{X}$ 表示实例的特征向量, 对应于输入空间 (特征空间) 的点; 输出 $y \in \mathcal{Y}$ 表示实例的类别。由输入空间到输出空间的如下函数
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}(w \cdot x+b) \tag{2.1}
+\end{equation*}
+
+
+称为感知机。其中, $w$ 和 $b$ 为感知机模型参数, $w \in \boldsymbol{R}^{n}$ 叫作权值 (weight) 或权值向量 ( weight vector), $b \in \boldsymbol{R}$ 叫作偏置 ( bias), $w \cdot x$ 表示 $w$ 和 $x$ 的内积。sign 是符号函数, 即
+
+\[
+\operatorname{sign}(x)= \begin{cases}+1, & x \geqslant 0  \tag{2.2}\\ -1, & x<0\end{cases}
+\]
+
+感知机是一种线性分类模型, 属于判别模型。感知机模型的假设空间是定义在特征空间中的所有线性分类模型 (linear classification model) 或线性分类器 (linear classifier), 即函数集合 $\{f \mid f(x)=w \cdot x+b\}$ 。
+
+感知机有如下几何解释: 线性方程
+
+
+\begin{equation*}
+w \cdot x+b=0 \tag{2.3}
+\end{equation*}
+
+
+对应于特征空间 $\boldsymbol{R}^{n}$ 中的一个超平面 $S$, 其中 $w$ 是超平面的法向量, $b$ 是超平面的截距。这\\
+个超平面将特征空间划分为两个部分。位于两部分的点（特征向量）分别被分为正、负两类。因此，超平面 $S$ 称为分离超平面（separating hyperplane），如图 2.1 所示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-14}
+\end{center}
+
+图 2.1 感知机模型
+
+感知机学习由训练数据集 (实例的特征向量及类别)
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{+1,-1\}, i=1,2, \cdots, N$, 求得感知机模型（式 (2.1)), 即求得模型参数 $w, b$ 。感知机预测通过学习得到的感知机模型, 对新的输入实例给出其对应的输出类别。
+
+\section*{2.2 感知机学习策略}
+\subsection*{2.2.1 数据集的线性可分性}
+定义 2.2 (数据集的线性可分性) 给定一个数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{+1,-1\}, i=1,2, \cdots, N$, 如果存在某个超平面 $S$
+
+$$
+w \cdot x+b=0
+$$
+
+能够将数据集的正实例点和负实例点完全正确地划分到超平面的两侧, 即对所有 $y_{i}=+1$ 的实例 $i$, 有 $w \cdot x_{i}+b>0$, 对所有 $y_{i}=-1$ 的实例 $i$, 有 $w \cdot x_{i}+b<0$, 则称数据集 $T$ 为线性可分数据集 (linearly separable data set); 否则, 称数据集 $T$ 线性不可分。
+
+\section*{2.2 .2 感知机学习策略}
+假设训练数据集是线性可分的, 感知机学习的目标是求得一个能够将训练集正实例点和负实例点完全正确分开的分离超平面。为了找出这样的超平面, 即确定感知机模型参数 $w, b$,需要确定一个学习策略, 即定义 (经验) 损失函数并将损失函数极小化。\\
+损失函数的一个自然选择是误分类点的总数。但是, 这样的损失函数不是参数 $w, b$ 的连续可导函数, 不易优化。损失函数的另一个选择是误分类点到超平面 $S$ 的总距离, 这是感知机所采用的。为此, 首先写出输入空间 $\boldsymbol{R}^{n}$ 中任一点 $x_{0}$ 到超平面 $S$ 的距离:
+
+$$
+\frac{1}{\|w\|}\left|w \cdot x_{0}+b\right|
+$$
+
+这里, $\|w\|$ 是 $w$ 的 $L_{2}$ 范数。
+
+其次, 对于误分类的数据 $\left(x_{i}, y_{i}\right)$,
+
+$$
+-y_{i}\left(w \cdot x_{i}+b\right)>0
+$$
+
+成立。因为当 $w \cdot x_{i}+b>0$ 时, $y_{i}=-1$; 而当 $w \cdot x_{i}+b<0$ 时, $y_{i}=+1$ 。 因此, 误分类点 $x_{i}$ 到超平面 $S$ 的距离是
+
+$$
+-\frac{1}{\|w\|} y_{i}\left(w \cdot x_{i}+b\right)
+$$
+
+假设超平面 $S$ 的误分类点集合为 $M$, 那么所有误分类点到超平面 $S$ 的总距离为
+
+$$
+-\frac{1}{\|w\|} \sum_{x_{i} \in M} y_{i}\left(w \cdot x_{i}+b\right)
+$$
+
+不考虑 $\frac{1}{\|w\|}$, 就得到感知机学习的损失函数 ${ }^{(1)}$ 。
+
+给定训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{+1,-1\}, i=1,2, \cdots, N$ 。感知机 $\operatorname{sign}(w \cdot x+b)$ 学习的损失函数定义为
+
+
+\begin{equation*}
+L(w, b)=-\sum_{x_{i} \in M} y_{i}\left(w \cdot x_{i}+b\right) \tag{2.4}
+\end{equation*}
+
+
+其中, $M$ 为误分类点的集合。这个损失函数就是感知机学习的经验风险函数。
+
+显然, 损失函数 $L(w, b)$ 是非负的。如果没有误分类点, 损失函数值是 0 。而且, 误分类点越少，误分类点离超平面越近，损失函数值就越小。一个特定的样本点的损失函数在误分类时是参数 $w, b$ 的线性函数, 在正确分类时是 0 。因此, 给定训练数据集 $T$, 损失函数 $L(w, b)$是 $w, b$ 的连续可导函数。
+
+感知机学习的策略是在假设空间中选取使损失函数式 (2.4) 最小的模型参数 $w, b$, 即感知机模型。
+
+\section*{2.3 感知机学习算法}
+感知机学习问题转化为求解损失函数式 (2.4) 的最优化问题, 最优化的方法是随机梯度下降法。本节叙述感知机学习的具体算法, 包括原始形式和对偶形式, 并证明在训练数据线
+
+(1) 第 7 章中会介绍 $y(w \cdot x+b)$ 称为样本点的函数间隔。\\
+性可分条件下感知机学习算法的收敛性。
+
+\subsection*{2.3.1 感知机学习算法的原始形式}
+感知机学习算法是对以下最优化问题的算法。给定一个训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{-1,1\}, i=1,2, \cdots, N$, 求参数 $w, b$, 使其为以下损失函数极小化问题的解:
+
+
+\begin{equation*}
+\min _{w, b} L(w, b)=-\sum_{x_{i} \in M} y_{i}\left(w \cdot x_{i}+b\right) \tag{2.5}
+\end{equation*}
+
+
+其中, $M$ 为误分类点的集合。
+
+感知机学习算法是误分类驱动的, 具体采用随机梯度下降法 (stochastic gradient descent）。首先, 任意选取一个超平面 $w_{0}, b_{0}$, 然后用梯度下降法不断地极小化目标函数（式 (2.5））。极小化过程中不是一次使 $M$ 中所有误分类点的梯度下降, 而是一次随机选取一个误分类点使其梯度下降。
+
+假设误分类点集合 $M$ 是固定的, 那么损失函数 $L(w, b)$ 的梯度由
+
+$$
+\begin{aligned}
+\nabla_{w} L(w, b) & =-\sum_{x_{i} \in M} y_{i} x_{i} \\
+\nabla_{b} L(w, b) & =-\sum_{x_{i} \in M} y_{i}
+\end{aligned}
+$$
+
+给出。
+
+随机选取一个误分类点 $\left(x_{i}, y_{i}\right)$, 对 $w, b$ 进行更新:
+
+
+\begin{gather*}
+w \leftarrow w+\eta y_{i} x_{i}  \tag{2.6}\\
+b \leftarrow b+\eta y_{i} \tag{2.7}
+\end{gather*}
+
+
+式中 $\eta(0<\eta \leqslant 1)$ 是步长, 在机器学习中又称为学习率 (learning rate)。这样, 通过迭代可以期待损失函数 $L(w, b)$ 不断减小, 直到为 0 。综上所述, 得到如下算法:
+
+\section*{算法 2.1 (感知机学习算法的原始形式)}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中 $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=$ $\{-1,+1\}, i=1,2, \cdots, N$; 学习率 $\eta(0<\eta \leqslant 1)$ 。
+
+输出: $w, b$; 感知机模型 $f(x)=\operatorname{sign}(w \cdot x+b)$ 。
+
+(1) 选取初值 $w_{0}, b_{0}$;
+
+(2) 在训练集中选取数据 $\left(x_{i}, y_{i}\right)$;
+
+(3) 如果 $y_{i}\left(w \cdot x_{i}+b\right) \leqslant 0$, 则
+
+$$
+\begin{aligned}
+& w \leftarrow w+\eta y_{i} x_{i} \\
+& b \leftarrow b+\eta y_{i}
+\end{aligned}
+$$
+
+（4）转至步骤 (2)，直至训练集中没有误分类点。
+
+这种学习算法直观上有如下解释：当一个实例点被误分类，即位于分离超平面的错误一侧时, 则调整 $w, b$ 的值, 使分离超平面向该误分类点的一侧移动, 以减少该误分类点与超平面间的距离，直至超平面越过该误分类点使其被正确分类。
+
+算法 2.1 是感知机学习的基本算法, 对应于后面的对偶形式, 称为原始形式。感知机学习算法简单且易于实现。
+
+例 2.1 如图 2.2 所示的训练数据集, 其正实例点是 $x_{1}=(3,3)^{\mathrm{T}}, x_{2}=(4,3)^{\mathrm{T}}$, 负实例点是 $x_{3}=(1,1)^{\mathrm{T}}$, 试用感知机学习算法的原始形式求感知机模型 $f(x)=\operatorname{sign}(w \cdot x+b)$ 。这里, $w=\left(w^{(1)}, w^{(2)}\right)^{\mathrm{T}}, x=\left(x^{(1)}, x^{(2)}\right)^{\mathrm{T}}$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-17}
+\end{center}
+
+图 2.2 感知机示例
+
+解 构建最优化问题:
+
+$$
+\min _{w, b} L(w, b)=-\sum_{x_{i} \in M} y_{i}\left(w \cdot x_{i}+b\right)
+$$
+
+按照算法 2.1 求解 $w, b, \eta=1$ 。
+
+(1) 取初值 $w_{0}=0, b_{0}=0$;
+
+(2) 对 $x_{1}=(3,3)^{\mathrm{T}}, y_{1}\left(w_{0} \cdot x_{1}+b_{0}\right)=0$, 未能被正确分类, 更新 $w, b$ :
+
+$$
+w_{1}=w_{0}+y_{1} x_{1}=(3,3)^{\mathrm{T}}, b_{1}=b_{0}+y_{1}=1
+$$
+
+得到线性模型:
+
+$$
+w_{1} \cdot x+b_{1}=3 x^{(1)}+3 x^{(2)}+1
+$$
+
+(3) 对 $x_{1}, x_{2}$, 显然, $y_{i}\left(w_{1} \cdot x_{i}+b_{1}\right)>0$, 被正确分类, 不修改 $w, b$; 对 $x_{3}=(1,1)^{\mathrm{T}}$, $y_{3}\left(w_{1} \cdot x_{3}+b_{1}\right)<0$, 被误分类, 更新 $w, b:$
+
+$$
+w_{2}=w_{1}+y_{3} x_{3}=(2,2)^{\mathrm{T}}, b_{2}=b_{1}+y_{3}=0
+$$
+
+得到线性模型:
+
+$$
+w_{2} \cdot x+b_{2}=2 x^{(1)}+2 x^{(2)}
+$$
+
+如此继续下去, 直到
+
+$$
+\begin{gathered}
+w_{7}=(1,1)^{\mathrm{T}}, b_{7}=-3 \\
+w_{7} \cdot x+b_{7}=x^{(1)}+x^{(2)}-3
+\end{gathered}
+$$
+
+对所有数据点 $y_{i}\left(w_{7} \cdot x_{i}+b_{7}\right)>0$, 没有误分类点, 损失函数达到极小。
+
+分离超平面为 $x^{(1)}+x^{(2)}-3=0$, 感知机模型为 $f(x)=\operatorname{sign}\left(x^{(1)}+x^{(2)}-3\right)$ 。
+
+迭代过程见表 2.1。
+
+表 2.1 例 2.1 求解的迭代过程
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+迭代次数 & 误分类点 & $w$ & $b$ & $w \cdot x+b$ \\
+\hline
+0 &  & 0 & 0 & 0 \\
+1 & $x_{1}$ & $(3,3)^{\mathrm{T}}$ & 1 & $3 x^{(1)}+3 x^{(2)}+1$ \\
+2 & $x_{3}$ & $(2,2)^{\mathrm{T}}$ & 0 & $2 x^{(1)}+2 x^{(2)}$ \\
+3 & $x_{3}$ & $(1,1)^{\mathrm{T}}$ & -1 & $x^{(1)}+x^{(2)}-1$ \\
+4 & $x_{3}$ & $(0,0)^{\mathrm{T}}$ & -2 & -2 \\
+5 & $x_{1}$ & $(3,3)^{\mathrm{T}}$ & -1 & $3 x^{(1)}+3 x^{(2)}-1$ \\
+6 & $x_{3}$ & $(2,2)^{\mathrm{T}}$ & -2 & $2 x^{(1)}+2 x^{(2)}-2$ \\
+7 & $x_{3}$ & $(1,1)^{\mathrm{T}}$ & -3 & $x^{(1)}+x^{(2)}-3$ \\
+8 & 0 & $(1,1)^{\mathrm{T}}$ & -3 & $x^{(1)}+x^{(2)}-3$ \\
+\hline
+\end{tabular}
+\end{center}
+
+这是在计算中误分类点先后取 $x_{1}, x_{3}, x_{3}, x_{3}, x_{1}, x_{3}, x_{3}$ 得到的分离超平面和感知机模型。如果在计算中误分类点依次取 $x_{1}, x_{3}, x_{3}, x_{3}, x_{2}, x_{3}, x_{3}, x_{3}, x_{1}, x_{3}, x_{3}$, 那么得到的分离超平面是 $2 x^{(1)}+x^{(2)}-5=0$ 。
+
+可见, 感知机学习算法由于采用不同的初值或选取不同的误分类点, 解可以不同。
+
+\subsection*{2.3.2 算法的收敛性}
+现在证明, 对于线性可分数据集, 感知机学习算法原始形式收玫, 即经过有限次迭代可以得到一个将训练数据集完全正确划分的分离超平面及感知机模型。
+
+为了便于叙述与推导, 将偏置 $b$ 并入权重向量 $w$, 记作 $\hat{w}=\left(w^{\mathrm{T}}, b\right)^{\mathrm{T}}$, 同样也将输入向量加以扩充, 加进常数 1 , 记作 $\hat{x}=\left(x^{\mathrm{T}}, 1\right)^{\mathrm{T}}$ 。这样, $\hat{x} \in \boldsymbol{R}^{n+1}, \hat{w} \in \boldsymbol{R}^{n+1}$ 。显然, $\hat{w} \cdot \hat{x}=w \cdot x+b$ 。
+
+定理 2.1 (Novikoff) 设训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$ 是线性可分的, 其中 $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{-1,+1\}, i=1,2, \cdots, N$, 则
+
+(1) 存在满足条件 $\left\|\hat{w}_{\mathrm{opt}}\right\|=1$ 的超平面 $\hat{w}_{\mathrm{opt}} \cdot \hat{x}=w_{\mathrm{opt}} \cdot x+b_{\mathrm{opt}}=0$ 将训练数据集完全正确分开; 且存在 $\gamma>0$, 对所有 $i=1,2, \cdots, N$, 有
+
+
+\begin{equation*}
+y_{i}\left(\hat{w}_{\mathrm{opt}} \cdot \hat{x}_{i}\right)=y_{i}\left(w_{\mathrm{opt}} \cdot x_{i}+b_{\mathrm{opt}}\right) \geqslant \gamma \tag{2.8}
+\end{equation*}
+
+
+(2) 令 $R=\max _{1 \leqslant i \leqslant N}\left\|\hat{x}_{i}\right\|$, 则感知机算法 2.1 在训练数据集上的误分类次数 $k$ 满足不等式
+
+
+\begin{equation*}
+k \leqslant\left(\frac{R}{\gamma}\right)^{2} \tag{2.9}
+\end{equation*}
+
+
+证明 (1) 由于训练数据集是线性可分的, 按照定义 2.2 , 存在超平面可将训练数据集完全正确分开, 取此超平面为 $\hat{w}_{\mathrm{opt}} \cdot \hat{x}=w_{\mathrm{opt}} \cdot x+b_{\mathrm{opt}}=0$, 使 $\left\|\hat{w}_{\mathrm{opt}}\right\|=1$ 。由于对有限的 $i=1,2, \cdots, N$, 均有
+
+$$
+y_{i}\left(\hat{w}_{\mathrm{opt}} \cdot \hat{x}_{i}\right)=y_{i}\left(w_{\mathrm{opt}} \cdot x_{i}+b_{\mathrm{opt}}\right)>0
+$$
+
+所以存在
+
+$$
+\gamma=\min _{i}\left\{y_{i}\left(w_{\mathrm{opt}} \cdot x_{i}+b_{\mathrm{opt}}\right)\right\}
+$$
+
+使
+
+$$
+y_{i}\left(\hat{w}_{\mathrm{opt}} \cdot \hat{x}_{i}\right)=y_{i}\left(w_{\mathrm{opt}} \cdot x_{i}+b_{\mathrm{opt}}\right) \geqslant \gamma
+$$
+
+(2) 感知机算法从 $\hat{w}_{0}=0$ 开始, 如果实例被误分类, 则更新权重。令 $\hat{w}_{k-1}$ 是第 $k$ 个误分类实例之前的扩充权重向量, 即
+
+$$
+\hat{w}_{k-1}=\left(w_{k-1}^{\mathrm{T}}, b_{k-1}\right)^{\mathrm{T}}
+$$
+
+则第 $k$ 个误分类实例的条件是
+
+
+\begin{equation*}
+y_{i}\left(\hat{w}_{k-1} \cdot \hat{x}_{i}\right)=y_{i}\left(w_{k-1} \cdot x_{i}+b_{k-1}\right) \leqslant 0 \tag{2.10}
+\end{equation*}
+
+
+若 $\left(x_{i}, y_{i}\right)$ 是被 $\hat{w}_{k-1}=\left(w_{k-1}^{\mathrm{T}}, b_{k-1}\right)^{\mathrm{T}}$ 误分类的数据, 则 $w$ 和 $b$ 的更新是
+
+$$
+\begin{aligned}
+& w_{k} \leftarrow w_{k-1}+\eta y_{i} x_{i} \\
+& b_{k} \leftarrow b_{k-1}+\eta y_{i}
+\end{aligned}
+$$
+
+即
+
+
+\begin{equation*}
+\hat{w}_{k}=\hat{w}_{k-1}+\eta y_{i} \hat{x}_{i} \tag{2.11}
+\end{equation*}
+
+
+下面推导不等式 (2.12) 及不等式 (2.13):
+
+
+\begin{equation*}
+\hat{w}_{k} \cdot \hat{w}_{\text {opt }} \geqslant k \eta \gamma \tag{2.12}
+\end{equation*}
+
+
+由式 (2.11) 及式 (2.8) 得:
+
+$$
+\begin{aligned}
+\hat{w}_{k} \cdot \hat{w}_{\mathrm{opt}} & =\hat{w}_{k-1} \cdot \hat{w}_{\mathrm{opt}}+\eta y_{i} \hat{w}_{\mathrm{opt}} \cdot \hat{x}_{i} \\
+& \geqslant \hat{w}_{k-1} \cdot \hat{w}_{\mathrm{opt}}+\eta \gamma
+\end{aligned}
+$$
+
+由此递推即得不等式 (2.12):
+
+
+\begin{gather*}
+\hat{w}_{k} \cdot \hat{w}_{\text {opt }} \geqslant \hat{w}_{k-1} \cdot \hat{w}_{\text {opt }}+\eta \gamma \geqslant \hat{w}_{k-2} \cdot \hat{w}_{\text {opt }}+2 \eta \gamma \geqslant \cdots \geqslant k \eta \gamma \\
+\left\|\hat{w}_{k}\right\|^{2} \leqslant k \eta^{2} R^{2} \tag{2.13}
+\end{gather*}
+
+
+由式 (2.11) 及式 (2.10) 得:
+
+$$
+\begin{aligned}
+\left\|\hat{w}_{k}\right\|^{2} & =\left\|\hat{w}_{k-1}\right\|^{2}+2 \eta y_{i} \hat{w}_{k-1} \cdot \hat{x}_{i}+\eta^{2}\left\|\hat{x}_{i}\right\|^{2} \\
+& \leqslant\left\|\hat{w}_{k-1}\right\|^{2}+\eta^{2}\left\|\hat{x}_{i}\right\|^{2} \\
+& \leqslant\left\|\hat{w}_{k-1}\right\|^{2}+\eta^{2} R^{2} \\
+& \leqslant\left\|\hat{w}_{k-2}\right\|^{2}+2 \eta^{2} R^{2} \leqslant \cdots \\
+& \leqslant k \eta^{2} R^{2}
+\end{aligned}
+$$
+
+结合不等式 $(2.12)$ 及式 (2.13) 即得:
+
+$$
+\begin{aligned}
+& k \eta \gamma \leqslant \hat{w}_{k} \cdot \hat{w}_{\text {opt }} \leqslant\left\|\hat{w}_{k}\right\|\left\|\hat{w}_{\text {opt }}\right\| \leqslant \sqrt{k} \eta R \\
+& k^{2} \gamma^{2} \leqslant k R^{2}
+\end{aligned}
+$$
+
+于是
+
+$$
+k \leqslant\left(\frac{R}{\gamma}\right)^{2}
+$$
+
+定理表明, 误分类的次数 $k$ 是有上界的, 经过有限次搜索可以找到将训练数据完全正确分开的分离超平面。也就是说, 当训练数据集线性可分时, 感知机学习算法原始形式迭代是收玫的。但是例 2.1 说明, 感知机学习算法存在许多解, 这些解既依赖于初值的选择, 也依赖于迭代过程中误分类点的选择顺序。为了得到唯一的超平面, 需要对分离超平面增加约束条件。这就是第 7 章将要讲述的线性支持向量机的想法。当训练集线性不可分时, 感知机学习算法不收玫，迭代结果会发生振荡。
+
+\subsection*{2.3.3 感知机学习算法的对偶形式}
+现在考虑感知机学习算法的对偶形式。感知机学习算法的原始形式和对偶形式与第 7 章中支持向量机学习算法的原始形式和对偶形式相对应。
+
+对偶形式的基本想法是: 将 $w$ 和 $b$ 表示为实例 $x_{i}$ 和标记 $y_{i}$ 的线性组合的形式, 通过求解其系数而求得 $w$ 和 $b$ 。不失一般性, 在算法 2.1 中可假设初始值 $w_{0}, b_{0}$ 均为 0 。对误分类点 $\left(x_{i}, y_{i}\right)$ 通过
+
+$$
+\begin{aligned}
+& w \leftarrow w+\eta y_{i} x_{i} \\
+& b \leftarrow b+\eta y_{i}
+\end{aligned}
+$$
+
+逐步修改 $w, b$, 设修改 $n$ 次, 则 $w, b$ 关于 $\left(x_{i}, y_{i}\right)$ 的增量分别是 $\alpha_{i} y_{i} x_{i}$ 和 $\alpha_{i} y_{i}$, 这里 $\alpha_{i}=n_{i} \eta, n_{i}$ 是点 $\left(x_{i}, y_{i}\right)$ 被误分类的次数。这样, 从学习过程不难看出, 最后学习到的 $w, b$可以分别表示为
+
+
+\begin{align*}
+w & =\sum_{i=1}^{N} \alpha_{i} y_{i} x_{i}  \tag{2.14}\\
+b & =\sum_{i=1}^{N} \alpha_{i} y_{i} \tag{2.15}
+\end{align*}
+
+
+这里, $\alpha_{i} \geqslant 0, i=1,2, \cdots, N$, 当 $\eta=1$ 时, 表示第 $i$ 个实例点由于误分而进行更新的次数。实例点更新次数越多, 意味着它距分离超平面越近, 也就越难正确分类。换句话说, 这样的实例对学习结果影响最大。
+
+下面对照原始形式来叙述感知机学习算法的对偶形式。
+
+\section*{算法 2.2 (感知机学习算法的对偶形式)}
+输入: 线性可分的数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中 $x_{i} \in \boldsymbol{R}^{n}, y_{i} \in$ $\{-1,+1\}, i=1,2, \cdots, N$; 学习率 $\eta(0<\eta \leqslant 1)$ 。
+
+输出: $\alpha, b$; 感知机模型 $f(x)=\operatorname{sign}\left(\sum_{j=1}^{N} \alpha_{j} y_{j} x_{j} \cdot x+b\right)$, 其中 $\alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{N}\right)^{\mathrm{T}}$ 。
+
+(1) $\alpha \leftarrow 0, b \leftarrow 0$;
+
+(2) 在训练集中选取数据 $\left(x_{i}, y_{i}\right)$;
+
+(3) 如果 $y_{i}\left(\sum_{j=1}^{N} \alpha_{j} y_{j} x_{j} \cdot x_{i}+b\right) \leqslant 0$, 则
+
+$$
+\begin{aligned}
+& \alpha_{i} \leftarrow \alpha_{i}+\eta \\
+& b \leftarrow b+\eta y_{i}
+\end{aligned}
+$$
+
+(4) 转至步骤 (2) 直到没有误分类数据。
+
+对偶形式中训练实例仅以内积的形式出现。为了方便, 可以预先将训练集中实例间的内积计算出来并以矩阵的形式存储, 这个矩阵就是所谓的 Gram 矩阵 (Gram matrix):
+
+$$
+G=\left[x_{i} \cdot x_{j}\right]_{N \times N}
+$$
+
+例 2.2 数据同例 2.1 , 正样本点是 $x_{1}=(3,3)^{\mathrm{T}}, x_{2}=(4,3)^{\mathrm{T}}$, 负样本点是 $x_{3}=(1,1)^{\mathrm{T}}$,试用感知机学习算法对偶形式求感知机模型。
+
+解 按照算法 2.2 ,
+
+(1) 取 $\alpha_{i}=0, i=1,2,3, b=0, \eta=1$;
+
+(2) 计算 Gram 矩阵:
+
+$$
+G=\left[\begin{array}{ccc}
+18 & 21 & 6 \\
+21 & 25 & 7 \\
+6 & 7 & 2
+\end{array}\right]
+$$
+
+(3) 误分条件
+
+$$
+y_{i}\left(\sum_{j=1}^{N} \alpha_{j} y_{j} x_{j} \cdot x_{i}+b\right) \leqslant 0
+$$
+
+参数更新：
+
+$$
+\alpha_{i} \leftarrow \alpha_{i}+1, b \leftarrow b+y_{i}
+$$
+
+（4）迭代, 过程从略, 结果列于表 2.2 ;
+
+(5)
+
+$$
+\begin{aligned}
+& w=2 x_{1}+0 x_{2}-5 x_{3}=(1,1)^{\mathrm{T}} \\
+& b=-3
+\end{aligned}
+$$
+
+分离超平面为
+
+$$
+x^{(1)}+x^{(2)}-3=0
+$$
+
+感知机模型为
+
+$$
+f(x)=\operatorname{sign}\left(x^{(1)}+x^{(2)}-3\right)
+$$
+
+表 2.2 例 2.2 求解的迭代过程
+
+\begin{center}
+\begin{tabular}{ccccccccc}
+\hline
+$k$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+\hline
+ &  & $x_{1}$ & $x_{3}$ & $x_{3}$ & $x_{3}$ & $x_{1}$ & $x_{3}$ & $x_{3}$ \\
+$\alpha_{1}$ & 0 & 1 & 1 & 1 & 1 & 2 & 2 & 2 \\
+$\alpha_{2}$ & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+$\alpha_{3}$ & 0 & 0 & 1 & 2 & 3 & 3 & 4 & 5 \\
+$b$ & 0 & 1 & 0 & -1 & -2 & -1 & -2 & -3 \\
+\hline
+\end{tabular}
+\end{center}
+
+对照例 2.1, 结果一致, 迭代步骤也是互相对应的。
+
+与原始形式一样, 感知机学习算法的对偶形式迭代是收玫的, 存在多个解。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 感知机是根据输入实例的特征向量 $x$ 对其进行二类分类的线性分类模型:
+\end{enumerate}
+
+$$
+f(x)=\operatorname{sign}(w \cdot x+b)
+$$
+
+感知机模型对应于输入空间（特征空间）中的分离超平面 $w \cdot x+b=0$ 。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 感知机学习的策略是极小化损失函数:
+\end{enumerate}
+
+$$
+\min _{w, b} L(w, b)=-\sum_{x_{i} \in M} y_{i}\left(w \cdot x_{i}+b\right)
+$$
+
+损失函数对应于误分类点到分离超平面的总距离。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 感知机学习算法是基于随机梯度下降法的对损失函数的最优化算法, 有原始形式和对偶形式。算法简单且易于实现。原始形式中, 首先任意选取一个超平面, 然后用梯度下降法不断极小化目标函数。在这个过程中一次随机选取一个误分类点使其梯度下降。
+
+  \item 当训练数据集线性可分时, 感知机学习算法是收玫的。感知机算法在训练数据集上的误分类次数 $k$ 满足不等式
+
+\end{enumerate}
+
+$$
+k \leqslant\left(\frac{R}{\gamma}\right)^{2}
+$$
+
+当训练数据集线性可分时, 感知机学习算法存在无穷多个解, 其解由于不同的初值或不同的迭代顺序而可能有所不同。
+
+\section*{继续阅 读}
+感知机最早在 1957 年由 Rosenblatt 提出 ${ }^{[1]}$ 。Novikoff ${ }^{[2]}$, Minsky 与 Papert ${ }^{[3]}$ 等人对感知机进行了一系列理论研究。感知机的扩展学习方法包括口袋算法 (pocket algorithm) ${ }^{[4]}$ 、表决感知机 (voted perceptron) ${ }^{[5]}$ 、带边缘感知机 (perceptron with margin) ${ }^{[6]}$ 。关于感知机的介绍可进一步参考文献 [7] 和文献 [8]。
+
+\section*{习 题}
+2.1 Minsky 与 Papert 指出: 感知机因为是线性模型, 所以不能表示复杂的函数, 如异或 (XOR)。验证感知机为什么不能表示异或。
+
+2.2 模仿例题 2.1, 构建从训练数据集求解感知机模型的例子。
+
+2.3 证明以下定理: 样本集线性可分的充分必要条件是正实例点集所构成的凸壳(1)与负实例点集所构成的凸壳互不相交。
+
+\section*{参考文献}
+[1] ROSENBLATT F. The perceptron: a probabilistic model for information storage and organization in the Brain[J]. Psychological Review, 1958, 65 (6): 386-408.
+
+[2] NOVIKOFF A B. On convergence proofs on perceptrons[C]//Polytechnic Institute of Brooklyn. Proceedings of the Symposium on the Mathematical Theory of Automata. 1962: 615-622.
+
+[3] MINSKY M L, Papert S A. Perceptrons[M]. Cambridge, MA: MIT Press. 1969.
+
+[4] GALLANT S I. Perceptron-based learning algorithms[J]. IEEE Transactions on Neural Networks, 1990, 1(2): 179-191.
+
+[5] FREUND Y, SCHAPIRE R E. Large margin classification using the perceptron algorithm[C]// Proceedings of the 11th Annual Conference on Computational Learning Theory (COLT' 98). ACM Press, 1998.
+
+[6] LI Y Y, Zaragoza H, Herbrich R, et al. The perceptron algorithm with uneven margins[C]// Proceedings of the 19th International Conference on Machine Learning. 2002: 379-386.
+
+[7] WIDROW B, LEHR M A. 30 years of adaptive neural networks: perceptron, madaline, and backpropagation[J]. Proceedings of the IEEE, 1990, 78(9): 1415-1442.
+
+[8] CRISTIANINI N, SHAWE-TAYLOR J. An introduction to support vector machines and other kernel-based learning methods[M]. Cambridge University Press, 2000.
+
+(1) 设集合 $S \subset \boldsymbol{R}^{n}$ 是由 $\boldsymbol{R}^{n}$ 中的 $k$ 个点所组成的集合, 即 $S=\left\{x_{1}, x_{2}, \cdots, x_{k}\right\}$, 定义 $S$ 的凸壳 $\operatorname{conv}(S)$ 为
+
+$$
+\operatorname{conv}(S)=\left\{x=\sum_{i=1}^{k} \lambda_{i} x_{i} \mid \sum_{i=1}^{k} \lambda_{i}=1, \lambda_{i} \geqslant 0, i=1,2, \cdots, k\right\}
+$$
+
+\section*{第 3 章 $k$ 近邻法}
+$k$ 近邻法 ( $k$-nearest neighbor, $k$-NN) 是一种基本分类与回归方法。本书只讨论分类问题中的 $k$ 近邻法。 $k$ 近邻法的输入为实例的特征向量, 对应于特征空间的点; 输出为实例的类别, 可以取多类。 $k$ 近邻法假设给定一个训练数据集, 其中的实例类别已定。分类时, 对新的实例, 根据其 $k$ 个最近邻的训练实例的类别, 通过多数表决等方式进行预测。因此, $k$ 近邻法不具有显式的学习过程。 $k$ 近邻法实际上利用训练数据集对特征向量空间进行划分, 并作为其分类的 “模型” 。 $k$ 值的选择、距离度量及分类决策规则是 $k$ 近邻法的三个基本要素。 $k$近邻法在 1968 年由 Cover 和 Hart 提出。
+
+本章首先叙述 $k$ 近邻算法, 然后讨论 $k$ 近邻法的模型及三个基本要素, 最后讲述 $k$ 近邻法的一个实现方法 $-~ k d$ 树, 介绍构造 $k d$ 树和搜索 $k d$ 树的算法。
+
+\section*{$3.1 k$ 近邻算法}
+$k$ 近邻算法简单、直观: 给定一个训练数据集, 对新的输入实例, 在训练数据集中找到与该实例最邻近的 $k$ 个实例, 这 $k$ 个实例的多数属于某个类, 就把该输入实例分为这个类。下面先叙述 $k$ 近邻算法, 然后再讨论其细节。
+
+算法 3.1 ( $k$ 近邻法)
+
+输入: 训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X} \subseteq \boldsymbol{R}^{n}$ 为实例的特征向量, $y_{i} \in \mathcal{Y}=\left\{c_{1}, c_{2}, \cdots, c_{K}\right\}$ 为实例的类别, $i=$ $1,2, \cdots, N$ 。
+
+输出: 实例 $x$ 所属的类 $y$ 。
+
+(1) 根据给定的距离度量, 在训练集 $T$ 中找出与 $x$ 最邻近的 $k$ 个点, 涵盖这 $k$ 个点的 $x$的邻域记作 $N_{k}(x)$;
+
+(2) 在 $N_{k}(x)$ 中根据分类决策规则（如多数表决）决定 $x$ 的类别 $y:$
+
+
+\begin{equation*}
+y=\arg \max _{c_{j}} \sum_{x_{i} \in N_{k}(x)} I\left(y_{i}=c_{j}\right), \quad i=1,2, \cdots, N, j=1,2, \cdots, K \tag{3.1}
+\end{equation*}
+
+
+式 (3.1) 中, $I$ 为指示函数, 即当 $y_{i}=c_{j}$ 时 $I$ 为 1 , 否则 $I$ 为 0 。
+
+$k$ 近邻法的特殊情况是 $k=1$ 的情形, 称为最近邻算法。对于输入的实例点（特征向量) $x$, 最近邻法将训练数据集中与 $x$ 最邻近点的类作为 $x$ 的类。\\
+$k$ 近邻法没有显式的学习过程。
+
+\section*{$3.2 k$ 近邻模型}
+$k$ 近邻法使用的模型实际上对应于对特征空间的划分。模型由三个基本要素 — 距离度量、 $k$ 值的选择和分类决策规则决定。
+
+\section*{3.2 .1 模型}
+$k$ 近邻法中, 当训练集、距离度量 (如欧氏距离) $、 k$ 值及分类决策规则 (如多数表决) 确定后, 对于任何一个新的输入实例, 它所属的类唯一地确定。这相当于根据上述要素将特征空间划分为一些子空间, 确定子空间里的每个点所属的类。这一事实从最近邻算法中可以看得很清楚。
+
+特征空间中, 对每个训练实例点 $x_{i}$, 距离该点比其他点更近的所有点组成一个区域, 叫作单元 (cell)。每个训练实例点拥有一个单元, 所有训练实例点的单元构成对特征空间的一个划分。最近邻法将实例 $x_{i}$ 的类 $y_{i}$ 作为其单元中所有点的类标记 (class label)。这样，每个单元的实例点的类别是确定的。图 3.1 是二维特征空间划分的一个例子。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-25}
+\end{center}
+
+图 $3.1 k$ 近邻法的模型对应特征空间的一个划分
+
+\section*{3.2 .2 距离度量}
+特征空间中两个实例点的距离是两个实例点相似程度的反映。 $k$ 近邻模型的特征空间一般是 $n$ 维实数向量空间 $\boldsymbol{R}^{n}$ 。使用的距离是欧氏距离, 但也可以是其他距离, 如更一般的 $L_{p}$距离 ( $L_{p}$ distance) 或 Minkowski 距离 (Minkowski distance)。
+
+设特征空间 $\mathcal{X}$ 是 $n$ 维实数向量空间 $\boldsymbol{R}^{n}, x_{i}, x_{j} \in \mathcal{X}, x_{i}=\left(x_{i}^{(1)}, x_{i}^{(2)}, \cdots, x_{i}^{(n)}\right)^{\mathrm{T}}, x_{j}=$ $\left(x_{j}^{(1)}, x_{j}^{(2)}, \cdots, x_{j}^{(n)}\right)^{\mathrm{T}}, x_{i}, x_{j}$ 的 $L_{p}$ 距离定义为
+
+
+\begin{equation*}
+L_{p}\left(x_{i}, x_{j}\right)=\left(\sum_{l=1}^{n}\left|x_{i}^{(l)}-x_{j}^{(l)}\right|^{p}\right)^{\frac{1}{p}} \tag{3.2}
+\end{equation*}
+
+
+这里 $p \geqslant 1$ 。当 $p=2$ 时, 称为欧氏距离 (Euclidean distance), 即
+
+
+\begin{equation*}
+L_{2}\left(x_{i}, x_{j}\right)=\left(\sum_{l=1}^{n}\left|x_{i}^{(l)}-x_{j}^{(l)}\right|^{2}\right)^{\frac{1}{2}} \tag{3.3}
+\end{equation*}
+
+
+当 $p=1$ 时, 称为曼哈顿距离（Manhattan distance）, 即
+
+
+\begin{equation*}
+L_{1}\left(x_{i}, x_{j}\right)=\sum_{l=1}^{n}\left|x_{i}^{(l)}-x_{j}^{(l)}\right| \tag{3.4}
+\end{equation*}
+
+
+当 $p=\infty$ 时, 它是各个坐标距离的最大值, 即
+
+
+\begin{equation*}
+L_{\infty}\left(x_{i}, x_{j}\right)=\max _{l}\left|x_{i}^{(l)}-x_{j}^{(l)}\right| \tag{3.5}
+\end{equation*}
+
+
+图 3.2 给出了二维空间中 $p$ 取不同值时, 与原点的 $L_{p}$ 距离为 $1\left(L_{p}=1\right)$ 的点的图形。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-26}
+\end{center}
+
+图 $3.2 L_{p}$ 距离间的关系
+
+下面的例子说明, 由不同的距离度量所确定的最近邻点是不同的。
+
+例 3.1 已知二维空间的 3 个点 $x_{1}=(1,1)^{\mathrm{T}}, x_{2}=(5,1)^{\mathrm{T}}, x_{3}=(4,4)^{\mathrm{T}}$, 试求在 $p$ 取不同值时, $L_{p}$ 距离下 $x_{1}$ 的最近邻点。
+
+解 因为 $x_{1}$ 和 $x_{2}$ 只有第一维的值不同, 所以 $p$ 为任何值时, $L_{p}\left(x_{1}, x_{2}\right)=4$ 。而
+
+$$
+L_{1}\left(x_{1}, x_{3}\right)=6, \quad L_{2}\left(x_{1}, x_{3}\right)=4.24, \quad L_{3}\left(x_{1}, x_{3}\right)=3.78, \quad L_{4}\left(x_{1}, x_{3}\right)=3.57
+$$
+
+于是得到: $p=1$ 或 2 时, $x_{2}$ 是 $x_{1}$ 的最近邻点; $p \geqslant 3$ 时, $x_{3}$ 是 $x_{1}$ 的最近邻点。
+
+\subsection*{3.2.3 $k$ 值的选择}
+$k$ 值的选择会对 $k$ 近邻法的结果产生重大影响。
+
+如果选择较小的 $k$ 值, 就相当于用较小的邻域中的训练实例进行预测, “学习” 的近似误差 (approximation error) 会减小, 只有与输入实例较近的 (相似的) 训练实例才会对预测结\\
+果起作用。但缺点是 “学习” 的估计误差 (estimation error) 会增大, 预测结果会对近邻的实例点非常敏感 ${ }^{[2]}$ 。如果邻近的实例点恰巧是噪声, 预测就会出错。换句话说, $k$ 值的减小就意味着整体模型变得复杂, 容易发生过拟合。
+
+如果选择较大的 $k$ 值, 就相当于用较大邻域中的训练实例进行预测。其优点是可以减少学习的估计误差, 但缺点是学习的近似误差会增大。这时与输入实例较远的 (不相似的) 训练实例也会对预测起作用, 使预测发生错误。 $k$ 值的增大就意味着整体模型变得简单。
+
+如果 $k=N$, 那么无论输入实例是什么, 都将简单地预测它属于在训练实例中最多的类。这时, 模型过于简单, 完全忽略训练实例中的大量有用信息, 是不可取的。
+
+在应用中, $k$ 值一般取一个比较小的数值。通常采用交叉验证法来选取最优的 $k$ 值。
+
+\subsection*{3.2.4 分类决策规则}
+$k$ 近邻法中的分类决策规则往往是多数表决, 即由输入实例的 $k$ 个邻近的训练实例中的多数类决定输入实例的类。
+
+多数表决规则 (majority voting rule) 有如下解释: 如果分类的损失函数为 0-1 损失函数, 分类函数为
+
+$$
+f: \boldsymbol{R}^{n} \rightarrow\left\{c_{1}, c_{2}, \cdots, c_{K}\right\}
+$$
+
+那么误分类的概率是
+
+$$
+P(Y \neq f(X))=1-P(Y=f(X))
+$$
+
+对给定的实例 $x \in \mathcal{X}$, 其最近邻的 $k$ 个训练实例点构成集合 $N_{k}(x)$ 。如果涵盖 $N_{k}(x)$ 的区域的类别是 $c_{j}$, 那么误分类率是
+
+$$
+\frac{1}{k} \sum_{x_{i} \in N_{k}(x)} I\left(y_{i} \neq c_{j}\right)=1-\frac{1}{k} \sum_{x_{i} \in N_{k}(x)} I\left(y_{i}=c_{j}\right)
+$$
+
+要使误分类率最小即经验风险最小, 就要使 $\sum_{x_{i} \in N_{k}(x)} I\left(y_{i}=c_{j}\right)$ 最大, 所以多数表决规则等价于经验风险最小化。
+
+\section*{$3.3 k$ 近邻法的实现: $k d$ 树}
+实现 $k$ 近邻法时, 主要考虑的问题是如何对训练数据进行快速 $k$ 近邻搜索。这点在特征空间的维数大及训练数据容量大时尤其必要。
+
+$k$ 近邻法最简单的实现方法是线性扫描 (linear scan), 这时要计算输入实例与每一个训练实例的距离。当训练集很大时, 计算非常耗时, 这种方法是不可行的。
+
+为了提高 $k$ 近邻搜索的效率, 可以考虑使用特殊的结构存储训练数据, 以减少计算距离的次数。具体方法很多, 下面介绍其中的 $k d$ 树 ( $k d$ tree) 方法 (1)。树的名称。
+
+(1) $k d$ 树是存储 $k$ 维空间数据的树结构, 这里的 $k$ 与 $k$ 近邻法的 $k$ 意义不同, 为了与习惯一致, 本书仍用 $k d$
+
+\subsection*{3.3.1 构造 $k d$ 树}
+$k d$ 树是一种对 $k$ 维空间中的实例点进行存储以便对其进行快速检索的树形数据结构。 $k d$ 树是二叉树, 表示对 $k$ 维空间的一个划分（partition）。构造 $k d$ 树相当于不断地用垂直于坐标轴的超平面将 $k$ 维空间切分, 构成一系列的 $k$ 维超矩形区域。 $k d$ 树的每个结点对应于一个 $k$ 维超矩形区域。
+
+构造 $k d$ 树的方法如下: 构造根结点, 使根结点对应于 $k$ 维空间中包含所有实例点的超矩形区域; 通过下面的递归方法, 不断地对 $k$ 维空间进行切分, 生成子结点。在超矩形区域 (结点）上选择一个坐标轴和在此坐标轴上的一个切分点, 确定一个超平面, 这个超平面通过选定的切分点并垂直于选定的坐标轴, 将当前超矩形区域切分为左、右两个子区域 (子结点),这时实例被分到两个子区域。这个过程直到子区域内没有实例时终止（终止时的结点为叶结点)。在此过程中, 将实例保存在相应的结点上。
+
+通常, 依次选择坐标轴对空间切分, 选择训练实例点在选定坐标轴上的中位数 (median) ${ }^{1}$为切分点, 这样得到的 $k d$ 树是平衡的。注意, 平衡的 $k d$ 树搜索时的效率未必是最优的。
+
+下面给出构造 $k d$ 树的算法。
+
+\section*{算法 3.2 (构造平衡 $\boldsymbol{k} d$ 树)}
+输入: $k$ 维空间数据集 $T=\left\{x_{1}, x_{2}, \cdots, x_{N}\right\}$, 其中 $x_{i}=\left(x_{i}^{(1)}, x_{i}^{(2)}, \cdots, x_{i}^{(k)}\right)^{\mathrm{T}}, i=$ $1,2, \cdots, N$ 。
+
+输出: $k d$ 树。
+
+（1）开始: 构造根结点, 根结点对应于包含 $T$ 的 $k$ 维空间的超矩形区域。
+
+选择 $x^{(1)}$ 为坐标轴, 以 $T$ 中所有实例的 $x^{(1)}$ 坐标的中位数为切分点, 将根结点对应的超矩形区域切分为两个子区域。切分由通过切分点并与坐标轴 $x^{(1)}$ 垂直的超平面实现。
+
+由根结点生成深度为 1 的左、右子结点: 左子结点对应坐标 $x^{(1)}$ 小于切分点的子区域,右子结点对应坐标 $x^{(1)}$ 大于切分点的子区域。
+
+将落在切分超平面上的实例点保存在根结点。
+
+(2) 重复: 对深度为 $j$ 的结点, 选择 $x^{(l)}$ 为切分的坐标轴, $l=j(\bmod k)+1$, 以该结点的区域中所有实例的 $x^{(l)}$ 坐标的中位数为切分点, 将该结点对应的超矩形区域切分为两个子区域。切分由通过切分点并与坐标轴 $x^{(l)}$ 垂直的超平面实现。
+
+由该结点生成深度为 $j+1$ 的左、右子结点: 左子结点对应坐标 $x^{(l)}$ 小于切分点的子区域, 右子结点对应坐标 $x^{(l)}$ 大于切分点的子区域。
+
+将落在切分超平面上的实例点保存在该结点。
+
+（3）直到两个子区域没有实例存在时停止，从而形成 $k d$ 树的区域划分。
+
+例 3.2 给定一个二维空间的数据集
+
+$$
+T=\left\{(2,3)^{\mathrm{T}},(5,4)^{\mathrm{T}},(9,6)^{\mathrm{T}},(4,7)^{\mathrm{T}},(8,1)^{\mathrm{T}},(7,2)^{\mathrm{T}}\right\}
+$$
+
+构造一个平衡 $k d$ 树 ${ }^{2}$ 。
+\footnotetext{(1) 一组数据按大小顺序排列起来, 处在中间位置的一个数或最中间两个数的平均值。
+
+(2) 取自 Wikipedia。
+}
+解 根结点对应包含数据集 $T$ 的矩形, 选择 $x^{(1)}$ 轴, 6 个数据点的 $x^{(1)}$ 坐标的中位数是 $7^{(1)}$, 以平面 $x^{(1)}=7$ 将空间分为左、右两个子矩形 (子结点); 接着, 左矩形以 $x^{(2)}=4$分为两个子矩形, 右矩形以 $x^{(2)}=6$ 分为两个子矩形, 如此递归, 最后得到如图 3.3 所示的特征空间划分和如图 3.4 所示的 $k d$ 树。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-29(1)}
+\end{center}
+
+图 3.3 特征空间划分
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-29}
+\end{center}
+
+图 $3.4 k d$ 树示例
+
+\subsection*{3.3.2 搜索 $k d$ 树}
+下面介绍如何利用 $k d$ 树进行 $k$ 近邻搜索。可以看到, 利用 $k d$ 树可以省去对大部分数据点的搜索, 从而减少搜索的计算量。这里以最近邻为例加以叙述, 同样的方法可以应用到 $k$近邻。
+
+给定一个目标点, 搜索其最近邻。首先找到包含目标点的叶结点; 然后从该叶结点出发,依次回退到父结点; 不断查找与目标点最邻近的结点, 当确定不可能存在更近的结点时终止。这样搜索就被限制在空间的局部区域上，效率大为提高。
+
+包含目标点的叶结点对应包含目标点的最小超矩形区域。以此叶结点的实例点作为当前最近点, 目标点的最近邻一定在以目标点为中心并通过当前最近点的超球体的内部（参阅
+
+(1) $x^{(1)}=6$ 是中位数, 但 $x^{(1)}=6$ 上没有数据点, 故选 $x^{(1)}=7$ 。\\
+图 3.5)。然后返回当前结点的父结点, 如果父结点的另一子结点的超矩形区域与超球体相交,那么在相交的区域内寻找与目标点更近的实例点。如果存在这样的点, 将此点作为新的当前最近点。算法转到更上一级的父结点, 继续上述过程。如果父结点的另一子结点的超矩形区域与超球体不相交, 或不存在比当前最近点更近的点, 则停止搜索。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-30}
+\end{center}
+
+图 3.5 通过 $k d$ 树搜索最近邻
+
+下面叙述用 $k d$ 树的最近邻搜索算法。
+
+\section*{算法 3.3 (用 $k d$ 树的最近邻搜索)}
+输入: 已构造的 $k d$ 树, 目标点 $x$ 。
+
+输出: $x$ 的最近邻。
+
+(1) 在 $k d$ 树中找出包含目标点 $x$ 的叶结点: 从根结点出发, 递归地向下访问 $k d$ 树。若目标点 $x$ 当前维的坐标小于切分点的坐标, 则移动到左子结点, 否则移动到右子结点, 直到子结点为叶结点为止。
+
+(2) 以此叶结点为 “当前最近点”。
+
+(3) 递归地向上回退, 在每个结点进行以下操作:
+
+(a) 如果该结点保存的实例点比当前最近点距离目标点更近, 则以该实例点为 “当前最近点”。
+
+(b) 当前最近点一定存在于该结点一个子结点对应的区域。检查该子结点的父结点的另一子结点对应的区域是否有更近的点。具体地, 检查另一子结点对应的区域是否与以目标点为球心、以目标点与 “当前最近点” 间的距离为半径的超球体相交。如果相交,可能在另一个子结点对应的区域内存在距目标点更近的点, 移动到另一个子结点。接着,递归地进行最近邻搜索。如果不相交, 向上回退。
+
+(4) 当回退到根结点时, 搜索结束。最后的 “当前最近点” 即为 $x$ 的最近邻点。
+
+如果实例点是随机分布的, $k d$ 树搜索的平均计算复杂度是 $O(\log N)$, 这里 $N$ 是训练实例数。 $k d$ 树更适用于训练实例数远大于空间维数时的 $k$ 近邻搜索。当空间维数接近训练实例数时, 它的效率会迅速下降, 几乎接近线性扫描。
+
+下面通过一个例题来说明搜索方法。
+
+例 3.3 给定一个如图 3.5 所示的 $k d$ 树, 根结点为 $\mathrm{A}$, 其子结点为 $\mathrm{B}, \mathrm{C}$ 等。树上共存储 7 个实例点, 另有一个输入目标实例点 $\mathrm{S}$, 求 $\mathrm{S}$ 的最近邻。\\
+解 首先在 $k d$ 树中找到包含点 $\mathrm{S}$ 的叶结点 $\mathrm{D}$ (图中的右下区域), 以点 $\mathrm{D}$ 作为近似最近邻。真正最近邻一定在以点 $\mathrm{S}$ 为中心通过点 $\mathrm{D}$ 的圆的内部。然后返回结点 $\mathrm{D}$ 的父结点 $\mathrm{B}$, 在结点 $\mathrm{B}$ 的另一子结点 $\mathrm{F}$ 的区域内搜索最近邻。结点 $\mathrm{F}$ 的区域与圆不相交, 不可能有最近邻点。继续返回上一级父结点 $\mathrm{A}$, 在结点 $\mathrm{A}$ 的另一子结点 $\mathrm{C}$ 的区域内搜索最近邻。结点 $\mathrm{C}$ 的区域与圆相交, 该区域在圆内的实例点有点 $\mathrm{E}$, 点 $\mathrm{E}$ 比点 $\mathrm{D}$ 更近, 成为新的最近邻近似。最后得到点 $\mathrm{E}$ 是点 $\mathrm{S}$ 的最近邻。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item $k$ 近邻法是基本且简单的分类与回归方法。 $k$ 近邻法的基本做法是: 对给定的训练实例点和输入实例点, 首先确定输入实例点的 $k$ 个最近邻训练实例点, 然后利用这 $k$ 个训练实例点的类的多数来预测输入实例点的类。
+  \item $k$ 近邻模型对应于基于训练数据集对特征空间的一个划分。 $k$ 近邻法中, 当训练集、距离度量、 $k$ 值及分类决策规则确定后, 其结果唯一确定。
+  \item $k$ 近邻法三要素: 距离度量、 $k$ 值的选择和分类决策规则。常用的距离度量是欧氏距离及更一般的 $L_{p}$ 距离。 $k$ 值小时, $k$ 近邻模型更复杂; $k$ 值大时, $k$ 近邻模型更简单。 $k$ 值的选择反映了对近似误差与估计误差之间的权衡, 通常由交叉验证选择最优的 $k$ 。常用的分类决策规则是多数表决, 对应于经验风险最小化。
+  \item $k$ 近邻法的实现需要考虑如何快速搜索 $k$ 个最近邻点。 $k d$ 树是一种便于对 $k$ 维空间中的数据进行快速检索的数据结构。 $k d$ 树是二叉树, 表示对 $k$ 维空间的一个划分, 其每个结点对应于 $k$ 维空间划分中的一个超矩形区域。利用 $k d$ 树可以省去对大部分数据点的搜索,从而减少搜索的计算量。
+\end{enumerate}
+
+\section*{继续阅读}
+$k$ 近邻法由 Cover 与 Hart 提出 [1]。 $k$ 近邻法相关的理论在文献 [2] 和文献 [3] 中已有论述。 $k$ 近邻法的扩展可参考文献 [4]。 $k d$ 树及其他快速搜索算法可参考文献 [5]。关于 $k$ 近邻法的介绍可参考文献 $[2]$ 。
+
+\section*{习 题}
+3.1 参照图 3.1, 在二维空间中给出实例点, 画出 $k$ 为 1 和 2 时的 $k$ 近邻法构成的空间划分, 并对其进行比较, 体会 $k$ 值选择与模型复杂度及预测精确率的关系。
+
+3.2 利用例题 3.2 构造的 $k d$ 树求点 $x=(3,4.5)^{\mathrm{T}}$ 的最近邻点。
+
+3.3 参照算法 3.3 , 写出输出为 $x$ 的 $k$ 近邻的算法。
+
+\section*{参考文献}
+[1] COVER T, HART P. Nearest neighbor pattern classification[J]. IEEE Transactions on Information Theory, 1967, 13(1): 21-27.
+
+[2] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 处红英, 等译. Springer, 2001.
+
+[3] FRIEDMAN J. Flexible metric nearest neighbor classification[J]. Technical Report, 1994.
+
+[4] WEINBERGER K Q, BLITZER J, SAUL L K. Distance metric learning for large margin nearest neighbor classification[C]//Proceedings of the NIPS. 2005.
+
+[5] SAMET H. The design and analysis of spatial data structures[M]. Reading, MA: AddisonWesley, 1990.
+
+\section*{第 4 章朴素贝叶斯法}
+朴素贝叶斯 (naïve Bayes) 法是基于贝叶斯定理与特征条件独立假设的分类方法 (1)。对于给定的训练数据集, 首先基于特征条件独立假设学习输入输出的联合概率分布; 然后基于此模型, 对给定的输入 $x$, 利用贝叶斯定理求出后验概率最大的输出 $y$ 。朴素贝叶斯法实现简单, 学习与预测的效率都很高, 是一种常用的方法。
+
+本章叙述朴素贝叶斯法, 包括朴素贝叶斯法的学习与分类、朴素贝叶斯法的参数估计算法。
+
+\section*{4.1 朴素贝口十斯法的学习与分类}
+\subsection*{4.1.1 基本方法}
+设输入空间 $\mathcal{X} \subseteq \boldsymbol{R}^{n}$ 为 $n$ 维向量的集合, 输出空间为类标记集合 $\mathcal{Y}=\left\{c_{1}, c_{2}, \cdots, c_{K}\right\}$ 。输入为特征向量 $x \in \mathcal{X}$, 输出为类标记 (class label) $y \in \mathcal{Y} \circ X$ 是定义在输入空间 $\mathcal{X}$ 上的随机向量, $Y$ 是定义在输出空间 $\mathcal{Y}$ 上的随机变量。 $P(X, Y)$ 是 $X$ 和 $Y$ 的联合概率分布。训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+由 $P(X, Y)$ 独立同分布产生。
+
+朴素贝叶斯法通过训练数据集学习联合概率分布 $P(X, Y)$ 。具体地, 学习以下先验概率分布及条件概率分布。先验概率分布
+
+
+\begin{equation*}
+P\left(Y=c_{k}\right), \quad k=1,2, \cdots, K \tag{4.1}
+\end{equation*}
+
+
+条件概率分布
+
+
+\begin{equation*}
+P\left(X=x \mid Y=c_{k}\right)=P\left(X^{(1)}=x^{(1)}, \cdots, X^{(n)}=x^{(n)} \mid Y=c_{k}\right), \quad k=1,2, \cdots, K \tag{4.2}
+\end{equation*}
+
+
+于是学习到联合概率分布 $P(X, Y)$ 。
+
+条件概率分布 $P\left(X=x \mid Y=c_{k}\right)$ 有指数级数量的参数, 其估计实际是不可行的。事实上,假设 $x^{(j)}$ 可取值有 $S_{j}$ 个, $j=1,2, \cdots, n, Y$ 可取值有 $K$ 个, 那么参数个数为 $K \prod_{j=1}^{n} S_{j}$ 。
+\footnotetext{(1) 注意: 朴素贝叶斯法与贝叶斯估计 (Bayesian estimation) 是不同的概念。
+}
+朴素贝叶斯法对条件概率分布作了条件独立性的假设。由于这是一个较强的假设, 朴素贝叶斯法也由此得名。具体地, 条件独立性假设是
+
+
+\begin{align*}
+P\left(X=x \mid Y=c_{k}\right) & =P\left(X^{(1)}=x^{(1)}, \cdots, X^{(n)}=x^{(n)} \mid Y=c_{k}\right) \\
+& =\prod_{j=1}^{n} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right) \tag{4.3}
+\end{align*}
+
+
+朴素贝叶斯法实际上学习到生成数据的机制, 所以属于生成模型。条件独立假设等于是说用于分类的特征在类确定的条件下都是条件独立的。这一假设使朴素贝叶斯法变得简单,但有时会牺牲一定的分类准确率。
+
+朴素贝叶斯法分类时, 对给定的输入 $x$, 通过学习到的模型计算后验概率分布 $P(Y=$ $\left.c_{k} \mid X=x\right)$, 将后验概率最大的类作为 $x$ 的类输出。后验概率计算根据贝叶斯定理进行:
+
+
+\begin{equation*}
+P\left(Y=c_{k} \mid X=x\right)=\frac{P\left(X=x \mid Y=c_{k}\right) P\left(Y=c_{k}\right)}{\sum_{k} P\left(X=x \mid Y=c_{k}\right) P\left(Y=c_{k}\right)} \tag{4.4}
+\end{equation*}
+
+
+将式 (4.3) 代入式 (4.4), 有
+
+
+\begin{equation*}
+P\left(Y=c_{k} \mid X=x\right)=\frac{P\left(Y=c_{k}\right) \prod_{j} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)}{\sum_{k} P\left(Y=c_{k}\right) \prod_{j} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)}, \quad k=1,2, \cdots, K \tag{4.5}
+\end{equation*}
+
+
+这是朴素贝叶斯法分类的基本公式。于是, 朴素贝叶斯分类器可表示为
+
+
+\begin{equation*}
+y=f(x)=\arg \max _{c_{k}} \frac{P\left(Y=c_{k}\right) \prod_{j} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)}{\sum_{k} P\left(Y=c_{k}\right) \prod_{j} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)} \tag{4.6}
+\end{equation*}
+
+
+注意到, 在式 (4.6) 中分母对所有 $c_{k}$ 都是相同的, 所以,
+
+
+\begin{equation*}
+y=\arg \max _{c_{k}} P\left(Y=c_{k}\right) \prod_{j} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right) \tag{4.7}
+\end{equation*}
+
+
+\subsection*{4.1.2 后验概率最大化的含义}
+朴素贝叶斯法将实例分到后验概率最大的类中, 这等价于期望风险最小化。假设选择 0-1 损失函数:
+
+$$
+L(Y, f(X))=\left\{\begin{array}{cc}
+1, & Y \neq f(X) \\
+0, & Y=f(X)
+\end{array}\right.
+$$
+
+式中 $f(X)$ 是分类决策函数。这时, 期望风险函数为
+
+$$
+R_{\exp }(f)=E[L(Y, f(X))]
+$$
+
+期望是对联合分布 $P(X, Y)$ 取的。由此取条件期望
+
+$$
+R_{\exp }(f)=E_{X} \sum_{k=1}^{K}\left[L\left(c_{k}, f(X)\right)\right] P\left(c_{k} \mid X\right)
+$$
+
+为了使期望风险最小化, 只需对 $X=x$ 逐个极小化, 由此得到:
+
+$$
+\begin{aligned}
+f(x) & =\arg \min _{y \in \mathcal{Y}} \sum_{k=1}^{K} L\left(c_{k}, y\right) P\left(c_{k} \mid X=x\right) \\
+& =\arg \min _{y \in \mathcal{Y}} \sum_{k=1}^{K} P\left(y \neq c_{k} \mid X=x\right) \\
+& =\arg \min _{y \in \mathcal{Y}}\left(1-P\left(y=c_{k} \mid X=x\right)\right) \\
+& =\arg \max _{y \in \mathcal{Y}} P\left(y=c_{k} \mid X=x\right)
+\end{aligned}
+$$
+
+这样一来, 根据期望风险最小化准则就得到了后验概率最大化准则:
+
+$$
+f(x)=\arg \max _{c_{k}} P\left(c_{k} \mid X=x\right)
+$$
+
+即朴素贝叶斯法所采用的原理。
+
+\section*{4.2 朴素贝口十斯法的参数估计}
+\subsection*{4.2.1 极大似然估计}
+在朴素贝叶斯法中, 学习意味着估计 $P\left(Y=c_{k}\right)$ 和 $P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)$ 。可以应用极大似然估计法估计相应的概率。先验概率 $P\left(Y=c_{k}\right)$ 的极大似然估计是
+
+
+\begin{equation*}
+P\left(Y=c_{k}\right)=\frac{\sum_{i=1}^{N} I\left(y_{i}=c_{k}\right)}{N}, \quad k=1,2, \cdots, K \tag{4.8}
+\end{equation*}
+
+
+设第 $j$ 个特征 $x^{(j)}$ 可能取值的集合为 $\left\{a_{j 1}, a_{j 2}, \cdots, a_{j S_{j}}\right\}$, 条件概率 $P\left(X^{(j)}=a_{j l} \mid Y=c_{k}\right)$的极大似然估计是
+
+\[
+\begin{array}{r}
+P\left(X^{(j)}=a_{j l} \mid Y=c_{k}\right)=\frac{\sum_{i=1}^{N} I\left(x_{i}^{(j)}=a_{j l}, y_{i}=c_{k}\right)}{\sum_{i=1}^{N} I\left(y_{i}=c_{k}\right)}, \\
+j=1,2, \cdots, n, \quad l=1,2, \cdots, S_{j}, \quad k=1,2, \cdots, K \tag{4.9}
+\end{array}
+\]
+
+式中, $x_{i}^{(j)}$ 是第 $i$ 个样本的第 $j$ 个特征; $a_{j l}$ 是第 $j$ 个特征可能取的第 $l$ 个值; $I$ 为指示函数。
+
+\subsection*{4.2.2 学习与分类算法}
+下面给出朴素贝叶斯法的学习与分类算法。
+
+\section*{算法 4.1 (朴素贝叶斯算法 (naïve Bayes algorithm))}
+输入: 训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$, 其中 $x_{i}=\left(x_{i}^{(1)}, x_{i}^{(2)}, \cdots\right.$, $\left.x_{i}^{(n)}\right)^{\mathrm{T}}, x_{i}^{(j)}$ 是第 $i$ 个样本的第 $j$ 个特征, $x_{i}^{(j)} \in\left\{a_{j 1}, a_{j 2}, \cdots, a_{j S_{j}}\right\}, a_{j l}$ 是第 $j$ 个特征可能取的第 $l$ 个值, $j=1,2, \cdots, n, l=1,2, \cdots, S_{j}, y_{i} \in\left\{c_{1}, c_{2}, \cdots, c_{K}\right\}$; 实例 $x$ 。
+
+输出: 实例 $x$ 的分类。
+
+(1) 计算先验概率及条件概率
+
+$$
+\begin{gathered}
+P\left(Y=c_{k}\right)=\frac{\sum_{i=1}^{N} I\left(y_{i}=c_{k}\right)}{N}, \quad k=1,2, \cdots, K \\
+P\left(X^{(j)}=a_{j l} \mid Y=c_{k}\right)=\frac{\sum_{i=1}^{N} I\left(x_{i}^{(j)}=a_{j l}, y_{i}=c_{k}\right)}{\sum_{i=1}^{N} I\left(y_{i}=c_{k}\right)}, \\
+j=1,2, \cdots, n, \quad l=1,2, \cdots, S_{j}, \quad k=1,2, \cdots, K
+\end{gathered}
+$$
+
+(2) 对于给定的实例 $x=\left(x^{(1)}, x^{(2)}, \cdots, x^{(n)}\right)^{\mathrm{T}}$, 计算
+
+$$
+P\left(Y=c_{k}\right) \prod_{j=1}^{n} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right), \quad k=1,2, \cdots, K
+$$
+
+(3) 确定实例 $x$ 的类
+
+$$
+y=\arg \max _{c_{k}} P\left(Y=c_{k}\right) \prod_{j=1}^{n} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)
+$$
+
+例 4.1 试由表 4.1 的训练数据学习一个朴素贝叶斯分类器并确定 $x=(2, S)^{\mathrm{T}}$ 的类标记 $y$ 。表中 $X^{(1)}, X^{(2)}$ 为特征, 取值的集合分别为 $A_{1}=\{1,2,3\}, A_{2}=\{S, M, L\}, Y$ 为类标记, $Y \in C=\{1,-1\}$ 。
+
+表 4.1 训练数据
+
+\begin{center}
+\begin{tabular}{lrrrrrrrrrrrrrrr}
+\hline
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\
+\hline
+$X^{(1)}$ & 1 & 1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 3 & 3 & 3 & 3 & 3 \\
+$X^{(2)}$ & $S$ & $M$ & $M$ & $S$ & $S$ & $S$ & $M$ & $M$ & $L$ & $L$ & $L$ & $M$ & $M$ & $L$ & $L$ \\
+$Y$ & -1 & -1 & 1 & 1 & -1 & -1 & -1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & -1 \\
+\hline
+\end{tabular}
+\end{center}
+
+解 根据算法 4.1, 由表 4.1 容易计算下列概率:
+
+$$
+P(Y=1)=\frac{9}{15}, \quad P(Y=-1)=\frac{6}{15}
+$$
+
+$$
+\begin{aligned}
+& P\left(X^{(1)}=1 \mid Y=1\right)=\frac{2}{9}, \quad P\left(X^{(1)}=2 \mid Y=1\right)=\frac{3}{9}, \quad P\left(X^{(1)}=3 \mid Y=1\right)=\frac{4}{9} \\
+& P\left(X^{(2)}=S \mid Y=1\right)=\frac{1}{9}, \quad P\left(X^{(2)}=M \mid Y=1\right)=\frac{4}{9}, \quad P\left(X^{(2)}=L \mid Y=1\right)=\frac{4}{9} \\
+& P\left(X^{(1)}=1 \mid Y=-1\right)=\frac{3}{6}, \quad P\left(X^{(1)}=2 \mid Y=-1\right)=\frac{2}{6}, \quad P\left(X^{(1)}=3 \mid Y=-1\right)=\frac{1}{6} \\
+& P\left(X^{(2)}=S \mid Y=-1\right)=\frac{3}{6}, \quad P\left(X^{(2)}=M \mid Y=-1\right)=\frac{2}{6}, \quad P\left(X^{(2)}=L \mid Y=-1\right)=\frac{1}{6}
+\end{aligned}
+$$
+
+对于给定的 $x=(2, S)^{\mathrm{T}}$, 计算
+
+$$
+\begin{aligned}
+& P(Y=1) P\left(X^{(1)}=2 \mid Y=1\right) P\left(X^{(2)}=S \mid Y=1\right)=\frac{9}{15} \cdot \frac{3}{9} \cdot \frac{1}{9}=\frac{1}{45} \\
+& P(Y=-1) P\left(X^{(1)}=2 \mid Y=-1\right) P\left(X^{(2)}=S \mid Y=-1\right)=\frac{6}{15} \cdot \frac{2}{6} \cdot \frac{3}{6}=\frac{1}{15}
+\end{aligned}
+$$
+
+由于 $P(Y=-1) P\left(X^{(1)}=2 \mid Y=-1\right) P\left(X^{(2)}=S \mid Y=-1\right)$ 最大, 所以 $y=-1$ 。
+
+\subsection*{4.2.3 贝ㅁ斯估计}
+用极大似然估计可能会出现所要估计的概率值为 0 的情况。这时会影响后验概率的计算结果, 使分类产生偏差。解决这一问题的方法是采用贝叶斯估计。具体地, 条件概率的贝叶斯估计是
+
+
+\begin{equation*}
+P_{\lambda}\left(X^{(j)}=a_{j l} \mid Y=c_{k}\right)=\frac{\sum_{i=1}^{N} I\left(x_{i}^{(j)}=a_{j l}, y_{i}=c_{k}\right)+\lambda}{\sum_{i=1}^{N} I\left(y_{i}=c_{k}\right)+S_{j} \lambda} \tag{4.10}
+\end{equation*}
+
+
+式中 $\lambda \geqslant 0$, 等价于在随机变量各个取值的频数上赋予一个正数 $\lambda>0$ 。当 $\lambda=0$ 时就是极大似然估计。常取 $\lambda=1$, 这时称为拉普拉斯平滑（Laplacian smoothing）。显然, 对任何 $l=1,2, \cdots, S_{j}, k=1,2, \cdots, K$, 有
+
+$$
+\begin{aligned}
+& P_{\lambda}\left(X^{(j)}=a_{j l} \mid Y=c_{k}\right)>0 \\
+& \sum_{l=1}^{S_{j}} P_{\lambda}\left(X^{(j)}=a_{j l} \mid Y=c_{k}\right)=1
+\end{aligned}
+$$
+
+表明式 (4.10) 确为一种概率分布。同样, 先验概率的贝叶斯估计是
+
+
+\begin{equation*}
+P_{\lambda}\left(Y=c_{k}\right)=\frac{\sum_{i=1}^{N} I\left(y_{i}=c_{k}\right)+\lambda}{N+K \lambda} \tag{4.11}
+\end{equation*}
+
+
+例 4.2 问题同例 4.1, 按照拉普拉斯平滑估计概率, 即取 $\lambda=1$ 。
+
+解 $A_{1}=\{1,2,3\}, A_{2}=\{S, M, L\}, C=\{1,-1\}$ 。按照式 (4.10) 和式 (4.11) 计算下列\\
+概率:
+
+$$
+\begin{aligned}
+& P(Y=1)=\frac{10}{17}, \quad P(Y=-1)=\frac{7}{17} \\
+& P\left(X^{(1)}=1 \mid Y=1\right)=\frac{3}{12}, \quad P\left(X^{(1)}=2 \mid Y=1\right)=\frac{4}{12}, \quad P\left(X^{(1)}=3 \mid Y=1\right)=\frac{5}{12} \\
+& P\left(X^{(2)}=S \mid Y=1\right)=\frac{2}{12}, \quad P\left(X^{(2)}=M \mid Y=1\right)=\frac{5}{12}, \quad P\left(X^{(2)}=L \mid Y=1\right)=\frac{5}{12} \\
+& P\left(X^{(1)}=1 \mid Y=-1\right)=\frac{4}{9}, \quad P\left(X^{(1)}=2 \mid Y=-1\right)=\frac{3}{9}, \quad P\left(X^{(1)}=3 \mid Y=-1\right)=\frac{2}{9} \\
+& P\left(X^{(2)}=S \mid Y=-1\right)=\frac{4}{9}, \quad P\left(X^{(2)}=M \mid Y=-1\right)=\frac{3}{9}, \quad P\left(X^{(2)}=L \mid Y=-1\right)=\frac{2}{9}
+\end{aligned}
+$$
+
+对于给定的 $x=(2, S)^{\mathrm{T}}$, 计算
+
+$$
+\begin{aligned}
+& P(Y=1) P\left(X^{(1)}=2 \mid Y=1\right) P\left(X^{(2)}=S \mid Y=1\right)=\frac{10}{17} \cdot \frac{4}{12} \cdot \frac{2}{12}=\frac{5}{153}=0.0327 \\
+& P(Y=-1) P\left(X^{(1)}=2 \mid Y=-1\right) P\left(X^{(2)}=S \mid Y=-1\right)=\frac{7}{17} \cdot \frac{3}{9} \cdot \frac{4}{9}=\frac{28}{459}=0.0610
+\end{aligned}
+$$
+
+由于 $P(Y=-1) P\left(X^{(1)}=2 \mid Y=-1\right) P\left(X^{(2)}=S \mid Y=-1\right)$ 最大, 所以 $y=-1$ 。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 朴素贝叶斯法是典型的生成学习方法。生成方法由训练数据学习联合概率分布 $P(X, Y)$, 然后求得后验概率分布 $P(Y \mid X)$ 。具体来说, 利用训练数据学习 $P(X \mid Y)$ 和 $P(Y)$的估计, 得到联合概率分布:
+\end{enumerate}
+
+$$
+P(X, Y)=P(Y) P(X \mid Y)
+$$
+
+概率估计方法可以是极大似然估计或贝叶斯估计。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 朴素贝叶斯法的基本假设是条件独立性:
+\end{enumerate}
+
+$$
+\begin{aligned}
+P\left(X=x \mid Y=c_{k}\right) & =P\left(X^{(1)}=x^{(1)}, \cdots, X^{(n)}=x^{(n)} \mid Y=c_{k}\right) \\
+& =\prod_{j=1}^{n} P\left(X^{(j)}=x^{(j)} \mid Y=c_{k}\right)
+\end{aligned}
+$$
+
+这是一个较强的假设。由于这一假设, 模型包含的条件概率的数量大为减少, 朴素贝叶斯法的学习与预测大为简化。因而朴素贝叶斯法高效且易于实现, 其缺点是分类的性能不一定很高。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 朴素贝叶斯法利用贝叶斯定理与学到的联合概率模型进行分类预测。
+\end{enumerate}
+
+$$
+P(Y \mid X)=\frac{P(X, Y)}{P(X)}=\frac{P(Y) P(X \mid Y)}{\sum_{Y} P(Y) P(X \mid Y)}
+$$
+
+将输入 $x$ 分到后验概率最大的类 $y$ 。
+
+$$
+y=\arg \max _{c_{k}} P\left(Y=c_{k}\right) \prod_{j=1}^{n} P\left(X_{j}=x^{(j)} \mid Y=c_{k}\right)
+$$
+
+后验概率最大等价于 0-1 损失函数时的期望风险最小化。
+
+\section*{继续阅读}
+朴素贝叶斯法的介绍可见文献 [1] 和文献 [2]。朴素贝叶斯法中假设输入变量都是条件独立的, 如果假设它们之间存在概率依存关系, 模型就变成了贝叶斯网络, 参见文献 [3]。
+
+\section*{习 题}
+4.1 用极大似然估计法推出朴素贝叶斯法中的概率估计公式 (4.8) 及公式 (4.9)。
+
+4.2 用贝叶斯估计法推出朴素贝叶斯法中的概率估计公式 (4.10) 及公式 (4.11)。
+
+\section*{参考文献}
+[1] MITCHELL T M. Machine Learning[M]. Engineering, 2005.
+
+[2] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 迫红英, 等译. Springer, 2001.
+
+[3] BISHOP C. Pattern recognition and machine learning[M]. Springer, 2006.
+
+\section*{第 5 章 决 策 树}
+决策树（decision tree）是一种基本的分类与回归方法。本章主要讨论用于分类的决策树。决策树模型呈树形结构, 在分类问题中, 表示基于特征对实例进行分类的过程。它可以认为是 if-then 规则的集合，也可以认为是定义在特征空间与类空间上的条件概率分布。其主要优点是模型具有可读性, 分类速度快。学习时, 利用训练数据, 根据损失函数最小化的原则建立决策树模型。预测时, 对新的数据利用决策树模型进行分类。决策树学习通常包括 3 个步骤: 特征选择、决策树的生成和决策树的修剪。这些决策树学习的思想主要来源于由 Quinlan 在 1986 年提出的 ID3 算法和 1993 年提出的 C4.5 算法, 以及由 Breiman 等人在 1984 年提出的 CART 算法。
+
+本章首先介绍决策树的基本概念, 然后通过 ID3 算法和 C4.5 算法介绍特征的选择、决策树的生成以及决策树的修剪, 最后介绍 CART 算法。
+
+\section*{5.1 决策树模型与学习}
+\subsection*{5.1.1 决策树模型}
+定义 5.1 (决策树) 分类决策树模型是一种描述对实例进行分类的树形结构。决策树由结点 (node) 和有向边 (directed edge ) 组成。结点有两种类型: 内部结点 (internal node) 和叶结点 (leaf node)。内部结点表示一个特征或属性, 叶结点表示一个类。
+
+用决策树分类, 从根结点开始, 对实例的某一特征进行测试, 根据测试结果, 将实例分配到其子结点, 这时, 每一个子结点对应该特征的一个取值。如此递归地对实例进行测试并分配, 直至达到叶结点。最后将实例分到叶结点的类中。
+
+图 5.1 是一个决策树模型, 图中圆和方框分别表示内部结点和叶结点。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_c4e863166a24653ffd7cg-40}
+\end{center}
+
+图 5.1 决策树模型
+
+
+\end{document}

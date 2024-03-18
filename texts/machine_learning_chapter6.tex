@@ -1,0 +1,1789 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan,}
+\urlstyle{same}
+\usepackage{multirow}
+
+\begin{document}
+\begin{CJK*}{UTF8}{bsmi}
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-01}
+\end{center}
+
+图 10.4 求最优路径
+
+同时, 对每个状态 $i, i=1,2,3$, 记录概率最大路径的前一个状态 $j$ :
+
+$$
+\Psi_{2}(i)=\arg \max _{1 \leqslant j \leqslant 3}\left[\delta_{1}(j) a_{j i}\right], \quad i=1,2,3
+$$
+
+计算:
+
+$$
+\begin{aligned}
+\delta_{2}(1) & =\max _{1 \leqslant j \leqslant 3}\left[\delta_{1}(j) a_{j 1}\right] b_{1}\left(o_{2}\right) \\
+& =\max _{j}\{0.10 \times 0.5,0.16 \times 0.3,0.28 \times 0.2\} \times 0.5 \\
+& =0.028 \\
+\Psi_{2}(1) & =3 \\
+\delta_{2}(2) & =0.0504 \\
+\Psi_{2}(2) & =3 \\
+\delta_{2}(3) & =0.042 \\
+\Psi_{2}(3) & =3
+\end{aligned}
+$$
+
+同样, 在 $t=3$ 时,
+
+$$
+\begin{aligned}
+& \delta_{3}(i)=\max _{1 \leqslant j \leqslant 3}\left[\delta_{2}(j) a_{j i}\right] b_{i}\left(o_{3}\right) \\
+& \Psi_{3}(i)=\arg \max _{1 \leqslant j \leqslant 3}\left[\delta_{2}(j) a_{j i}\right] \\
+& \delta_{3}(1)=0.00756 \\
+& \Psi_{3}(1)=2 \\
+& \delta_{3}(2)=0.01008 \\
+& \Psi_{3}(2)=2 \\
+& \delta_{3}(3)=0.0147 \\
+& \Psi_{3}(3)=3
+\end{aligned}
+$$
+
+（3）以 $P^{*}$ 表示最优路径的概率, 则
+
+$$
+P^{*}=\max _{1 \leqslant i \leqslant 3} \delta_{3}(i)=0.0147
+$$
+
+最优路径的终点是 $i_{3}^{*}:$
+
+$$
+i_{3}^{*}=\arg \max _{i} \delta_{3}(i)=3
+$$
+
+（4）由最优路径的终点 $i_{3}^{*}$, 逆向找到 $i_{2}^{*}, i_{1}^{*}$ :
+
+$$
+\begin{array}{ll}
+\text { 当 } t=2 \text { 时 }, & i_{2}^{*}=\Psi_{3}\left(i_{3}^{*}\right)=\Psi_{3}(3)=3 \\
+\text { 当 } t=1 \text { 时 }, & i_{1}^{*}=\Psi_{2}\left(i_{2}^{*}\right)=\Psi_{2}(3)=3
+\end{array}
+$$
+
+于是求得最优路径, 即最优状态序列 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, i_{3}^{*}\right)=(3,3,3)$ 。
+
+\section*{本 章 概 要}
+\begin{enumerate}
+  \item 隐马尔可夫模型是关于时序的概率模型, 描述由一个隐藏的马尔可夫链随机生成不可观测的状态的序列, 再由各个状态随机生成一个观测从而产生观测序列的过程。
+\end{enumerate}
+
+隐马尔可夫模型由初始状态概率向量 $\pi$ 、状态转移概率矩阵 $A$ 和观测概率矩阵 $B$ 决定。因此, 隐马尔可夫模型可以写成 $\lambda=(A, B, \pi)$ 。
+
+隐马尔可夫模型是一个生成模型, 表示状态序列和观测序列的联合分布, 但是状态序列是隐藏的, 不可观测的。
+
+隐马尔可夫模型可以用于标注, 这时状态对应着标记。标注问题是指给定观测序列预测其对应的标记序列。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 概率计算问题。给定模型 $\lambda=(A, B, \pi)$ 和观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 计算在模型 $\lambda$ 下观测序列 $O$ 出现的概率 $P(O \mid \lambda)$ 。前向-后向算法通过递推地计算前向-后向概率可以高效地进行隐马尔可夫模型的概率计算。
+
+  \item 学习问题。已知观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 估计模型 $\lambda=(A, B, \pi)$ 参数, 使得在该模型下观测序列概率 $P(O \mid \lambda)$ 最大。即用极大似然估计的方法估计参数。Baum-Welch 算法, 也就是 EM 算法可以高效地对隐马尔可夫模型进行训练。它是一种无监督学习算法。
+
+  \item 预测问题。已知模型 $\lambda=(A, B, \pi)$ 和观测序列 $O=\left(o_{1}, o_{2}, \cdots, o_{T}\right)$, 求对给定观测序列条件概率 $P(I \mid O)$ 最大的状态序列 $I=\left(i_{1}, i_{2}, \cdots, i_{T}\right)$ 。维特比算法应用动态规划高效地求解最优路径, 即概率最大的状态序列。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+隐马尔可夫模型的介绍可参见文献 [1] 和文献 [2], 特别地, 文献 [1] 是经典的介绍性论文。关于 Baum-Welch 算法可参见文献 [3] 和文献 [4]。可以认为概率上下文无关文法 (probabilistic context-free grammar) 是隐马尔可夫模型的一种推广, 隐马尔可夫模型的不可观测数据是状态序列, 而概率上下文无关文法的不可观测数据是上下文无关文法树 ${ }^{[5]}$ 。动态贝叶斯网络 (dynamic Bayesian network) 是定义在时序数据上的贝叶斯网络, 它包含隐马尔可夫模型, 是一种特例 $[6]$ 。
+
+\section*{习 题}
+10.1 给定盒子和球组成的隐马尔可夫模型 $\lambda=(A, B, \pi)$, 其中,
+
+$$
+A=\left[\begin{array}{lll}
+0.5 & 0.2 & 0.3 \\
+0.3 & 0.5 & 0.2 \\
+0.2 & 0.3 & 0.5
+\end{array}\right], \quad B=\left[\begin{array}{cc}
+0.5 & 0.5 \\
+0.4 & 0.6 \\
+0.7 & 0.3
+\end{array}\right], \quad \pi=(0.2,0.4,0.4)^{\mathrm{T}}
+$$
+
+设 $T=4, O=$ (红, 白, 红, 白), 试用后向算法计算 $P(O \mid \lambda)$ 。
+
+10.2 考虑盒子和球组成的隐马尔可夫模型 $\lambda=(A, B, \pi)$, 其中,
+
+$$
+A=\left[\begin{array}{lll}
+0.5 & 0.1 & 0.4 \\
+0.3 & 0.5 & 0.2 \\
+0.2 & 0.2 & 0.6
+\end{array}\right], \quad B=\left[\begin{array}{ll}
+0.5 & 0.5 \\
+0.4 & 0.6 \\
+0.7 & 0.3
+\end{array}\right], \quad \pi=(0.2,0.3,0.5)^{\mathrm{T}}
+$$
+
+设 $T=8, O=$ (红, 白, 红, 红, 白, 红, 白, 白), 用前向-后向概率计算 $P\left(i_{4}=q_{3} \mid O, \lambda\right)$ 。
+
+10.3 在习题 10.1 中, 试用维特比算法求最优路径 $I^{*}=\left(i_{1}^{*}, i_{2}^{*}, i_{3}^{*}, i_{4}^{*}\right)$ 。
+
+10.4 试用前向概率和后向概率推导
+
+$$
+P(O \mid \lambda)=\sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{t}(i) a_{i j} b_{j}\left(o_{t+1}\right) \beta_{t+1}(j), \quad t=1,2, \cdots, T-1
+$$
+
+10.5 比较维特比算法中变量 $\delta$ 的计算和前向算法中变量 $\alpha$ 的计算的主要区别。
+
+\section*{参考文献}
+[1] RABINER L, JUANG B. An introduction to hidden Markov Models[J]. IEEE ASSP Magazine, 1986, 3(1): 4-16.
+
+[2] RABINER L. A tutorial on hidden Markov models and selected applications in speech recognition[J]. Proceedings of IEEE, 1989, 77(2): 257-286.
+
+[3] BAUM L, et al. A maximization technique occuring in the statistical analysis of probabilistic functions of Markov chains[J]. Annals of Mathematical Statistics, 1970, 41: 164-171.
+
+[4] BILMES J A. A gentle tutorial of the EM algorithm and its application to parameter estimation for Gaussian mixture and hidden Markov models[Z/OL]. \href{http://ssli.ee.washington.edu/}{http://ssli.ee.washington.edu/} bilmes/ mypubs/bilmes1997-em.pdf.
+
+[5] LARI K, YOUNG S J. Applications of stochastic context-free grammars using the InsideOutside algorithm[J]. Computer Speech \& Language, 1991, 5(3): 237-257.
+
+[6] GHAHRAmANI Z. Learning dynamic Bayesian networks[J]. Lecture Notes in Computer Science, 1997, 1387: 168-197.
+
+\section*{第 11 章 条件随机场}
+条件随机场 (conditional random field, CRF) 是给定一组输入随机变量条件下另一组输出随机变量的条件概率分布模型, 其特点是假设输出随机变量构成马尔可夫随机场。条件随机场可以用于不同的预测问题, 本书仅论及它在标注问题的应用。因此主要讲述线性链 (linear chain) 条件随机场, 这时, 问题变成了由输入序列对输出序列预测的判别模型, 形式为对数线性模型, 其学习方法通常是极大似然估计或正则化的极大似然估计。线性链条件随机场应用于标注问题是由 Lafferty 等人于 2001 年提出的。
+
+本章首先介绍概率无向图模型, 然后叙述条件随机场的定义和各种表示方法, 最后介绍条件随机场的 3 个基本问题: 概率计算问题、学习问题和预测问题。
+
+\section*{11.1 概率无向图模型}
+概率无向图模型 (probabilistic undirected graphical model) 又称为马尔可夫随机场 （Markov random field）, 是一个可以由无向图表示的联合概率分布。本节首先叙述概率无向图模型的定义，然后介绍概率无向图模型的因子分解。
+
+\subsection*{11.1.1 模型定义}
+图 (graph) 是由结点 (node) 及连接结点的边 (edge) 组成的集合。结点和边分别记作 $v$和 $e$, 结点和边的集合分别记作 $V$ 和 $E$, 图记作 $G=(V, E)$ 。无向图是指边没有方向的图。
+
+概率图模型 (probabilistic graphical model) 是由图表示的概率分布。设有联合概率分布 $P(Y), Y \in \mathcal{Y}$ 是一组随机变量。由无向图 $G=(V, E)$ 表示概率分布 $P(Y)$, 即在图 $G$ 中,结点 $v \in V$ 表示一个随机变量 $Y_{v}, Y=\left(Y_{v}\right)_{v \in V}$; 边 $e \in E$ 表示随机变量之间的概率依赖关系。
+
+给定一个联合概率分布 $P(Y)$ 和表示它的无向图 $G$ 。首先定义无向图表示的随机变量之间存在的成对马尔可夫性 (pairwise Markov property) 、局部马尔可夫性 (local Markov property）和全局马尔可夫性（global Markov property）。
+
+成对马尔可夫性: 设 $u$ 和 $v$ 是无向图 $G$ 中任意两个没有边连接的结点, 结点 $u$ 和 $v$ 分别对应随机变量 $Y_{u}$ 和 $Y_{v}$ 。其他所有结点为 $O$, 对应的随机变量组是 $Y_{O}$ 。成对马尔可夫性是指给定随机变量组 $Y_{O}$ 的条件下随机变量 $Y_{u}$ 和 $Y_{v}$ 是条件独立的, 即
+
+
+\begin{equation*}
+P\left(Y_{u}, Y_{v} \mid Y_{O}\right)=P\left(Y_{u} \mid Y_{O}\right) P\left(Y_{v} \mid Y_{O}\right) \tag{11.1}
+\end{equation*}
+
+
+局部马尔可夫性: 设 $v \in V$ 是无向图 $G$ 中任意一个结点, $W$ 是与 $v$ 有边连接的所有结点, $O$ 是 $v$ 和 $W$ 以外的其他所有结点。 $v$ 表示的随机变量是 $Y_{v}, W$ 表示的随机变量组是 $Y_{W}, O$ 表示的随机变量组是 $Y_{O}$ 。局部马尔可夫性是指在给定随机变量组 $Y_{W}$ 的条件下随机变量 $Y_{v}$ 与随机变量组 $Y_{O}$ 是独立的, 即
+
+
+\begin{equation*}
+P\left(Y_{v}, Y_{O} \mid Y_{W}\right)=P\left(Y_{v} \mid Y_{W}\right) P\left(Y_{O} \mid Y_{W}\right) \tag{11.2}
+\end{equation*}
+
+
+在 $P\left(Y_{O} \mid Y_{W}\right)>0$ 时, 等价地,
+
+
+\begin{equation*}
+P\left(Y_{v} \mid Y_{W}\right)=P\left(Y_{v} \mid Y_{W}, Y_{O}\right) \tag{11.3}
+\end{equation*}
+
+
+图 11.1 表示由式 (11.2) 或式 (11.3) 所示的局部马尔可夫性。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_32592c58f22d1a77d634g-05(1)}
+
+图 11.1 局部马尔可夫性
+
+全局马尔可夫性: 设结点集合 $A, B$ 是在无向图 $G$ 中被结点集合 $C$ 分开的任意结点集合, 如图 11.2 所示。结点集合 $A, B$ 和 $C$ 所对应的随机变量组分别是 $Y_{A}, Y_{B}$ 和 $Y_{C}$ 。全局马尔可夫性是指给定随机变量组 $Y_{C}$ 条件下随机变量组 $Y_{A}$ 和 $Y_{B}$ 是条件独立的, 即
+
+
+\begin{equation*}
+P\left(Y_{A}, Y_{B} \mid Y_{C}\right)=P\left(Y_{A} \mid Y_{C}\right) P\left(Y_{B} \mid Y_{C}\right) \tag{11.4}
+\end{equation*}
+
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-05}
+\end{center}
+
+图 11.2 全局马尔可夫性
+
+上述成对的、局部的、全局的马尔可夫性定义是等价的 ${ }^{[2]}$ 。
+
+下面定义概率无向图模型。
+
+定义 11.1 (概率无向图模型) 设有联合概率分布 $P(Y)$, 由无向图 $G=(V, E)$ 表示,在图 $G$ 中, 结点表示随机变量, 边表示随机变量之间的依赖关系。如果联合概率分布 $P(Y)$满足成对、局部或全局马尔可夫性, 就称此联合概率分布为概率无向图模型 (probabilistic undirected graphical model ) 或马尔可夫随机场 (Markov random field)。
+
+以上是概率无向图模型的定义, 实际上, 我们更关心的是如何求其联合概率分布。对给\\
+定的概率无向图模型, 我们希望将整体的联合概率写成若干子联合概率的乘积的形式, 也就是将联合概率进行因子分解, 这样便于模型的学习与计算。事实上, 概率无向图模型的最大特点就是易于因子分解。下面介绍这一结果。
+
+\subsection*{11.1.2 概率无向图模型的因子分解}
+首先给出无向图中的团与最大团的定义。
+
+定义 11.2 (团与最大团) 无向图 $G$ 中任何两个结点均有边连接的结点子集称为团 (clique)。若 $C$ 是无向图 $G$ 的一个团, 并且不能再加进任何一个 $G$ 的结点使其成为一个更大的团, 则称此 $C$ 为最大团 (maximal clique)。
+
+图 11.3 表示由 4 个结点组成的无向图。图中由两个结点组成的团有 5 个: $\left\{Y_{1}, Y_{2}\right\}$, $\left\{Y_{2}, Y_{3}\right\},\left\{Y_{3}, Y_{4}\right\},\left\{Y_{4}, Y_{2}\right\}$ 和 $\left\{Y_{1}, Y_{3}\right\}$ 。有两个最大团: $\left\{Y_{1}, Y_{2}, Y_{3}\right\}$ 和 $\left\{Y_{2}, Y_{3}, Y_{4}\right\}$ 。而 $\left\{Y_{1}, Y_{2}, Y_{3}, Y_{4}\right\}$ 不是一个团, 因为 $Y_{1}$ 和 $Y_{4}$ 没有边连接。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-06}
+\end{center}
+
+图 11.3 无向图的团和最大团
+
+将概率无向图模型的联合概率分布表示为其最大团上的随机变量的函数的乘积形式的操作，称为概率无向图模型的因子分解（factorization）。
+
+给定概率无向图模型, 设其无向图为 $G, C$ 为 $G$ 上的最大团, $Y_{C}$ 表示 $C$ 对应的随机变量。那么概率无向图模型的联合概率分布 $P(Y)$ 可写作图中所有最大团 $C$ 上的函数 $\Psi_{C}\left(Y_{C}\right)$的乘积形式, 即
+
+
+\begin{equation*}
+P(Y)=\frac{1}{Z} \prod_{C} \Psi_{C}\left(Y_{C}\right) \tag{11.5}
+\end{equation*}
+
+
+其中, $Z$ 是规范化因子 (normalization factor), 由式
+
+
+\begin{equation*}
+Z=\sum_{Y} \prod_{C} \Psi_{C}\left(Y_{C}\right) \tag{11.6}
+\end{equation*}
+
+
+给出。规范化因子保证 $P(Y)$ 构成一个概率分布。函数 $\Psi_{C}\left(Y_{C}\right)$ 称为势函数 (potential function）。这里要求势函数 $\Psi_{C}\left(Y_{C}\right)$ 是严格正的, 通常定义为指数函数:
+
+
+\begin{equation*}
+\Psi_{C}\left(Y_{C}\right)=\exp \left(-E\left(Y_{C}\right)\right) \tag{11.7}
+\end{equation*}
+
+
+概率无向图模型的因子分解由下述定理来保证。
+
+定理 11.1 (Hammersley-Clifford 定理) 概率无向图模型的联合概率分布 $P(Y)$ 可以表示为如下形式:
+
+$$
+P(Y)=\frac{1}{Z} \prod_{C} \Psi_{C}\left(Y_{C}\right)
+$$
+
+$$
+Z=\sum_{Y} \prod_{C} \Psi_{C}\left(Y_{C}\right)
+$$
+
+其中, $C$ 是无向图的最大团, $Y_{C}$ 是 $C$ 的结点对应的随机变量, $\Psi_{C}\left(Y_{C}\right)$ 是 $C$ 上定义的严格正函数，乘积是在无向图所有的最大团上进行的。
+
+\section*{11.2 条件随机场的定义与形式}
+\section*{11.2 .1 条件随机场的定义}
+条件随机场（conditional random field）是给定随机变量 $X$ 条件下, 随机变量 $Y$ 的马尔可夫随机场。这里主要介绍定义在线性链上的特殊的条件随机场, 称为线性链条件随机场（linear chain conditional random field）。线性链条件随机场可以用于标注等问题。这时,在条件概率模型 $P(Y \mid X)$ 中, $Y$ 是输出变量, 表示标记序列, $X$ 是输入变量, 表示需要标注的观测序列。也把标记序列称为状态序列 (参见隐马尔可夫模型)。学习时, 利用训练数据集通过极大似然估计或正则化的极大似然估计得到条件概率模型 $\hat{P}(Y \mid X)$; 预测时, 对于给定的输入序列 $x$, 求出条件概率 $\hat{P}(y \mid x)$ 最大的输出序列 $\hat{y}$ 。
+
+首先定义一般的条件随机场, 然后定义线性链条件随机场。
+
+定义 11.3 (条件随机场) 设 $X$ 与 $Y$ 是随机变量, $P(Y \mid X)$ 是在给定 $X$ 的条件下 $Y$ 的条件概率分布。若随机变量 $Y$ 构成一个由无向图 $G=(V, E)$ 表示的马尔可夫随机场, 即
+
+
+\begin{equation*}
+P\left(Y_{v} \mid X, Y_{w}, w \neq v\right)=P\left(Y_{v} \mid X, Y_{w}, w \sim v\right) \tag{11.8}
+\end{equation*}
+
+
+对任意结点 $v$ 成立, 则称条件概率分布 $P(Y \mid X)$ 为条件随机场。式中 $w \sim v$ 表示在图 $G=(V, E)$ 中与结点 $v$ 有边连接的所有结点 $w, w \neq v$ 表示结点 $v$ 以外的所有结点, $Y_{v}, Y_{u}$与 $Y_{w}$ 为结点 $v, u$ 与 $w$ 对应的随机变量。
+
+在定义中并没有要求 $X$ 和 $Y$ 具有相同的结构。现实中,一般假设 $X$ 和 $Y$ 有相同的图结构。本书主要考虑无向图为如图 11.4 与图 11.5 所示的线性链的情况, 即
+
+$$
+G=(V=\{1,2, \cdots, n\}, E=\{(i, i+1)\}), \quad i=1,2, \cdots, n-1
+$$
+
+在此情况下, $X=\left(X_{1}, X_{2}, \cdots, X_{n}\right), Y=\left(Y_{1}, Y_{2}, \cdots, Y_{n}\right)$, 最大团是相邻两个结点的集合。线性链条件随机场有下面的定义。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-07}
+\end{center}
+
+图 11.4 线性链条件随机场
+
+定义 11.4 (线性链条件随机场) 设 $X=\left(X_{1}, X_{2}, \cdots, X_{n}\right), Y=\left(Y_{1}, Y_{2}, \cdots, Y_{n}\right)$ 均为线性链表示的随机变量序列, 若在给定随机变量序列 $X$ 的条件下, 随机变量序列 $Y$ 的条件
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-08}
+\end{center}
+
+图 $11.5 X$ 和 $Y$ 有相同的图结构的线性链条件随机场
+
+概率分布 $P(Y \mid X)$ 构成条件随机场，即满足马尔可夫性
+
+
+\begin{gather*}
+P\left(Y_{i} \mid X, Y_{1}, \cdots, Y_{i-1}, Y_{i+1}, \cdots, Y_{n}\right)=P\left(Y_{i} \mid X, Y_{i-1}, Y_{i+1}\right), \\
+i=1,2, \cdots, n(\text { 在 } i=1 \text { 和 } i=n \text { 时只考虑单边 }) \tag{11.9}
+\end{gather*}
+
+
+则称 $P(Y \mid X)$ 为线性链条件随机场。在标注问题中, $X$ 表示输入观测序列, $Y$ 表示对应的输出标记序列或状态序列。
+
+\subsection*{11.2.2 条件随机场的参数化形式}
+根据定理 11.1, 可以给出线性链条件随机场 $P(Y \mid X)$ 的因子分解式, 各因子是定义在相邻两个结点（最大团）上的势函数。
+
+定理 11.2 (线性链条件随机场的参数化形式) 设 $P(Y \mid X)$ 为线性链条件随机场, 则在随机变量 $X$ 取值为 $x$ 的条件下, 随机变量 $Y$ 取值为 $y$ 的条件概率具有如下形式:
+
+
+\begin{equation*}
+P(y \mid x)=\frac{1}{Z(x)} \exp \left(\sum_{i, k} \lambda_{k} t_{k}\left(y_{i-1}, y_{i}, x, i\right)+\sum_{i, l} \mu_{l} s_{l}\left(y_{i}, x, i\right)\right) \tag{11.10}
+\end{equation*}
+
+
+其中，
+
+
+\begin{equation*}
+Z(x)=\sum_{y} \exp \left(\sum_{i, k} \lambda_{k} t_{k}\left(y_{i-1}, y_{i}, x, i\right)+\sum_{i, l} \mu_{l} s_{l}\left(y_{i}, x, i\right)\right) \tag{11.11}
+\end{equation*}
+
+
+式中, $t_{k}$ 和 $s_{l}$ 是特征函数, $\lambda_{k}$ 和 $\mu_{l}$ 是对应的权值, $Z(x)$ 是规范化因子, 求和是在所有可能的输出序列上进行的。
+
+式 (11.10) 和式 (11.11) 是线性链条件随机场模型的基本形式, 表示给定输入序列 $x$, 对输出序列 $y$ 预测的条件概率。在式 (11.10) 和式 (11.11) 中, $t_{k}$ 是定义在边上的特征函数, 称为转移特征, 依赖于当前和前一个位置; $s_{l}$ 是定义在结点上的特征函数, 称为状态特征, 依赖于当前位置。 $t_{k}$ 和 $s_{l}$ 都依赖于位置, 是局部特征函数。通常, 特征函数 $t_{k}$ 和 $s_{l}$ 取值为 1 或 0 ; 当满足特征条件时取值为 1 , 否则为 0 。条件随机场完全由特征函数 $t_{k}, s_{l}$ 和对应的权值 $\lambda_{k}, \mu_{l}$ 确定。
+
+线性链条件随机场也是对数线性模型 ( $\log$ linear model)。
+
+下面看一个简单的例子。
+
+例 11.1 设有一标注问题: 输入观测序列为 $X=\left(X_{1}, X_{2}, X_{3}\right)$, 输出标记序列为 $Y=\left(Y_{1}, Y_{2}, Y_{3}\right), Y_{1}, Y_{2}, Y_{3}$ 取值于 $\mathcal{Y}=\{1,2\}$ 。\\
+假设特征 $t_{k}, s_{l}$ 和对应的权值 $\lambda_{k}, \mu_{l}$ 如下:
+
+$$
+t_{1}=t_{1}\left(y_{i-1}=1, y_{i}=2, x, i\right), \quad i=2,3, \quad \lambda_{1}=1
+$$
+
+这里只注明特征取值为 1 的条件, 取值为 0 的条件省略, 即
+
+$$
+t_{1}\left(y_{i-1}, y_{i}, x, i\right)= \begin{cases}1, & y_{i-1}=1, y_{i}=2, x, i,(i=2,3) \\ 0, & \text { 其他 }\end{cases}
+$$
+
+下同。
+
+$$
+\begin{aligned}
+& t_{2}=t_{2}\left(y_{1}=1, y_{2}=1, x, 2\right), \quad \lambda_{2}=0.6 \\
+& t_{3}=t_{3}\left(y_{2}=2, y_{3}=1, x, 3\right), \quad \lambda_{3}=1 \\
+& t_{4}=t_{4}\left(y_{1}=2, y_{2}=1, x, 2\right), \quad \lambda_{4}=1 \\
+& t_{5}=t_{5}\left(y_{2}=2, y_{3}=2, x, 3\right), \quad \lambda_{5}=0.2 \\
+& s_{1}=s_{1}\left(y_{1}=1, x, 1\right), \quad \mu_{1}=1 \\
+& s_{2}=s_{2}\left(y_{i}=2, x, i\right), i=1,2, \quad \mu_{2}=0.5 \\
+& s_{3}=s_{3}\left(y_{i}=1, x, i\right), i=2,3, \quad \mu_{3}=0.8 \\
+& s_{4}=s_{4}\left(y_{3}=2, x, 3\right), \quad \mu_{4}=0.5
+\end{aligned}
+$$
+
+对给定的观测序列 $x$, 求标记序列为 $y=\left(y_{1}, y_{2}, y_{3}\right)=(1,2,2)$ 的非规范化条件概率 (即没有除以规范化因子的条件概率)。
+
+解 由式 (11.10), 线性链条件随机场模型为
+
+$$
+P(y \mid x) \propto \exp \left[\sum_{k=1}^{5} \lambda_{k} \sum_{i=2}^{3} t_{k}\left(y_{i-1}, y_{i}, x, i\right)+\sum_{k=1}^{4} \mu_{k} \sum_{i=1}^{3} s_{k}\left(y_{i}, x, i\right)\right]
+$$
+
+对给定的观测序列 $x$, 标记序列 $y=(1,2,2)$ 的非规范化条件概率为
+
+$$
+P\left(y_{1}=1, y_{2}=2, y_{3}=2 \mid x\right) \propto \exp (3.2)
+$$
+
+\section*{11.2 .3 条件随机场的简化形式}
+条件随机场还可以由简化形式表示。注意到条件随机场 (式 (11.10)) 中同一特征在各个位置都有定义, 可以对同一个特征在各个位置求和, 将局部特征函数转化为一个全局特征函数, 这样就可以将条件随机场写成权值向量和特征向量的内积形式, 即条件随机场的简化形式。
+
+为简便起见, 首先将转移特征和状态特征及其权值用统一的符号表示。设有 $K_{1}$ 个转移特征, $K_{2}$ 个状态特征, $K=K_{1}+K_{2}$, 记
+
+\[
+f_{k}\left(y_{i-1}, y_{i}, x, i\right)= \begin{cases}t_{k}\left(y_{i-1}, y_{i}, x, i\right), & k=1,2, \cdots, K_{1}  \tag{11.12}\\ s_{l}\left(y_{i}, x, i\right), & k=K_{1}+l, \quad l=1,2, \cdots, K_{2}\end{cases}
+\]
+
+然后, 对转移特征与状态特征在各个位置 $i$ 求和, 记作
+
+
+\begin{equation*}
+f_{k}(y, x)=\sum_{i=1}^{n} f_{k}\left(y_{i-1}, y_{i}, x, i\right), \quad k=1,2, \cdots, K \tag{11.13}
+\end{equation*}
+
+
+用 $w_{k}$ 表示特征 $f_{k}(y, x)$ 的权值, 即
+
+\[
+w_{k}= \begin{cases}\lambda_{k}, & k=1,2, \cdots, K_{1}  \tag{11.14}\\ \mu_{l}, & k=K_{1}+l, \quad l=1,2, \cdots, K_{2}\end{cases}
+\]
+
+于是, 条件随机场 (式 (11.10) 式 (11.11)) 可表示为
+
+
+\begin{align*}
+P(y \mid x) & =\frac{1}{Z(x)} \exp \sum_{k=1}^{K} w_{k} f_{k}(y, x)  \tag{11.15}\\
+Z(x) & =\sum_{y} \exp \sum_{k=1}^{K} w_{k} f_{k}(y, x) \tag{11.16}
+\end{align*}
+
+
+若以 $w$ 表示权值向量, 即
+
+
+\begin{equation*}
+w=\left(w_{1}, w_{2}, \cdots, w_{K}\right)^{\mathrm{T}} \tag{11.17}
+\end{equation*}
+
+
+以 $F(y, x)$ 表示全局特征向量, 即
+
+
+\begin{equation*}
+F(y, x)=\left(f_{1}(y, x), f_{2}(y, x), \cdots, f_{K}(y, x)\right)^{\mathrm{T}} \tag{11.18}
+\end{equation*}
+
+
+则条件随机场可以写成向量 $w$ 与 $F(y, x)$ 的内积的形式:
+
+
+\begin{equation*}
+P_{w}(y \mid x)=\frac{\exp (w \cdot F(y, x))}{Z_{w}(x)} \tag{11.19}
+\end{equation*}
+
+
+其中,
+
+
+\begin{equation*}
+Z_{w}(x)=\sum_{y} \exp (w \cdot F(y, x)) \tag{11.20}
+\end{equation*}
+
+
+\subsection*{11.2.4 条件随机场的矩阵形式}
+条件随机场还可以由矩阵表示。假设 $P_{w}(y \mid x)$ 是由式 (11.15) 式 (11.16) 给出的线性链条件随机场, 表示对给定观测序列 $x$, 相应的标记序列 $y$ 的条件概率。对每个标记序列引进特殊的起点和终点状态标记 $y_{0}=\operatorname{start}$ 和 $y_{n+1}=\operatorname{stop}$, 这时标注序列的概率 $P_{w}(y \mid x)$ 可以通过矩阵形式表示并有效计算。
+
+对观测序列 $x$ 的每一个位置 $i=1,2, \cdots, n+1$, 由于 $y_{i-1}$ 和 $y_{i}$ 在 $m$ 个标记中取值, 可以定义一个 $m$ 阶矩阵随机变量:
+
+
+\begin{equation*}
+M_{i}(x)=\left(M_{i}\left(y_{i-1}, y_{i} \mid x\right)\right) \tag{11.21}
+\end{equation*}
+
+
+矩阵随机变量的元素为
+
+
+\begin{equation*}
+M_{i}\left(y_{i-1}, y_{i} \mid x\right)=\exp \left(W_{i}\left(y_{i-1}, y_{i} \mid x\right)\right) \tag{11.22}
+\end{equation*}
+
+
+
+\begin{equation*}
+W_{i}\left(y_{i-1}, y_{i} \mid x\right)=\sum_{k=1}^{K} w_{k} f_{k}\left(y_{i-1}, y_{i}, x, i\right) \tag{11.23}
+\end{equation*}
+
+
+这里 $w_{k}$ 和 $f_{k}$ 分别由式 (11.14) 和式 (11.12) 给出, $y_{i-1}$ 和 $y_{i}$ 是标记随机变量 $Y_{i-1}$ 和 $Y_{i}$ 的取值。
+
+这样, 给定观测序列 $x$, 相应标记序列 $y$ 的非规范化概率可以通过该序列 $n+1$ 个矩阵
+
+的适当元素的乘积 $\prod_{i=1}^{n+1} M_{i}\left(y_{i-1}, y_{i} \mid x\right)$ 表示。于是, 条件概率 $P_{w}(y \mid x)$ 是
+
+
+\begin{equation*}
+P_{w}(y \mid x)=\frac{1}{Z_{w}(x)} \prod_{i=1}^{n+1} M_{i}\left(y_{i-1}, y_{i} \mid x\right) \tag{11.24}
+\end{equation*}
+
+
+其中, $Z_{w}(x)$ 为规范化因子, 是 $n+1$ 个矩阵的乘积的 (start, stop) 元素, 即
+
+
+\begin{equation*}
+Z_{w}(x)=\left(M_{1}(x) M_{2}(x) \cdots M_{n+1}(x)\right)_{\text {start,stop }} \tag{11.25}
+\end{equation*}
+
+
+注意, $y_{0}=$ start 与 $y_{n+1}=\operatorname{stop}$ 表示开始状态与终止状态, 规范化因子 $Z_{w}(x)$ 是以 start 为起点、stop 为终点通过状态的所有路径 $y_{1} y_{2} \cdots y_{n}$ 的非规范化概率 $\prod_{i=1}^{n+1} M_{i}\left(y_{i-1}, y_{i} \mid x\right)$ 之和。下面的例子说明了这一事实。
+
+例 11.2 给定一个由图 11.6 所示的线性链条件随机场, 观测序列 $x$, 状态序列 $y, i=$ $1,2,3, n=3$, 标记 $y_{i} \in\{1,2\}$, 假设 $y_{0}=$ start $=1, y_{4}=$ stop $=1$, 各个位置的随机矩阵 $M_{1}(x), M_{2}(x), M_{3}(x), M_{4}(x)$ 分别是
+
+$$
+\begin{array}{ll}
+M_{1}(x)=\left[\begin{array}{cc}
+a_{01} & a_{02} \\
+0 & 0
+\end{array}\right], & M_{2}(x)=\left[\begin{array}{ll}
+b_{11} & b_{12} \\
+b_{21} & b_{22}
+\end{array}\right] \\
+M_{3}(x)=\left[\begin{array}{cc}
+c_{11} & c_{12} \\
+c_{21} & c_{22}
+\end{array}\right], & M_{4}(x)=\left[\begin{array}{ll}
+1 & 0 \\
+1 & 0
+\end{array}\right]
+\end{array}
+$$
+
+试求状态序列 $y$ 以 start 为起点、 stop 为终点的所有路径的非规范化概率及规范化因子。
+
+解 首先计算图 11.6 中从 start 到 stop 对应于 $y=(1,1,1), y=(1,1,2), \ldots, y=$ $(2,2,2)$ 各路径的非规范化概率分别是
+
+$$
+\begin{array}{llll}
+a_{01} b_{11} c_{11}, & a_{01} b_{11} c_{12}, & a_{01} b_{12} c_{21}, & a_{01} b_{12} c_{22} \\
+a_{02} b_{21} c_{11}, & a_{02} b_{21} c_{12}, & a_{02} b_{22} c_{21}, & a_{02} b_{22} c_{22}
+\end{array}
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-11}
+\end{center}
+
+图 11.6 状态路径\\
+然后按式 (11.25) 求规范化因子。通过计算矩阵乘积 $M_{1}(x) M_{2}(x) M_{3}(x) M_{4}(x)$ 可知, 其第 1 行第 1 列的元素为
+
+$a_{01} b_{11} c_{11}+a_{02} b_{21} c_{11}+a_{01} b_{12} c_{21}+a_{02} b_{22} c_{22}+a_{01} b_{11} c_{12}+a_{02} b_{21} c_{12}+a_{01} b_{12} c_{22}+a_{02} b_{22} c_{21}$
+
+恰好等于从 start 到 stop 的所有路径的非规范化概率之和, 即规范化因子 $Z(x)$ 。
+
+\section*{11.3 条件随机场的概率计算问题}
+条件随机场的概率计算问题是给定条件随机场 $P(Y \mid X)$ 、输入序列 $x$ 和输出序列 $y$, 计算条件概率 $P\left(Y_{i}=y_{i} \mid x\right), P\left(Y_{i-1}=y_{i-1}, Y_{i}=y_{i} \mid x\right)$ 以及相应的数学期望的问题。为了方便起见, 像隐马尔可夫模型那样, 引进前向-后向向量, 递归地计算以上概率及期望值。这样的算法也称为前向一后向算法。
+
+\subsection*{11.3.1 前向-后向算法}
+对每个指标 $i=0,1, \cdots, n+1$, 定义前向向量 $\alpha_{i}(x)$ :
+
+\[
+\alpha_{0}(y \mid x)= \begin{cases}1, & y=\text { start }  \tag{11.26}\\ 0, & \text { 否则 }\end{cases}
+\]
+
+递推公式为
+
+
+\begin{equation*}
+\alpha_{i}^{\mathrm{T}}\left(y_{i} \mid x\right)=\alpha_{i-1}^{\mathrm{T}}\left(y_{i-1} \mid x\right)\left(M_{i}\left(y_{i-1}, y_{i} \mid x\right)\right), \quad i=1,2, \cdots, n+1 \tag{11.27}
+\end{equation*}
+
+
+又可表示为
+
+
+\begin{equation*}
+\alpha_{i}^{\mathrm{T}}(x)=\alpha_{i-1}^{\mathrm{T}}(x) M_{i}(x) \tag{11.28}
+\end{equation*}
+
+
+$\alpha_{i}\left(y_{i} \mid x\right)$ 表示在位置 $i$ 的标记是 $y_{i}$ 并且从 1 到 $i$ 的前部分标记序列的非规范化概率, $y_{i}$ 可取的值有 $m$ 个, 所以 $\alpha_{i}(x)$ 是 $m$ 维列向量。
+
+同样, 对每个指标 $i=0,1, \cdots, n+1$, 定义后向向量 $\beta_{i}(x)$ :
+
+
+\begin{align*}
+\beta_{n+1}\left(y_{n+1} \mid x\right) & = \begin{cases}1, & y_{n+1}=\text { stop } \\
+0, & \text { 否则 }\end{cases}  \tag{11.29}\\
+\beta_{i}\left(y_{i} \mid x\right) & =\left(M_{i+1}\left(y_{i}, y_{i+1} \mid x\right)\right) \beta_{i+1}\left(y_{i+1} \mid x\right) \tag{11.30}
+\end{align*}
+
+
+又可表示为
+
+
+\begin{equation*}
+\beta_{i}(x)=M_{i+1}(x) \beta_{i+1}(x) \tag{11.31}
+\end{equation*}
+
+
+$\beta_{i}\left(y_{i} \mid x\right)$ 表示在位置 $i$ 的标记为 $y_{i}$ 并且从 $i+1$ 到 $n$ 的后部分标记序列的非规范化概率。
+
+\subsection*{11.3.2 概率计算}
+按照前向一后向向量的定义, 很容易计算标记序列在位置 $i$ 是标记 $y_{i}$ 的条件概率和在位\\
+置 $i-1$ 与 $i$ 是标记 $y_{i-1}$ 和 $y_{i}$ 的条件概率:
+
+
+\begin{gather*}
+P\left(Y_{i}=y_{i} \mid x\right)=\frac{\alpha_{i}^{\mathrm{T}}\left(y_{i} \mid x\right) \beta_{i}\left(y_{i} \mid x\right)}{Z(x)}  \tag{11.32}\\
+P\left(Y_{i-1}=y_{i-1}, Y_{i}=y_{i} \mid x\right)=\frac{\alpha_{i-1}^{\mathrm{T}}\left(y_{i-1} \mid x\right) M_{i}\left(y_{i-1}, y_{i} \mid x\right) \beta_{i}\left(y_{i} \mid x\right)}{Z(x)} \tag{11.33}
+\end{gather*}
+
+
+其中，
+
+$$
+Z(x)=\alpha_{n}^{\mathrm{T}}(x) 1=1 \beta_{1}(x)
+$$
+
+1 是元素均为 1 的 $m$ 维列向量。
+
+\subsection*{11.3.3 期望值的计算}
+利用前向-后向向量, 可以计算特征函数关于联合分布 $P(X, Y)$ 和条件分布 $P(Y \mid X)$ 的数学期望。
+
+特征函数 $f_{k}$ 关于条件分布 $P(Y \mid X)$ 的数学期望是
+
+
+\begin{align*}
+E_{P(Y \mid X)}\left[f_{k}\right]= & \sum_{y} P(y \mid x) f_{k}(y, x) \\
+= & \\
+&  \tag{11.34}\\
+& k=1,2, \cdots, K
+\end{align*}
+
+
+其中,
+
+$$
+Z(x)=\alpha_{n}^{\mathrm{T}}(x) 1
+$$
+
+假设经验分布为 $\tilde{P}(X)$, 特征函数 $f_{k}$ 关于联合分布 $P(X, Y)$ 的数学期望是
+
+
+\begin{align*}
+& E_{P(X, Y)}\left[f_{k}\right]=\sum_{x, y} P(x, y) \sum_{i=1}^{n+1} f_{k}\left(y_{i-1}, y_{i}, x, i\right) \\
+&=\sum_{x} \tilde{P}(x) \sum_{y} P(y \mid x) \sum_{i=1}^{n+1} f_{k}\left(y_{i-1}, y_{i}, x, i\right) \\
+&=\sum_{x} \tilde{P}(x) \sum_{i=1}^{n+1} \sum_{y_{i-1} y_{i}} f_{k}\left(y_{i-1}, y_{i}, x, i\right) \frac{\alpha_{i-1}^{\mathrm{T}}\left(y_{i-1} \mid x\right) M_{i}\left(y_{i-1}, y_{i} \mid x\right) \beta_{i}\left(y_{i} \mid x\right)}{Z(x)} \\
+& k=1,2, \cdots, K \tag{11.35}
+\end{align*}
+
+
+其中，
+
+$$
+Z(x)=\alpha_{n}^{\mathrm{T}}(x) 1
+$$
+
+式 (11.34) 和式 (11.35) 是特征函数数学期望的一般计算公式。对于转移特征 $t_{k}\left(y_{i-1}, y_{i}, x, i\right)$,\\
+$k=1,2, \cdots, K_{1}$, 可以将式中的 $f_{k}$ 换成 $t_{k}$; 对于状态特征, 可以将式中的 $f_{k}$ 换成 $s_{i}$, 表示为 $s_{l}\left(y_{i}, x, i\right), k=K_{1}+l, l=1,2, \cdots, K_{2}$ 。
+
+有了式 (11.32) 式 (11.35), 对于给定的观测序列 $x$ 与标记序列 $y$, 可以通过一次前向扫描计算 $\alpha_{i}$ 及 $Z(x)$, 通过一次后向扫描计算 $\beta_{i}$, 从而计算所有的概率和特征的期望。
+
+\section*{11.4 条件随机场的学习算法}
+本节讨论给定训练数据集估计条件随机场模型参数的问题, 即条件随机场的学习问题。条件随机场模型实际上是定义在时序数据上的对数线性模型, 其学习方法包括极大似然估计和正则化的极大似然估计。具体的优化实现算法有改进的迭代尺度法 IIS、梯度下降法以及拟牛顿法 (参阅附录 $\mathrm{A}$ 和附录 $\mathrm{B}$ )。
+
+\subsection*{11.4.1 改进的迭代尺度法}
+已知训练数据集, 由此可知经验概率分布 $\tilde{P}(X, Y)$ 。可以通过极大化训练数据的对数似然函数来求模型参数。
+
+训练数据的对数似然函数为
+
+$$
+L(w)=L_{\tilde{P}}\left(P_{w}\right)=\log \prod_{x, y} P_{w}(y \mid x)^{\tilde{P}(x, y)}=\sum_{x, y} \tilde{P}(x, y) \log P_{w}(y \mid x)
+$$
+
+当 $P_{w}$ 是一个由式 (11.15) 和式 (11.16) 给出的条件随机场模型时, 对数似然函数为
+
+$$
+\begin{aligned}
+L(w) & =\sum_{x, y} \tilde{P}(x, y) \log P_{w}(y \mid x) \\
+& =\sum_{x, y}\left[\tilde{P}(x, y) \sum_{k=1}^{K} w_{k} f_{k}(y, x)-\tilde{P}(x, y) \log Z_{w}(x)\right] \\
+& =\sum_{j=1}^{N} \sum_{k=1}^{K} w_{k} f_{k}\left(y_{j}, x_{j}\right)-\sum_{j=1}^{N} \log Z_{w}\left(x_{j}\right)
+\end{aligned}
+$$
+
+改进的迭代尺度法通过迭代的方法不断优化对数似然函数改变量的下界, 达到极大化对数似然函数的目的。假设模型的当前参数向量为 $w=\left(w_{1}, w_{2}, \cdots, w_{K}\right)^{\mathrm{T}}$, 向量的增量为 $\delta=\left(\delta_{1}, \delta_{2}, \cdots, \delta_{K}\right)^{\mathrm{T}}$, 更新参数向量为 $w+\delta=\left(w_{1}+\delta_{1}, w_{2}+\delta_{2}, \cdots, w_{K}+\delta_{K}\right)^{\mathrm{T}}$ 。在每步迭代过程中, 改进的迭代尺度法通过依次求解式 (11.36) 和式 (11.37), 得到 $\delta=\left(\delta_{1}, \delta_{2}, \cdots, \delta_{K}\right)^{\mathrm{T}}$ 。推导可参考本书 6.3 .1 节。
+
+关于转移特征 $t_{k}$ 的更新方程为
+
+
+\begin{align*}
+E_{\tilde{P}}\left[t_{k}\right]= & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n+1} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \\
+= & \sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n+1} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \exp \left(\delta_{k} T(x, y)\right), \\
+& k=1,2, \cdots, K_{1} \tag{11.36}
+\end{align*}
+
+
+关于状态特征 $s_{l}$ 的更新方程为
+
+
+\begin{align*}
+E_{\tilde{P}}\left[s_{l}\right]= & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n+1} s_{l}\left(y_{i}, x, i\right) \\
+= & \sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n} s_{l}\left(y_{i}, x, i\right) \exp \left(\delta_{K_{1}+l} T(x, y)\right), \\
+& \quad l=1,2, \cdots, K_{2} \tag{11.37}
+\end{align*}
+
+
+这里, $T(x, y)$ 是在数据 $(x, y)$ 中出现的所有特征数的总和:
+
+
+\begin{equation*}
+T(x, y)=\sum_{k} f_{k}(y, x)=\sum_{k=1}^{K} \sum_{i=1}^{n+1} f_{k}\left(y_{i-1}, y_{i}, x, i\right) \tag{11.38}
+\end{equation*}
+
+
+\section*{算法 11.1 (条件随机场模型学习的改进的迭代尺度法)}
+输入: 特征函数 $t_{1}, t_{2}, \cdots, t_{K_{1}}, s_{1}, s_{2}, \cdots, s_{K_{2}}$, 经验分布 $\tilde{P}(x, y)$ 。
+
+输出: 参数估计值 $\hat{w}$, 模型 $P_{\hat{w}}$ 。
+
+(1) 对所有 $k \in\{1,2, \cdots, K\}$, 取初值 $w_{k}=0$ 。
+
+(2) 对每一 $k \in\{1,2, \cdots, K\}$ :
+
+（a）当 $k=1,2, \cdots, K_{1}$ 时, 令 $\delta_{k}$ 是方程
+
+$$
+\sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n+1} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \exp \left(\delta_{k} T(x, y)\right)=E_{\tilde{P}}\left[t_{k}\right]
+$$
+
+的解;
+
+当 $k=K_{1}+l, l=1,2, \cdots, K_{2}$ 时, 令 $\delta_{K_{1}+l}$ 是方程
+
+$$
+\sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n} s_{l}\left(y_{i}, x, i\right) \exp \left(\delta_{K_{1}+l} T(x, y)\right)=E_{\tilde{P}}\left[s_{l}\right]
+$$
+
+的解, 式中 $T(x, y)$ 由式 (11.38) 给出。
+
+(b) 更新 $w_{k}$ 值: $w_{k} \leftarrow w_{k}+\delta_{k}$ 。
+
+(3) 如果不是所有 $w_{k}$ 都收玫, 重复步骤 (2)。
+
+在式 (11.36) 和式 (11.37) 中, $T(x, y)$ 表示数据 $(x, y)$ 中的特征总数, 对不同的数据 $(x, y)$取值可能不同。为了处理这个问题, 定义松他特征
+
+
+\begin{equation*}
+s(x, y)=S-\sum_{i=1}^{n+1} \sum_{k=1}^{K} f_{k}\left(y_{i-1}, y_{i}, x, i\right) \tag{11.39}
+\end{equation*}
+
+
+式中 $S$ 是一个常数。选择足够大的常数 $S$ 使得对训练数据集的所有数据 $(x, y), s(x, y) \geqslant 0$成立。这时特征总数可取 $S$ 。
+
+由式 (11.36), 对于转移特征 $t_{k}, \delta_{k}$ 的更新方程是
+
+
+\begin{equation*}
+\sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n+1} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \exp \left(\delta_{k} S\right)=E_{\tilde{P}}\left[t_{k}\right] \tag{11.40}
+\end{equation*}
+
+
+
+\begin{equation*}
+\delta_{k}=\frac{1}{S} \log \frac{E_{\tilde{P}}\left[t_{k}\right]}{E_{P}\left[t_{k}\right]} \tag{11.41}
+\end{equation*}
+
+
+其中，
+
+
+\begin{equation*}
+E_{P}\left(t_{k}\right)=\sum_{x} \tilde{P}(x) \sum_{i=1}^{n+1} \sum_{y_{i-1}, y_{i}} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \frac{\alpha_{i-1}^{\mathrm{T}}\left(y_{i-1} \mid x\right) M_{i}\left(y_{i-1}, y_{i} \mid x\right) \beta_{i}\left(y_{i} \mid x\right)}{Z(x)} \tag{11.42}
+\end{equation*}
+
+
+同样由式 (11.37), 对于状态特征 $s_{l}, \delta_{k}$ 的更新方程是
+
+
+\begin{gather*}
+\sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n} s_{l}\left(y_{i}, x, i\right) \exp \left(\delta_{K_{1}+l} S\right)=E_{\tilde{P}}\left[s_{l}\right]  \tag{11.43}\\
+\delta_{K_{1}+l}=\frac{1}{S} \log \frac{E_{\tilde{P}}\left[s_{l}\right]}{E_{P}\left[s_{l}\right]} \tag{11.44}
+\end{gather*}
+
+
+其中，
+
+
+\begin{equation*}
+E_{P}\left(s_{l}\right)=\sum_{x} \tilde{P}(x) \sum_{i=1}^{n} \sum_{y_{i}} s_{l}\left(y_{i}, x, i\right) \frac{\alpha_{i}^{\mathrm{T}}\left(y_{i} \mid x\right) \beta_{i}\left(y_{i} \mid x\right)}{Z(x)} \tag{11.45}
+\end{equation*}
+
+
+以上算法称为算法 $\mathrm{S}$ 。在算法 $\mathrm{S}$ 中需要使常数 $S$ 取足够大, 这样一来, 每步迭代的增量向量会变大, 算法收玫会变慢。算法 $\mathrm{T}$ 试图解决这个问题, 对每个观测序列 $x$ 计算其特征总数最大值 $T(x)$ :
+
+
+\begin{equation*}
+T(x)=\max _{y} T(x, y) \tag{11.46}
+\end{equation*}
+
+
+利用前向-后向递推公式, 可以很容易地计算 $T(x)=t$ 。这时, 关于转移特征参数的更新方程可以写成
+
+
+\begin{align*}
+E_{\tilde{P}}\left[t_{k}\right] & =\sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n+1} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \exp \left(\delta_{k} T(x)\right) \\
+& =\sum_{x} \tilde{P}(x) \sum_{y} P(y \mid x) \sum_{i=1}^{n+1} t_{k}\left(y_{i-1}, y_{i}, x, i\right) \exp \left(\delta_{k} T(x)\right) \\
+& =\sum_{x} \tilde{P}(x) a_{k, t} \exp \left(\delta_{k} t\right) \\
+& =\sum_{t=0}^{T_{\max }} a_{k, t} \beta_{k}^{t} \tag{11.47}
+\end{align*}
+
+
+这里, $a_{k, t}$ 是特征 $t_{k}$ 的期待值, $\delta_{k}=\log \beta_{k}$ 。 $\beta_{k}$ 是多项式方程 (11.47) 唯一的实根, 可以用牛顿法求得, 从而求得相关的 $\delta_{k}$ 。
+
+同样, 关于状态特征的参数更新方程可以写成
+
+$$
+E_{\tilde{P}}\left[s_{l}\right]=\sum_{x, y} \tilde{P}(x) P(y \mid x) \sum_{i=1}^{n} s_{l}\left(y_{i}, x, i\right) \exp \left(\delta_{K_{1}+l} T(x)\right)
+$$
+
+
+\begin{align*}
+& =\sum_{x} \tilde{P}(x) \sum_{y} P(y \mid x) \sum_{i=1}^{n} s_{l}\left(y_{i}, x, i\right) \exp \left(\delta_{K_{1}+l} T(x)\right) \\
+& =\sum_{x} \tilde{P}(x) b_{l, t} \exp \left(\delta_{k} t\right) \\
+& =\sum_{t=0}^{T_{\max }} b_{l, t} \gamma_{l}^{t} \tag{11.48}
+\end{align*}
+
+
+这里, $b_{l, t}$ 是特征 $s_{l}$ 的期望值, $\delta_{l}=\log \gamma_{l}, \gamma_{l}$ 是多项式方程 (11.48) 唯一的实根, 也可以用牛顿法求得。
+
+\subsection*{11.4.2 拟牛顿法}
+条件随机场模型学习还可以应用牛顿法或拟牛顿法 (参阅附录 B)。对于条件随机场模型, 有
+
+
+\begin{equation*}
+P_{w}(y \mid x)=\frac{\exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)}{\sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)} \tag{11.49}
+\end{equation*}
+
+
+学习的优化目标函数是
+
+
+\begin{equation*}
+\min _{w \in \boldsymbol{R}^{n}} f(w)=\sum_{x} \tilde{P}(x) \log \sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)-\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y) \tag{11.50}
+\end{equation*}
+
+
+其梯度函数是
+
+
+\begin{equation*}
+g(w)=\sum_{x, y} \tilde{P}(x) P_{w}(y \mid x) f(x, y)-E_{\tilde{P}}(f) \tag{11.51}
+\end{equation*}
+
+
+拟牛顿法的 BFGS 算法如下。
+
+\section*{算法 11.2 (条件随机场模型学习的 BFGS 算法)}
+输入: 特征函数 $f_{1}, f_{2}, \cdots, f_{n}$, 经验分布 $\tilde{P}(X, Y)$ 。
+
+输出: 最优参数值 $\hat{w}$, 最优模型 $P_{\hat{w}}(y \mid x)$ 。
+
+(1) 选定初始点 $w^{(0)}$, 取 $B_{0}$ 为正定对称矩阵, 置 $k=0$ 。
+
+(2) 计算 $g_{k}=g\left(w^{(k)}\right)$ 。若 $g_{k}=0$, 则停止计算; 否则, 转步骤 (3)。
+
+(3) 由 $B_{k} p_{k}=-g_{k}$ 求出 $p_{k}$ 。
+
+(4) 一维搜索: 求 $\lambda_{k}$ 使得
+
+$$
+f\left(w^{(k)}+\lambda_{k} p_{k}\right)=\min _{\lambda \geqslant 0} f\left(w^{(k)}+\lambda p_{k}\right)
+$$
+
+(5) 置 $w^{(k+1)}=w^{(k)}+\lambda_{k} p_{k}$ 。
+
+(6) 计算 $g_{k+1}=g\left(w^{(k+1)}\right)$, 若 $g_{k+1}=0$, 则停止计算; 否则, 按下式求出 $B_{k+1}$ :
+
+$$
+B_{k+1}=B_{k}+\frac{y_{k} y_{k}^{\mathrm{T}}}{y_{k}^{\mathrm{T}} \delta_{k}}-\frac{B_{k} \delta_{k} \delta_{k}^{\mathrm{T}} B_{k}}{\delta_{k}^{\mathrm{T}} B_{k} \delta_{k}}
+$$
+
+其中，
+
+$$
+y_{k}=g_{k+1}-g_{k}, \quad \delta_{k}=w^{(k+1)}-w^{(k)}
+$$
+
+(7) 置 $k=k+1$, 转步骤 $(3)$ 。
+
+\section*{11.5 条件随机场的预测算法}
+条件随机场的预测问题是指给定条件随机场 $P(Y \mid X)$ 和输入序列 (观测序列) $x$, 求条件概率最大的输出序列 (标记序列) $y^{*}$, 即对观测序列进行标注。条件随机场的预测算法是著名的维特比算法 (参阅本书 10.4 节)。
+
+由式 (11.19) 可得:
+
+$$
+\begin{aligned}
+y^{*} & =\arg \max _{y} P_{w}(y \mid x) \\
+& =\arg \max _{y} \frac{\exp (w \cdot F(y, x))}{Z_{w}(x)} \\
+& =\arg \max _{y} \exp (w \cdot F(y, x)) \\
+& =\arg \max _{y}(w \cdot F(y, x))
+\end{aligned}
+$$
+
+于是, 条件随机场的预测问题成为求非规范化概率最大的最优路径问题:
+
+
+\begin{equation*}
+\max _{y}(w \cdot F(y, x)) \tag{11.52}
+\end{equation*}
+
+
+这里，路径表示标记序列。其中，
+
+$$
+\begin{aligned}
+w & =\left(w_{1}, w_{2}, \cdots, w_{K}\right)^{\mathrm{T}} \\
+F(y, x) & =\left(f_{1}(y, x), f_{2}(y, x), \cdots, f_{K}(y, x)\right)^{\mathrm{T}} \\
+f_{k}(y, x) & =\sum_{i=1}^{n} f_{k}\left(y_{i-1}, y_{i}, x, i\right), \quad k=1,2, \cdots, K
+\end{aligned}
+$$
+
+注意, 这时只需计算非规范化概率, 而不必计算概率, 可以大大提高效率。为了求解最优路径, 将式 (11.52) 写成如下形式:
+
+
+\begin{equation*}
+\max _{y} \sum_{i=1}^{n} w \cdot F_{i}\left(y_{i-1}, y_{i}, x\right) \tag{11.53}
+\end{equation*}
+
+
+其中，
+
+$$
+F_{i}\left(y_{i-1}, y_{i}, x\right)=\left(f_{1}\left(y_{i-1}, y_{i}, x, i\right), f_{2}\left(y_{i-1}, y_{i}, x, i\right), \cdots, f_{K}\left(y_{i-1}, y_{i}, x, i\right)\right)^{\mathrm{T}}
+$$
+
+是局部特征向量。\\
+下面叙述维特比算法。首先求出位置 1 的各个标记 $j=1,2, \cdots, m$ 的非规范化概率:
+
+
+\begin{equation*}
+\delta_{1}(j)=w \cdot F_{1}\left(y_{0}=\text { start }, y_{1}=j, x\right), \quad j=1,2, \cdots, m \tag{11.54}
+\end{equation*}
+
+
+一般地, 由递推公式求出到位置 $i$ 的各个标记 $l=1,2, \cdots, m$ 的非规范化概率的最大值, 同时记录非规范化概率最大值的路径:
+
+
+\begin{gather*}
+\delta_{i}(l)=\max _{1 \leqslant j \leqslant m}\left\{\delta_{i-1}(j)+w \cdot F_{i}\left(y_{i-1}=j, y_{i}=l, x\right)\right\}, \quad l=1,2, \cdots, m  \tag{11.55}\\
+\Psi_{i}(l)=\arg \max _{1 \leqslant j \leqslant m}\left\{\delta_{i-1}(j)+w \cdot F_{i}\left(y_{i-1}=j, y_{i}=l, x\right)\right\}, \quad l=1,2, \cdots, m \tag{11.56}
+\end{gather*}
+
+
+直到 $i=n$ 时终止。这时求得非规范化概率的最大值为
+
+
+\begin{equation*}
+\max _{y}(w \cdot F(y, x))=\max _{1 \leqslant j \leqslant m} \delta_{n}(j) \tag{11.57}
+\end{equation*}
+
+
+最优路径的终点为
+
+
+\begin{equation*}
+y_{n}^{*}=\arg \max _{1 \leqslant j \leqslant m} \delta_{n}(j) \tag{11.58}
+\end{equation*}
+
+
+由此最优路径终点返回:
+
+
+\begin{equation*}
+y_{i}^{*}=\Psi_{i+1}\left(y_{i+1}^{*}\right), \quad i=n-1, n-2, \cdots, 1 \tag{11.59}
+\end{equation*}
+
+
+求得最优路径 $y^{*}=\left(y_{1}^{*}, y_{2}^{*}, \cdots, y_{n}^{*}\right)^{\mathrm{T}}$ 。
+
+综上所述, 得到条件随机场预测的维特比算法。
+
+\section*{算法 11.3 (条件随机场预测的维特比算法)}
+输入: 模型特征向量 $F(y, x)$ 和权值向量 $w$, 观测序列 $x=\left(x_{1}, x_{2}, \cdots, x_{n}\right)$ 。
+
+输出: 最优路径 $y^{*}=\left(y_{1}^{*}, y_{2}^{*}, \cdots, y_{n}^{*}\right)^{\mathrm{T}}$ 。
+
+(1) 初始化:
+
+$$
+\delta_{1}(j)=w \cdot F_{1}\left(y_{0}=\text { start }, y_{1}=j, x\right), \quad j=1,2, \cdots, m
+$$
+
+(2) 递推。对 $i=2,3, \cdots, n$, 有
+
+$$
+\begin{gathered}
+\delta_{i}(l)=\max _{1 \leqslant j \leqslant m}\left\{\delta_{i-1}(j)+w \cdot F_{i}\left(y_{i-1}=j, y_{i}=l, x\right)\right\}, \quad l=1,2, \cdots, m \\
+\Psi_{i}(l)=\arg \max _{1 \leqslant j \leqslant m}\left\{\delta_{i-1}(j)+w \cdot F_{i}\left(y_{i-1}=j, y_{i}=l, x\right)\right\}, \quad l=1,2, \cdots, m
+\end{gathered}
+$$
+
+(3) 终止:
+
+$$
+\begin{gathered}
+\max _{y}(w \cdot F(y, x))=\max _{1 \leqslant j \leqslant m} \delta_{n}(j) \\
+y_{n}^{*}=\arg \max _{1 \leqslant j \leqslant m} \delta_{n}(j)
+\end{gathered}
+$$
+
+(4) 返回路径:
+
+$$
+y_{i}^{*}=\Psi_{i+1}\left(y_{i+1}^{*}\right), \quad i=n-1, n-2, \cdots, 1
+$$
+
+求得最优路径 $y^{*}=\left(y_{1}^{*}, y_{2}^{*}, \cdots, y_{n}^{*}\right)^{\mathrm{T}}$ 。\\
+下面通过一个例子说明维特比算法。
+
+例 11.3 在例 11.1 中, 用维特比算法求给定的输入序列 (观测序列) $x$ 对应的最优输出序列 (标记序列) $y^{*}=\left(y_{1}^{*}, y_{2}^{*}, y_{3}^{*}\right)^{\mathrm{T}}$ 。
+
+解 特征函数及对应的权值均在例 11.1 中给出。
+
+现在利用维特比算法求最优路径问题:
+
+$$
+\max \sum_{i=1}^{3} w \cdot F_{i}\left(y_{i-1}, y_{i}, x\right)
+$$
+
+(1) 初始化:
+
+$$
+\delta_{1}(j)=w \cdot F_{1}\left(y_{0}=\operatorname{start}, y_{1}=j, x\right), \quad j=1,2
+$$
+
+$i=1, \quad \delta_{1}(1)=1, \quad \delta_{1}(2)=0.5$ 。
+
+(2) 递推:
+
+$i=2$ 时,
+
+$$
+\begin{aligned}
+& \delta_{2}(l)=\max _{j}\left\{\delta_{1}(j)+w \cdot F_{2}(j, l, x)\right\} \\
+& \delta_{2}(1)=\max \left\{1+\lambda_{2} t_{2}+\mu_{3} s_{3}, 0.5+\lambda_{4} t_{4}+\mu_{3} s_{3}\right\}=2.4, \quad \Psi_{2}(1)=1 \\
+& \delta_{2}(2)=\max \left\{1+\lambda_{1} t_{1}+\mu_{2} s_{2}, 0.5+\mu_{2} s_{2}\right\}=2.5, \quad \Psi_{2}(2)=1
+\end{aligned}
+$$
+
+$i=3$ 时,
+
+$$
+\begin{aligned}
+& \delta_{3}(l)=\max _{j}\left\{\delta_{2}(j)+w \cdot F_{3}(j, l, x)\right\} \\
+& \delta_{3}(1)=\max \left\{2.4+\mu_{3} s_{3}, 2.5+\lambda_{3} t_{3}+\mu_{3} s_{3}\right\}=4.3, \quad \Psi_{3}(1)=2 \\
+& \delta_{3}(2)=\max \left\{2.4+\lambda_{1} t_{1}+\mu_{4} s_{4}, 2.5+\lambda_{5} t_{5}+\mu_{4} s_{4}\right\}=3.9, \quad \Psi_{3}(2)=1
+\end{aligned}
+$$
+
+(3) 终止:
+
+$$
+\begin{gathered}
+\max _{y}(w \cdot F(y, x))=\max \delta_{3}(l)=\delta_{3}(1)=4.3 \\
+y_{3}^{*}=\arg \max _{l} \delta_{3}(l)=1
+\end{gathered}
+$$
+
+(4) 返回:
+
+$$
+\begin{aligned}
+& y_{2}^{*}=\Psi_{3}\left(y_{3}^{*}\right)=\Psi_{3}(1)=2 \\
+& y_{1}^{*}=\Psi_{2}\left(y_{2}^{*}\right)=\Psi_{2}(2)=1
+\end{aligned}
+$$
+
+最优标记序列:
+
+$$
+y^{*}=\left(y_{1}^{*}, y_{2}^{*}, y_{3}^{*}\right)^{\mathrm{T}}=(1,2,1)^{\mathrm{T}}
+$$
+
+\section*{本章概 要}
+\begin{enumerate}
+  \item 概率无向图模型是由无向图表示的联合概率分布。无向图上的结点之间的连接关系表示了联合分布的随机变量集合之间的条件独立性, 即马尔可夫性。因此, 概率无向图模型\\
+也称为马尔可夫随机场。概率无向图模型或马尔可夫随机场的联合概率分布可以分解为无向图最大团上的正值函数的乘积的形式。
+
+  \item 条件随机场是给定输入随机变量 $X$ 条件下, 输出随机变量 $Y$ 的条件概率分布模型,其形式为参数化的对数线性模型。条件随机场的最大特点是假设输出变量之间的联合概率分布构成概率无向图模型, 即马尔可夫随机场。条件随机场是判别模型。
+
+  \item 线性链条件随机场是定义在观测序列与标记序列上的条件随机场。线性链条件随机场一般表示为给定观测序列条件下的标记序列的条件概率分布, 由参数化的对数线性模型表示。模型包含特征及相应的权值, 特征是定义在线性链的边与结点上的。线性链条件随机场模型的参数形式是最基本的形式, 其他形式是其简化与变形, 参数形式的数学表达式是
+
+\end{enumerate}
+
+$$
+P(y \mid x)=\frac{1}{Z(x)} \exp \left(\sum_{i, k} \lambda_{k} t_{k}\left(y_{i-1}, y_{i}, x, i\right)+\sum_{i, l} \mu_{l} s_{l}\left(y_{i}, x, i\right)\right)
+$$
+
+其中，
+
+$$
+Z(x)=\sum_{y} \exp \left(\sum_{i, k} \lambda_{k} t_{k}\left(y_{i-1}, y_{i}, x, i\right)+\sum_{i, l} \mu_{l} s_{l}\left(y_{i}, x, i\right)\right)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 线性链条件随机场的概率计算通常利用前向-后向算法。
+
+  \item 条件随机场的学习方法通常是极大似然估计方法或正则化的极大似然估计, 即在给定训练数据下, 通过极大化训练数据的对数似然函数估计模型参数。具体的算法有改进的迭代尺度算法、梯度下降法、拟牛顿法等。
+
+  \item 线性链条件随机场的一个重要应用是标注。维特比算法是给定观测序列求条件概率最大的标记序列的方法。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+关于概率无向图模型可以参阅文献 [1] 和文献 [2]。关于条件随机场可以参阅文献 [3] 和文献 [4]。在条件随机场提出之前已有最大熵马尔可夫模型等模型被提出 ${ }^{[5]}$ 。条件随机场可以看作是最大熵马尔可夫模型在标注问题上的推广。支持向量机模型也被推广到标注问题上 ${ }^{[6-7]}$ 。
+
+\section*{习 题}
+11.1 写出图 11.3 中无向图描述的概率图模型的因子分解式。
+
+11.2 证明 $Z(x)=\alpha_{n}^{\mathrm{T}}(x) 1=1^{\mathrm{T}} \beta_{1}(x)$, 其中 1 是元素均为 1 的 $m$ 维列向量。
+
+11.3 写出条件随机场模型学习的梯度下降法。
+
+11.4 参考图 11.6 的状态路径图, 假设随机矩阵 $M_{1}(x), M_{2}(x), M_{3}(x), M_{4}(x)$ 分别是
+
+$$
+M_{1}(x)=\left[\begin{array}{cc}
+0 & 0 \\
+0.5 & 0.5
+\end{array}\right], \quad M_{2}(x)=\left[\begin{array}{cc}
+0.3 & 0.7 \\
+0.7 & 0.3
+\end{array}\right]
+$$
+
+$$
+M_{3}(x)=\left[\begin{array}{ll}
+0.5 & 0.5 \\
+0.6 & 0.4
+\end{array}\right], \quad M_{4}(x)=\left[\begin{array}{ll}
+0 & 1 \\
+0 & 1
+\end{array}\right]
+$$
+
+求以 $\mathrm{start}=2$ 为起点、以 $\mathrm{stop}=2$ 为终点的所有路径的状态序列 $y$ 的概率及概率最大的状态序列。
+
+\section*{参考文献}
+[1] BISHOP M. Pattern recognition and machine learning[M]. Springer-Verlag, 2006.
+
+[2] KOLLER D, FRIEDMAN N. Probabilistic graphical models: principles and techniques[M]. MIT Press, 2009 .
+
+[3] LAFFERTY J, MCCALLUM A, PEREIRA F. Conditional random fields: probabilistic models for segmenting and labeling sequence data[C]//International Conference on Machine Learning, 2001.
+
+[4] SHA F, PEREIRA F. Shallow parsing with conditional random fields[C]//Proceedings of the 2003 Conference of the North American Chapter of Association for Computational Linguistics on Human Language Technology, 2003.
+
+[5] MCCALLUM A, FREITAG D, PEREIRA F. Maximum entropy Markov models for information extraction and segmentation[C]//Proceedings of the International Conference on Machine Learning, 2000.
+
+[6] TASKAR B, GUESTRIN C, KOLLER D. Max-margin Markov networks[C]//Proceedings of the NIPS 2003, 2003 .
+
+[7] TSOCHANTARIDIS I, HOFMANN T, JOACHIMS T. Support vector machine learning for interdependent and structured output spaces[C]//ICML, 2004.
+
+\section*{第 12 章 监督学习方法总结}
+本篇共介绍了 10 种主要的机器学习方法, 属于监督学习: 感知机、 $k$ 近邻法、朴素贝叶斯法、决策树、逻辑斯谛回归与最大嫡模型、支持向量机、Boosting、EM 算法、隐马尔可夫模型和条件随机场。现将这 10 种监督学习方法的特点概括总结在表 12.1 中。
+
+表 12.110 种监督学习方法特点的概括总结
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+方法 & 适用问题 & 模型特点 & 模型类型 & 学习策略 & \begin{tabular}{c}
+学习的 \\
+损失函数 \\
+\end{tabular} & 学习算法 \\
+\hline
+感知机 & 二类分类 & 分离超平面 & 判别模型 & \begin{tabular}{l}
+极小化误分点 \\
+到超平面距离 \\
+\end{tabular} & \begin{tabular}{l}
+误分点到超 \\
+平面距离 \\
+\end{tabular} & 随机梯度下降 \\
+\hline
+$k$ 近邻法 & \begin{tabular}{l}
+多 类 分 \\
+类, 回归 \\
+\end{tabular} & 特征空间, 样本点 & 判别模型 & - & - & - \\
+\hline
+\begin{tabular}{l}
+朴素贝叶 \\
+斯法 \\
+\end{tabular} & 多类分类 & \begin{tabular}{l}
+特征与类别的联 \\
+合概率分布, 条 \\
+件独立假设 \\
+\end{tabular} & 生成模型 & \begin{tabular}{l}
+极大 似 然估 \\
+计, 最大后验 \\
+概率估计 \\
+\end{tabular} & \begin{tabular}{l}
+对数似然损 \\
+失 \\
+\end{tabular} & \begin{tabular}{l}
+概 率 计 算 公 \\
+式, EM 算法 \\
+\end{tabular} \\
+\hline
+决策树 & \begin{tabular}{l}
+多 类 分 \\
+类, 回归 \\
+\end{tabular} & 分类树, 回归树 & 判别模型 & \begin{tabular}{l}
+正则化的极大 \\
+似然估计 \\
+\end{tabular} & \begin{tabular}{l}
+对数似然损 \\
+失 \\
+\end{tabular} & \begin{tabular}{l}
+特征选择, 生 \\
+成, 剪枝 \\
+\end{tabular} \\
+\hline
+\begin{tabular}{l}
+逻辑斯谛回 \\
+归与最大熵 \\
+模型 \\
+\end{tabular} & 多类分类 & \begin{tabular}{l}
+特征条件下类别 \\
+的条件概率分布, \\
+对数线形模型 \\
+\end{tabular} & 判别模型 & \begin{tabular}{l}
+极 大 似 然 估 \\
+计, 正则化的 \\
+极大似然估计 \\
+\end{tabular} & \begin{tabular}{l}
+逻辑斯谛损 \\
+失 \\
+\end{tabular} & \begin{tabular}{l}
+改进的迭代尺 \\
+度算法, 梯度下 \\
+降, 拟牛顿法 \\
+\end{tabular} \\
+\hline
+支持向量机| & 二类分类 & \begin{tabular}{l}
+分离超平面, 核 \\
+技巧 \\
+\end{tabular} & 判别模型 & \begin{tabular}{l}
+极小化正则化 \\
+合负损失, 软 \\
+间隔最大化 \\
+\end{tabular} & 合页损失 & \begin{tabular}{l}
+序列最小最优 \\
+化算法 (SMO) \\
+\end{tabular} \\
+\hline
+Boosting & 二类分类 & \begin{tabular}{l}
+弱分类器的线性 \\
+组合 \\
+\end{tabular} & 判别模型 & \begin{tabular}{l}
+极小化加法模 \\
+型的指数损失 \\
+\end{tabular} & 指数损失 & \begin{tabular}{l}
+前向分步加法 \\
+算法 \\
+\end{tabular} \\
+\hline
+EM 算法 ${ }^{1}$ & \begin{tabular}{|l|}
+概率模型 \\
+参数估计 \\
+\end{tabular} & \begin{tabular}{l}
+含隐变量概率模 \\
+型 \\
+\end{tabular} & - & \begin{tabular}{l}
+极大似然 估 \\
+计, 最大后验 \\
+概率估计 \\
+\end{tabular} & \begin{tabular}{|l|}
+对数似然损 \\
+失 \\
+\end{tabular} & 迭代算法 \\
+\hline
+\begin{tabular}{l}
+隐马尔可夫 \\
+模型 \\
+\end{tabular} & 标注 & \begin{tabular}{l}
+观测序列与状态 \\
+序列的联合概率 \\
+分布模型 \\
+\end{tabular} & 生成模型 & \begin{tabular}{l}
+极大似然估 \\
+计, 最大后验 \\
+概率估计 \\
+\end{tabular} & \begin{tabular}{l}
+对数似然损 \\
+失 \\
+\end{tabular} & \begin{tabular}{l}
+概 率计 算公 \\
+式, EM 算法 \\
+\end{tabular} \\
+\hline
+条件随机场 & 标注 & \begin{tabular}{l}
+状态序列条件下 \\
+观测序列的条件 \\
+概率分布, 对数 \\
+线性模型 \\
+\end{tabular} & 判别模型 & \begin{tabular}{l}
+极 大 似 然估 \\
+计, 正则化极 \\
+大似然估计 \\
+\end{tabular} & \begin{tabular}{|l}
+对数似然损 \\
+失 \\
+\end{tabular} & \begin{tabular}{l}
+改进的迭代尺 \\
+度算法, 梯度下 \\
+降, 拟牛顿法 \\
+\end{tabular} \\
+\hline
+\end{tabular}
+\end{center}
+
+(1) EM 算法在这里有些特殊, 它是个一般方法, 不具有具体模型。\\
+下面对各种方法的特点及其关系进行简单的讨论。
+
+\section*{1. 适用问题}
+本篇主要介绍监督学习方法。监督学习可以认为是学习一个模型, 使它能对给定的输入预测相应的输出。监督学习包括分类、标注、回归。本篇主要考虑前两者的学习方法。分类问题是从实例的特征向量到类标记的预测问题, 标注问题是从观测序列到标记序列 (或状态序列）的预测问题。可以认为分类问题是标注问题的特殊情况。分类问题中可能的预测结果是二类或多类。而标注问题中可能的预测结果是所有的标记序列, 其数目是指数级的。
+
+感知机、 $k$ 近邻法、朴素贝叶斯法、决策树、逻辑斯谛回归与最大熵模型、支持向量机、Boosting 是分类方法。原始的感知机、支持向量机以及 Boosting 是针对二类分类的, 可以将它们扩展到多类分类。隐马尔可夫模型、条件随机场是标注方法。EM 算法是含有隐变量的概率模型的一般学习算法, 可以用于生成模型的无监督学习。
+
+感知机、 $k$ 近邻法、朴素贝叶斯法、决策树是简单的分类方法, 具有模型直观、方法简单、实现容易等特点。逻辑斯谛回归与最大熵模型、支持向量机、Boosting 是更复杂但更有效的分类方法, 往往分类准确率更高。隐马尔可夫模型、条件随机场是主要的标注方法。通常条件随机场的标注准确率更高。
+
+\section*{2. 模型}
+分类问题与标注问题的预测模型都可以认为是表示从输入空间到输出空间的映射。它们可以写成条件概率分布 $P(Y \mid X)$ 或决策函数 $Y=f(X)$ 的形式。前者表示给定输入条件下输出的概率模型, 后者表示输入到输出的非概率模型。有时, 模型更直接地表示为概率模型或者非概率模型, 但有时模型兼有两种解释。
+
+朴素贝叶斯法、隐马尔可夫模型是概率模型，感知机、 $k$ 近邻法、支持向量机、Boosting 是非概率模型。而决策树、逻辑斯谛回归与最大熵模型、条件随机场既可以看作是概率模型,又可以看作是非概率模型。
+
+直接学习条件概率分布 $P(Y \mid X)$ 或决策函数 $Y=f(X)$ 的方法为判别方法, 对应的模型是判别模型。感知机、 $k$ 近邻法、决策树、逻辑斯谛回归与最大熵模型、支持向量机、Boosting、条件随机场是判别方法。首先学习联合概率分布 $P(X, Y)$, 从而求得条件概率分布 $P(Y \mid X)$ 的方法是生成方法, 对应的模型是生成模型。朴素贝叶斯法、隐马尔可夫模型是生成方法。图 12.1 给出部分模型之间的关系。
+
+可以用无监督学习的方法学习生成模型。具体地, 应用 EM 算法可以学习朴素贝叶斯模型以及隐马尔可夫模型。
+
+决策树是定义在一般的特征空间上的, 可以含有连续变量或离散变量。感知机、支持向量机、 $k$ 近邻法的特征空间是欧氏空间 (更一般地, 是希尔伯特空间)。Boosting 的模型是弱分类器的线性组合, 弱分类器的特征空间就是 Boosting 模型的特征空间。
+
+感知机模型是线性模型, 而逻辑斯谛回归与最大熵模型、条件随机场是对数线性模型。 $k$近邻法、决策树、支持向量机 (包含核函数)、Boosting 使用的是非线性模型。
+
+图 12.1 从生成与判别、分类与标注两个方面描述了几个机器学习方法之间的关系。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-25}
+\end{center}
+
+图 12.1 部分模型之间的关系
+
+\section*{3. 学习策略}
+在二类分类的监督学习中, 支持向量机、逻辑斯谛回归与最大熵模型、Boosting 各自使用合页损失函数、逻辑斯谛损失函数、指数损失函数。 3 种损失函数分别写为
+
+
+\begin{gather*}
+(1-y f(x))_{+}  \tag{12.1}\\
+\log [1+\exp (-y f(x))]  \tag{12.2}\\
+\exp (-y f(x)) \tag{12.3}
+\end{gather*}
+
+
+这 3 种损失函数都是 0-1 损失函数的上界, 具有相似的形状, 如图 12.2 所示。所以, 可以认为支持向量机、逻辑斯谛回归与最大嫡模型、Boosting 使用不同的代理损失函数 (surrogate loss function）表示分类的损失, 定义经验风险或结构风险函数, 实现二类分类学习任务。学习的策略是优化以下结构风险函数:
+
+
+\begin{equation*}
+\min _{f \in H} \frac{1}{N} \sum_{i=1}^{N} L\left(y_{i}, f\left(x_{i}\right)\right)+\lambda J(f) \tag{12.4}
+\end{equation*}
+
+
+这里, 第 1 项为经验风险 (经验损失), 第 2 项为正则化项, $L(y, f(x))$ 为损失函数, $J(f)$ 为模型的复杂度, $\lambda \geqslant 0$ 为系数。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-25(1)}
+\end{center}
+
+图 $12.20-1$ 损失函数、合页损失函数、逻辑斯谛损失函数、指数损失函数的关系
+
+支持向量机用 $L_{2}$ 范数表示模型的复杂度。原始的逻辑斯谛回归与最大熵模型没有正则化项, 可以给它们加上 $L_{2}$ 范数正则化项。Boosting 没有显式的正则化项, 通常通过早停止 (early stopping) 的方法达到正则化的效果。\\
+以上二类分类的学习方法可以扩展到多类分类学习以及标注问题, 比如标注问题的条件随机场可以看作是分类问题的最大熵模型的推广。
+
+概率模型的学习可以形式化为极大似然估计或贝叶斯估计的最大后验概率估计。这时,学习的策略是极小化对数似然损失或极小化正则化的对数似然损失。对数似然损失可以写成
+
+$$
+-\log P(y \mid x)
+$$
+
+最大后验概率估计时, 正则化项是先验概率的负对数。
+
+决策树学习的策略是正则化的极大似然估计, 损失函数是对数似然损失, 正则化项是决策树的复杂度。
+
+逻辑斯谛回归与最大熵模型、条件随机场的学习策略既可以看成是极大似然估计 (或正则化的极大似然估计), 又可以看成是极小化逻辑斯谛损失 (或正则化的逻辑斯谛损失)。
+
+朴素贝叶斯模型、隐马尔可夫模型的无监督学习也是极大似然估计或最大后验概率估计, 但这时模型含有隐变量。
+
+\section*{4. 学习算法}
+机器学习的问题有了具体的形式以后, 就变成了最优化问题。有时, 最优化问题比较简单, 解析解存在, 最优解可以由公式简单计算。但在多数情况下, 最优化问题没有解析解, 需要用数值计算的方法或启发式的方法求解。
+
+对于朴素贝叶斯法与隐马尔可夫模型的监督学习, 最优解即极大似然估计值, 可以由概率计算公式直接计算。
+
+感知机、逻辑斯谛回归与最大熵模型、条件随机场的学习利用梯度下降法、拟牛顿法等,这些都是一般的无约束最优化问题的解法。
+
+支持向量机学习可以解凸二次规划的对偶问题, 有序列最小最优化算法等方法。
+
+决策树学习是基于启发式算法的典型例子。可以认为特征选择、生成、剪枝是启发式地进行正则化的极大似然估计。
+
+Boosting 利用学习的模型是加法模型、损失函数是指数损失函数的特点, 启发式地从前向后逐步学习模型, 以达到逼近优化目标函数的目的。
+
+EM 算法是一种迭代地求解含隐变量概率模型参数的方法, 它的收玫性可以保证, 但是不能保证收敛到全局最优。
+
+支持向量机学习、逻辑斯谛回归与最大熵模型学习、条件随机场学习是凸优化问题, 全局最优解保证存在, 而其他学习问题不是凸优化问题。\\
+第 2 篇 无监督学习
+
+\section*{第 13 章 无监督学习概论}
+第 2 篇讲述机器学习或统计机器学习中的无监督学习方法。无监督学习是从无标注数据中学习模型的机器学习问题, 是机器学习的重要组成部分。
+
+本章是无监督学习的概述, 首先叙述无监督学习的基本原理, 之后介绍无监督学习的基本问题和基本方法。基本问题包括聚类、降维、话题分析和图分析。
+
+\section*{13.1 无监督学习基本原理}
+无监督学习是从无标注的数据中学习数据的统计规律或者说内在结构的机器学习, 主要包括聚类、降维、概率估计。无监督学习可以用于数据分析或者监督学习的前处理。
+
+无监督学习使用无标注数据 $U=\left\{x_{1}, x_{2}, \cdots, x_{N}\right\}$ 学习或训练, 其中 $x_{i}, i=1,2, \cdots, N$,是样本 (实例), 由特征向量组成。无监督学习的模型是函数 $z=g_{\theta}(x)$ 、条件概率分布 $P_{\theta}(z \mid x)$或条件概率分布 $P_{\theta}(x \mid z)$ 。其中 $x \in X$ 是输入, 表示样本; $z \in Z$ 是输出, 表示对样本的分析结果, 可以是类别、转换、概率; $\theta$ 是参数。
+
+假设训练数据集由 $N$ 个样本组成, 每个样本是一个 $M$ 维向量。训练数据可以由一个矩阵表示, 每一行对应一个特征, 每一列对应一个样本。
+
+$$
+X=\left[\begin{array}{ccc}
+x_{11} & \cdots & x_{1 N} \\
+\vdots & & \vdots \\
+x_{M 1} & \cdots & x_{M N}
+\end{array}\right]
+$$
+
+其中, $x_{i j}$ 是第 $j$ 个向量的第 $i$ 维, $i=1,2, \cdots, M, j=1,2, \cdots, N$ 。
+
+无监督学习是一个困难的任务, 因为数据没有标注, 也就是没有人的指导, 机器需要自己从数据中找出规律。模型的输入 $x$ 在数据中可以观测, 而输出 $z$ 隐藏在数据中。无监督学习通常需要大量的数据, 因为对数据隐藏的规律的发现需要足够的观测。
+
+无监督学习的基本想法是对给定数据（矩阵数据）进行某种 “压缩”, 从而找到数据的潜在结构。假定损失最小的压缩得到的结果就是最本质的结构。图 13.1 是这种想法的一个示意图。可以考虑发掘数据的纵向结构, 把相似的样本聚到同类, 即对数据进行聚类。还可以考虑发掘数据的横向结构, 把高维空间的向量转换为低维空间的向量, 即对数据进行降维。也可以同时考虑发掘数据的纵向与横向结构, 假设数据由含有隐式结构的概率模型生成得到, 从数据中学习该概率模型。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-31(3)}
+\end{center}
+
+(a) 数据纵向结构
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-31}
+\end{center}
+
+(b) 数据横向结构
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-31(1)}
+\end{center}
+
+(c) 数据横向纵向结构
+
+图 13.1 无监督学习的基本想法
+
+\section*{13.2 基本问题}
+\section*{1. 聚类}
+聚类 (clustering) 是指将样本集合中相似的样本 (实例) 分配到相同的类, 不相似的样本分配到不同的类。聚类时, 样本通常是欧氏空间中的向量, 类别不是事先给定, 而是从数据中自动发现, 但类别的个数通常是事先给定的。样本之间的相似度或距离由应用决定。如果一个样本只能属于一个类, 则称为硬聚类 (hard clustering) ; 如果一个样本可以属于多个类,则称为软聚类 (soft clustering)。图 13.2 给出聚类 (硬聚类) 的例子。二维空间的样本被分到三个不同的类中。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-31(2)}
+\end{center}
+
+图 13.2 聚类的例子
+
+假设输入空间是欧氏空间 $X \subseteq \boldsymbol{R}^{d}$, 输出空间是类别集合 $Z=\{1,2, \cdots, k\}$ 。聚类的模型是函数 $z=g_{\theta}(x)$ 或者条件概率分布 $P_{\theta}(z \mid x)$, 其中 $x \in X$ 是样本的向量, $z \in Z$ 是样本的类别, $\theta$ 是参数。前者的函数是硬聚类模型, 后者的条件概率分布是软聚类模型。\\
+聚类的过程就是学习聚类模型的过程。硬聚类时, 每一个样本属于某一类 $z_{i}=g_{\theta}\left(x_{i}\right), i=$ $1,2, \cdots, N$; 软聚类时, 每一个样本依概率属于每一个类 $P_{\theta}\left(z_{i} \mid x_{i}\right), i=1,2, \cdots, N$ 。如图 13.1 所示, 聚类可以帮助发现数据中隐藏的纵向结构。(也有例外, co-clustering 是聚类算法, 对样本和特征都进行聚类, 同时发现数据中的纵向横向结构)
+
+\section*{2. 降维}
+降维 (dimensionality reduction) 是将训练数据中的样本 (实例) 从高维空间转换到低维空间。假设样本原本存在于高维空间, 或者近似地存在于高维空间, 通过降维则可以更好地表示样本数据的结构, 即更好地表示样本之间的关系。高维空间通常是高维的欧氏空间, 而低维空间是低维的欧氏空间或者流形（manifold）。低维空间不是事先给定, 而是从数据中自动发现, 其维数通常是事先给定的。从高维到低维的降维中, 要保证样本中的信息损失最小。降维有线性的降维和非线性的降维。图 13.3 给出降维的例子。二维空间的样本存在于一条直线的附近, 可以将样本从二维空间转换到一维空间。通过降维可以更好地表示样本之间的关系。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-32}
+\end{center}
+
+图 13.3 降维的例子
+
+假设输入空间是欧氏空间 $X \subseteq \boldsymbol{R}^{d}$, 输出空间也是欧氏空间 $Z \subseteq \boldsymbol{R}^{d^{\prime}}, d^{\prime} \ll d$, 后者的维数低于前者的维数。降维的模型是函数 $z=g_{\theta}(x)$, 其中 $x \in X$ 是样本的高维向量, $z \in Z$ 是样本的低维向量, $\theta$ 是参数。函数可以是线性函数也可以是非线性函数。
+
+降维的过程就是学习降维模型的过程。降维时, 每一个样本从高维向量转换为低维向量 $z_{i}=g_{\theta}\left(x_{i}\right), i=1,2, \cdots, N$ 。如图 13.1 所示, 降维可以帮助发现数据中隐藏的横向结构。
+
+\section*{3. 概率模型估计}
+概率模型估计（probability model estimation）简称概率估计, 假设训练数据由一个概率模型生成, 由训练数据学习概率模型的结构和参数。概率模型的结构类型, 或者说概率模型的集合事先给定, 而模型的具体结构与参数从数据中自动学习。学习的目标是找到最有可能生成数据的结构和参数。概率模型包括混合模型、概率图模型等。概率图模型又包括有向图模型和无向图模型。图 13.4 给出混合模型估计的例子。假设数据由高斯混合模型生成, 学习的目标是估计这个模型的参数。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-32(1)}
+\end{center}
+
+图 13.4 概率模型估计的例子\\
+概率模型表示为条件概率分布 $P_{\theta}(x \mid z)$, 其中随机变量 $x$ 表示观测数据, 可以是连续变量也可以是离散变量; 随机变量 $z$ 表示隐式结构, 是离散变量; 随机变量 $\theta$ 表示参数。模型是混合模型时, $z$ 表示成分的个数; 模型是概率图模型时, $z$ 表示图的结构。
+
+概率模型的一种特殊情况是隐式结构不存在, 即满足 $P_{\theta}(x \mid z)=P_{\theta}(x)$ 。这时条件概率分布估计变成概率分布估计, 只要估计分布 $P_{\theta}(x)$ 的参数即可。传统统计学中的概率密度估计,比如高斯分布参数估计, 都属于这种情况。
+
+概率模型估计是从给定的训练数据 $U=\left\{x_{1}, x_{2}, \cdots, x_{N}\right\}$ 中学习模型 $P_{\theta}(x \mid z)$ 的结构和参数。这样可以计算出模型相关的任意边缘分布和条件分布。注意随机变量 $x$ 是多元变量,甚至是高维多元变量。如图 13.1 所示, 概率模型估计可以帮助发现数据中隐藏的横向纵向结构。
+
+软聚类也可以看作是概率模型估计问题。根据贝叶斯公式
+
+
+\begin{equation*}
+P(z \mid x)=\frac{P(z) P(x \mid z)}{P(x)} \propto P(z) P(x \mid z) \tag{13.1}
+\end{equation*}
+
+
+假设先验概率服从均匀分布, 只需要估计条件概率分布 $P_{\theta}(x \mid z)$ 。这样, 可以通过对条件概率分布 $P_{\theta}(x \mid z)$ 的估计进行软聚类, 这里 $z$ 表示类别, $\theta$ 表示参数。
+
+\section*{13.3 机器学习三要素}
+同监督学习一样, 无监督学习也有三要素: 模型、策略、算法。
+
+模型就是函数 $z=g_{\theta}(x)$ 、条件概率分布 $P_{\theta}(z \mid x)$ 或条件概率分布 $P_{\theta}(x \mid z)$, 在聚类、降维、概率模型估计中拥有不同的形式。比如, 聚类中模型的输出是类别; 降维中模型的输出是低维向量; 概率模型估计中的模型可以是混合概率模型, 也可以是有向概率图模型和无向概率图模型。
+
+策略在不同的问题中有不同的形式, 但都可以表示为目标函数的优化。比如, 聚类中样本与所属类别中心距离的最小化, 降维中样本从高维空间转换到低维空间过程中信息损失的最小化, 概率模型估计中模型生成数据概率的最大化。
+
+算法通常是迭代算法, 通过迭代达到目标函数的最优化，比如，梯度下降法。
+
+层次聚类法、 $k$ 均值聚类是硬聚类方法, 高斯混合模型 EM 算法是软聚类方法。主成分分析、潜在语义分析是降维方法。概率潜在语义分析、潜在狄利克雷分配是概率模型估计方法。
+
+\section*{13.4 无监督学习方法}
+\section*{1. 聚类}
+聚类主要用于数据分析, 也可以用于监督学习的前处理。聚类可以帮助发现数据中的统计规律。数据通常是连续变量表示的, 也可以是离散变量表示的。第 14 章将讲述聚类方法,包括层次聚类和 $k$ 均值聚类。\\
+表 13.1 给出一个简单的数据集合。有 5 个样本 $\mathrm{A}, \mathrm{B}, \mathrm{C}, \mathrm{D}, \mathrm{E}$, 每个样本有二维特征 $x_{1}, x_{2}$ 。图 13.5 显示样本在二维实数空间的位置。通过聚类算法, 可以将样本分配到两个类别中。假设用 $k$ 均值聚类, $k=2$ 。开始可以取任意两点作为两个类的中心; 依据样本与类中心的欧氏距离的大小将样本分配到两个类中; 然后计算两个类中样本的均值, 作为两个类的新的类中心; 重复以上操作, 直到两类不再改变, 最后得到聚类结果, A, B, C 为一个类, D 和 $\mathrm{E}$ 为另一个类。
+
+表 13.1 聚类数据
+
+\begin{center}
+\begin{tabular}{cccccc}
+\hline
+ & A & B & C & D & E \\
+\hline
+$x_{1}$ & 1 & 1 & 0 & 2 & 3 \\
+$x_{2}$ & 1 & 0 & 2 & 4 & 5 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-34}
+\end{center}
+
+图 13.5 聚类的结果
+
+\section*{2. 降维}
+降维主要用于数据分析, 也可以用于监督学习的前处理。降维可以帮助发现高维数据中的统计规律。数据是连续变量表示的。第 16 章介绍降维方法的主成分分析, 第 15 章介绍基础的奇异值分解。
+
+表 13.2 给出一个简单的数据集合。有 14 个样本 $\mathrm{A}, \mathrm{B}, \mathrm{C}, \mathrm{D}$ 等, 每个样本有 9 维特征 $x_{1}, x_{2}, \cdots, x_{9}$ 。由于数据是高维 (多变量) 数据, 很难观察变量的样本区分能力, 也很难观察样本之间的关系。比如样本表示细胞, 特征表示细胞中的指标。从数据中很难直接观察到哪些变量能帮助区分细胞, 哪些细胞相似, 哪些细胞不相似。对数据进行降维, 如主成分分析,就可以更直接地分析以上问题。图 13.6 显示对样本集合进行降维 (主成分分析) 的结果。结果在新的二维实数空间中, 有二维新的特征 $y_{1}, y_{2}, 14$ 个样本分布在不同位置。通过降维, 可以发现样本可以分为三个类别。二维新特征由原始特征定义。
+
+\section*{3. 话题分析}
+话题分析是文本分析的一种技术。给定一个文本集合, 话题分析旨在发现文本集合中每个文本的话题, 而话题由单词的集合表示。注意, 这里假设有足够数量的文本, 如果只有一个\\
+表 13.2 聚类数据
+
+\begin{center}
+\begin{tabular}{llllll}
+\hline
+ & $\mathrm{A}$ & $\mathrm{B}$ & $\mathrm{C}$ & $\mathrm{D}$ & $\cdots$ \\
+\hline
+$x_{1}$ & 3 & 0.25 & 2.8 & 0.1 & $\cdots$ \\
+$x_{2}$ & 2.9 & 0.8 & 2.2 & 1.8 & $\cdots$ \\
+$x_{3}$ & 2.2 & 1 & 1.5 & 3.2 & $\cdots$ \\
+$x_{4}$ & 2 & 1.4 & 2 & 0.3 & $\cdots$ \\
+$x_{5}$ & 1.3 & 1.6 & 1.6 & 0 & $\cdots$ \\
+$x_{6}$ & 1.5 & 2 & 2.1 & 3 & $\cdots$ \\
+$x_{7}$ & 1.1 & 2.2 & 1.2 & 2.8 & $\cdots$ \\
+$x_{8}$ & 1 & 2.7 & 0.9 & 0.3 & $\cdots$ \\
+$x_{9}$ & 0.4 & 3 & 0.6 & 0.1 & $\cdots$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-35}
+\end{center}
+
+图 13.6 降维 (主成分分析) 的结果
+
+文本或几个文本, 是不能做话题分析的。话题分析可以形式化为概率模型估计问题或降维问题。第 17 章、第 18 章、第 20 章分别介绍话题分析方法的潜在语义分析、概率潜在语义分析、潜在狄利克雷分配，第 19 章介绍基础的马尔可夫链蒙特卡罗法。
+
+表 13.3 给出一个文本数据集合。有 6 个文本, 6 个单词, 表中数字表示单词在文本中的出现次数。对数据进行话题分析, 如潜在狄利克雷分配分析, 得到由单词集合表示的话题, 以及由话题集合表示的文本。如表 13.4 所示, 具体地, 话题表示为单词的概率分布, 文本表示
+
+表 13.3 话题分析的数据
+
+\begin{center}
+\begin{tabular}{c|cccccc}
+\hline
+\multirow{2}{*}{单词} & \multicolumn{5}{|c}{文本} &  \\
+\cline { 2 - 6 }
+ & doc1 & doc2 & doc3 & doc4 & doc5 & doc6 \\
+\hline
+word1 & 1 & 1 &  &  &  &  \\
+word2 & 1 &  & 1 &  &  &  \\
+word3 &  & 1 & 1 & 1 & 1 & 1 \\
+word4 &  &  &  & 1 &  & 1 \\
+word5 &  &  &  &  & 1 & 1 \\
+word6 &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+为话题的概率分布。LDA 是含有这些概率分布的模型。直观上, 一个话题包含语义相似的单词。一个文本包含若干个话题。
+
+表 13.4 话题分析 (LDA 分析) 的结果
+
+\begin{center}
+\begin{tabular}{c|cc||c|cc}
+\hline
+\multirow{2}{*}{单词} & \multicolumn{3}{|c|}{话题} & \multirow{2}{*}{话题} &  \\
+\cline { 2 - 3 }
+ & topic1 & topic2 &  & \multicolumn{2}{|c}{topic2} \\
+\cline { 5 - 6 }
+word1 & 0.33 & 0 & dopic1 & 1 & 0 \\
+word2 & 0.33 & 0 & 1 & 0 &  \\
+word3 & 0.33 & 0 & doc2 & 1 & 0 \\
+word4 & 0 & doc3 & 0 & 1 &  \\
+word5 & 0 & 0.33 & doc4 & 0 & 1 \\
+word6 & 0 & 0.33 & doc5 & 0 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{4. 图分析}
+很多应用中的数据是以图的形式存在, 图数据表示实体之间的关系, 包括有向图、无向图、超图。图分析（graph analytics）的目的是发掘隐藏在图中的统计规律或潜在结构。链接分析 (link analysis) 是图分析的一种, 包括 PageRank 算法, 主要是发现有向图中的重要结点。第 21 章介绍 PageRank 算法。
+
+PageRank 算法是无监督学习方法。给定一个有向图, 定义在图上的随机游走即马尔可夫链。随机游走者在有向图上随机跳转, 到达一个结点后以等概率跳转到链接出去的结点,并不断持续这个过程。PageRank 算法就是求解该马尔可夫链的平稳分布的算法。一个结点上的平稳概率表示该结点的重要性, 称为该结点的 PageRank 值。被指向的结点越多, 该结点的 PageRank 值就越大; 被指向的结点的 PageRank 值越大, 该结点的 PageRank 值就越大。直观上 PageRank 值越大, 结点也就越重要。
+
+这里简单介绍 PageRank 的原理。图 13.7 是一个简单的有向图, 有 4 个结点 A, B, C, D。给定这个图, PageRank 算法通过迭代求出结点的 PageRank 值。首先, 对每个结点的概率值初始化, 表示各个结点的到达概率, 假设是等概率的。下一步, 各个结点的概率是上一步各个结点可能跳转到该结点的概率之和, 不断迭代, 各个结点的到达概率分布趋于平稳分布, 也就是 PageRank 值的分布。迭代过程见表 13.5。可以看出, 结点 C, D 的 PageRank 值更大。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_32592c58f22d1a77d634g-36}
+\end{center}
+
+图 13.7 有向图数据\\
+表 13.5 PageRank 计算的结果
+
+\begin{center}
+\begin{tabular}{c|ccc}
+\hline
+\multirow{2}{*}{结点} & \multicolumn{3}{|c}{步骤} \\
+\cline { 2 - 4 }
+ & 第 1 步 & 第 2 步 &  \\
+\hline
+A & $1 / 4$ & $2 / 24$ & $3 / 24$ \\
+B & $1 / 4$ & $5 / 24$ & $4 / 24$ \\
+C & $1 / 4$ & $9 / 24$ & $9 / 24$ \\
+D & $1 / 4$ & $8 / 24$ & $8 / 24$ \\
+\hline
+\end{tabular}
+\end{center}
+
+PageRank 算法最初是为互联网搜索而提出。可以将互联网看作是一个巨大的有向图,网页是结点, 网页的超链接是有向边。PageRank 算法可以算出网页的 PageRank 值, 表示其重要度, 在搜索引擎的排序中网页的重要度起着重要作用。
+
+\section*{本章 概 要}
+\begin{enumerate}
+  \item 机器学习或统计机器学习一般包括监督学习、无监督学习、强化学习。
+\end{enumerate}
+
+无监督学习是指从无标注数据中学习模型的机器学习问题。无标注数据是自然得到的数据, 模型表示数据的类别、转换或概率。无监督学习的本质是学习数据中的统计规律或潜在结构, 主要包括聚类、降维、概率估计。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 无监督学习可以用于对已有数据的分析, 也可以用于对未来数据的预测。学习得到的模型有函数 $z=g(x)$ 、条件概率分布 $P(z \mid x)$ 或条件概率分布 $P(x \mid z)$ 。
+\end{enumerate}
+
+无监督学习的基本想法是对给定数据（矩阵数据）进行某种 “压缩”, 从而找到数据的潜在结构, 假定损失最小的压缩得到的结果就是最本质的结构。可以考虑发掘数据的纵向结构,对应聚类。也可以考虑发掘数据的横向结构, 对应降维。还可以同时考虑发掘数据的纵向与横向结构, 对应概率模型估计。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 聚类是将样本集合中相似的样本 (实例) 分配到相同的类, 不相似的样本分配到不同的类。聚类分硬聚类和软聚类。聚类方法有层次聚类和 $k$ 均值聚类。
+
+  \item 降维是将样本集合中的样本 (实例) 从高维空间转换到低维空间。假设样本原本存在于高维空间, 或近似地存在于高维空间, 通过降维则可以更好地表示样本数据的结构, 即更好地表示样本之间的关系。降维有线性降维和非线性降维，降维方法有主成分分析。
+
+  \item 概率模型估计假设训练数据由一个概率模型生成, 同时利用训练数据学习概率模型的结构和参数。概率模型包括混合模型、概率图模型等。概率图模型又包括有向图模型和无向图模型。
+
+  \item 话题分析是文本分析的一种技术。给定一个文本集合, 话题分析旨在发现文本集合中每个文本的话题, 而话题由单词的集合表示。话题分析方法有潜在语义分析、概率潜在语义分析和潜在狄利克雷分配。
+
+  \item 图分析的目的是发掘隐藏在图中的统计规律或潜在结构。链接分析是图分析的一种,主要是发现有向图中的重要结点, 包括 PageRank 算法。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+无监督学习在主要的机器学习书籍 ${ }^{[1-7]}$ 中都有介绍, 可以参考。
+
+\section*{参考文献}
+[1] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction $[M]$. 范明, 柴玉梅, 旨红英, 等译. Springer. 2001.
+
+[2] BISHOP M. Pattern Recognition and Machine Learning[M]. Springer, 2006.
+
+[3] KOLLER D, FRIEDMAN N. Probabilistic graphical models: principles and techniques[M]. Cambridge, MA: MIT Press, 2009.
+
+[4] GOodfellow i, Bengio Y, COURville A. Deep learning[M]. Cambridge, MA: MiT Press, 2016.
+
+[5] MICHELLE T M. Machine Learning[M]. 曾华军, 张银奎, 等译. McGraw-Hill Companies, Inc. 1997.
+
+[6] BARBER D. Bayesian reasoning and machine learning[M]. Cambridge, UK: Cambridge University Press, 2012.
+
+[7] 周志华. 机器学习 $[M]$. 北京: 清华大学出版社, 2016.
+
+\section*{第 14 章聚类方法}
+聚类是针对给定的样本, 依据它们特征的相似度或距离, 将其归并到若干个“类”或“簃”的数据分析问题。一个类是给定样本集合的一个子集。直观上, 相似的样本聚集在相同的类,不相似的样本分散在不同的类。这里, 样本之间的相似度或距离起着重要作用。
+
+聚类的目的是通过得到的类或簇来发现数据的特点或对数据进行处理, 在数据挖掘、模式识别等领域有着广泛的应用。聚类属于无监督学习, 因为只是根据样本的相似度或距离将其进行归类, 而类或簇事先并不知道。
+
+聚类算法很多, 本章介绍两种最常用的聚类算法: 层次聚类 (hierarchical clustering) 和 $k$ 均值聚类 ( $k$-means clustering)。层次聚类又有聚合（自下而上）和分裂（自上而下）两种方法。聚合法开始将每个样本各自分到一个类, 之后将相距最近的两类合并, 建立一个新的类, 重复此操作直到满足停止条件, 得到层次化的类别。分裂法开始将所有样本分到一个类,之后将已有类中相距最远的样本分到两个新的类, 重复此操作直到满足停止条件, 得到层次化的类别。 $k$ 均值聚类是基于中心的聚类方法, 通过迭代, 将样本分到 $k$ 个类中, 使得每个样本与其所属类的中心或均值最近, 得到 $k$ 个 “平坦的” 、非层次化的类别, 构成对空间的划分。 $k$ 均值聚类的算法于 1967 年由 MacQueen 提出。
+
+本章 14.1 节介绍聚类的基本概念, 14.2 节和 14.3 节分别叙述层次聚类和 $k$ 均值聚类。
+
+\section*{14.1 聚类的基本概念}
+本节介绍聚类的基本概念, 包括样本之间的距离或相似度、类或簇、类与类之间的距离。
+
+\subsection*{14.1.1 相似度或距离}
+聚类的对象是观测数据或样本集合。假设有 $n$ 个样本, 每个样本由 $m$ 个属性的特征向量组成。样本集合可以用矩阵 $X$ 表示:
+
+\[
+X=\left[x_{i j}\right]_{m \times n}=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n}  \tag{14.1}\\
+x_{21} & x_{22} & \cdots & x_{2 n} \\
+\vdots & \vdots & & \vdots \\
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right]
+\]
+
+矩阵的第 $j$ 列表示第 $j$ 个样本, $j=1,2, \cdots, n$; 第 $i$ 行表示第 $i$ 个属性, $i=1,2, \cdots, m$; 矩阵元素 $x_{i j}$ 表示第 $j$ 个样本的第 $i$ 个属性值, $i=1,2, \cdots, m, j=1,2, \cdots, n$ 。
+
+聚类的核心概念是相似度 (similarity) 或距离 (distance), 有多种相似度或距离的定义。因为相似度直接影响聚类的结果, 所以其选择是聚类的根本问题。具体哪种相似度更合适取决于应用问题的特性。
+
+\section*{1. 闵可夫斯基距离 (1)}
+在聚类中, 可以将样本集合看作是向量空间中点的集合, 以该空间的距离表示样本之间的相似度。常用的距离有闵可夫斯基距离, 特别是欧氏距离。闵可夫斯基距离越大, 相似度越小; 距离越小, 相似度越大。
+
+定义 14.1 给定样本集合 $X, X$ 是 $m$ 维实数向量空间 $\boldsymbol{R}^{m}$ 中点的集合, 其中 $x_{i}, x_{j} \in$ $X, x_{i}=\left(x_{1 i}, x_{2 i}, \cdots, x_{m i}\right)^{\mathrm{T}}, x_{j}=\left(x_{1 j}, x_{2 j}, \cdots, x_{m j}\right)^{\mathrm{T}}$, 样本 $x_{i}$ 与样本 $x_{j}$ 的闵可夫斯基距离 (Minkowski distance) 定义为
+
+
+\begin{equation*}
+d_{i j}=\left(\sum_{k=1}^{m}\left|x_{k i}-x_{k j}\right|^{p}\right)^{\frac{1}{p}} \tag{14.2}
+\end{equation*}
+
+
+这里 $p \geqslant 1$ 。当 $p=2$ 时称为欧氏距离 (Euclidean distance), 即
+
+
+\begin{equation*}
+d_{i j}=\left(\sum_{k=1}^{m}\left|x_{k i}-x_{k j}\right|^{2}\right)^{\frac{1}{2}} \tag{14.3}
+\end{equation*}
+
+
+当 $p=1$ 时称为曼哈顿距离（Manhattan distance）, 即
+
+
+\begin{equation*}
+d_{i j}=\sum_{k=1}^{m}\left|x_{k i}-x_{k j}\right| \tag{14.4}
+\end{equation*}
+
+
+当 $p=\infty$ 时称为切比雪夫距离 (Chebyshev distance), 取各个坐标数值差的绝对值的最大值, 即
+
+
+\begin{equation*}
+d_{i j}=\max _{k}\left|x_{k i}-x_{k j}\right| \tag{14.5}
+\end{equation*}
+
+
+\section*{2. 马哈拉诺比斯距离}
+马哈拉诺比斯距离 (Mahalanobis distance) 简称马氏距离, 也是另一种常用的相似度,考虑各个分量 (特征) 之间的相关性并与各个分量的尺度无关。马哈拉诺比斯距离越大, 相似度越小; 距离越小, 相似度越大。
+
+定义 14.2 给定一个样本集合 $X, X=\left[x_{i j}\right]_{m \times n}$, 其协方差矩阵记作 $S$ 。样本 $x_{i}$ 与样本 $x_{j}$ 之间的马哈拉诺比斯距离 $d_{i j}$ 定义为
+
+
+\begin{equation*}
+d_{i j}=\left[\left(x_{i}-x_{j}\right)^{\mathrm{T}} S^{-1}\left(x_{i}-x_{j}\right)\right]^{\frac{1}{2}} \tag{14.6}
+\end{equation*}
+
+
+其中，
+
+
+\begin{equation*}
+x_{i}=\left(x_{1 i}, x_{2 i}, \cdots, x_{m i}\right)^{\mathrm{T}}, \quad x_{j}=\left(x_{1 j}, x_{2 j}, \cdots, x_{m j}\right)^{\mathrm{T}} \tag{14.7}
+\end{equation*}
+
+
+(1) 在第 3 章叙述了闵可夫斯基距离, 现重述, 符号有所改变。
+
+
+\end{CJK*}
+\end{document}

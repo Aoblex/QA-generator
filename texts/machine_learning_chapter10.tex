@@ -1,0 +1,1970 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{CJKutf8}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{multirow}
+
+\title{20.4 LDA 的变分 EM 算法 }
+
+\author{}
+\date{}
+
+
+\begin{document}
+\begin{CJK*}{UTF8}{bsmi}
+\maketitle
+（c）增加计数 $n_{m k^{\prime}}=n_{m k^{\prime}}+1, n_{m}=n_{m}+1, n_{k^{\prime} v}=n_{k^{\prime} v}+1, n_{k^{\prime}}=n_{k^{\prime}}+1$;
+
+(d) 得到更新的两个计数矩阵 $N_{K \times V}=\left[n_{k v}\right]$ 和 $N_{M \times K}=\left[n_{m k}\right]$, 表示后验概率分布 $p(z \mid w, \alpha, \beta)$ 的样本计数。
+
+(4) 利用得到的样本计数, 计算模型参数:
+
+$$
+\begin{array}{r}
+\theta_{m k}=\frac{n_{m k}+\alpha_{k}}{\sum_{k=1}^{K}\left(n_{m k}+\alpha_{k}\right)} \\
+\varphi_{k v}=\frac{n_{k v}+\beta_{v}}{\sum_{v=1}^{V}\left(n_{k v}+\beta_{v}\right)}
+\end{array}
+$$
+
+本节首先介绍变分推理, 然后介绍变分 EM 算法, 最后介绍将变分 EM 算法应用到 LDA 模型学习的具体算法。LDA 的变分 EM 算法具有推理与学习效率高的优点。
+
+\subsection*{20.4.1 变分推理}
+变分推理 (variational inference) 是贝叶斯学习中常用的、含有隐变量模型的学习和推理方法。变分推理和马尔可夫链蒙特卡罗法 (MCMC) 属于不同的技巧。MCMC 通过随机抽样的方法近似地计算模型的后验概率, 变分推理则通过解析的方法计算模型的后验概率的近似值。
+
+变分推理的基本想法如下。假设模型是联合概率分布 $p(x, z)$, 其中 $x$ 是观测变量（数据), $z$ 是隐变量, 包括参数。目标是学习模型的后验概率分布 $p(z \mid x)$, 用模型进行概率推理。但这是一个复杂的分布, 直接估计分布的参数很困难。所以考虑用概率分布 $q(z)$ 近似条件概率分布 $p(z \mid x)$, 用 $\mathrm{KL}$ 散度 $D(q(z) \| p(z \mid x))$ 计算两者的相似度, $q(z)$ 称为变分分布 (variational distribution)。如果能找到与 $p(z \mid x)$ 在 KL 散度意义下最近的分布 $q^{*}(z)$, 则可以用这个分布近似 $p(z \mid x)$ 。
+
+
+\begin{equation*}
+p(z \mid x) \approx q^{*}(z) \tag{20.34}
+\end{equation*}
+
+
+图 20.6 给出了 $q^{*}(z)$ 与 $p(z \mid x)$ 的关系。 $\mathrm{KL}$ 散度的定义见附录 $\mathrm{E}$ 。
+
+KL 散度可以写成以下形式:
+
+
+\begin{align*}
+D(q(z) \| p(z \mid x)) & =E_{q}[\log q(z)]-E_{q}[\log p(z \mid x)] \\
+& =E_{q}[\log q(z)]-E_{q}[\log p(x, z)]+\log p(x) \\
+& =\log p(x)-\left\{E_{q}[\log p(x, z)]-E_{q}[\log q(z)]\right\} \tag{20.35}
+\end{align*}
+
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-02}
+\end{center}
+
+图 20.6 变分推理的原理
+
+注意到 KL 散度大于等于零, 当且仅当两个分布一致时为零, 由此可知式 (20.35) 右端第一项与第二项满足关系
+
+
+\begin{equation*}
+\log p(x) \geqslant E_{q}[\log p(x, z)]-E_{q}[\log q(z)] \tag{20.36}
+\end{equation*}
+
+
+不等式右端是左端的下界, 左端称为证据 (evidence), 右端称为证据下界 (evidence lower bound, ELBO）, 证据下界记作
+
+
+\begin{equation*}
+L(q)=E_{q}[\log p(x, z)]-E_{q}[\log q(z)] \tag{20.37}
+\end{equation*}
+
+
+KL 散度 (20.35) 的最小化可以通过证据下界 (20.37) 的最大化实现, 因为目标是求 $q(z)$使 KL 散度最小化, 这时 $\log p(x)$ 是常量。因此, 变分推理变成求解证据下界最大化的问题。
+
+变分推理可以从另一个角度理解。目标是通过证据 $\log p(x)$ 的最大化估计联合概率分布 $p(x, z)$ 。因为含有隐变量 $z$, 直接对证据进行最大化困难, 转而根据式 (20.36) 对证据下界进行最大化。
+
+对变分分布 $q(z)$ 要求是具有容易处理的形式, 通常假设 $q(z)$ 对 $z$ 的所有分量都是互相独立的 (实际是条件独立于参数), 即满足
+
+
+\begin{equation*}
+q(z)=q\left(z_{1}\right) q\left(z_{2}\right) \cdots q\left(z_{n}\right) \tag{20.38}
+\end{equation*}
+
+
+这时的变分分布称为平均场（mean field） (1) KL 散度的最小化或证据下界最大化实际是在平均场的集合, 即满足独立假设的分布集合 $Q=\left\{q(z) \mid q(z)=\prod_{i=1}^{n} q\left(z_{i}\right)\right\}$ 之中进行的。
+
+总结起来, 变分推理有以下几个步骤: 定义变分分布 $q(z)$; 推导其证据下界表达式; 用最优化方法对证据下界进行优化, 如坐标上升, 得到最优分布 $q^{*}(z)$, 作为后验分布 $p(z \mid x)$ 的近似。
+
+\subsection*{20.4.2 变分 EM 算法}
+变分推理中, 可以通过迭代的方法最大化证据下界, 这时算法是 EM 算法的推广, 称为变分 EM 算法。
+
+假设模型是联合概率分布 $p(x, z \mid \theta)$, 其中 $x$ 是观测变量, $z$ 是隐变量, $\theta$ 是参数。目标是
+
+(1) 平均场的概念最初来自物理学。\\
+通过观测数据的概率 (证据) $\log p(x \mid \theta)$ 的最大化, 估计模型的参数 $\theta$ 。使用变分推理, 导入平均场 $q(z)=\prod_{i=1}^{n} q\left(z_{i}\right)$, 定义证据下界
+
+
+\begin{equation*}
+L(q, \theta)=E_{q}[\log p(x, z \mid \theta)]-E_{q}[\log q(z)] \tag{20.39}
+\end{equation*}
+
+
+通过迭代, 分别以 $q$ 和 $\theta$ 为变量对证据下界进行最大化, 就得到变分 EM 算法。
+
+\section*{算法 20.3 (变分 EM 算法)}
+循环执行以下 $\mathrm{E}$ 步和 $\mathrm{M}$ 步, 直到收玫。
+
+(1) $\mathrm{E}$ 步: 固定 $\theta$, 求 $L(q, \theta)$ 对 $q$ 的最大化。
+
+(2) $\mathrm{M}$ 步：固定 $q$, 求 $L(q, \theta)$ 对 $\theta$ 的最大化。
+
+给出模型参数 $\theta$ 的估计值。
+
+根据变分推理原理, 观测数据的概率和证据下界满足
+
+
+\begin{equation*}
+\log p(x \mid \theta)-L(q, \theta)=D(q(z) \| p(z \mid x, \theta)) \geqslant 0 \tag{20.40}
+\end{equation*}
+
+
+变分 EM 算法的迭代过程中, 以下关系成立:
+
+
+\begin{equation*}
+\log p\left(x \mid \theta^{(t-1)}\right)=L\left(q^{(t)}, \theta^{(t-1)}\right) \leqslant L\left(q^{(t)}, \theta^{(t)}\right) \leqslant \log p\left(x \mid \theta^{(t)}\right) \tag{20.41}
+\end{equation*}
+
+
+其中上角标 $t-1$ 和 $t$ 表示迭代次数, 左边的等式基于 $\mathrm{E}$ 步计算和变分推理原理, 中间的不等式基于 $\mathrm{M}$ 步计算, 右边的不等式基于变分推理原理。说明每次迭代都保证观测数据的概率不递减。因此, 变分 EM 算法一定收玫, 但可能收玫到局部最优。
+
+EM 算法实际也是对证据下界进行最大化。不妨对照 9.4 节 EM 算法的推广, EM 算法的推广是求 $\mathrm{F}$ 函数的极大-极大算法, 其中的 $\mathrm{F}$ 函数就是证据下界。 $\mathrm{EM}$ 算法假设 $q(z)=p(z \mid x)$且 $p(z \mid x)$ 容易计算, 而变分 $\mathrm{EM}$ 算法考虑一般情况使用容易计算的平均场 $q(z)=\prod_{i=1}^{n} q\left(z_{i}\right)$ 。当模型复杂时, EM 算法末必可用, 但变分 EM 算法仍然可以使用。
+
+\subsection*{20.4.3 算法推导}
+将变分 EM 算法应用到图 20.7 的 LDA 模型的学习上, 是图 20.4 的 LDA 模型的简化。首先定义具体的变分分布, 推导证据下界的表达式, 接着推导变分分布的参数和 LDA 模型的参数的估计式, 最后给出 LDA 模型的变分 EM 算法。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-03}
+\end{center}
+
+图 20.7 LDA 模型
+
+\section*{1. 证据下界的定义}
+为简单起见, 一次只考虑一个文本, 记作 $w$ 。文本的单词序列 $w=\left(w_{1}, \cdots, w_{n}, \cdots, w_{N}\right)$,对应的话题序列 $z=\left(z_{1}, \cdots, z_{n}, \cdots, z_{N}\right)$, 随机变量 $w, z$ 和话题分布 $\theta$ 的联合分布是
+
+
+\begin{equation*}
+p(\theta, z, w \mid \alpha, \varphi)=p(\theta \mid \alpha) \prod_{n=1}^{N} p\left(z_{n} \mid \theta\right) p\left(w_{n} \mid z_{n}, \varphi\right) \tag{20.42}
+\end{equation*}
+
+
+其中, $w$ 是可观测变量, $\theta$ 和 $z$ 是隐变量, $\alpha$ 和 $\varphi$ 是参数。
+
+定义基于平均场的变分分布
+
+
+\begin{equation*}
+q(\theta, z \mid \gamma, \eta)=q(\theta \mid \gamma) \prod_{n=1}^{N} q\left(z_{n} \mid \eta_{n}\right) \tag{20.43}
+\end{equation*}
+
+
+其中, $\gamma$ 是狄利克雷分布参数, $\eta=\left(\eta_{1}, \eta_{2}, \cdots, \eta_{n}\right)$ 是多项分布参数, 变量 $\theta$ 和 $z$ 的各个分量都是条件独立的。目标是求 KL 散度意义下最相近的变分分布 $q(\theta, z \mid \gamma, \eta)$, 以近似 LDA 模型的后验分布 $p(\theta, z \mid w, \alpha, \varphi)$ 。
+
+图 20.8 是变分分布的板块表示。LDA 模型中隐变量 $\theta$ 和 $z$ 之间存在依存关系, 变分分布中这些依存关系被去掉, 变量 $\theta$ 和 $z$ 条件独立。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-04}
+\end{center}
+
+图 20.8 基于平均场的变分分布
+
+由此得到一个文本的证据下界:
+
+
+\begin{equation*}
+L(\gamma, \eta, \alpha, \varphi)=E_{q}[\log p(\theta, z, w \mid \alpha, \varphi)]-E_{q}[\log q(\theta, z \mid \gamma, \eta)] \tag{20.44}
+\end{equation*}
+
+
+其中, 数学期望是对分布 $q(\theta, z \mid \gamma, \eta)$ 定义的, 为了方便写作 $E_{q}[\cdot] ; \gamma$ 和 $\eta$ 是变分分布的参数; $\alpha$ 和 $\varphi$ 是 LDA 模型的参数。
+
+所有文本的证据下界为
+
+
+\begin{equation*}
+L_{w}(\gamma, \eta, \alpha, \varphi)=\sum_{m=1}^{M}\left\{E_{q_{m}}\left[\log p\left(\theta_{m}, z_{m}, w_{m} \mid \alpha, \varphi\right)\right]-E_{q_{m}}\left[\log q\left(\theta_{m}, z_{m} \mid \gamma_{m}, \eta_{m}\right)\right]\right\} \tag{20.45}
+\end{equation*}
+
+
+为求解证据下界 $L(\gamma, \eta, \alpha, \varphi)$ 的最大化, 首先写出证据下界的表达式。为此展开证据下界式 (20.44):
+
+
+\begin{gather*}
+L(\gamma, \eta, \alpha, \varphi)=E_{q}[\log p(\theta \mid \alpha)]+E_{q}[\log p(z \mid \theta)]+E_{q}[\log p(w \mid z, \varphi)]- \\
+E_{q}[\log q(\theta \mid \gamma)]-E_{q}[\log q(z \mid \eta)] \tag{20.46}
+\end{gather*}
+
+
+根据变分参数 $\gamma$ 和 $\eta$, 模型参数 $\alpha$ 和 $\varphi$ 继续展开, 并将展开式的每一项写成一行:
+
+
+\begin{align*}
+L(\gamma, \eta, \alpha, \varphi)= & \log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)-\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right)+\sum_{k=1}^{K}\left(\alpha_{k}-1\right)\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]+ \\
+& \sum_{n=1}^{N} \sum_{k=1}^{K} \eta_{n k}\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]+ \\
+& \sum_{n=1}^{N} \sum_{k=1}^{K} \sum_{v=1}^{V} \eta_{n k} w_{n}^{v} \log \varphi_{k v}- \\
+& \log \Gamma\left(\sum_{l=1}^{K} \gamma_{l}\right)+\sum_{k=1}^{K} \log \Gamma\left(\gamma_{k}\right)-\sum_{k=1}^{K}\left(\gamma_{k}-1\right)\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]- \\
+& \sum_{n=1}^{N} \sum_{k=1}^{K} \eta_{n k} \log \eta_{n k} \tag{20.47}
+\end{align*}
+
+
+式中 $\Psi\left(\alpha_{k}\right)$ 是对数伽马函数的导数, 即
+
+
+\begin{equation*}
+\Psi\left(\alpha_{k}\right)=\frac{\mathrm{d}}{\mathrm{d} \alpha_{k}} \log \Gamma\left(\alpha_{k}\right) \tag{20.48}
+\end{equation*}
+
+
+第一项推导求 $E_{q}[\log p(\theta \mid \alpha)]$, 是关于分布 $q(\theta, z \mid \gamma, \eta)$ 的数学期望。
+
+
+\begin{equation*}
+E_{q}[\log p(\theta \mid \alpha)]=\sum_{k=1}^{K}\left(\alpha_{k}-1\right) E_{q}\left[\log \theta_{k}\right]+\log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)-\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right) \tag{20.49}
+\end{equation*}
+
+
+其中, $\theta \sim \operatorname{Dir}(\theta \mid \gamma)$, 所以利用附录 $\mathrm{E}$ 中式 (E.7) 有
+
+
+\begin{equation*}
+E_{q(\theta \mid \gamma)}\left[\log \theta_{k}\right]=\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right) \tag{20.50}
+\end{equation*}
+
+
+故得:
+
+
+\begin{equation*}
+E_{q}[\log p(\theta \mid \alpha)]=\log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)-\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right)+\sum_{k=1}^{K}\left(\alpha_{k}-1\right)\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right] \tag{20.51}
+\end{equation*}
+
+
+式中 $\alpha_{k}$ 和 $\gamma_{k}$ 表示第 $k$ 个话题的狄利克雷分布参数。
+
+第二项推导求 $E_{q}[\log p(z \mid \theta)]$, 是关于分布 $q(\theta, z \mid \gamma, \eta)$ 的数学期望。
+
+$$
+\begin{aligned}
+E_{q}(\log p(z \mid \theta)) & =\sum_{n=1}^{N} E_{q}\left[\log p\left(z_{n} \mid \theta\right)\right] \\
+& =\sum_{n=1}^{N} E_{q\left(\theta, z_{n} \mid \gamma, \eta\right)}\left[\log \left(z_{n} \mid \theta\right)\right]
+\end{aligned}
+$$
+
+
+\begin{align*}
+& =\sum_{n=1}^{N} \sum_{k=1}^{K} q\left(z_{n k} \mid \eta\right) E_{q(\theta \mid \gamma)}\left[\log \theta_{k}\right] \\
+& =\sum_{n=1}^{N} \sum_{k=1}^{K} \eta_{n k}\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right] \tag{20.52}
+\end{align*}
+
+
+式中 $\eta_{n k}$ 表示文档第 $n$ 个位置的单词由第 $k$ 个话题产生的概率, $\gamma_{k}$ 表示第 $k$ 个话题的狄利克雷分布参数。最后一步用到附录 $\mathrm{E}$ 中式 (E.4)。
+
+第三项推导求 $E_{q}[\log p(w \mid z, \varphi)]$, 是关于分布 $q(\theta, z \mid \gamma, \eta)$ 的数学期望。
+
+
+\begin{align*}
+E_{q}[\log p(w \mid z, \varphi)] & =\sum_{n=1}^{N} E_{q}\left[\log p\left(w_{n} \mid z_{n}, \varphi\right)\right] \\
+& =\sum_{n=1}^{N} E_{q\left(z_{n} \mid \eta\right)}\left[\log p\left(w_{n} \mid z_{n}, \varphi\right)\right] \\
+& =\sum_{n=1}^{N} \sum_{k=1}^{K} q\left(z_{n k} \mid \eta\right) \log p\left(w_{n} \mid z_{n k}, \varphi\right) \\
+& =\sum_{n=1}^{N} \sum_{k=1}^{K} \sum_{v=1}^{V} \eta_{n k} w_{n}^{v} \log \varphi_{k v} \tag{20.53}
+\end{align*}
+
+
+式中 $\eta_{n k}$ 表示文档第 $n$ 个位置的单词由第 $k$ 个话题产生的概率; $w_{n}^{v}$ 在第 $n$ 个位置的单词是单词集合的第 $v$ 个单词时取值为 1 , 否则取值为 $0 ; \varphi_{k v}$ 表示第 $k$ 个话题生成单词集合中第 $v$个单词的概率。
+
+第四项推导求 $E_{q}[\log q(\theta \mid \gamma)]$, 是关于分布 $q(\theta, z \mid \gamma, \eta)$ 的数学期望。由于 $\theta \sim \operatorname{Dir}(\gamma)$, 类似式 (20.50) 可以得到:
+
+
+\begin{equation*}
+E_{q}[\log q(\theta \mid \gamma)]=\log \Gamma\left(\sum_{l=1}^{K} \gamma_{l}\right)-\sum_{k=1}^{K} \log \Gamma\left(\gamma_{k}\right)+\sum_{k=1}^{K}\left(\gamma_{k}-1\right)\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right] \tag{20.54}
+\end{equation*}
+
+
+式中 $\gamma_{k}$ 表示第 $k$ 个话题的狄利克雷分布参数。
+
+第五项公式推导求 $E_{q}[\log q(z \mid \eta)]$, 是关于分布 $q(\theta, z \mid \gamma, \eta)$ 的数学期望。
+
+
+\begin{align*}
+E_{q}[\log q(z \mid \eta)] & =\sum_{n=1}^{N} E_{q}\left[\log q\left(z_{n} \mid \eta\right)\right] \\
+& =\sum_{n=1}^{N} E_{q\left(z_{n} \mid \eta\right)}\left[\log q\left(z_{n} \mid \eta\right)\right] \\
+& =\sum_{n=1}^{N} \sum_{k=1}^{K} q\left(z_{n k} \mid \eta\right) \log q\left(z_{n k} \mid \eta\right) \\
+& =\sum_{n=1}^{N} \sum_{k=1}^{K} \eta_{n k} \log \eta_{n k} \tag{20.55}
+\end{align*}
+
+
+式中 $\eta_{n k}$ 表示文档第 $n$ 个位置的单词由第 $k$ 个话题产生的概率, $\gamma_{k}$ 表示第 $k$ 个话题的狄利克雷分布参数。
+
+\section*{2. 变分参数 $\gamma$ 和 $\eta$ 的估计}
+首先通过证据下界最优化估计参数 $\eta_{\circ} \eta_{n k}$ 表示第 $n$ 个位置的单词由第 $k$ 个话题生成的概率。考虑式 (20.47) 关于 $\eta_{n k}$ 的最大化, $\eta_{n k}$ 满足约束条件 $\sum_{l=1}^{K} \eta_{n l}=1$ 。包含 $\eta_{n k}$ 的约束最优化问题拉格朗日函数为
+
+
+\begin{equation*}
+L_{\left[\eta_{n k}\right]}=\eta_{n k}\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]+\eta_{n k} \log \varphi_{k v}-\eta_{n k} \log \eta_{n k}+\lambda_{n}\left(\sum_{l=1}^{K} \eta_{n l}-1\right) \tag{20.56}
+\end{equation*}
+
+
+这里 $\varphi_{k v}$ 是 (在第 $n$ 个位置) 由第 $k$ 个话题生成第 $v$ 个单词的概率。
+
+对 $\eta_{n k}$ 求偏导数得:
+
+
+\begin{equation*}
+\frac{\partial L}{\partial \eta_{n k}}=\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)+\log \varphi_{k v}-\log \eta_{n k}-1+\lambda_{n} \tag{20.57}
+\end{equation*}
+
+
+令偏导数为零, 得到参数 $\eta_{n k}$ 的估计值:
+
+
+\begin{equation*}
+\eta_{n k} \propto \varphi_{k v} \exp \left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right] \tag{20.58}
+\end{equation*}
+
+
+接着通过证据下界最优化估计参数 $\gamma_{\circ} \gamma_{k}$ 是第 $k$ 个话题的狄利克雷分布参数。考虑式 (20.47) 关于 $\gamma_{k}$ 的最大化:
+
+
+\begin{align*}
+L_{\left[\gamma_{k}\right]}= & \sum_{k=1}^{K}\left(\alpha_{k}-1\right)\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]+\sum_{n=1}^{N} \sum_{k=1}^{K} \eta_{n k}\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]- \\
+& \log \Gamma\left(\sum_{l=1}^{K} \gamma_{l}\right)+\log \Gamma\left(\gamma_{k}\right)-\sum_{k=1}^{K}\left(\gamma_{k}-1\right)\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right] \tag{20.59}
+\end{align*}
+
+
+简化为
+
+
+\begin{equation*}
+L_{\left[\gamma_{k}\right]}=\sum_{k=1}^{K}\left[\Psi\left(\gamma_{k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]\left(\alpha_{k}+\sum_{n=1}^{N} \eta_{n k}-\gamma_{k}\right)-\log \Gamma\left(\sum_{l=1}^{K} \gamma_{l}\right)+\log \Gamma\left(\gamma_{k}\right) \tag{20.60}
+\end{equation*}
+
+
+对 $\gamma_{k}$ 求偏导数得:
+
+
+\begin{equation*}
+\frac{\partial L}{\partial \gamma_{k}}=\left[\Psi^{\prime}\left(\gamma_{k}\right)-\Psi^{\prime}\left(\sum_{l=1}^{K} \gamma_{l}\right)\right]\left(\alpha_{k}+\sum_{n=1}^{N} \eta_{n k}-\gamma_{k}\right) \tag{20.61}
+\end{equation*}
+
+
+令偏导数为零, 求解得到参数 $\gamma_{k}$ 的估计值:
+
+
+\begin{equation*}
+\gamma_{k}=\alpha_{k}+\sum_{n=1}^{N} \eta_{n k} \tag{20.62}
+\end{equation*}
+
+
+据此, 得到由坐标上升算法估计变分参数的方法, 具体算法如下。
+
+\section*{算法 20.4 (LDA 的变分参数估计算法)}
+(1) 初始化: 对所有 $k$ 和 $n, \eta_{n k}^{(0)}=1 / K$;
+
+(2) 初始化: 对所有 $k, \gamma_{k}=\alpha_{k}+N / K$;
+
+(3) 重复;
+
+(4) 对 $n=1$ 到 $n=N$, 对 $k=1$ 到 $k=K$,
+
+$$
+\eta_{n k}^{(t+1)}=\varphi_{k v} \exp \left[\Psi\left(\gamma_{k}^{(t)}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{l}^{(t)}\right)\right]
+$$
+
+(5) 规范化 $\eta_{n k}^{(t+1)}$ 使其和为 1 ;
+
+(6) $\gamma^{(t+1)}=\alpha+\sum_{n=1}^{N} \eta_{n}^{(t+1)}$;
+
+(7) 直到收敛。
+
+\section*{3. 模型参数 $\alpha$ 和 $\varphi$ 的什计}
+给定一个文本集合 $D=\left\{w_{1}, w_{2}, \cdots, w_{m}, \cdots, w_{M}\right\}$, 模型参数估计对所有文本同时进行。
+
+首先通过证据下界的最大化估计 $\varphi \circ \varphi_{k v}$ 表示第 $k$ 个话题生成单词集合第 $v$ 个单词的概率。将式 (20.47) 扩展到所有文本, 并考虑关于 $\varphi$ 的最大化。满足 $K$ 个约束条件
+
+$$
+\sum_{v=1}^{V} \varphi_{k v}=1, \quad k=1,2, \cdots, K
+$$
+
+约束最优化问题的拉格朗日函数为
+
+
+\begin{equation*}
+L_{[\beta]}=\sum_{m=1}^{M} \sum_{n=1}^{N_{m}} \sum_{k=1}^{K} \sum_{v=1}^{V} \eta_{m n k} w_{m n}^{v} \log \varphi_{k v}+\sum_{k=1}^{K} \lambda_{k}\left(\sum_{v=1}^{V} \varphi_{k v}-1\right) \tag{20.63}
+\end{equation*}
+
+
+对 $\varphi_{k v}$ 求偏导数并令其为零, 归一化求解, 得到参数 $\varphi_{k v}$ 的估计值:
+
+
+\begin{equation*}
+\varphi_{k v}=\sum_{m=1}^{M} \sum_{n=1}^{N_{m}} \eta_{m n k} w_{m n}^{v} \tag{20.64}
+\end{equation*}
+
+
+其中, $\eta_{m n k}$ 为第 $m$ 个文本的第 $n$ 个单词属于第 $k$ 个话题的概率, $w_{m n}^{v}$ 在第 $m$ 个文本的第 $n$ 个单词是单词集合的第 $v$ 个单词时取值为 1 , 否则为 0 。
+
+接着通过证据下界的最大化估计参数 $\alpha_{\circ} \alpha_{k}$ 表示第 $k$ 个话题的狄利克雷分布参数。将式 (20.47) 扩展到所有文本, 并考虑关于 $\alpha$ 的最大化:
+
+
+\begin{equation*}
+L_{[\alpha]}=\sum_{m=1}^{M}\left\{\log \Gamma\left(\sum_{l=1}^{K} \alpha_{l}\right)-\sum_{k=1}^{K} \log \Gamma\left(\alpha_{k}\right)+\sum_{k=1}^{K}\left(\alpha_{k}-1\right)\left[\Psi\left(\gamma_{m k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{m l}\right)\right]\right\} \tag{20.65}
+\end{equation*}
+
+
+对 $\alpha_{k}$ 求偏导数得:
+
+
+\begin{equation*}
+\frac{\partial L}{\partial \alpha_{k}}=M\left[\Psi\left(\sum_{l=1}^{K} \alpha_{l}\right)-\Psi\left(\alpha_{k}\right)\right]+\sum_{m=1}^{M}\left[\Psi\left(\gamma_{m k}\right)-\Psi\left(\sum_{l=1}^{K} \gamma_{m l}\right)\right] \tag{20.66}
+\end{equation*}
+
+
+再对 $\alpha_{l}$ 求偏导数得:
+
+
+\begin{equation*}
+\frac{\partial^{2} L}{\partial \alpha_{k} \partial \alpha_{l}}=M\left[\Psi^{\prime}\left(\sum_{l=1}^{K} \alpha_{l}\right)-\delta(k, l) \Psi^{\prime}\left(\alpha_{k}\right)\right] \tag{20.67}
+\end{equation*}
+
+
+这里 $\delta(k, l)$ 是 delta 函数。
+
+式 (20.65) 和式 (20.66) 分别是函数 (20.64) 对变量 $\alpha$ 的梯度 $g(\alpha)$ 和 Hessian 矩阵 $H(\alpha)$ 。应用牛顿法 (又称为牛顿-拉弗森方法) 求该函数的最大化 ${ }^{1}$ 。用以下公式迭代, 得到参数 $\alpha$的估计值。
+
+
+\begin{equation*}
+\alpha_{\text {new }}=\alpha_{\text {old }}-H\left(\alpha_{\text {old }}\right)^{-1} g\left(\alpha_{\text {old }}\right) \tag{20.68}
+\end{equation*}
+
+
+据此, 得到估计参数 $\alpha$ 的算法。
+
+\subsection*{20.4.4 算法总结}
+根据上面的推导给出 LDA 的变分 EM 算法。
+
+\section*{算法 20.5 (LDA 的变分 EM 算法)}
+输入: 给定文本集合 $D=\left\{w_{1}, w_{2}, \cdots, w_{m}, \cdots, w_{M}\right\}$ 。
+
+输出: 变分参数 $\gamma, \eta$, 模型参数 $\alpha, \varphi$ 。
+
+交替迭代 E 步和 $M$ 步, 直到收玫。
+
+\section*{(1) $\mathrm{E}$ 步}
+固定模型参数 $\alpha, \varphi$, 通过关于变分参数 $\gamma, \eta$ 的证据下界的最大化, 估计变分参数 $\gamma, \eta$ 。具体见算法 20.4。
+
+(2) $\mathrm{M}$ 步
+
+固定变分参数 $\gamma, \eta$, 通过关于模型参数 $\alpha, \varphi$ 的证据下界的最大化, 估计模型参数 $\alpha, \varphi$ 。具体算法见式 (20.63) 和式 (20.67)。
+
+根据变分参数 $(\gamma, \eta)$ 可以估计模型参数 $\theta=\left(\theta_{1}, \theta_{2}, \cdots, \theta_{m}, \cdots, \theta_{M}\right), z=\left(z_{1}, z_{2}, \cdots\right.$, $\left.z_{m}, \cdots, z_{M}\right)$ 。
+
+以上介绍的是图 20.7 中简化 LDA 模型的变分 EM 算法, 图 20.4 中完整 LDA 模型的变分 $\mathrm{EM}$ 算法作为推广可以类似地导出。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 狄利克雷分布的概率密度函数为
+\end{enumerate}
+
+$$
+p(\theta \mid \alpha)=\frac{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)}{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1}
+$$
+
+(1) 牛顿法的介绍可参照附录 B。\\
+其中, $\sum_{i=1}^{k} \theta_{i}=1, \theta_{i} \geqslant 0, \alpha=\left(\alpha_{1}, \alpha_{2}, \cdots, \alpha_{k}\right), \alpha_{i}>0, i=1,2, \cdots, k \circ$ 狄利克雷分布是多项分布的共轭先验。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 潜在狄利克雷分配 (LDA) 是文本集合的生成概率模型。模型假设话题由单词的多项分布表示, 文本由话题的多项分布表示, 单词分布和话题分布的先验分布都是狄利克雷分布。LDA 模型属于概率图模型, 可以由板块表示法表示。LDA 模型中, 每个话题的单词分布、每个文本的话题分布、文本的每个位置的话题是隐变量, 文本的每个位置的单词是观测变量。
+
+  \item LDA 生成文本集合的过程如下:
+
+\end{enumerate}
+
+（1）话题的单词分布：随机生成所有话题的单词分布, 话题的单词分布是多项分布, 其先验分布是狄利克雷分布。
+
+（2）文本的话题分布：随机生成所有文本的话题分布, 文本的话题分布是多项分布, 其先验分布是狄利克雷分布。
+
+(3) 文本的内容: 随机生成所有文本的内容。在每个文本的每个位置, 按照文本的话题分布随机生成一个话题，再按照该话题的单词分布随机生成一个单词。
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item LDA 模型的学习与推理不能直接求解。通常采用的方法是吉布斯抽样算法和变分 EM 算法, 前者是蒙特卡罗法而后者是近似算法。
+
+  \item LDA 的收缩的吉布斯抽样算法的基本想法如下。目标是对联合概率分布 $p(w, z, \theta$, $\varphi \mid \alpha, \beta)$ 进行估计。通过积分求和将隐变量 $\theta$ 和 $\varphi$ 消掉, 得到边缘概率分布 $p(w, z \mid \alpha, \beta)$; 对概率分布 $p(w \mid z, \alpha, \beta)$ 进行吉布斯抽样, 得到分布 $p(w \mid z, \alpha, \beta)$ 的随机样本; 再利用样本对变量 $z, \theta$ 和 $\varphi$ 的概率进行估计, 最终得到 LDA 模型 $p(w, z, \theta, \varphi \mid \alpha, \beta)$ 的参数估计。具体算法如下: 对给定的文本单词序列, 每个位置上随机指派一个话题, 整体构成话题系列; 然后循环执行以下操作, 对整个文本序列进行扫描, 在每一个位置上计算在该位置上的话题的满条件概率分布，然后进行随机抽样，得到该位置的新的话题，指派给这个位置。
+
+  \item 变分推理的基本想法如下。假设模型是联合概率分布 $p(x, z)$, 其中 $x$ 是观测变量（数据), $z$ 是隐变量。目标是学习模型的后验概率分布 $p(z \mid x)$ 。考虑用变分分布 $q(z)$ 近似条件概率分布 $p(z \mid x)$, 用 KL 散度计算两者的相似性, 找到与 $p(z \mid x)$ 在 KL 散度意义下最近的 $q^{*}(z)$,用这个分布近似 $p(z \mid x)$ 。假设 $q(z)$ 中的 $z$ 的所有分量都是互相独立的。利用 Jensen 不等式得到 KL 散度的最小化可以通过证据下界的最大化实现。因此, 变分推理变成求解以下证据下界最大化问题:
+
+\end{enumerate}
+
+$$
+L(q, \theta)=E_{q}[\log p(x, z \mid \theta)]-E_{q}[\log q(z)]
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{6}
+  \item LDA 的变分 EM 算法如下: 针对 LDA 模型, 定义变分分布, 应用变分 EM 算法。目标是对证据下界 $L(\gamma, \eta, \alpha, \varphi)$ 进行最大化, 其中 $\alpha$ 和 $\varphi$ 是模型参数, $\gamma$ 和 $\eta$ 是变分参数。交替迭代 E 步和 $\mathrm{M}$ 步, 直到收玫。
+\end{enumerate}
+
+(1) $\mathrm{E}$ 步: 固定模型参数 $\alpha, \varphi$, 通过关于变分参数 $\gamma, \eta$ 的证据下界的最大化, 估计变分参数 $\gamma, \eta$ 。
+
+(2) $\mathrm{M}$ 步: 固定变分参数 $\gamma, \eta$, 通过关于模型参数 $\alpha, \varphi$ 的证据下界的最大化, 估计模型参数 $\alpha, \varphi$ 。
+
+\section*{继续阅 读}
+LDA 的原始论文是文献 [1] 和文献 [2], LDA 的吉布斯抽样算法见文献 [3] 文献 [5], 变分 EM 算法见文献 [2]。变分推理的介绍可参考文献 [6]。LDA 的分布式学习算法有文献 [7],快速学习算法有文献 [8], 在线学习算法有文献 [9]。
+
+\section*{习 题}
+20.1 推导狄利克雷分布数学期望公式。
+
+20.2 针对 17.2.2 节的文本例子, 使用 LDA 模型进行话题分析。
+
+20.3 找出 LDA 的吉布斯抽样算法、变分 EM 算法中利用狄利克雷分布的部分, 思考 LDA 中使用狄利克雷分布的重要性。
+
+20.4 给出 LDA 的吉布斯抽样算法和变分 EM 算法的算法复杂度。
+
+20.5 证明变分 EM 算法收敛。
+
+\section*{参考文献}
+[1] BLEI D M, NG A Y, JORDAN M I. Latent Dirichlet allocation[C]//Advances in Neural Information Processing Systems 14. MIT Press, 2002.
+
+[2] BLEI D M, NG A Y, JORDAN M I. Latent Dirichlet allocation[J]. Journal of Machine Learning Research, 2003, 3: 933-1022.
+
+[3] GRIFFITHS T L, STEYVERS M. Finding scientific topics[J]. Proceedings of the National Academy of Science, 2004, 101: 5228-5235.
+
+[4] STEYVERS M, GRIFFITHS T. Probabilistic topic models[C]//Landauer T, McNamara D, Dennis S, et al. Handbook of Latent Semantic Analysis. Psychology Press, 2014.
+
+[5] GREGOR HEINRICH. Parameter estimation for text analysis[J]. Technical note, 2004.
+
+[6] BLEI D M, KUCUKELBIR A, MCAULIFFE J D. Variational inference: a review for statisticians $[\mathrm{J}]$. Journal of the American Statistical Association, 2017, 112(518).
+
+[7] NEWMAN D, SMYTH P, WELLING M, et al. Distributed inference for latent Dirichlet allocation[J]. Advances in Neural Information Processing Systems, 2008: 1081-1088.
+
+[8] PORTEOUS I, NEWMAN D, IHLER A, et al. Fast collapsed Gibbs sampling for latent Dirichlet allocation[C]//Proceedings of the 14th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. 2008: 569-577.
+
+[9] HOFFMAN M, BACH F R, BLEI D M. Online learning for latent Dirichlet allocation[J]. Advances in Neural Information Processing Systems, 2010: 856-864.
+
+\section*{第 21 章 PageRank 算法}
+在实际应用中许多数据都以图 (graph) 的形式存在, 比如, 互联网、社交网络都可以看作是一个图。图数据上的机器学习具有理论与应用上的重要意义。PageRank 算法是图的链接分析（link analysis）的代表性算法, 属于图数据上的无监督学习方法。
+
+PageRank 算法最初作为互联网网页重要度的计算方法, 于 1996 年由 Page 和 Brin 提出, 并用于谷歌搜索引擎的网页排序。事实上, PageRank 可以定义在任意有向图上, 后来被应用到社会影响力分析、文本摘要等多个问题。
+
+PageRank 算法的基本想法是在有向图上定义一个随机游走模型, 即一阶马尔可夫链,描述随机游走者沿着有向图随机访问各个结点的行为。在一定条件下, 极限情况访问每个结点的概率收玫到平稳分布, 这时各个结点的平稳概率值就是其 PageRank 值, 表示结点的重要度。PageRank 是递归定义的, PageRank 的计算可以通过迭代算法进行。
+
+本章 21.1 节给出 PageRank 的定义, 21.2 节叙述 PageRank 的计算方法, 包括常用的幂法 (power method)。
+
+\subsection*{21.1 PageRank 的定义}
+\subsection*{21.1.1 基本想法}
+历史上, PageRank 算法作为计算互联网网页重要度的算法被提出。PageRank 是定义在网页集合上的一个函数, 它对每个网页给出一个正实数, 表示网页的重要程度, 整体构成一个向量, PageRank 值越高, 网页就越重要, 在互联网搜索的排序中可能就被排在前面 (1)。
+
+假设互联网是一个有向图, 在其基础上定义随机游走模型, 即一阶马尔可夫链, 表示网页浏览者在互联网上随机浏览网页的过程。假设浏览者在每个网页依照连接出去的超链接以等概率跳转到下一个网页, 并在网上持续不断进行这样的随机跳转, 这个过程形成一阶马尔可夫链。PageRank 表示这个马尔可夫链的平稳分布。每个网页的 PageRank 值就是平稳概率。
+
+图 21.1 表示一个有向图, 假设是简化的互联网例, 结点 $\mathrm{A}, \mathrm{B}, \mathrm{C}$ 和 D 表示网页, 结点之间的有向边表示网页之间的超链接, 边上的权值表示网页之间随机跳转的概率。假设有一个浏览者, 在网上随机游走。如果浏览者在网页 $\mathrm{A}$, 则下一步以 $1 / 3$ 的概率分别转移到网页
+
+(1) 网页在搜索引擎上的排序, 除了网页本身的重要度以外, 还由网页与查询的匹配度决定。在互联网搜索中,网页的 PageRank 与查皅无关, 可以事先离线计算, 加入网页索引。\\
+$\mathrm{B}, \mathrm{C}$ 和 $\mathrm{D}$ 。如果浏览者在网页 $\mathrm{B}$, 则下一步以 $1 / 2$ 的概率分别转移到网页 $\mathrm{A}$ 和 $\mathrm{D}$ 。如果浏览者在网页 $\mathrm{C}$, 则下一步以概率 1 转移到网页 $\mathrm{A}$ 。如果浏览者在网页 $\mathrm{D}$, 则下一步以 $1 / 2$ 的概率分别转移到网页 $\mathrm{B}$ 和 C。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-13}
+\end{center}
+
+图 21.1 有向图
+
+直观上, 对于一个网页, 指向该网页的超链接越多, 随机跳转到该网页的概率也就越高, 该网页的 PageRank 值就越高, 这个网页也就越重要。一个网页, 如果指向该网页的 PageRank 值越高, 随机跳转到该网页的概率也就越高, 该网页的 PageRank 值就越高, 这个网页也就越重要。PageRank 值依赖于网络的拓扑结构, 一旦网络的拓扑 (连接关系) 确定, PageRank 值就确定。
+
+PageRank 的计算可以在互联网的有向图上进行, 通常是一个迭代过程。先假设一个初始分布，通过迭代，不断计算所有网页的 PageRank 值，直到收玫为止。
+
+下面首先给出有向图及有向图上随机游走模型的定义, 然后给出 PageRank 的基本定义以及一般定义。基本定义对应于理想情况, 一般定义对应于现实情况。
+
+\subsection*{21.1.2 有向图和随机游走模型}
+\section*{1. 有向图}
+定义 21.1 (有向图) 有向图 (directed graph) 记作 $G=(V, E)$, 其中 $V$ 和 $E$ 分别表示结点和有向边的集合。
+
+比如, 互联网就可以看作是一个有向图, 每个网页是有向图的一个结点, 网页之间的每一条超链接是有向图的一条边。
+
+从一个结点出发到达另一个结点, 所经过的边的一个序列称为一条路径 (path), 路径上边的个数称为路径的长度。如果一个有向图从其中任何一个结点出发可以到达其他任何一个结点, 就称这个有向图是强连通图 (strongly connected graph)。图 21.1 中的有向图就是一个强连通图。
+
+假设 $k$ 是一个大于 1 的自然数, 如果从有向图的一个结点出发返回到这个结点的路径的长度都是 $k$ 的倍数, 那么称这个结点为周期性结点。如果一个有向图不含有周期性结点, 则称这个有向图为非周期性图（aperiodic graph），否则为周期性图。
+
+图 21.2 是一个周期性有向图的例子。从结点 A 出发返回到 A, 必须经过路径 A-B-C-A,所有可能的路径的长度都是 3 的倍数, 所以结点 $\mathrm{A}$ 是周期性结点。这个有向图是周期性图。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-14}
+\end{center}
+
+图 21.2 周期性有向图
+
+\section*{2. 随机游走模型}
+定义 21.2 (随机游走模型) 给定一个含有 $n$ 个结点的有向图, 在有向图上定义随机游走 (random walk) 模型, 即一阶马尔可夫链 (1), 其中结点表示状态, 有向边表示状态之间的转移, 假设从一个结点到通过有向边相连的所有结点的转移概率相等。具体地, 转移矩阵是一个 $n$ 阶矩阵 $M$ :
+
+
+\begin{equation*}
+\boldsymbol{M}=\left[m_{i j}\right]_{n \times n} \tag{21.1}
+\end{equation*}
+
+
+第 $i$ 行第 $j$ 列的元素 $m_{i j}$ 取值规则如下: 如果结点 $j$ 有 $k$ 个有向边连出, 并且结点 $i$ 是其连出的一个结点, 则 $m_{i j}=\frac{1}{k}$; 否则 $m_{i j}=0, i, j=1,2, \cdots, n$ 。
+
+注意转移矩阵具有性质:
+
+
+\begin{gather*}
+m_{i j} \geqslant 0  \tag{21.2}\\
+\sum_{i=1}^{n} m_{i j}=1 \tag{21.3}
+\end{gather*}
+
+
+即每个元素非负, 每列元素之和为 1 , 即矩阵 $\boldsymbol{M}$ 为随机矩阵 (stochastic matrix)。
+
+在有向图上的随机游走形成马尔可夫链。也就是说, 随机游走者每经一个单位时间转移一个状态, 如果当前时刻在第 $j$ 个结点 (状态), 那么下一个时刻在第 $i$ 个结点（状态）的概率是 $m_{i j}$, 这一概率只依赖于当前的状态, 与过去无关, 具有马尔可夫性。
+
+在图 21.1 的有向图上可以定义随机游走模型。结点 $\mathrm{A}$ 到结点 $\mathrm{B}, \mathrm{C}$ 和 $\mathrm{D}$ 存在有向边, 可以以概率 $1 / 3$ 从 $\mathrm{A}$ 分别转移到 $\mathrm{B}, \mathrm{C}$ 和 $\mathrm{D}$, 并以概率 0 转移到 $\mathrm{A}$, 于是可以写出转移矩阵的第 1 列。结点 $\mathrm{B}$ 到结点 $\mathrm{A}$ 和 $\mathrm{D}$ 存在有向边, 可以以概率 $1 / 2$ 从 $\mathrm{B}$ 分别转移到 $\mathrm{A}$ 和 $\mathrm{D}$, 并以概率 0 分别转移到 $B$ 和 $C$, 于是可以写出矩阵的第 2 列等。于是得到转移矩阵:
+
+$$
+M=\left[\begin{array}{cccc}
+0 & 1 / 2 & 1 & 0 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 1 / 2 & 0 & 0
+\end{array}\right]
+$$
+
+随机游走在某个时刻 $t$ 访问各个结点的概率分布就是马尔可夫链在时刻 $t$ 的状态分布,可以用一个 $n$ 维列向量 $\boldsymbol{R}_{t}$ 表示, 那么在时刻 $t+1$ 访问各个结点的概率分布 $\boldsymbol{R}_{t+1}$ 满足
+
+
+\begin{equation*}
+\boldsymbol{R}_{t+1}=M \boldsymbol{R}_{t} \tag{21.4}
+\end{equation*}
+
+
+(1) 马尔可夫链的介绍可参照第 19 章。
+
+\subsection*{21.1.3 PageRank 的基本定义}
+给定一个包含 $n$ 个结点的强连通且非周期性的有向图, 在其基础上定义随机游走模型。假设转移矩阵为 $\boldsymbol{M}$, 在时刻 $0,1,2, \cdots, t, \cdots$ 访问各个结点的概率分布为
+
+$$
+R_{0}, M R_{0}, M^{2} R_{0}, \cdots, M^{t} R_{0}, \cdots
+$$
+
+则极限
+
+
+\begin{equation*}
+\lim _{t \rightarrow \infty} M^{t} \boldsymbol{R}_{0}=\boldsymbol{R} \tag{21.5}
+\end{equation*}
+
+
+存在, 极限向量 $\boldsymbol{R}$ 表示马尔可夫链的平稳分布, 满足
+
+$$
+M R=R
+$$
+
+定义 21.3 (PageRank 的基本定义） 给定一个包含 $n$ 个结点 $v_{1}, v_{2}, \cdots, v_{n}$ 的强连通且非周期性的有向图, 在有向图上定义随机游走模型, 即一阶马尔可夫链。随机游走的特点是从一个结点到有有向边连出的所有结点的转移概率相等, 转移矩阵为 $M$ 。这个马尔可夫链具有平稳分布 $R:$
+
+
+\begin{equation*}
+M R=R \tag{21.6}
+\end{equation*}
+
+
+平稳分布 $\boldsymbol{R}$ 称为这个有向图的 PageRank。 $\boldsymbol{R}$ 的各个分量称为各个结点的 PageRank 值。
+
+$$
+\boldsymbol{R}=\left[\begin{array}{c}
+\operatorname{PR}\left(v_{1}\right) \\
+\operatorname{PR}\left(v_{2}\right) \\
+\vdots \\
+\operatorname{PR}\left(v_{n}\right)
+\end{array}\right]
+$$
+
+其中, $\mathrm{PR}\left(v_{i}\right), i=1,2, \cdots, n$, 表示结点 $v_{i}$ 的 PageRank 值。
+
+显然有
+
+
+\begin{gather*}
+\operatorname{PR}\left(v_{i}\right) \geqslant 0, \quad i=1,2, \cdots, n  \tag{21.7}\\
+\sum_{i=1}^{n} \operatorname{PR}\left(v_{i}\right)=1  \tag{21.8}\\
+\operatorname{PR}\left(v_{i}\right)=\sum_{v_{j} \in M\left(v_{i}\right)} \frac{\operatorname{PR}\left(v_{j}\right)}{L\left(v_{j}\right)}, \quad i=1,2, \cdots, n \tag{21.9}
+\end{gather*}
+
+
+这里 $M\left(v_{i}\right)$ 表示指向结点 $v_{i}$ 的结点集合, $L\left(v_{j}\right)$ 表示结点 $v_{j}$ 连出的有向边的个数。
+
+PageRank 的基本定义是理想化的情况, 在这种情况下, PageRank 存在, 而且可以通过不断迭代求得 PageRank 值。
+
+定理 21.1 不可约且非周期的有限状态马尔可夫链有唯一平稳分布存在, 并且当时间趋于无穷时状态分布收敛于唯一的平稳分布。
+
+根据马尔可夫链平稳分布定理, 对于强连通且非周期的有向图上定义的随机游走模\\
+型 (马尔可夫链), 当在图上的随机游走时间趋于无穷时状态分布收玫于唯一的平稳分布。
+
+例 21.1 已知图 21.1 的有向图, 求该图的 PageRank。(1)
+
+解 转移矩阵
+
+$$
+\boldsymbol{M}=\left[\begin{array}{cccc}
+0 & 1 / 2 & 1 & 0 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 1 / 2 & 0 & 0
+\end{array}\right]
+$$
+
+取初始分布向量 $\boldsymbol{R}_{0}$ 为
+
+$$
+\boldsymbol{R}_{0}=\left[\begin{array}{c}
+1 / 4 \\
+1 / 4 \\
+1 / 4 \\
+1 / 4
+\end{array}\right]
+$$
+
+以转移矩阵 $M$ 连乘初始向量 $\boldsymbol{R}_{0}$ 得到向量序列:
+
+$$
+\left[\begin{array}{l}
+1 / 4 \\
+1 / 4 \\
+1 / 4 \\
+1 / 4
+\end{array}\right],\left[\begin{array}{l}
+9 / 24 \\
+5 / 24 \\
+5 / 24 \\
+5 / 24
+\end{array}\right],\left[\begin{array}{l}
+15 / 48 \\
+11 / 48 \\
+11 / 48 \\
+11 / 48
+\end{array}\right],\left[\begin{array}{c}
+11 / 32 \\
+7 / 32 \\
+7 / 32 \\
+7 / 32
+\end{array}\right], \quad \cdots,\left[\begin{array}{c}
+3 / 9 \\
+2 / 9 \\
+2 / 9 \\
+2 / 9
+\end{array}\right]
+$$
+
+最后得到极限向量:
+
+$$
+\boldsymbol{R}=\left[\begin{array}{c}
+3 / 9 \\
+2 / 9 \\
+2 / 9 \\
+2 / 9
+\end{array}\right]
+$$
+
+即有向图的 PageRank 值。
+
+一般的有向图未必满足强连通且非周期性的条件。比如在互联网, 大部分网页没有连接出去的超链接, 也就是说从这些网页无法跳转到其他网页, 所以 PageRank 的基本定义不适用。
+
+例 21.2 从图 21.1 的有向图中去掉由 $\mathrm{C}$ 到 $\mathrm{A}$ 的边, 得到图 21.3 的有向图。在图 21.3 的有向图中, 结点 $\mathrm{C}$ 没有边连接出去。
+
+图 21.3 的有向图的转移矩阵 $\boldsymbol{M}$ 是
+
+$$
+\boldsymbol{M}=\left[\begin{array}{cccc}
+0 & 1 / 2 & 0 & 0 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 1 / 2 & 0 & 0
+\end{array}\right]
+$$
+
+(1) 例 21.1 和例 21.2 来自文献 [2]。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-17}
+\end{center}
+
+图 21.3 有向图
+
+这时 $M$ 不是一个随机矩阵, 因为随机矩阵要求每一列的元素之和是 1 , 这里第 3 列的和是 0 , 不是 1 。
+
+如果仍然计算在各个时刻的各个结点的概率分布, 就会得到如下结果:
+
+$$
+\left[\begin{array}{l}
+1 / 4 \\
+1 / 4 \\
+1 / 4 \\
+1 / 4
+\end{array}\right],\left[\begin{array}{l}
+3 / 24 \\
+5 / 24 \\
+5 / 24 \\
+5 / 24
+\end{array}\right],\left[\begin{array}{l}
+5 / 48 \\
+7 / 48 \\
+7 / 48 \\
+7 / 48
+\end{array}\right],\left[\begin{array}{l}
+21 / 288 \\
+31 / 288 \\
+31 / 288 \\
+31 / 288
+\end{array}\right], \cdots,\left[\begin{array}{l}
+0 \\
+0 \\
+0 \\
+0
+\end{array}\right]
+$$
+
+可以看到, 随着时间推移, 访问各个结点的概率皆变为 0 。
+
+\subsection*{21.1.4 PageRank 的一般定义}
+PageRank 一般定义的想法是在基本定义的基础上导入平滑项。
+
+给定一个含有 $n$ 个结点 $v_{i}, i=1,2, \cdots, n$, 的任意有向图, 假设考虑一个在图上的随机游走模型, 即一阶马尔可夫链, 其转移矩阵是 $M$, 从一个结点到其连出的所有结点的转移概率相等。这个马尔可夫链未必具有平稳分布。假设考虑另一个完全随机游走的模型, 其转移矩阵的元素全部为 $1 / n$, 也就是说从任意一个结点到任意一个结点的转移概率都是 $1 / n$ 。两个转移矩阵的线性组合又构成一个新的转移矩阵, 在其上可以定义一个新的马尔可夫链。容易证明这个马尔可夫链一定具有平稳分布, 且平稳分布满足
+
+
+\begin{equation*}
+\boldsymbol{R}=d \boldsymbol{M} \boldsymbol{R}+\frac{1-d}{n} \boldsymbol{1} \tag{21.10}
+\end{equation*}
+
+
+式中 $d(0 \leqslant d \leqslant 1)$ 是系数, 称为阻尼因子 (damping factor) ; $\boldsymbol{R}$ 是 $n$ 维向量; $\boldsymbol{1}$ 是所有分量为 1 的 $n$ 维向量。 $\boldsymbol{R}$ 表示的就是有向图的一般 PageRank。
+
+$$
+\boldsymbol{R}=\left[\begin{array}{c}
+\operatorname{PR}\left(v_{1}\right) \\
+\operatorname{PR}\left(v_{2}\right) \\
+\vdots \\
+\operatorname{PR}\left(v_{n}\right)
+\end{array}\right]
+$$
+
+其中, $\operatorname{PR}\left(v_{i}\right), i=1,2, \cdots, n$, 表示结点 $v_{i}$ 的 PageRank 值。
+
+式 (21.10) 中第一项表示 (状态分布是平稳分布时) 依照转移矩阵 $\boldsymbol{M}$ 访问各个结点的概\\
+率, 第二项表示完全随机访问各个结点的概率。阻尼因子 $d$ 取值由经验决定, 例如, $d=0.85$ 。当 $d$ 接近 1 时, 随机游走主要依照转移矩阵 $M$ 进行; 当 $d$ 接近 0 时, 随机游走主要以等概率随机访问各个结点。
+
+可以由式 (21.10) 写出每个结点的 PageRank, 这是一般 PageRank 的定义。
+
+
+\begin{equation*}
+\operatorname{PR}\left(v_{i}\right)=d\left(\sum_{v_{j} \in M\left(v_{i}\right)} \frac{\operatorname{PR}\left(v_{j}\right)}{L\left(v_{j}\right)}\right)+\frac{1-d}{n}, \quad i=1,2, \cdots, n \tag{21.11}
+\end{equation*}
+
+
+这里 $M\left(v_{i}\right)$ 是指向结点 $v_{i}$ 的结点集合, $L\left(v_{j}\right)$ 是结点 $v_{j}$ 连出的边的个数。
+
+第二项称为平滑项, 由于采用平滑项, 所有结点的 PageRank 值都不会为 0 , 具有以下性质:
+
+
+\begin{gather*}
+\operatorname{PR}\left(v_{i}\right)>0, \quad i=1,2, \cdots, n  \tag{21.12}\\
+\sum_{i=1}^{n} \operatorname{PR}\left(v_{i}\right)=1 \tag{21.13}
+\end{gather*}
+
+
+下面给出 PageRank 的一般定义。
+
+定义 21.4 (PageRank 的一般定义) 给定一个含有 $n$ 个结点的任意有向图, 在有向图上定义一个一般的随机游走模型, 即一阶马尔可夫链。一般的随机游走模型的转移矩阵由两部分线性组合组成, 一部分是有向图的基本转移矩阵 $M$, 表示从一个结点到其连出的所有结点的转移概率相等, 另一部分是完全随机的转移矩阵, 表示从任意一个结点到任意一个结点的转移概率都是 $1 / n$, 线性组合系数为阻尼因子 $d(0 \leqslant d \leqslant 1)$ 。这个一般随机游走的马尔可夫链存在平稳分布, 记作 $\boldsymbol{R}$ 。定义平稳分布向量 $\boldsymbol{R}$ 为这个有向图的一般 PageRank。 $\boldsymbol{R}$ 由公式
+
+
+\begin{equation*}
+\boldsymbol{R}=d \boldsymbol{M} \boldsymbol{R}+\frac{1-d}{n} \mathbf{1} \tag{21.14}
+\end{equation*}
+
+
+决定，其中 1 是所有分量为 1 的 $n$ 维向量。
+
+一般 PageRank 的定义意味着互联网浏览者按照以下方法在网上随机游走: 在任意一个网页上, 浏览者或者以概率 $d$ 决定按照超链接随机跳转, 这时以等概率从连接出去的超链接跳转到下一个网页; 或者以概率 $(1-d)$ 决定完全随机跳转, 这时以等概率 $1 / n$ 跳转到任意一个网页。第二个机制保证从没有连接出去的超链接的网页也可以跳转出。这样可以保证平稳分布, 即一般 PageRank 的存在, 因而一般 PageRank 适用于任何结构的网络。
+
+\subsection*{21.2 PageRank 的计算}
+PageRank 的定义是构造性的, 即定义本身就给出了算法。本节列出的 PageRank 的计算方法包括迭代算法、幂法、代数算法, 常用的方法是幂法。
+
+\subsection*{21.2.1 迭代算法}
+给定一个含有 $n$ 个结点的有向图, 转移矩阵为 $M$, 有向图的一般 PageRank 由迭代公式
+
+
+\begin{equation*}
+\boldsymbol{R}_{t+1}=d \boldsymbol{M} \boldsymbol{R}_{t}+\frac{1-d}{n} \boldsymbol{1} \tag{21.15}
+\end{equation*}
+
+
+的极限向量 $\boldsymbol{R}$ 确定。
+
+PageRank 的迭代算法就是按照这个一般定义进行迭代, 直至收玫。
+
+\section*{算法 21.1 (PageRank 的迭代算法)}
+输入: 含有 $n$ 个结点的有向图, 转移矩阵 $\boldsymbol{M}$, 阻尼因子 $d$, 初始向量 $\boldsymbol{R}_{0}$ 。
+
+输出: 有向图的 PageRank 向量 $\boldsymbol{R}$ 。
+
+(1) 令 $t=0$;
+
+(2) 计算
+
+$$
+\boldsymbol{R}_{t+1}=d \boldsymbol{M} \boldsymbol{R}_{t}+\frac{1-d}{n} \boldsymbol{1}
+$$
+
+(3) 如果 $\boldsymbol{R}_{t+1}$ 与 $\boldsymbol{R}_{t}$ 充分接近, 令 $\boldsymbol{R}=\boldsymbol{R}_{t+1}$, 停止迭代;
+
+(4) 否则, 令 $t=t+1$, 执行步骤 (2)。
+
+例 21.3 给定图 21.4 所示的有向图, 取 $d=0.8$, 求图的 PageRank。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-19}
+\end{center}
+
+图 21.4 有向图
+
+解 从图 21.4 得知转移矩阵为
+
+$$
+\boldsymbol{M}=\left[\begin{array}{cccc}
+0 & 1 / 2 & 0 & 0 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 0 & 1 & 1 / 2 \\
+1 / 3 & 1 / 2 & 0 & 0
+\end{array}\right]
+$$
+
+按照式 (21.15) 计算:
+
+$$
+\begin{aligned}
+& d \boldsymbol{M}=\frac{4}{5} \times\left[\begin{array}{cccc}
+0 & 1 / 2 & 0 & 0 \\
+1 / 3 & 0 & 0 & 1 / 2 \\
+1 / 3 & 0 & 1 & 1 / 2 \\
+1 / 3 & 1 / 2 & 0 & 0
+\end{array}\right]=\left[\begin{array}{cccc}
+0 & 2 / 5 & 0 & 0 \\
+4 / 15 & 0 & 0 & 2 / 5 \\
+4 / 15 & 0 & 4 / 5 & 2 / 5 \\
+4 / 15 & 2 / 5 & 0 & 0
+\end{array}\right] \\
+& \frac{1-d}{n} \boldsymbol{1}=\left[\begin{array}{c}
+1 / 20 \\
+1 / 20 \\
+1 / 20 \\
+1 / 20
+\end{array}\right]
+\end{aligned}
+$$
+
+迭代公式为
+
+$$
+\boldsymbol{R}_{t+1}=\left[\begin{array}{cccc}
+0 & 2 / 5 & 0 & 0 \\
+4 / 15 & 0 & 0 & 2 / 5 \\
+4 / 15 & 0 & 4 / 5 & 2 / 5 \\
+4 / 15 & 2 / 5 & 0 & 0
+\end{array}\right] \boldsymbol{R}_{t}+\left[\begin{array}{c}
+1 / 20 \\
+1 / 20 \\
+1 / 20 \\
+1 / 20
+\end{array}\right]
+$$
+
+令初始向量
+
+$$
+\boldsymbol{R}_{0}=\left[\begin{array}{c}
+1 / 4 \\
+1 / 4 \\
+1 / 4 \\
+1 / 4
+\end{array}\right]
+$$
+
+进行迭代:
+
+$$
+\begin{aligned}
+& \boldsymbol{R}_{1}=\left[\begin{array}{cccc}
+0 & 2 / 5 & 0 & 0 \\
+4 / 15 & 0 & 0 & 2 / 5 \\
+4 / 15 & 0 & 4 / 5 & 2 / 5 \\
+4 / 15 & 2 / 5 & 0 & 0
+\end{array}\right]\left[\begin{array}{c}
+1 / 4 \\
+1 / 4 \\
+1 / 4 \\
+1 / 4
+\end{array}\right]+\left[\begin{array}{c}
+1 / 20 \\
+1 / 20 \\
+1 / 20 \\
+1 / 20
+\end{array}\right]=\left[\begin{array}{c}
+9 / 60 \\
+13 / 60 \\
+25 / 60 \\
+13 / 60
+\end{array}\right] \\
+& \boldsymbol{R}_{2}=\left[\begin{array}{cccc}
+0 & 2 / 5 & 0 & 0 \\
+4 / 15 & 0 & 0 & 2 / 5 \\
+4 / 15 & 0 & 4 / 5 & 2 / 5 \\
+4 / 15 & 2 / 5 & 0 & 0
+\end{array}\right]\left[\begin{array}{c}
+9 / 60 \\
+13 / 60 \\
+25 / 60 \\
+13 / 60
+\end{array}\right]+\left[\begin{array}{c}
+1 / 20 \\
+1 / 20 \\
+1 / 20 \\
+1 / 20
+\end{array}\right]=\left[\begin{array}{c}
+41 / 300 \\
+53 / 300 \\
+153 / 300 \\
+53 / 300
+\end{array}\right]
+\end{aligned}
+$$
+
+等。最后得到:
+
+$$
+\left[\begin{array}{c}
+1 / 4 \\
+1 / 4 \\
+1 / 4 \\
+1 / 4
+\end{array}\right],\left[\begin{array}{c}
+9 / 60 \\
+13 / 60 \\
+25 / 60 \\
+13 / 60
+\end{array}\right],\left[\begin{array}{c}
+41 / 300 \\
+53 / 300 \\
+153 / 300 \\
+53 / 300
+\end{array}\right],\left[\begin{array}{c}
+543 / 4500 \\
+707 / 4500 \\
+2543 / 4500 \\
+707 / 4500
+\end{array}\right], \cdots,\left[\begin{array}{c}
+15 / 148 \\
+19 / 148 \\
+95 / 148 \\
+19 / 148
+\end{array}\right]
+$$
+
+计算结果表明, 结点 C 的 PageRank 值超过一半, 其他结点也有相应的 PageRank 值。
+
+\subsection*{21.2.2 幂法}
+幂法 (power method) 是一个常用的 PageRank 计算方法, 通过近似计算矩阵的主特征值和主特征向量求得有向图的一般 PageRank。
+
+首先介绍幂法。幂法主要用于近似计算矩阵的主特征值 (dominant eigenvalue) 和主特\\
+征向量（dominant eigenvector）。主特征值是指绝对值最大的特征值, 主特征向量是其对应的特征向量。注意特征向量不是唯一的, 只是其方向是确定的, 乘以任意系数还是特征向量。
+
+假设要求 $n$ 阶矩阵 $A$ 的主特征值和主特征向量, 采用下面的步骤。
+
+首先, 任取一个初始 $n$ 维向量 $\boldsymbol{x}_{0}$, 构造如下的一个 $n$ 维向量序列:
+
+$$
+\boldsymbol{x}_{0}, \quad \boldsymbol{x}_{1}=\boldsymbol{A} \boldsymbol{x}_{0}, \quad \boldsymbol{x}_{2}=\boldsymbol{A} \boldsymbol{x}_{1}, \quad \cdots, \quad \boldsymbol{x}_{k}=\boldsymbol{A} \boldsymbol{x}_{k-1}
+$$
+
+然后, 假设矩阵 $\boldsymbol{A}$ 有 $n$ 个特征值, 按照绝对值大小排列:
+
+$$
+\left|\lambda_{1}\right| \geqslant\left|\lambda_{2}\right| \geqslant \cdots \geqslant\left|\lambda_{n}\right|
+$$
+
+对应的 $n$ 个线性无关的特征向量为
+
+$$
+\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{n}
+$$
+
+这 $n$ 个特征向量构成 $n$ 维空间的一组基。
+
+于是, 可以将初始向量 $\boldsymbol{x}_{0}$ 表示为 $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{n}$ 的线性组合:
+
+$$
+\boldsymbol{x}_{0}=a_{1} \boldsymbol{u}_{1}+a_{2} \boldsymbol{u}_{2}+\cdots+a_{n} \boldsymbol{u}_{n}
+$$
+
+得到:
+
+$$
+\begin{aligned}
+\boldsymbol{x}_{1} & =\boldsymbol{A} \boldsymbol{x}_{0}=a_{1} \boldsymbol{A} \boldsymbol{u}_{1}+a_{2} \boldsymbol{A} \boldsymbol{u}_{2}+\cdots+a_{n} \boldsymbol{A} \boldsymbol{u}_{n} \\
+& \vdots \\
+\boldsymbol{x}_{k} & =\boldsymbol{A}^{k} \boldsymbol{x}_{0}=a_{1} \boldsymbol{A}^{k} \boldsymbol{u}_{1}+a_{2} \boldsymbol{A}^{k} \boldsymbol{u}_{2}+\cdots+a_{n} \boldsymbol{A}^{k} \boldsymbol{u}_{n} \\
+& =a_{1} \lambda_{1}^{k} \boldsymbol{u}_{1}+a_{2} \lambda_{2}^{k} \boldsymbol{u}_{2}+\cdots+a_{n} \lambda_{n}^{k} \boldsymbol{u}_{n}
+\end{aligned}
+$$
+
+接着, 假设矩阵 $\boldsymbol{A}$ 的主特征值 $\lambda_{1}$ 是特征方程的单根，由上式得:
+
+
+\begin{equation*}
+\boldsymbol{x}_{k}=a_{1} \lambda_{1}^{k}\left[\boldsymbol{u}_{1}+\frac{a_{2}}{a_{1}}\left(\frac{\lambda_{2}}{\lambda_{1}}\right)^{k} \boldsymbol{u}_{2}+\cdots+\frac{a_{n}}{a_{1}}\left(\frac{\lambda_{n}}{\lambda_{1}}\right)^{k} \boldsymbol{u}_{n}\right] \tag{21.16}
+\end{equation*}
+
+
+由于 $\left|\lambda_{1}\right|>\left|\lambda_{j}\right|, j=2,3, \cdots, n$, 当 $k$ 充分大时有
+
+
+\begin{equation*}
+\boldsymbol{x}_{k}=a_{1} \lambda_{1}^{k}\left(\boldsymbol{u}_{1}+\varepsilon_{k}\right) \tag{21.17}
+\end{equation*}
+
+
+这里 $\varepsilon_{k}$ 是当 $k \rightarrow \infty$ 时的无穷小量, $\varepsilon_{k} \rightarrow 0(k \rightarrow \infty)$ 。即
+
+
+\begin{equation*}
+x_{k} \rightarrow a_{1} \lambda_{1}^{k} \boldsymbol{u}_{1}(k \rightarrow \infty) \tag{21.18}
+\end{equation*}
+
+
+说明当 $k$ 充分大时向量 $\boldsymbol{x}_{k}$ 与特征向量 $\boldsymbol{u}_{1}$ 只相差一个系数。由式 (21.18) 知:
+
+$$
+\begin{aligned}
+& \boldsymbol{x}_{k} \approx a_{1} \lambda_{1}^{k} \boldsymbol{u}_{1} \\
+& \boldsymbol{x}_{k+1} \approx a_{1} \lambda_{1}^{k+1} \boldsymbol{u}_{1}
+\end{aligned}
+$$
+
+于是主特征值 $\lambda_{1}$ 可表示为
+
+
+\begin{equation*}
+\lambda_{1} \approx \frac{x_{k+1, j}}{x_{k, j}} \tag{21.19}
+\end{equation*}
+
+
+其中, $x_{k, j}$ 和 $x_{k+1, j}$ 分别是 $x_{k}$ 和 $\boldsymbol{x}_{k+1}$ 的第 $j$ 个分量。\\
+在实际计算时, 为了避免出现绝对值过大或过小的情况, 通常在每步迭代后即进行规范化, 将向量除以其范数, 即
+
+
+\begin{align*}
+& \boldsymbol{y}_{t+1}=\boldsymbol{A} \boldsymbol{x}_{t}  \tag{21.20}\\
+& \boldsymbol{x}_{t+1}=\frac{\boldsymbol{y}_{t+1}}{\left\|\boldsymbol{y}_{t+1}\right\|} \tag{21.21}
+\end{align*}
+
+
+这里的范数是向量的无穷范数, 即向量各分量的绝对值的最大值。
+
+$$
+\|x\|_{\infty}=\max \left\{\left|x_{1}\right|,\left|x_{2}\right|, \cdots,\left|x_{n}\right|\right\}
+$$
+
+现在回到计算一般 PageRank。
+
+转移矩阵可以写作
+
+
+\begin{equation*}
+\boldsymbol{R}=\left(d \boldsymbol{M}+\frac{1-d}{n} \boldsymbol{E}\right) \boldsymbol{R}=\boldsymbol{A} \boldsymbol{R} \tag{21.22}
+\end{equation*}
+
+
+其中, $d$ 是阻尼因子, $\boldsymbol{E}$ 是所有元素为 1 的 $n$ 阶方阵。根据 Perron-Frobenius 定理 (1), 一般 PageRank 的向量 $\boldsymbol{R}$ 是矩阵 $\boldsymbol{A}$ 的主特征向量, 主特征值是 1, 所以可以使用幂法近似计算一般 PageRank。
+
+\section*{算法 21.2 (计算一般 PageRank 的幂法)}
+输入: 含有 $n$ 个结点的有向图, 有向图的转移矩阵 $\boldsymbol{M}$, 系数 $d$, 初始向量 $\boldsymbol{x}_{0}$, 计算精度 $\varepsilon$ 。
+
+输出: 有向图的 PageRank $\boldsymbol{R}$ 。
+
+(1) 令 $t=0$, 选择初始向量 $x_{0}$ 。
+
+(2) 计算有向图的一般转移矩阵 $\boldsymbol{A}$ :
+
+$$
+\boldsymbol{A}=d \boldsymbol{M}+\frac{1-d}{n} \boldsymbol{E}
+$$
+
+(3) 迭代并规范化结果向量:
+
+$$
+\begin{aligned}
+& \boldsymbol{y}_{t+1}=\boldsymbol{A} \boldsymbol{x}_{t} \\
+& \boldsymbol{x}_{t+1}=\frac{\boldsymbol{y}_{t+1}}{\left\|\boldsymbol{y}_{t+1}\right\|}
+\end{aligned}
+$$
+
+(4) 当 $\left\|\boldsymbol{x}_{t+1}-\boldsymbol{x}_{t}\right\|<\varepsilon$ 时, 令 $\boldsymbol{R}=\boldsymbol{x}_{t}$, 停止迭代。
+
+(5) 否则, 令 $t=t+1$, 执行步骤 (3)。
+
+（6）对 $\boldsymbol{R}$ 进行规范化处理，使其表示概率分布。
+
+例 21.4 给定一个如图 21.5 所示的有向图, 取 $d=0.85$, 求有向图的一般 PageRank。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-22}
+\end{center}
+
+图 21.5 有向图
+
+(1) Perron-Frobenius 定理的形式比较复杂, 这里不予叙述。\\
+解 利用幂法, 按照算法 21.2, 计算有向图的一般 PageRank。
+
+由图 21.5 可知转移矩阵为
+
+$$
+\boldsymbol{M}=\left[\begin{array}{ccc}
+0 & 0 & 1 \\
+1 / 2 & 0 & 0 \\
+1 / 2 & 1 & 0
+\end{array}\right]
+$$
+
+(1) 令 $t=0$,
+
+$$
+\boldsymbol{x}_{0}=\left[\begin{array}{l}
+1 \\
+1 \\
+1
+\end{array}\right]
+$$
+
+(2) 计算有向图的一般转移矩阵 $\boldsymbol{A}$ :
+
+$$
+\begin{aligned}
+\boldsymbol{A} & =d \boldsymbol{M}+\frac{1-d}{n} \boldsymbol{E} \\
+& =0.85 \times\left[\begin{array}{ccc}
+0 & 0 & 1 \\
+1 / 2 & 0 & 0 \\
+1 / 2 & 1 & 0
+\end{array}\right]+\frac{0.15}{3} \times\left[\begin{array}{ccc}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1
+\end{array}\right] \\
+& =\left[\begin{array}{lll}
+0.05 & 0.05 & 0.9 \\
+0.475 & 0.05 & 0.05 \\
+0.475 & 0.9 & 0.05
+\end{array}\right]
+\end{aligned}
+$$
+
+(3) 迭代并规范化:
+
+$$
+\begin{aligned}
+& \boldsymbol{y}_{1}=\boldsymbol{A} \boldsymbol{x}_{0}=\left[\begin{array}{l}
+1 \\
+0.575 \\
+1.425
+\end{array}\right] \\
+& x_{1}=\frac{1}{1.425}\left[\begin{array}{l}
+1 \\
+0.575 \\
+1.425
+\end{array}\right]=\left[\begin{array}{l}
+0.7018 \\
+0.4035 \\
+1
+\end{array}\right] \\
+& \boldsymbol{y}_{2}=\boldsymbol{A} \boldsymbol{x}_{1}=\left[\begin{array}{lll}
+0.05 & 0.05 & 0.9 \\
+0.475 & 0.05 & 0.05 \\
+0.475 & 0.9 & 0.05
+\end{array}\right]\left[\begin{array}{l}
+0.7018 \\
+0.4035 \\
+1
+\end{array}\right]=\left[\begin{array}{l}
+0.9553 \\
+0.4035 \\
+0.7465
+\end{array}\right]
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+& \boldsymbol{x}_{2}=\frac{1}{0.9553}\left[\begin{array}{l}
+0.9553 \\
+0.4035 \\
+0.7465
+\end{array}\right]=\left[\begin{array}{l}
+1 \\
+0.4224 \\
+0.7814
+\end{array}\right] \\
+& \boldsymbol{y}_{3}=\boldsymbol{A} \boldsymbol{x}_{2}=\left[\begin{array}{lll}
+0.05 & 0.05 & 0.9 \\
+0.475 & 0.05 & 0.05 \\
+0.475 & 0.9 & 0.05
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0.4224 \\
+0.7814
+\end{array}\right]=\left[\begin{array}{l}
+0.7744 \\
+0.5352 \\
+0.8943
+\end{array}\right] \\
+& \boldsymbol{x}_{3}=\frac{1}{0.8943}\left[\begin{array}{l}
+0.7744 \\
+0.5352 \\
+0.8943
+\end{array}\right]=\left[\begin{array}{l}
+0.8659 \\
+0.5985 \\
+1
+\end{array}\right]
+\end{aligned}
+$$
+
+如此继续迭代规范化, 得到 $\boldsymbol{x}_{t}, t=0,1,2, \cdots, 21,22$ 的向量序列:
+
+$$
+\begin{aligned}
+& {\left[\begin{array}{l}
+1 \\
+1 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+0.7018 \\
+0.4035 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+1 \\
+0.4224 \\
+0.7814
+\end{array}\right],\left[\begin{array}{l}
+0.8659 \\
+0.5985 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+0.9732 \\
+0.4912 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+1 \\
+0.5516 \\
+0.9807
+\end{array}\right],} \\
+& {\left[\begin{array}{l}
+0.9409 \\
+0.5405 \\
+1
+\end{array}\right], \cdots,\left[\begin{array}{l}
+0.9760 \\
+0.5408 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+0.9755 \\
+0.5404 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+0.9761 \\
+0.5406 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+0.9756 \\
+0.5406 \\
+1
+\end{array}\right],\left[\begin{array}{l}
+0.9758 \\
+0.5404 \\
+1
+\end{array}\right]}
+\end{aligned}
+$$
+
+假设后面得到的两个向量已满足计算精度要求, 那么取
+
+$$
+\boldsymbol{R}=\left[\begin{array}{l}
+0.9756 \\
+0.5406 \\
+1
+\end{array}\right]
+$$
+
+即得所求的一般 PageRank。如果将一般 PageRank 作为一个概率分布, 进行规范化, 使各分量之和为 1 , 那么相应的一般 PageRank 可以写作
+
+$$
+\boldsymbol{R}=\left[\begin{array}{l}
+0.3877 \\
+0.2149 \\
+0.3974
+\end{array}\right]
+$$
+
+\section*{21.2 .3 代数算法}
+代数算法通过一般转移矩阵的逆矩阵计算求有向图的一般 PageRank。\\
+按照一般 PageRank 的定义式 (21.14):
+
+$$
+\boldsymbol{R}=d \boldsymbol{M} \boldsymbol{R}+\frac{1-d}{n} \boldsymbol{1}
+$$
+
+于是，
+
+
+\begin{gather*}
+(\boldsymbol{I}-d \boldsymbol{M}) \boldsymbol{R}=\frac{1-d}{n} \boldsymbol{1}  \tag{21.23}\\
+\boldsymbol{R}=(\boldsymbol{I}-d \boldsymbol{M})^{-1} \frac{1-d}{n} \boldsymbol{1} \tag{21.24}
+\end{gather*}
+
+
+这里 $\boldsymbol{I}$ 是单位矩阵。当 $0<d<1$ 时, 线性方程 (21.23) 的解存在且唯一。这样, 可以通过求逆矩阵 $(\boldsymbol{I}-d \boldsymbol{M})^{-1}$ 得到有向图的一般 PageRank。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item PageRank 是互联网网页重要度的计算方法, 可以定义推广到任意有向图结点的重要度计算上。其基本思想是在有向图上定义随机游走模型, 即一阶马尔可夫链, 描述游走者沿着有向图随机访问各个结点的行为, 在一定条件下, 极限情况访问每个结点的概率收玫到平稳分布, 这时各个结点的概率值就是其 PageRank 值, 表示结点相对重要度。
+
+  \item 有向图上可以定义随机游走模型, 即一阶马尔可夫链, 其中结点表示状态, 有向边表示状态之间的转移, 假设一个结点到连接出的所有结点的转移概率相等。转移概率由转移矩阵 $M$ 表示:
+
+\end{enumerate}
+
+$$
+\boldsymbol{M}=\left[m_{i j}\right]_{n \times n}
+$$
+
+第 $i$ 行第 $j$ 列的元素 $m_{i j}$ 表示从结点 $j$ 跳转到结点 $i$ 的概率。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 当含有 $n$ 个结点的有向图是强连通且非周期性的有向图时, 在其基础上定义的随机游走模型即一阶马尔可夫链具有平稳分布, 平稳分布向量 $\boldsymbol{R}$ 称为这个有向图的 PageRank。若矩阵 $\boldsymbol{M}$ 是马尔可夫链的转移矩阵, 则向量 $\boldsymbol{R}$ 满足
+\end{enumerate}
+
+$$
+M R=R
+$$
+
+向量 $\boldsymbol{R}$ 的各个分量称为各个结点的 PageRank 值。
+
+$$
+\boldsymbol{R}=\left[\begin{array}{c}
+\operatorname{PR}\left(v_{1}\right) \\
+\operatorname{PR}\left(v_{2}\right) \\
+\vdots \\
+\operatorname{PR}\left(v_{n}\right)
+\end{array}\right]
+$$
+
+其中, $\mathrm{PR}\left(v_{i}\right), i=1,2, \cdots, n$, 表示结点 $v_{i}$ 的 PageRank 值。这是 PageRank 的基本定义。
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item PageRank 基本定义的条件现实中往往不能满足, 对其进行扩展得到 PageRank 的一般定义。任意含有 $n$ 个结点的有向图上, 可以定义一个随机游走模型, 即一阶马尔可夫链, 转移矩阵由两部分线性组合组成, 其中一部分按照转移矩阵 $M$, 从一个结点到连接出的所有结\\
+点的转移概率相等, 另一部分按照完全随机转移矩阵, 从任一结点到任一结点的转移概率都是 $1 / n$ 。这个马尔可夫链存在平稳分布, 平稳分布向量 $\boldsymbol{R}$ 称为这个有向图的一般 PageRank,满足
+\end{enumerate}
+
+$$
+\boldsymbol{R}=d \boldsymbol{M} \boldsymbol{R}+\frac{1-d}{n} \boldsymbol{1}
+$$
+
+其中, $d(0 \leqslant d \leqslant 1)$ 是阻尼因子, 1 是所有分量为 1 的 $n$ 维向量。
+
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item PageRank 的计算方法包括迭代算法、幂法、代数算法。
+\end{enumerate}
+
+幂法将 PageRank 的等价式写成
+
+$$
+\boldsymbol{R}=\left(d \boldsymbol{M}+\frac{1-d}{n} \boldsymbol{E}\right) \boldsymbol{R}=\boldsymbol{A} \boldsymbol{R}
+$$
+
+其中, $d$ 是阻尼因子, $\boldsymbol{E}$ 是所有元素为 1 的 $n$ 阶方阵。
+
+可以看出 $R$ 是一般转移矩阵 $\boldsymbol{A}$ 的主特征向量, 即最大的特征值对应的特征向量。幂法就是一个计算矩阵的主特征值和主特征向量的方法。
+
+步骤如下: 选择初始向量 $\boldsymbol{x}_{0}$; 计算一般转移矩阵 $\boldsymbol{A}$; 进行迭代并规范化向量
+
+$$
+\begin{aligned}
+& \boldsymbol{y}_{t+1}=\boldsymbol{A} \boldsymbol{x}_{t} \\
+& \boldsymbol{x}_{t+1}=\frac{\boldsymbol{y}_{t+1}}{\left\|\boldsymbol{y}_{t+1}\right\|}
+\end{aligned}
+$$
+
+直至收玫。
+
+\section*{继续阅 读}
+PageRank 的原始论文是文献 [1], 其详细介绍可见文献 [2] 和文献 [3]。介绍马尔可夫过程的教材有文献 [4]。与 PageRank 同样著名的链接分析算法还有 HITS 算法 ${ }^{[5]}$, 可以发现网络中的枢纽与权威。PageRank 有不少扩展与变形, 原始的 PageRank 是基于离散时间马尔可夫链的, BrowseRank 是基于连续时间马尔可夫链的推广 ${ }^{[6]}$, 可以更好地防范网页排名欺诈。Personalized PageRank 是个性化的 PageRank (文献 [7]), Topic Sensitive PageRank 是基于话题的 PageRank (文献 [8]), TrustRank 是防范网页排名欺诈的 PageRank (文献 [9])。
+
+\section*{习 题}
+21.1 假设方阵 $\boldsymbol{A}$ 是随机矩阵, 即其每个元素非负, 每列元素之和为 1 , 证明 $\boldsymbol{A}^{k}$ 仍然是随机矩阵, 其中 $k$ 是自然数。
+
+21.2 例 21.1 中, 以不同的初始分布向量 $\boldsymbol{R}_{0}$ 进行迭代, 仍然得到同样的极限向量 $\boldsymbol{R}$,即 PageRank。请验证。
+
+21.3 证明 PageRank 一般定义中的马尔可夫链具有平稳分布, 即式 (21.11) 成立。
+
+21.4 证明随机矩阵的最大特征值为 1 。
+
+\section*{参考文献}
+[1] PAGE L, BRIN S, MOTWANI R, et al. The PageRank citation ranking: bringing order to the Web[M]. Stanford University, 1999.
+
+[2] RAJARAman A, ULLman J D. Mining of massive datasets[M]. Cambridge University Press, 2014 .
+
+[3] LIU B. Web data mining: exploring hyperlinks, contents, and usage data[M]. Springer Science \& Business Media, 2007.
+
+[4] SERFOZO R. Basics of applied stochastic processes[M]. Springer, 2009.
+
+[5] KLEINBERG J M. Authoritative sources in a hyperlinked environment[J]. Journal of the $\operatorname{ACM}(\mathrm{JACM}), 1999,46(5): 604-632$.
+
+[6] LIU Y, GAO B, LIU T Y, et al. BrowseRank: letting Web users vote for page importance[C]//Proceedings of the 31st SIGIR Conference. 2008: 451-458.
+
+[7] JEH G, WIDOM J. Scaling personalized Web search[C]//Proceedings of the 12th WWW Conference. 2003: 271-279.
+
+[8] HAVELIWALA T H. Topic-sensitive PageRank[C]//Proceedings of the 11th WWW Conference. 2002: 517-526.
+
+[9] GYÖNGYI Z, GARCIA-MOLINA H, PEDERSEN J. Combating Web spam with TrustRank[C] //Proceedings of VLDB Conference. 2004: 576-587.
+
+\section*{第 22 章无监督学习方法总结}
+\section*{22.1 无监督学习方法的关系和特点}
+第 2 篇详细介绍了八种常用的统计机器学习方法, 即聚类方法 (包括层次聚类与 $k$ 均值聚类)、奇异值分解 (SVD) 、主成分分析 (PCA) 、潜在语义分析 (LSA)、概率潜在语义分析 (PLSA) 、马尔可夫链蒙特卡罗法 (MCMC, 包括 Metropolis-Hastings 算法和吉布斯抽样)、潜在狄利克雷分配 (LDA)、PageRank 算法。此外, 还简单介绍了另外三种常用的统计机器学习方法, 即非负矩阵分解 (NMF) 、变分推理、幂法。这些方法通常用于无监督学习的聚类、降维、话题分析以及图分析。
+
+\subsection*{22.1.1 各种方法之间的关系}
+图 22.1 总结了一些机器学习方法之间的关系, 包括第 1 篇、第 2 篇介绍的方法, 分别用深灰色与浅灰色表示。图中上面是无监督学习方法, 下面是基础机器学习方法。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-28}
+\end{center}
+
+图 22.1 机器学习方法之间的关系
+
+无监督学习用于聚类、降维、话题分析、图分析。聚类的方法有层次聚类、 $k$ 均值聚类、高斯混合模型, 降维的方法有 PCA, 话题分析的方法包括 LSA、PLSA、LDA, 图分析的方法有 PageRank。
+
+基础方法不涉及具体的机器学习模型。基础方法不仅可以用于无监督学习, 也可以用于监督学习、半监督学习。基础方法分为矩阵分解、矩阵特征值求解、含有隐变量的概率模型估计, 前两者是线性代数问题, 后者是概率统计问题。矩阵分解的方法有 SVD 和 NMF, 矩阵特\\
+征值求解的方法有幂法, 含有隐变量的概率模型学习的方法有 EM 算法、变分推理、MCMC。
+
+\subsection*{22.1.2 无监督学习方法}
+聚类有硬聚类和软聚类, 层次聚类与 $k$ 均值聚类是硬聚类方法, 高斯混合模型是软聚类方法。层次聚类基于启发式算法, $k$ 均值聚类基于迭代算法, 高斯混合模型学习通常基于 EM 算法。
+
+降维有线性降维和非线性降维, PCA 是线性降维方法。PCA 基于 SVD。
+
+话题分析兼有聚类和降维特点, 有非概率模型、概率模型。LSA 和 NMF 是非概率模型, PLSA 和 LDA 是概率模型。PLSA 不假设模型具有先验分布, 学习基于极大似然估计; LDA 假设模型具有先验分布, 学习基于贝叶斯学习, 具体地后验概率估计。LSA 的学习基于 SVD, NMF 可以直接用于话题分析。PLSA 的学习基于 EM 算法, LDA 的学习基于吉布斯抽样或变分推理。
+
+图分析的一个问题是链接分析, 即结点的重要度计算。PageRank 是链接分析的一个方法, 通常基于幂法。
+
+表 22.1 总结了无监督学习方法的模型、策略、算法。
+
+表 22.1 无监督学习方法的模型、策略和算法
+
+\begin{center}
+\begin{tabular}{l|l|l|l|l}
+\hline
+\multirow{4}{*}{聚类} & \multicolumn{1}{|c|}{方法} & \multicolumn{1}{c|}{模型} & \multicolumn{1}{c}{策略} & \multicolumn{1}{c}{算法} \\
+\cline { 2 - 5 }
+ & 层次聚类 & 聚类树 & 类内样本距离最小 & 启发式算法 \\
+\cline { 2 - 5 }
+ & $k$ 均值聚类 & $k$ 中心聚类 & 样本与类中心距离最小 & 迭代算法 \\
+\cline { 2 - 5 }
+ & 高斯混合模型 & 高斯混合模型 & 似然函数最大 & EM 算法 \\
+\hline
+\multirow{3}{*}{话题分析} & PCA & 低维正交空间 & 方差最大 & SVD \\
+\cline { 2 - 5 }
+ & LSA & 矩阵分解模型 & 平方损失最小 & SVD \\
+\cline { 2 - 5 }
+ & PLSA & 矩阵分解模型 & 平方损失最小 & 非负矩阵分解 \\
+\cline { 2 - 5 }
+图分析 & PLSA 模型 & 似然函数最大 & EM 算法 &  \\
+\hline
+\multirow{2}{*}{PageRank} & LDA 模型 & 后验概率估计 & 吉布斯抽样, 变分推理 &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{22.1.3 基础机器学习方法}
+矩阵分解基于不同假设：SVD 基于正交假设，即分解得到的左右矩阵是正交矩阵，中间矩阵是非负对角矩阵; 非负矩阵分解基于非负假设, 即分解得到的左右矩阵皆是非负矩阵。
+
+含有隐变量的概率模型的学习有两种方法: 迭代计算方法、随机抽样方法。EM 算法和变分推理 (包括变分 EM 算法) 属于迭代计算方法, 吉布斯抽样属于随机抽样方法。变分 EM 算法是 EM 算法的推广。
+
+矩阵的特征值与特征向量求解方法中, 幂法是常用的算法。
+
+表 22.2 总结了含隐变量概率模型的学习方法的特点。\\
+表 22.2 含有隐变量概率模型的学习方法的特点
+
+\begin{center}
+\begin{tabular}{c|l|c|c|c|c}
+\hline
+\multicolumn{1}{c|}{算法} & \multicolumn{1}{|c|}{基本原理} & 收敛性 & 收敛速度 & 实现难易度 & 适合问题 \\
+\hline
+$\mathrm{EM}$ 算法 & \begin{tabular}{l}
+迭代计算、后验概 \\
+率估计 \\
+\end{tabular} & 收敛于局部最优 & 较快 & 容易 & 简单模型 \\
+\hline
+变分推理 & \begin{tabular}{l}
+迭代计算、后验概 \\
+率近似估计 \\
+\end{tabular} & 收敛于局部最优 & 较慢 & 较复杂 & 复杂模型 \\
+\hline
+吉布斯抽样 & \begin{tabular}{l}
+随机抽样、后验概 \\
+率估计 \\
+\end{tabular} & \begin{tabular}{l}
+依概率收敛于全局 \\
+最优 \\
+\end{tabular} & 较慢 & 容易 & 复杂模型 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{22.2 话题模型之间的关系和特点}
+在本书介绍的四种话题模型 LSA, NMF, PLSA 和 LDA 中, 前两者是非概率模型, 后两者是概率模型。下面讨论它们之间的关系（细节可参考文献 [1] 和文献 [2]）。
+
+可以从矩阵分解的统一框架看 LSA, NMF 和 PLSA。在这个框架下, 通过最小化一般化 Bregman 散度进行有约束的矩阵分解 $D=U V$, 得到这三个话题模型:
+
+$$
+\min _{U, V} B(D \| U V)
+$$
+
+这里 $B(D \| U V)$ 表示 $D$ 和 $U V$ 之间的一般化 Bregman 散度 (generalized Bregman divergence), 当且仅当两者相等时取值为 0 。一般化 Bregman 散度包含平方损失、KL 散度等。三个话题模型拥有三种不同的具体形式。表 22.3 给出了三个话题模型的损失函数和约束的公式, 其中 PLSA 的矩阵 $D$ 需要进行归一化 $\sum_{m, n} d_{m n}=1$ 。
+
+表 22.3 矩阵分解的角度看话题模型
+
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+方法 & 一般损失函数 $B(D \| U V)$ & 矩阵 $U$ 的约束条件 & 矩阵 $V$ 的约束条件 \\
+\hline
+LSA & $\|D-U V\|_{F}^{2}$ & $U^{\mathrm{T}} U=I$ & $V V^{\mathrm{T}}=\Lambda^{2}$ \\
+NMF & $\|D-U V\|_{F}^{2}$ & $u_{m k} \geqslant 0$ & $v_{k n} \geqslant 0$ \\
+PLSA & $\sum_{m n} d_{m n} \log \frac{d_{m n}}{(U V)_{m n}}$ & $U^{\mathrm{T}} 1=1$ & $V^{\mathrm{T}} 1=1$ \\
+ &  & $u_{m k} \geqslant 0$ & $v_{k n} \geqslant 0$ \\
+\hline
+\end{tabular}
+\end{center}
+
+话题模型 LSA 和 NMF 是非概率模型, 但也有概率模型解释。可以从概率图模型的统一框架看 LSA, NMF, PLSA 和 LDA。在这个框架下, 认为文本由概率模型生成, 基于不同的假设得到四个不同的话题模型。四个话题模型有不同的概率图模型定义。对于 LSA 和 NMF,每个文本 $d_{n}$ 由高斯分布 $P\left(d_{n} \mid U, v_{n}\right) \propto \exp \left(-\left\|d_{n}-U v_{n}\right\|^{2}\right)$ 生成, 其参数是 $U$ 和 $v_{n}$, 共有 $N$ 个文本, 如图 22.2 所示。两个话题模型有不同的约束条件, 表 22.4 给出约束条件的公式。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-30}
+\end{center}
+
+图 22.2 话题模型 LSA 和 NMF 的概率图模型表示\\
+表 22.4 话题模型 LSA 和 NMF 的约束条件
+
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+方法 & 变量 $u_{k}$ 的约束条件 & 变量 $v_{n}$ 的约束条件 \\
+\hline
+LSA & 正交 & 正交 \\
+NMF & $u_{m k} \geqslant 0$ & $v_{k n} \geqslant 0$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{参考文献}
+[1] SINGH A P, GORDON G J. A unified view of matrix factorization models[M]//Daelemans W, Goethals B, Morik K. Machine Learning and Knowledge Discovery in Databases. Berlin: Springer, 2008.
+
+[2] WANG Q, XU J, LI H, et al. Regularized latent semantic indexing: a new approach to largescale topic modeling[J]. ACM Transactions on Information Systems (TOIS), 2013, 31(1), 5.\\
+第 3 离深度学习
+
+\section*{第 23 章 前馈神经网络}
+人工神经网络（artificial neural network）或神经网络（neural network）是受生物神经网络启发而发明的由神经元连接组成的网络状机器学习模型。前馈神经网络 (feedforward neural network) 或多层感知机 (multilayer perceptron, MLP) 是最具代表性的神经网络, 主要用于监督学习, 如分类和回归。
+
+前馈神经网络由多层神经元组成, 层间的神经元相互连接, 层内的神经元不连接。其信息处理机制是: 前一层神经元通过层间连接向后一层神经元传递信号, 因为信号是从前往后转递的, 所以是 “前馈的” 信息处理网络。这里, 神经元是对多个输入信号 (实数向量) 进行非线性转换产生一个输出信号 (实数值) 的函数, 整个神经网络是对多个输入信号 (实数向量)进行多次非线性转换产生多个输出信号 (实数向量) 的复合函数。每一个神经元的函数含有参数, 神经网络的神经元的参数通过学习得到。当前馈神经网络的层数达到一定数量时 (一般大于 2), 又称为深度神经网络 (deep neural network, DNN)。
+
+前馈神经网络学习算法是反向传播 (back propagation) 算法, 是随机梯度下降法的具体实现。学习的损失函数通常在分类时是交叉嫡损失, 在回归时是平方损失, 其最小化等价于极大似然估计。学习的正则化方法包括早停法 (early stopping)、暂退法 (dropout)。
+
+McCulloch 和 Pitts 于 1943 年提出了最初的人工神经网络模型; Rosenblatt 于 1958 年发明了感知机, 可以看作是前馈神经网络的前身; Rumelhart 等于 1986 年重新开发了反向传播算法, 用于前馈神经网络学习; Hinton 于 2006 年提出了深度学习的概念, 指包括深度神经网络 (DNN) 等复杂神经网络的机器学习。
+
+本章 23.1 节讲述前馈神经网络的模型, 23.2 节叙述前馈神经网络学习的算法, 23.3 节叙述前馈神经网络学习的正则化方法。
+
+\section*{23.1 前馈神经网络的模型}
+神经网络是由神经元连接组成的网络, 采用不同类型的神经元以及神经元的不同连接方法可以构建出不同的网络结构, 也就是不同的神经网络模型。本节讲述前馈神经网络的基本模型。首先给出前馈神经网络的定义, 接着介绍具体例子, 最后讨论前馈神经网络的表示能力。
+
+\subsection*{23.1.1 前馈神经网络定义}
+\section*{1. 神经元}
+人工神经元 (artificial neuron) 或者简称神经元 (neuron) 是神经网络的基本单元。人工神经元是受生物神经元启发而发明的, 本质是一个函数。生物神经元一般有多个树突接入,一个轴突接出。输入信号从树突传入, 输出信号从轴突传出。当输入信号量达到阈值后, 神经元被激活, 产生输出信号。与其对应, 人工神经元是以实数向量为输入, 实数值为输出的非线性函数, 表示多个输入信号 (实数向量) 到一个输出信号 (实数值) 的非线性转换。
+
+定义 23.1 (神经元) 神经元是如下定义的非线性函数:
+
+
+\begin{equation*}
+y=f\left(x_{1}, x_{2}, \cdots, x_{n}\right)=a\left(\sum_{i=1}^{n} w_{i} x_{i}+b\right) \tag{23.1}
+\end{equation*}
+
+
+或者写作
+
+
+\begin{equation*}
+y=f\left(x_{1}, x_{2}, \cdots, x_{n}\right)=a(z), z=\sum_{i=1}^{n} w_{i} x_{i}+b \tag{23.2}
+\end{equation*}
+
+
+其中, $x_{1}, x_{2}, \cdots, x_{n}$ 是输入, 取实数值; $y$ 是输出, 取实数值; $z$ 是中间结果, 又称作净输入 ( net input), 也取实数值; $w_{1}, w_{2}, \cdots, w_{n}$ 是权重 (weight), $b$ 是偏置 ( bias), 也都取实数值; $z=\sum_{i=1}^{n} w_{i} x_{i}+b$ 是仿射函数; $a(\cdot)$ 是特定的非线性函数, 称为激活函数 (activation function )。激活函数有多种形式，比如 S 型函数:
+
+$$
+a(z)=\frac{1}{1+\mathrm{e}^{-z}}
+$$
+
+神经元函数由两部分组成, 首先使用仿射函数对输入 $x_{1}, x_{2}, \cdots, x_{n}$ 进行仿射变换, 得到净输入 $z$, 然后使用激活函数 $a(z)$ 对净输入 $z$ 进行非线性变换, 得到输出 $y$ 。权重 $w_{1}, w_{2}, \cdots, w_{n}$与偏置 $b$ 是神经元函数的参数, 通过学习得到。
+
+图 23.1 是神经元的示意图。图中结点表示变量, 有向边表示变量之间的依存关系, 有向图整体表示式 (23.1) 和式 (23.2) 的神经元函数。结点 $x_{1}, x_{2}, \cdots x_{n}$ 是神经元的输入变量, 结点 $y$ 是神经元的输出变量。通常不显式表示净输入变量 $z$ 。习惯上, 将权重 $w_{1}, w_{2}, \cdots, w_{n}$ 附在有向边上。为了方便, 经常增加一个恒为 +1 的输入, 取偏置 $b$ 为其权重, 将仿射变换转换成线性变换, 得到一个等价的神经元函数, 图 23.1 的有向图表示的就是这个形式的函数。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-35}
+\end{center}
+
+图 23.1 神经元\\
+神经元也可以用向量表示。设向量
+
+$$
+\begin{gathered}
+\boldsymbol{x}=\left[\begin{array}{c}
+x_{1} \\
+x_{2} \\
+\vdots \\
+x_{n}
+\end{array}\right] \\
+\boldsymbol{w}=\left[\begin{array}{c}
+w_{1} \\
+w_{2} \\
+\vdots \\
+w_{n}
+\end{array}\right]
+\end{gathered}
+$$
+
+为输入和权重, 则神经元为函数
+
+
+\begin{equation*}
+y=f(\boldsymbol{x})=a\left(\boldsymbol{w}^{\mathrm{T}} \boldsymbol{x}+b\right) \tag{23.3}
+\end{equation*}
+
+
+或者写作
+
+
+\begin{equation*}
+y=f(\boldsymbol{x})=a(z), \quad z=\boldsymbol{w}^{\mathrm{T}} \boldsymbol{x}+b \tag{23.4}
+\end{equation*}
+
+
+例 23.1 图 23.2 是一个神经元, 画出其函数的三维图形, 其中激活函数是 $\mathrm{S}$ 型函数。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-36}
+\end{center}
+
+图 23.2 神经元例
+
+解 神经元的仿射函数是 $z=-x_{1}+2 x_{2}+1$, 激活函数是 $a(z)=\frac{1}{1+\mathrm{e}^{-z}}$, 神经元函数是
+
+$$
+y=f\left(x_{1}, x_{2}\right)=\frac{1}{1+\mathrm{e}^{x_{1}-2 x_{2}-1}}
+$$
+
+图 23.3 是神经元函数的三维图形, 整体是三维空间 $\left(x_{1}, x_{2}, y\right)$ 中的一个 $\mathrm{S}$ 形曲面。 $\mathrm{S}$形曲面由平行的等高线组成, 每一条等高线对应着二维空间 $\left(x_{1}, x_{2}\right)$ 中的一条直线 $z=$ $-x_{1}+2 x_{2}+1$, 其中 $z$ 是一个定值。当 $z$ 趋于正无穷时, 等高线趋近于平面 $y=1$; 当 $z$ 趋于负无穷时, 等高线趋近于平面 $y=0$ 。
+
+\section*{2. 前馈神经网络}
+前馈神经网络由多层神经元组成, 层间的神经元相互连接, 层内的神经元不连接, 前一层神经元的输出是后一层神经元的输入。整体表示输入信号 (实数向量) 到输出信号 (实数向量) 的多次非线性转换。数学上, 前馈神经网络是以实数向量为输入、以实数向量为输出的非线性函数的复合函数 (这里, 函数都是以向量为输入输出的一般函数的扩展)。前馈神经
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-37}
+\end{center}
+
+图 23.3 神经元的三维图形 (见文前彩图)
+
+网络最后的输出也可以是一个实数值, 是实数向量的特殊情况。先给出二层前馈神经网络的定义 ${ }^{1}$ 。
+
+定义 23.2 (二层前馈神经网络) 二层前馈神经网络是如下定义的非线性函数的复合函数。输入是 $x_{i}, i=1,2, \cdots, n$, 输出是 $y_{k}, k=1,2, \cdots, l$ 。神经网络有两层。第一层由 $m$ 个神经元组成，其中第 $j$ 个神经元是
+
+
+\begin{equation*}
+h_{j}^{(1)}=a\left(z_{j}^{(1)}\right)=a\left(\sum_{i=1}^{n} w_{j i}^{(1)} x_{i}+b_{j}^{(1)}\right), \quad j=1,2, \cdots, m \tag{23.5}
+\end{equation*}
+
+
+这里 $x_{i}$ 是输入, $w_{j i}^{(1)}$ 是权重, $b_{j}^{(1)}$ 是偏置, $z_{j}^{(1)}$ 是净输入, $a(\cdot)$ 是激活函数。第二层由 $l$ 个神经元组成, 其中第 $k$ 个神经元是
+
+
+\begin{equation*}
+y_{k}=g\left(z_{k}^{(2)}\right)=g\left(\sum_{j=1}^{m} w_{k j}^{(2)} h_{j}^{(1)}+b_{k}^{(2)}\right), \quad k=1,2, \cdots, l \tag{23.6}
+\end{equation*}
+
+
+这里 $h_{j}^{(1)}$ 是第一层神经元的输出, $w_{k j}^{(2)}$ 是权重, 其中 $j=1,2, \cdots, m, b_{k}^{(2)}$ 是偏置, $z_{k}^{(2)}$ 是净输入, $g(\cdot)$ 是激活函数。神经网络整体是
+
+
+\begin{equation*}
+y_{k}=g\left[\sum_{j=1}^{m} w_{k j}^{(2)} a\left(\sum_{i=1}^{n} w_{j i}^{(1)} x_{i}+b_{j}^{(1)}\right)+b_{k}^{(2)}\right], \quad k=1,2, \cdots, l \tag{23.7}
+\end{equation*}
+
+
+通常情况第二层只有一个神经元, 即 $l=1$ 。
+
+第一层神经元从输入输出的角度不可见, 称为隐层。第二层神经元称为输出层。有时把输入也看作是一层, 称为输入层。隐层和输出层的激活函数 $a(\cdot)$ 和 $g(\cdot)$ 通常有不同的定义。这里考虑层间的全连接, 即前一层的每一个神经元都和后一层的每一个神经元连接。部分连接网络是其特殊情况, 相当于未连接边的权重为 0 。
+
+(1) 也有人视输入层为一层, 称这里的前馈神经网络为三层神经网络。本书采用通常的定义, 以含有神经元的层作为神经网络的层。\\
+图 23.4 是二层前馈神经网络的示意图。图中结点表示变量, 有向边表示变量间的依存关系, 边上的数值表示权重。结点 $x_{i}$ 是神经网络的输入, 结点 $y_{k}$ 是神经网络的输出 (也是输出层神经元), 结点 $h_{j}^{(1)}$ 是神经网络的隐层神经元。数值 $w_{j i}^{(1)}$ 是隐层神经元的权重, 数值 $w_{k j}^{(2)}$是输出层神经元的权重。数值 $b_{j}^{(1)}$ 是隐层神经元的偏置, 数值 $b_{k}^{(2)}$ 是输出层神经元的偏置。其中, $i=1,2, \cdots, n, \quad j=1,2, \cdots, m, \quad k=1,2, \cdots, l$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_3182641e7f8cf23e4171g-38}
+\end{center}
+
+图 23.4 二层前馈神经网络
+
+二层前馈神经网络也可以用矩阵来表示, 简称矩阵表示。
+
+
+\begin{align*}
+& \boldsymbol{h}^{(1)}=f^{(1)}(\boldsymbol{x})=a\left(\boldsymbol{z}^{(1)}\right)=a\left(\boldsymbol{W}^{(1)^{\mathrm{T}}} \boldsymbol{x}+\boldsymbol{b}^{(1)}\right)  \tag{23.8}\\
+& \boldsymbol{y}=f^{(2)}\left(\boldsymbol{h}^{(1)}\right)=g\left(\boldsymbol{z}^{(2)}\right)=g\left(\boldsymbol{W}^{(2)^{\mathrm{T}}} \boldsymbol{h}^{(1)}+\boldsymbol{b}^{(2)}\right) \tag{23.9}
+\end{align*}
+
+
+其中,
+
+$$
+\begin{aligned}
+& \boldsymbol{x}=\left[\begin{array}{c}
+x_{1} \\
+x_{2} \\
+\vdots \\
+x_{n}
+\end{array}\right] \\
+& \boldsymbol{z}^{(1)}=\left[\begin{array}{c}
+z_{1}^{(1)} \\
+z_{2}^{(1)} \\
+\vdots \\
+z_{m}^{(1)}
+\end{array}\right] \\
+& \boldsymbol{h}^{(1)}=\left[\begin{array}{c}
+h_{1}^{(1)} \\
+h_{2}^{(1)} \\
+\vdots \\
+h_{m}^{(1)}
+\end{array}\right]
+\end{aligned}
+$$
+
+$$
+\begin{gathered}
+\boldsymbol{z}^{(2)}=\left[\begin{array}{c}
+z_{1}^{(2)} \\
+z_{2}^{(2)} \\
+\vdots \\
+z_{l}^{(2)}
+\end{array}\right] \\
+\boldsymbol{W}^{(1)}=\left[\begin{array}{ccc}
+w_{11}^{(1)} & \cdots & w_{1 m}^{(1)} \\
+\vdots & & \vdots \\
+w_{n 1}^{(1)} & \cdots & w_{n m}^{(1)}
+\end{array}\right] \\
+\boldsymbol{W}^{(2)}=\left[\begin{array}{ccc}
+w_{11}^{(2)} & \cdots & w_{1 l}^{(2)} \\
+\vdots & & \vdots \\
+w_{m 1}^{(2)} & \cdots & w_{m l}^{(2)}
+\end{array}\right] \\
+\boldsymbol{b}^{(1)}=\left[\begin{array}{cc}
+b_{1}^{(1)} \\
+b_{2}^{(1)} \\
+\vdots \\
+b_{m}^{(1)}
+\end{array}\right] \\
+\boldsymbol{b}^{(2)}=\left[\begin{array}{c}
+b_{1}^{(2)} \\
+b_{2}^{(2)} \\
+\vdots \\
+b_{l}^{(2)}
+\end{array}\right]
+\end{gathered}
+$$
+
+向量 $\boldsymbol{x}$ 表示输入, 向量 $\boldsymbol{y}$ 表示输出, 向量 $\boldsymbol{z}^{(1)}$ 表示隐层的净输入, 向量 $\boldsymbol{h}^{(1)}$ 表示隐层的输出, 向量 $\boldsymbol{z}^{(2)}$ 表示输出层的净输入, 矩阵 $\boldsymbol{W}^{(1)}, \boldsymbol{W}^{(2)}$ 表示权重, 向量 $\boldsymbol{b}^{(1)}, \boldsymbol{b}^{(2)}$ 表示偏置。整体神经网络由复合函数 $f^{(2)}\left(f^{(1)}(\boldsymbol{x})\right)$ 表示。这里 $a(\cdot)$ 和 $g(\cdot)$, 以及 $f^{(1)}(\cdot)$ 和 $f^{(2)}(\cdot)$是一般函数的扩展, 作用在向量的每个元素上, 得到的仍是一个向量。
+
+下面给出更一般的多层前馈神经网络或深度神经网络的定义。
+
+定义 23.3 (多层前馈神经网络) 多层前馈神经网络或前馈神经网络是如下定义的非线性函数的复合函数。输入是 $x_{i}, i=1,2, \cdots, n$, 输出是 $y_{k}, k=1,2, \cdots, l$ 。神经网络有 $s$层 $(s \geqslant 2)$ 。第一层到第 $s-1$ 层是隐层。假设其中的第 $t$ 层由 $m$ 个神经元组成, 第 $t-1$ 层由 $n$ 个神经元组成, $t=1,2, \cdots, s-1$, 第 $t$ 层的第 $j$ 个神经元是
+
+
+\begin{equation*}
+h_{j}^{(t)}=a\left(z_{j}^{(t)}\right)=a\left(\sum_{i=1}^{n} w_{j i}^{(t)} h_{i}^{(t-1)}+b_{j}^{(t)}\right), \quad j=1,2, \cdots, m \tag{23.10}
+\end{equation*}
+
+
+这里 $h_{i}^{(t-1)}, i=1,2, \cdots, n$, 是第 $t-1$ 层的输出, 设 $h_{i}^{(0)}=x_{i}, w_{j i}^{(t)}, i=1,2, \cdots, n$, 是权\\
+重, $b_{j}^{(t)}$ 是偏置, $z_{j}^{(t)}$ 是净输入, $a(\cdot)$ 是激活函数。第 $s$ 层是输出层。假设第 $s$ 层由 $l$ 个神经元组成, 第 $s-1$ 层由 $m$ 个神经元组成, 第 $s$ 层的第 $k$ 个神经元是
+
+
+\begin{equation*}
+y_{k}=g\left(z_{k}^{(s)}\right)=g\left(\sum_{j=1}^{m} w_{k j}^{(s)} h_{j}^{(s-1)}+b_{k}^{(s)}\right), \quad k=1,2, \cdots, l \tag{23.11}
+\end{equation*}
+
+
+这里 $h_{j}^{(s-1)}, j=1,2, \cdots, m$, 是第 $s-1$ 层的输出, $w_{k j}^{(s)}, j=1,2, \cdots, m$, 是权重, $b_{k}^{(s)}$ 是偏置, $z_{k}^{(s)}$ 是净输入, $g(\cdot)$ 是激活函数。神经网络整体是
+
+
+\begin{equation*}
+y_{k}=g\left\{\sum_{j=1}^{m} w_{k j}^{(s)} \cdots\left[a\left(\sum_{i=1}^{n} w_{j i}^{(1)} x_{i}+b_{j}^{(1)}\right)\right] \cdots+b_{k}^{(s)}\right\}, \quad k=1,2, \cdots, l \tag{23.12}
+\end{equation*}
+
+
+层数大于 2 时的前馈神经网络又称为深度神经网络。通常情况是第 $s$ 层只有一个神经元, 即 $l=1$ 。
+
+前馈神经网络的矩阵表示如下:
+
+\[
+\left\{\begin{array}{l}
+\boldsymbol{h}^{(1)}=f^{(1)}(\boldsymbol{x})=a\left(\boldsymbol{z}^{(1)}\right)=a\left(\boldsymbol{W}^{(1)^{\mathrm{T}}} \boldsymbol{x}+\boldsymbol{b}^{(1)}\right)  \tag{23.13}\\
+\boldsymbol{h}^{(2)}=f^{(2)}\left(\boldsymbol{h}^{(1)}\right)=a\left(\boldsymbol{z}^{(2)}\right)=a\left(\boldsymbol{W}^{(2)^{\mathrm{T}}} \boldsymbol{h}^{(1)}+\boldsymbol{b}^{(2)}\right) \\
+\vdots \\
+\boldsymbol{h}^{(s-1)}=f^{(s-1)}\left(\boldsymbol{h}^{(s-2)}\right)=a\left(\boldsymbol{z}^{(s-1)}\right)=a\left(\boldsymbol{W}^{(s-1)^{\mathrm{T}}} \boldsymbol{h}^{(s-2)}+\boldsymbol{b}^{(s-1)}\right) \\
+\boldsymbol{y}=\boldsymbol{h}^{(s)}=f^{(s)}\left(\boldsymbol{h}^{(s-1)}\right)=g\left(\boldsymbol{z}^{(s)}\right)=g\left(\boldsymbol{W}^{(s)^{\mathrm{T}}} \boldsymbol{h}^{(s-1)}+\boldsymbol{b}^{(s)}\right)
+\end{array}\right.
+\]
+
+其中, 向量 $\boldsymbol{x}$ 表示输入, 向量 $\boldsymbol{y}$ 表示输出, 向量 $\boldsymbol{z}^{(1)}, \boldsymbol{z}^{(2)}, \cdots, \boldsymbol{z}^{(s)}$ 表示第 1 层到第 $s$ 层的净输入, 向量 $\boldsymbol{h}^{(1)}, \boldsymbol{h}^{(2)}, \cdots, \boldsymbol{h}^{(s)}$ 表示第 1 层到第 $s$ 层的输出, 矩阵 $\boldsymbol{W}^{(1)}, \boldsymbol{W}^{(2)}, \cdots, \boldsymbol{W}^{(s)}$ 表示权重, 向量 $\boldsymbol{b}^{(1)}, \boldsymbol{b}^{(2)}, \cdots, \boldsymbol{b}^{(s)}$ 表示偏置。整体神经网络由复合函数 $f^{(s)}\left(\cdots f^{(2)}\left(f^{(1)}(\boldsymbol{x})\right) \cdots\right)$表示, 也写作 $f(\boldsymbol{x} ; \boldsymbol{\theta})$, 其中 $\boldsymbol{\theta}$ 是所有参数组成的向量。
+
+可以看出, 前馈神经网络模型是矩阵与向量的乘积的非线性变换的多次重复, 其基本结构是非常简单的。因此, 多次非线性变换是前馈神经网络的本质。从后面的例子中可以看出,这种变换拥有很强的表示能力, 可以进行复杂的信息处理。相比之下, 多次线性变换等价于一次线性变换, 其表示能力有限。
+
+到目前为止考虑的是一个样本输入到神经网络的情况, 这时输入由一个向量表示。也可以是多个样本批量同时输入到神经网络, 这时输入样本由一个矩阵表示。可以用式 (23.13)的矩阵表示扩展, 细节省略, 在例 23.3 中介绍。
+
+\section*{3. 隐层的神经元}
+隐层神经元函数由两部分组成: 仿射函数和激活函数。这里介绍常用的隐层激活函数,包括 $\mathrm{S}$ 型函数、双曲正切函数、整流线性函数。一个神经网络通常采用一种隐层激活函数。
+
+$\mathrm{S}$ 型函数 (sigmoid function) 又称为逻辑斯谛函数 (logistic function), 是定义式如下的非线性函数。
+
+
+\begin{equation*}
+a(z)=\sigma(z)=\frac{1}{1+\mathrm{e}^{-z}} \tag{23.14}
+\end{equation*}
+
+
+
+\end{CJK*}
+\end{document}

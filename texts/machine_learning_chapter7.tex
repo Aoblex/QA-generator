@@ -1,0 +1,2376 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\title{3. 相关系数 }
+
+\author{}
+\date{}
+
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\begin{document}
+\maketitle
+当 $S$ 为单位矩阵时, 即样本数据的各个分量互相独立且各个分量的方差为 1 时, 由式 (14.6) 知马氏距离就是欧氏距离, 所以马氏距离是欧氏距离的推广。
+
+样本之间的相似度也可以用相关系数 (correlation coefficient) 来表示。相关系数的绝对值越接近 1 , 表示样本越相似; 越接近 0 , 表示样本越不相似。
+
+定义 14.3 样本 $x_{i}$ 与样本 $x_{j}$ 之间的相关系数定义为
+
+
+\begin{equation*}
+r_{i j}=\frac{\sum_{k=1}^{m}\left(x_{k i}-\bar{x}_{i}\right)\left(x_{k j}-\bar{x}_{j}\right)}{\left[\sum_{k=1}^{m}\left(x_{k i}-\bar{x}_{i}\right)^{2} \sum_{k=1}^{m}\left(x_{k j}-\bar{x}_{j}\right)^{2}\right]^{\frac{1}{2}}} \tag{14.8}
+\end{equation*}
+
+
+其中,
+
+$$
+\bar{x}_{i}=\frac{1}{m} \sum_{k=1}^{m} x_{k i}, \quad \bar{x}_{j}=\frac{1}{m} \sum_{k=1}^{m} x_{k j}
+$$
+
+\section*{4. 夹角余弦}
+样本之间的相似度也可以用夹角余弦 (cosine) 来表示。夹角余弦越接近 1 , 表示样本越相似; 越接近 0 , 表示样本越不相似。
+
+定义 14.4 样本 $x_{i}$ 与样本 $x_{j}$ 之间的夹角余弦定义为
+
+
+\begin{equation*}
+s_{i j}=\frac{\sum_{k=1}^{m} x_{k i} x_{k j}}{\left(\sum_{k=1}^{m} x_{k i}^{2} \sum_{k=1}^{m} x_{k j}^{2}\right)^{\frac{1}{2}}} \tag{14.9}
+\end{equation*}
+
+
+由上述定义看出, 用距离度量相似度时, 距离越小, 样本越相似; 用相关系数时, 相关系数越大, 样本越相似。注意不同相似度度量得到的结果并不一定一致, 请参照图 14.1。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-01}
+\end{center}
+
+图 14.1 距离与相关系数的关系
+
+从图 14.1 可以看出, 如果从距离的角度看, A 和 B 比 A 和 C 更相似; 但从相关系数的角度看, $\mathrm{A}$ 和 $\mathrm{C}$ 比 $\mathrm{A}$ 和 $\mathrm{B}$ 更相似。所以, 进行聚类时, 选择适合的距离或相似度非常重要。
+
+\section*{14.1 .2 类或簇}
+通过聚类得到的类或簇本质是样本的子集。如果一个聚类方法假定一个样本只能属于一个类或类的交集为空集, 那么该方法称为硬聚类 (hard clustering) 方法。否则, 如果一个样本可以属于多个类或类的交集不为空集，那么该方法称为软聚类 (soft clustering) 方法。本章只考虑硬聚类方法。
+
+用 $G$ 表示类或簇（cluster）, 用 $x_{i}, x_{j}$ 表示类中的样本, 用 $n_{G}$ 表示 $G$ 中样本的个数,用 $d_{i j}$ 表示样本 $x_{i}$ 与样本 $x_{j}$ 之间的距离。类或簇有多种定义, 下面给出几个常见的定义。
+
+定义 14.5 设 $T$ 为给定的正数, 若对于集合 $G$ 中任意两个样本 $x_{i}, x_{j}$, 有
+
+$$
+d_{i j} \leqslant T
+$$
+
+则称 $G$ 为一个类或簇。
+
+定义 14.6 设 $T$ 为给定的正数, 若对集合 $G$ 的任意样本 $x_{i}$, 一定存在 $G$ 中的另一个样本 $x_{j}$, 使得
+
+$$
+d_{i j} \leqslant T
+$$
+
+则称 $G$ 为一个类或簇。
+
+定义 14.7 设 $T$ 为给定的正数, 若对集合 $G$ 中任意一个样本 $x_{i}, G$ 中的另一个样本 $x_{j}$满足
+
+$$
+\frac{1}{n_{G}-1} \sum_{x_{j} \in G} d_{i j} \leqslant T
+$$
+
+其中 $n_{G}$ 为 $G$ 中样本的个数, 则称 $G$ 为一个类或簇。
+
+定义 14.8 设 $T$ 和 $V$ 为给定的两个正数, 如果集合 $G$ 中任意两个样本 $x_{i}, x_{j}$ 的距离 $d_{i j}$ 满足
+
+$$
+\begin{aligned}
+& \frac{1}{n_{G}\left(n_{G}-1\right)} \sum_{x_{i} \in G} \sum_{x_{j} \in G} d_{i j} \leqslant T \\
+& d_{i j} \leqslant V
+\end{aligned}
+$$
+
+则称 $G$ 为一个类或簇。
+
+以上四个定义中, 第一个定义最常用, 并且由它可推出其他三个定义。
+
+类的特征可以通过不同角度来刻画, 常用的特征有下面三种:
+
+(1) 类的均值 $\bar{x}_{G}$, 又称为类的中心
+
+
+\begin{equation*}
+\bar{x}_{G}=\frac{1}{n_{G}} \sum_{i=1}^{n_{G}} x_{i} \tag{14.10}
+\end{equation*}
+
+
+式中 $n_{G}$ 是类 $G$ 的样本个数。
+
+(2) 类的直径 (diameter) $D_{G}$
+
+类的直径 $D_{G}$ 是类中任意两个样本之间的最大距离, 即
+
+
+\begin{equation*}
+D_{G}=\max _{x_{i}, x_{j} \in G} d_{i j} \tag{14.11}
+\end{equation*}
+
+
+(3) 类的样本散布矩阵 (scatter matrix) $A_{G}$ 与样本协方差矩阵 (covariance matrix) $S_{G}$类的样本散布矩阵 $A_{G}$ 为
+
+
+\begin{equation*}
+A_{G}=\sum_{i=1}^{n_{G}}\left(x_{i}-\bar{x}_{G}\right)\left(x_{i}-\bar{x}_{G}\right)^{\mathrm{T}} \tag{14.12}
+\end{equation*}
+
+
+样本协方差矩阵 $S_{G}$ 为
+
+
+\begin{align*}
+S_{G} & =\frac{1}{n_{G}-1} A_{G} \\
+& =\frac{1}{n_{G}-1} \sum_{i=1}^{n_{G}}\left(x_{i}-\bar{x}_{G}\right)\left(x_{i}-\bar{x}_{G}\right)^{\mathrm{T}} \tag{14.13}
+\end{align*}
+
+
+\subsection*{14.1.3 类与类之间的距离}
+下面考虑类 $G_{p}$ 与类 $G_{q}$ 之间的距离 $D(p, q)$, 也称为连接 (linkage)。类与类之间的距离也有多种定义。
+
+设类 $G_{p}$ 包含 $n_{p}$ 个样本, $G_{q}$ 包含 $n_{q}$ 个样本, 分别用 $\bar{x}_{p}$ 和 $\bar{x}_{q}$ 表示 $G_{p}$ 和 $G_{q}$ 的均值,即类的中心。
+
+(1) 最短距离或单连接 (single linkage)
+
+定义类 $G_{p}$ 的样本与类 $G_{q}$ 的样本之间的最短距离为两类之间的距离:
+
+
+\begin{equation*}
+D_{p q}=\min \left\{d_{i j} \mid x_{i} \in G_{p}, x_{j} \in G_{q}\right\} \tag{14.14}
+\end{equation*}
+
+
+(2) 最长距离或完全连接 (complete linkage)
+
+定义类 $G_{p}$ 的样本与类 $G_{q}$ 的样本之间的最长距离为两类之间的距离:
+
+
+\begin{equation*}
+D_{p q}=\max \left\{d_{i j} \mid x_{i} \in G_{p}, x_{j} \in G_{q}\right\} \tag{14.15}
+\end{equation*}
+
+
+(3) 中心距离
+
+定义类 $G_{p}$ 与类 $G_{q}$ 的中心 $\bar{x}_{p}$ 与 $\bar{x}_{q}$ 之间的距离为两类之间的距离:
+
+
+\begin{equation*}
+D_{p q}=d_{\bar{x}_{p} \bar{x}_{q}} \tag{14.16}
+\end{equation*}
+
+
+(4) 平均距离
+
+定义类 $G_{p}$ 与类 $G_{q}$ 任意两个样本之间距离的平均值为两类之间的距离:
+
+
+\begin{equation*}
+D_{p q}=\frac{1}{n_{p} n_{q}} \sum_{x_{i} \in G_{p}} \sum_{x_{j} \in G_{q}} d_{i j} \tag{14.17}
+\end{equation*}
+
+
+\section*{14.2 层次聚类}
+层次聚类假设类别之间存在层次结构, 将样本聚到层次化的类中。层次聚类又有聚合 (agglomerative) 或自下而上 (bottom-up) 聚类、分裂 (divisive) 或自上而下 (top-down) 聚\\
+类两种方法。因为每个样本只属于一个类, 所以层次聚类属于硬聚类。
+
+聚合聚类开始将每个样本各自分到一个类, 之后将相距最近的两类合并, 建立一个新的类, 重复此操作直到满足停止条件, 得到层次化的类别。分裂聚类开始将所有样本分到一个类, 之后将已有类中相距最远的样本分到两个新的类, 重复此操作直到满足停止条件, 得到层次化的类别。本书只介绍聚合聚类。
+
+聚合聚类的具体过程如下：对于给定的样本集合, 开始将每个样本分到一个类; 然后按照一定规则, 如类间距离最小, 将最满足规则条件的两个类进行合并; 如此反复进行, 每次减少一个类, 直到满足停止条件, 如所有样本聚为一类。
+
+由此可知, 聚合聚类需要预先确定下面三个要素:
+
+(1) 距离或相似度;
+
+(2) 合并规则;
+
+(3) 停止条件。
+
+根据这些要素的不同组合, 就可以构成不同的聚类方法。距离或相似度可以是闵可夫斯基距离、马哈拉诺比斯距离、相关系数、夹角余弦。合并规则一般是类间距离最小, 类间距离可以是最短距离、最长距离、中心距离、平均距离。停止条件可以是类的个数达到阈值（极端情况类的个数是 1)、类的直径超过阈值。
+
+如果采用欧氏距离为样本之间距离; 类间距离最小为合并规则, 其中最短距离为类间距离; 类的个数是 1, 即所有样本聚为一类为停止条件, 那么聚合聚类的算法如下。
+
+\section*{算法 14.1 (聚合聚类算法)}
+输入: $n$ 个样本组成的样本集合及样本之间的距离。
+
+输出: 对样本集合的一个层次化聚类。
+
+(1) 计算 $n$ 个样本两两之间的欧氏距离 $\left\{d_{i j}\right\}$, 记作矩阵 $D=\left[d_{i j}\right]_{n \times n}$ 。
+
+（2）构造 $n$ 个类，每个类只包含一个样本。
+
+(3) 合并类间距离最小的两个类, 其中最短距离为类间距离, 构建一个新类。
+
+(4) 计算新类与当前各类的距离。若类的个数为 1 , 终止计算, 否则, 回到步骤 (3)。可以看出聚合层次聚类算法的复杂度是 $O\left(n^{3} m\right)$, 其中 $m$ 是样本的维数, $n$ 是样本个数。下面通过一个例子说明聚合层次聚类算法。
+
+例 14.1 给定 5 个样本的集合, 样本之间的欧氏距离由如下矩阵 $D$ 表示:
+
+$$
+D=\left[d_{i j}\right]_{5 \times 5}=\left[\begin{array}{ccccc}
+0 & 7 & 2 & 9 & 3 \\
+7 & 0 & 5 & 4 & 6 \\
+2 & 5 & 0 & 8 & 1 \\
+9 & 4 & 8 & 0 & 5 \\
+3 & 6 & 1 & 5 & 0
+\end{array}\right]
+$$
+
+其中 $d_{i j}$ 表示第 $i$ 个样本与第 $j$ 个样本之间的欧氏距离。显然 $D$ 为对称矩阵。应用聚合层次聚类法对这 5 个样本进行聚类。
+
+解 (1) 首先用 5 个样本构建 5 个类, $G_{i}=\left\{x_{i}\right\}, i=1,2, \cdots, 5$, 这样, 样本之间的距离也就变成类之间的距离, 所以 5 个类之间的距离矩阵亦为 $D$ 。
+
+(2) 由矩阵 $D$ 可以看出, $D_{35}=D_{53}=1$ 为最小, 所以把 $G_{3}$ 和 $G_{5}$ 合并为一个新类, 记作 $G_{6}=\left\{x_{3}, x_{5}\right\}$ 。
+
+(3) 计算 $G_{6}$ 与 $G_{1}, G_{2}, G_{4}$ 之间的最短距离, 有
+
+$$
+D_{61}=2, \quad D_{62}=5, \quad D_{64}=5
+$$
+
+又注意到其余两类之间的距离是
+
+$$
+D_{12}=7, \quad D_{14}=9, \quad D_{24}=4
+$$
+
+显然, $D_{61}=2$ 最小, 所以将 $G_{1}$ 与 $G_{6}$ 合并成一个新类, 记作 $G_{7}=\left\{x_{1}, x_{3}, x_{5}\right\}$ 。
+
+(4) 计算 $G_{7}$ 与 $G_{2}, G_{4}$ 之间的最短距离:
+
+$$
+D_{72}=5, \quad D_{74}=5
+$$
+
+又注意到
+
+$$
+D_{24}=4
+$$
+
+显然, 其中 $D_{24}=4$ 最小, 所以将 $G_{2}$ 与 $G_{4}$ 合并成一个新类, 记作 $G_{8}=\left\{x_{2}, x_{4}\right\}$ 。
+
+(5) 将 $G_{7}$ 与 $G_{8}$ 合并成一个新类, 记作 $G_{9}=\left\{x_{1}, x_{2}, x_{3}, x_{4}, x_{5}\right\}$, 即将全部样本聚成一类, 聚类终止。
+
+上述层次聚类过程可以用图 14.2 所示的层次聚类图表示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-05}
+\end{center}
+
+图 14.2 层次聚类图
+
+\section*{$14.3 k$ 均值聚类}
+$k$ 均值聚类是基于样本集合划分的聚类算法。 $k$ 均值聚类将样本集合划分为 $k$ 个子集，构成 $k$ 个类, 将 $n$ 个样本分到 $k$ 个类中, 每个样本到其所属类的中心的距离最小。每个样本只能属于一个类, 所以 $k$ 均值聚类是硬聚类。下面分别介绍 $k$ 均值聚类的模型、策略、算法,讨论算法的特性及相关问题。
+
+\subsection*{14.3.1 模型}
+给定 $n$ 个样本的集合 $X=\left\{x_{1}, x_{2}, \cdots, x_{n}\right\}$, 每个样本由一个特征向量表示, 特征向量的\\
+维数是 $m$ 。 $k$ 均值聚类的目标是将 $n$ 个样本分到 $k$ 个不同的类或簇中, 这里假设 $k<n \circ k$ 个
+
+类 $G_{1}, G_{2}, \cdots, G_{k}$ 形成对样本集合 $X$ 的划分, 其中 $G_{i} \cap G_{j}=\varnothing, \bigcup_{i=1}^{k} G_{i}=X$ 。用 $C$ 表示划分,一个划分对应着一个聚类结果。
+
+划分 $C$ 是一个多对一的函数。事实上，如果把每个样本用一个整数 $i \in\{1,2, \cdots, n\}$ 表示, 每个类也用一个整数 $l \in\{1,2, \cdots, k\}$ 表示, 那么划分或者聚类可以用函数 $l=C(i)$ 表示, 其中 $i \in\{1,2, \cdots, n\}, l \in\{1,2, \cdots, k\}$ 。所以 $k$ 均值聚类的模型是一个从样本到类的函数。
+
+\subsection*{14.3.2 策略}
+$k$ 均值聚类归结为样本集合 $X$ 的划分, 或者从样本到类的函数的选择问题。 $k$ 均值聚类的策略是通过损失函数的最小化选取最优的划分或函数 $C^{*}$ 。
+
+首先, 采用欧氏距离平方 (squared Euclidean distance) 作为样本之间的距离 $d\left(x_{i}, x_{j}\right)$ :
+
+
+\begin{align*}
+d\left(x_{i}, x_{j}\right) & =\sum_{k=1}^{m}\left(x_{k i}-x_{k j}\right)^{2} \\
+& =\left\|x_{i}-x_{j}\right\|^{2} \tag{14.18}
+\end{align*}
+
+
+然后, 定义样本与其所属类的中心之间的距离的总和为损失函数, 即
+
+
+\begin{equation*}
+W(C)=\sum_{l=1}^{k} \sum_{C(i)=l}\left\|x_{i}-\bar{x}_{l}\right\|^{2} \tag{14.19}
+\end{equation*}
+
+
+式中 $\bar{x}_{l}=\left(\bar{x}_{1 l}, \bar{x}_{2 l}, \cdots, \bar{x}_{m l}\right)^{\mathrm{T}}$ 是第 $l$ 个类的均值或中心, $n_{l}=\sum_{i=1}^{n} I(C(i)=l), I(C(i)=l)$是指示函数, 取值为 1 或 0 。函数 $W(C)$ 也称为能量, 表示相同类中的样本相似的程度。
+
+$k$ 均值聚类就是求解最优化问题:
+
+
+\begin{align*}
+C^{*} & =\arg \min _{C} W(C) \\
+& =\arg \min _{C} \sum_{l=1}^{k} \sum_{C(i)=l}\left\|x_{i}-\bar{x}_{l}\right\|^{2} \tag{14.20}
+\end{align*}
+
+
+相似的样本被聚到同类时, 损失函数值最小, 这个目标函数的最优化能达到聚类的目的。但是, 这是一个组合优化问题, $n$ 个样本分到 $k$ 类, 所有可能分法的数目是
+
+\[
+S(n, k)=\frac{1}{k !} \sum_{l=1}^{k}(-1)^{k-l}\left(\begin{array}{c}
+k  \tag{14.21}\\
+l
+\end{array}\right) k^{n}
+\]
+
+这个数字是指数级的。事实上, $k$ 均值聚类的最优解求解问题是 NP 困难问题。现实中采用迭代的方法求解。
+
+\subsection*{14.3.3 算法}
+$k$ 均值聚类的算法是一个迭代的过程, 每次迭代包括两个步骤。首先选择 $k$ 个类的中心,将样本逐个指派到与其最近的中心的类中, 得到一个聚类结果; 然后更新每个类的样本的均值,作为类的新的中心; 重复以上步骤, 直到收玫为止。具体过程如下。
+
+首先, 对于给定的中心值 $\left(m_{1}, m_{2}, \cdots, m_{k}\right)$, 求一个划分 $C$, 使得目标函数极小化:
+
+
+\begin{equation*}
+\min _{C} \sum_{l=1}^{k} \sum_{C(i)=l}\left\|x_{i}-m_{l}\right\|^{2} \tag{14.22}
+\end{equation*}
+
+
+就是说在类中心确定的情况下, 将每个样本分到一个类中, 使样本和其所属类的中心之间的距离总和最小。求解结果, 将每个样本指派到与其最近的中心 $m_{l}$ 的类 $G_{l}$ 中。
+
+然后, 对给定的划分 $C$, 再求各个类的中心 $\left(m_{1}, m_{2}, \cdots, m_{k}\right)$, 使得目标函数极小化:
+
+$$
+\min _{m_{1}, m_{2}, \cdots, m_{k}} \sum_{l=1}^{k} \sum_{C(i)=l}\left\|x_{i}-m_{l}\right\|^{2}
+$$
+
+就是说在划分确定的情况下, 使样本和其所属类的中心之间的距离总和最小。求解结果, 对于每个包含 $n_{l}$ 个样本的类 $G_{l}$, 更新其均值 $m_{l}$ :
+
+$$
+m_{l}=\frac{1}{n_{l}} \sum_{C(i)=l} x_{i}, \quad l=1,2, \cdots, k
+$$
+
+重复以上两个步骤, 直到划分不再改变, 得到聚类结果。现将 $k$ 均值聚类算法叙述如下。
+
+\section*{算法 14.2 ( $k$ 均值聚类算法)}
+输入: $n$ 个样本的集合 $X$ 。
+
+输出: 样本集合的聚类 $C^{*}$ 。
+
+(1) 初始化。令 $t=0$, 随机选择 $k$ 个样本点作为初始聚类中心 $m^{(0)}=\left(m_{1}^{(0)}, \cdots, m_{l}^{(0)}, \cdots\right.$, $\left.m_{k}^{(0)}\right)$ 。
+
+(2) 对样本进行聚类。对固定的类中心 $m^{(t)}=\left(m_{1}^{(t)}, \cdots, m_{l}^{(t)}, \cdots, m_{k}^{(t)}\right)$, 其中 $m_{l}^{(t)}$ 为类 $G_{l}$ 的中心, 计算每个样本到类中心的距离, 将每个样本指派到与其最近的中心的类中, 构成聚类结果 $C^{(t)}$ 。
+
+(3) 计算新的类中心。对聚类结果 $C^{(t)}$, 计算当前各个类中的样本的均值, 作为新的类中心 $m^{(t+1)}=\left(m_{1}^{(t+1)}, \cdots, m_{l}^{(t+1)}, \cdots, m_{k}^{(t+1)}\right)$ 。
+
+(4) 如果迭代收玫或符合停止条件, 输出 $C^{*}=C^{(t)}$; 否则, 令 $t=t+1$, 返回步骤 (2)。
+
+$k$ 均值聚类算法的复杂度是 $O(m n k)$, 其中 $m$ 是样本维数, $n$ 是样本个数, $k$ 是类别个数。
+
+例 14.2 给定含有 5 个样本的集合
+
+$$
+X=\left[\begin{array}{lllll}
+0 & 0 & 1 & 5 & 5 \\
+2 & 0 & 0 & 0 & 2
+\end{array}\right]
+$$
+
+试用 $k$ 均值聚类算法将样本聚到两个类中。\\
+解 按照算法 14.2:
+
+(1) 选择两个样本点作为类的中心。假设选择 $m_{1}^{(0)}=x_{1}=(0,2)^{\mathrm{T}}, m_{2}^{(0)}=x_{2}=(0,0)^{\mathrm{T}}$ 。
+
+(2) 以 $m_{1}^{(0)}, m_{2}^{(0)}$ 为类 $G_{1}^{(0)}, G_{2}^{(0)}$ 的中心, 计算 $x_{3}=(1,0)^{\mathrm{T}}, x_{4}=(5,0)^{\mathrm{T}}, x_{5}=(5,2)^{\mathrm{T}}$与 $m_{1}^{(0)}=(0,2)^{\mathrm{T}}, m_{2}^{(0)}=(0,0)^{\mathrm{T}}$ 的欧氏距离平方。
+
+(a) 对 $x_{3}=(1,0)^{\mathrm{T}}, d\left(x_{3}, m_{1}^{(0)}\right)=5, d\left(x_{3}, m_{2}^{(0)}\right)=1$, 将 $x_{3}$ 分到类 $G_{2}^{(0)}$ 。
+
+(b) 对 $x_{4}=(5,0)^{\mathrm{T}}, d\left(x_{4}, m_{1}^{(0)}\right)=29, d\left(x_{4}, m_{2}^{(0)}\right)=25$, 将 $x_{4}$ 分到类 $G_{2}^{(0)}$ 。
+
+(c) 对 $x_{5}=(5,2)^{\mathrm{T}}, d\left(x_{5}, m_{1}^{(0)}\right)=25, d\left(x_{5}, m_{2}^{(0)}\right)=29$, 将 $x_{5}$ 分到类 $G_{1}^{(0)}$ 。
+
+(3) 得到新的类 $G_{1}^{(1)}=\left\{x_{1}, x_{5}\right\}, G_{2}^{(1)}=\left\{x_{2}, x_{3}, x_{4}\right\}$, 计算类的中心 $m_{1}^{(1)}, m_{2}^{(1)}$ :
+
+$$
+m_{1}^{(1)}=(2.5,2.0)^{\mathrm{T}}, \quad m_{2}^{(1)}=(2,0)^{\mathrm{T}}
+$$
+
+(4) 重复步骤 (2) 和步骤 (3)。将 $x_{1}$ 分到类 $G_{1}^{(1)}$, 将 $x_{2}$ 分到类 $G_{2}^{(1)}, x_{3}$ 分到类 $G_{2}^{(1)}, x_{4}$分到类 $G_{2}^{(1)}, x_{5}$ 分到类 $G_{1}^{(1)}$, 得到新的类 $G_{1}^{(2)}=\left\{x_{1}, x_{5}\right\}, G_{2}^{(2)}=\left\{x_{2}, x_{3}, x_{4}\right\}$ 。
+
+由于得到的新的类没有改变, 聚类停止。得到聚类结果:
+
+$$
+G_{1}^{*}=\left\{x_{1}, x_{5}\right\}, \quad G_{2}^{*}=\left\{x_{2}, x_{3}, x_{4}\right\}
+$$
+
+\subsection*{14.3.4 算法特性}
+\section*{1. 总体特点}
+$k$ 均值聚类有以下特点: 基于划分的聚类方法; 类别数 $k$ 事先指定; 以欧氏距离平方表示样本之间的距离, 以中心或样本的均值表示类别; 以样本和其所属类的中心之间的距离的总和为最优化的目标函数; 得到的类别是平坦的、非层次化的; 算法是迭代算法, 不能保证得到全局最优。
+
+\section*{2. 收敛性}
+$k$ 均值聚类属于启发式方法, 不能保证收玫到全局最优, 初始中心的选择会直接影响聚类结果。注意, 类中心在聚类的过程中会发生移动, 但是往往不会移动太大, 因为在每一步,样本被分到与其最近的中心的类中。
+
+\section*{3. 初始类的选择}
+选择不同的初始中心会得到不同的聚类结果。针对上面的例 14.2, 如果改变两个类的初始中心, 比如选择 $m_{1}^{(0)}=x_{1}$ 和 $m_{2}^{(0)}=x_{5}$, 那么 $x_{2}, x_{3}$ 会分到 $G_{1}^{(0)}, x_{4}$ 会分到 $G_{2}^{(0)}$, 形成聚类结果 $G_{1}^{(1)}=\left\{x_{1}, x_{2}, x_{3}\right\}, G_{2}^{(1)}=\left\{x_{4}, x_{5}\right\}$ 。中心是 $m_{1}^{(1)}=(0.33,0.67)^{\mathrm{T}}, m_{2}^{(1)}=(5,1)^{\mathrm{T}}$ 。继续迭代, 聚类结果仍然是 $G_{1}^{(2)}=\left\{x_{1}, x_{2}, x_{3}\right\}, G_{2}^{(2)}=\left\{x_{4}, x_{5}\right\}$ 。聚类停止。
+
+对于初始中心的选择, 可以用层次聚类对样本进行聚类, 得到 $k$ 个类时停止, 然后从每个类中选取一个与中心距离最近的点。
+
+\section*{4. 类别数 $k$ 的选择}
+$k$ 均值聚类中的类别数 $k$ 值需要预先指定, 而在实际应用中最优的 $k$ 值是不知道的。解决这个问题的一个方法是尝试用不同的 $k$ 值聚类，检验各自得到的聚类结果的质量，推测最\\
+优的 $k$ 值。聚类结果的质量可以用类的平均直径来衡量。一般地, 类别数变小时, 平均直径会增加; 类别数变大超过某个值以后, 平均直径会不变, 而这个值正是最优的 $k$ 值。图 14.3 说明类别数与平均直径的关系。实验时, 可以采用二分查找, 快速找到最优的 $k$ 值。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-09}
+\end{center}
+
+图 14.3 类别数与平均直径的关系
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 聚类是针对给定的样本, 依据它们属性的相似度或距离, 将其归并到若干个 “类”或 “簇” 的数据分析问题。一个类是样本的一个子集。直观上，相似的样本聚集在同类，不相似的样本分散在不同类。
+
+  \item 距离或相似度度量在聚类中起着重要作用。
+
+\end{enumerate}
+
+常用的距离度量有闵可夫斯基距离, 包括欧氏距离、曼哈顿距离、切比雪夫距离以及马哈拉诺比斯距离。常用的相似度度量有相关系数、夹角余弦。
+
+用距离度量相似度时, 距离越小表示样本越相似; 用相关系数时, 相关系数越大表示样本越相似。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 类是样本的子集, 比如有如下基本定义:
+\end{enumerate}
+
+用 $G$ 表示类或簇, 用 $x_{i}, x_{j}$ 等表示类中的样本, 用 $d_{i j}$ 表示样本 $x_{i}$ 与样本 $x_{j}$ 之间的距离。如果对任意的 $x_{i}, x_{j} \in G$, 有
+
+$$
+d_{i j} \leqslant T
+$$
+
+则称 $G$ 为一个类或簇。
+
+描述类的特征的指标有中心、直径、散布矩阵、协方差矩阵。
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 聚类过程中用到的类与类之间的距离也称为连接。类与类之间的距离包括最短距离、最长距离、中心距离、平均距离。
+
+  \item 层次聚类假设类别之间存在层次结构, 将样本聚到层次化的类中。层次聚类又有聚合或自下而上、分裂或自上而下两种方法。
+
+\end{enumerate}
+
+聚合聚类开始将每个样本各自分到一个类, 之后将相距最近的两类合并, 建立一个新的类, 重复此操作直到满足停止条件, 得到层次化的类别。分裂聚类开始将所有样本分到一个类, 之后将已有类中相距最远的样本分到两个新的类, 重复此操作直到满足停止条件, 得到层次化的类别。\\
+聚合聚类需要预先确定下面三个要素:
+
+(1) 距离或相似度;
+
+(2) 合并规则;
+
+(3) 停止条件。
+
+根据这些概念的不同组合, 就可以得到不同的聚类方法。\\
+6. $k$ 均值聚类是常用的聚类算法, 有以下特点: 基于划分的聚类方法; 类别数 $k$ 事先指定; 以欧氏距离平方表示样本之间的距离或相似度, 以中心或样本的均值表示类别; 以样本和其所属类的中心之间的距离的总和为优化的目标函数; 得到的类别是平坦的、非层次化的;算法是迭代算法, 不能保证得到全局最优。
+
+对于 $k$ 均值聚类算法, 首先选择 $k$ 个类的中心, 将样本分到与中心最近的类中, 得到一个聚类结果; 然后计算每个类的样本的均值, 作为类的新的中心; 重复以上步骤, 直到收玫为止。
+
+\section*{继续阅 读}
+聚类的方法很多，各种方法的详细介绍可参见文献 [1] 和文献 [2]。层次化聚类的方法可参见文献 [2], $k$ 均值聚类可参见文献 [3] 和文献 [4]。 $k$ 均值聚类的扩展有 X-means ${ }^{[5]}$ 。其他常用的聚类方法还有基于混合分布的方法, 如高斯混合模型与 EM 算法; 基于密度的方法, 如 DBScan ${ }^{[6]}$; 基于谱聚类的方法, 如 Normalized Cuts ${ }^{[7]}$ 。以上方法是对样本的聚类, 也有对样本与属性同时聚类的方法, 如 Co-Clustering ${ }^{[8]}$ 。
+
+\section*{习 题}
+14.1 试写出分裂聚类算法, 自上而下地对数据进行聚类, 并给出其算法复杂度。
+
+14.2 证明类或簇的四个定义中, 第一个定义可推出其他三个定义。
+
+14.3 证明式 (14.21) 成立, 即 $k$ 均值的可能解的个数是指数级的。
+
+14.4 比较 $k$ 均值聚类与高斯混合模型加 EM 算法的异同。
+
+\section*{参考文献}
+[1] JAIN A, DUBES R. Algorithms for clustering data[M]. Prentice-Hall, 1988.
+
+[2] AGGARWAL C C, REDDY C K. Data clustering: algorithms and applications $[M]$. CRC Press, 2013.
+
+[3] MACQUEEN J B. Some methods for classification and analysis of multivariate observations[C]// Procceedings of 5th Symposium on Mathematical Statistics and Probability. 1967: 396-410.
+
+[4] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 旨红英, 等译. Springer, 2001.
+
+[5] PElleG D, MOORE A W. X-means: extending $K$-means with efficient estimation of the number of clusters[C]//Proceedings of ICML. 2000: 727-734.
+
+[6] ESTER M, KRIEGEL H, SANDER J, et al. A density-based algorithm for discovering clusters in large spatial databases with noise[C]//Proceedings of ACM SIGKDD. 1996: 226-231.
+
+[7] SHI J, MALIK J. Normalized cuts and image segmentation[J]. IEEE Transactions on Pattern Analysis and Machine Intelligence, 2000, 22(8): 888-905.
+
+[8] DHILLON I S. Co-clustering documents and words using bipartite spectral graph partitioning[C]//Proceedings of ACM SIGKDD. 2001: 269-274.
+
+\section*{第 15 章 奇异值分解}
+奇异值分解 (singular value decomposition, SVD) 是一种矩阵因子分解方法, 是线性代数的概念, 但在机器学习中被广泛使用, 成为其重要工具。本书介绍的主成分分析、潜在语义分析都用到奇异值分解。
+
+任意一个 $m \times n$ 矩阵, 都可以表示为三个矩阵的乘积 (因子分解) 形式, 分别是 $m$ 阶正交矩阵、由降序排列的非负的对角线元素组成的 $m \times n$ 矩形对角矩阵和 $n$ 阶正交矩阵, 称为该矩阵的奇异值分解。矩阵的奇异值分解一定存在, 但不唯一。奇异值分解可以看作是矩阵数据压缩的一种方法, 即用因子分解的方式近似地表示原始矩阵, 这种近似是在平方损失意义下的最优近似。
+
+15.1 节讲述矩阵奇异值分解的定义与基本定理, 叙述奇异值分解的紧凑和截断形式、几何解释、主要性质; 15.2 节讲述奇异值分解的算法; 15.3 节论述奇异值分解是矩阵的一种最优近似方法。
+
+\section*{15.1 奇异值分解的定义与性质}
+\subsection*{15.1.1 定义与定理}
+定义 15.1 (奇异值分解) 矩阵的奇异值分解是指将一个非零的 $m \times n$ 实矩阵 $\boldsymbol{A}, \boldsymbol{A} \in$ $R^{m \times n}$, 表示为以下三个实矩阵乘积形式的运算 (1), 即进行矩阵的因子分解:
+
+
+\begin{equation*}
+\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \tag{15.1}
+\end{equation*}
+
+
+其中, $\boldsymbol{U}$ 是 $m$ 阶正交矩阵 ( orthogonal matrix)， $\boldsymbol{V}$ 是 $n$ 阶正交矩阵， $\boldsymbol{\Sigma}$ 是由降序排列的非负的对角线元素组成的 $m \times n$ 矩形对角矩阵 (rectangular diagonal matrix), 满足
+
+$$
+\begin{aligned}
+& \boldsymbol{U} \boldsymbol{U}^{\mathrm{T}}=\boldsymbol{I} \\
+& \boldsymbol{V} \boldsymbol{V}^{\mathrm{T}}=\boldsymbol{I} \\
+& \boldsymbol{\Sigma}=\operatorname{diag}\left(\sigma_{1}, \sigma_{2}, \cdots, \sigma_{p}\right) \\
+& \sigma_{1} \geqslant \sigma_{2} \geqslant \cdots \geqslant \sigma_{p} \geqslant 0 \\
+& p=\min (m, n)
+\end{aligned}
+$$
+
+(1) 奇异值分解可以更一般地定义在复数矩阵上, 这里并不涉及。\\
+$\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 称为矩阵 $\boldsymbol{A}$ 的奇异值分解 (singular value decomposition, SVD), $\sigma_{i}$ 称为矩阵 $\boldsymbol{A}$的奇异值 (singular value), $\boldsymbol{U}$ 的列向量称为左奇异向量 (left singular vector), $\boldsymbol{V}$ 的列向量称为右奇异向量 (right singular vector)。
+
+注意奇异值分解不要求矩阵 $\boldsymbol{A}$ 是方阵, 事实上矩阵的奇异值分解可以看作是方阵的对角化的推广。
+
+下面看一个奇异值分解的例子。
+
+例 15.1 给定一个 $5 \times 4$ 矩阵 $\boldsymbol{A}$ :
+
+$$
+\boldsymbol{A}=\left[\begin{array}{llll}
+1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 4 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+2 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+它的奇异值分解由三个矩阵的乘积 $U \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 给出, 矩阵 $\boldsymbol{U}, \boldsymbol{\Sigma}, \boldsymbol{V}^{\mathrm{T}}$ 分别为
+
+$$
+\begin{aligned}
+& \boldsymbol{U}=\left[\begin{array}{ccccc}
+0 & 0 & \sqrt{0.2} & 0 & \sqrt{0.8} \\
+1 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & \sqrt{0.8} & 0 & -\sqrt{0.2}
+\end{array}\right], \quad \boldsymbol{\Sigma}=\left[\begin{array}{cccc}
+4 & 0 & 0 & 0 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & \sqrt{5} & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{array}\right] \\
+& \boldsymbol{V}^{\mathrm{T}}=\left[\begin{array}{cccc}
+0 & 0 & 0 & 1 \\
+0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0
+\end{array}\right]
+\end{aligned}
+$$
+
+矩阵 $\boldsymbol{\Sigma}$ 是对角矩阵, 对角线外的元素都是 0, 对角线上的元素非负, 按降序排列。矩阵 $\boldsymbol{U}$ 和 $\boldsymbol{V}$ 是正交矩阵, 它们与各自的转置矩阵相乘是单位矩阵, 即
+
+$$
+\boldsymbol{U} \boldsymbol{U}^{\mathrm{T}}=\boldsymbol{I}_{5}, \quad \boldsymbol{V} \boldsymbol{V}^{\mathrm{T}}=\boldsymbol{I}_{4}
+$$
+
+矩阵的奇异值分解不是唯一的。在此例中如果选择 $\boldsymbol{U}$ 为
+
+$$
+\boldsymbol{U}=\left[\begin{array}{ccccc}
+0 & 0 & \sqrt{0.2} & \sqrt{0.4} & -\sqrt{0.4} \\
+1 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & \sqrt{0.5} & \sqrt{0.5} \\
+0 & 0 & \sqrt{0.8} & -\sqrt{0.1} & \sqrt{0.1}
+\end{array}\right]
+$$
+
+而 $\boldsymbol{\Sigma}$ 与 $\boldsymbol{V}$ 不变, 那么 $\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 也是 $\boldsymbol{A}$ 的一个奇异值分解。\\
+任意给定一个实矩阵, 其奇异值分解是否一定存在呢? 答案是肯定的, 下面的奇异值分解的基本定理给予保证。
+
+定理 15.1 (奇异值分解基本定理) 若 $\boldsymbol{A}$ 为一个 $m \times n$ 实矩阵, $\boldsymbol{A} \in \boldsymbol{R}^{m \times n}$, 则 $\boldsymbol{A}$ 的奇异值分解存在:
+
+
+\begin{equation*}
+\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \tag{15.2}
+\end{equation*}
+
+
+其中, $\boldsymbol{U}$ 是 $m$ 阶正交矩阵, $\boldsymbol{V}$ 是 $n$ 阶正交矩阵, $\boldsymbol{\Sigma}$ 是 $m \times n$ 矩形对角矩阵, 其对角线元素非负, 且按降序排列。
+
+证明 证明是构造性的, 对给定的矩阵 $\boldsymbol{A}$, 构造出其奇异值分解的各个矩阵。为了方便,不妨假设 $m \geqslant n$, 如果 $m<n$ 证明仍然成立。证明由三步完成。(1)
+
+(1) 确定 $\boldsymbol{V}$ 和 $\boldsymbol{\Sigma}$
+
+首先构造 $n$ 阶正交实矩阵 $\boldsymbol{V}$ 和 $m \times n$ 矩形对角实矩阵 $\boldsymbol{\Sigma}$ 。
+
+矩阵 $\boldsymbol{A}$ 是 $m \times n$ 实矩阵, 则矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 是 $n$ 阶实对称矩阵。因而 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值都是实数, 并且存在一个 $n$ 阶正交实矩阵 $\boldsymbol{V}$ 实现 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的对角化, 使得 $\boldsymbol{V}^{\mathrm{T}}\left(\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}\right) \boldsymbol{V}=\boldsymbol{\Lambda}$ 成立,其中 $\boldsymbol{\Lambda}$ 是 $n$ 阶对角矩阵, 其对角线元素由 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值组成。而且, $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值都是非负的。事实上, 令 $\lambda$ 是 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的一个特征值, $\boldsymbol{x}$ 是对应的特征向量, 则
+
+$$
+\|\boldsymbol{A} \boldsymbol{x}\|^{2}=\boldsymbol{x}^{\mathrm{T}} \boldsymbol{A}^{\mathrm{T}} \boldsymbol{A} \boldsymbol{x}=\lambda \boldsymbol{x}^{\mathrm{T}} \boldsymbol{x}=\lambda\|\boldsymbol{x}\|^{2}
+$$
+
+于是
+
+
+\begin{equation*}
+\lambda=\frac{\|\boldsymbol{A} \boldsymbol{x}\|^{2}}{\|\boldsymbol{x}\|^{2}} \geqslant 0 \tag{15.3}
+\end{equation*}
+
+
+可以假设正交矩阵 $\boldsymbol{V}$ 的列的排列使得对应的特征值形成降序排列:
+
+$$
+\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{n} \geqslant 0
+$$
+
+计算特征值的平方根 (实际就是矩阵 $\boldsymbol{A}$ 的奇异值):
+
+$$
+\sigma_{j}=\sqrt{\lambda_{j}}, \quad j=1,2, \cdots, n
+$$
+
+设矩阵 $\boldsymbol{A}$ 的秩是 $r, \operatorname{rank}(\boldsymbol{A})=r$, 则矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的秩也是 $r$ 。由于 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 是对称矩阵, 它的秩等于正的特征值的个数, 所以
+
+
+\begin{equation*}
+\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{r}>0, \quad \lambda_{r+1}=\lambda_{r+2}=\cdots=\lambda_{n}=0 \tag{15.4}
+\end{equation*}
+
+
+对应地有
+
+
+\begin{equation*}
+\sigma_{1} \geqslant \sigma_{2} \geqslant \cdots \geqslant \sigma_{r}>0, \quad \sigma_{r+1}=\sigma_{r+2}=\cdots=\sigma_{n}=0 \tag{15.5}
+\end{equation*}
+
+
+令
+
+$$
+\boldsymbol{V}_{1}=\left[\begin{array}{llll}
+\boldsymbol{\nu}_{1} & \boldsymbol{\nu}_{2} & \cdots & \boldsymbol{\nu}_{r}
+\end{array}\right], \quad \boldsymbol{V}_{2}=\left[\begin{array}{llll}
+\boldsymbol{\nu}_{r+1} & \boldsymbol{\nu}_{r+2} & \cdots & \boldsymbol{\nu}_{n}
+\end{array}\right]
+$$
+
+其中, $\boldsymbol{\nu}_{1}, \boldsymbol{\nu}_{2}, \cdots, \boldsymbol{\nu}_{r}$ 为 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的正特征值对应的特征向量, $\boldsymbol{\nu}_{r+1}, \boldsymbol{\nu}_{r+2}, \cdots, \boldsymbol{\nu}_{n}$ 为 0 特征值对
+\footnotetext{(1) 线性代数的基本知识可参见本章的参考文献。
+}
+应的特征向量, 则
+
+\[
+\boldsymbol{V}=\left[\begin{array}{ll}
+\boldsymbol{V}_{1} & \boldsymbol{V}_{2} \tag{15.6}
+\end{array}\right]
+\]
+
+这就是矩阵 $\boldsymbol{A}$ 的奇异值分解中的 $n$ 阶正交矩阵 $\boldsymbol{V}$ 。
+
+令
+
+$$
+\boldsymbol{\Sigma}_{1}=\left[\begin{array}{llll}
+\sigma_{1} & & & \\
+& \sigma_{2} & & \\
+& & \ddots & \\
+& & & \sigma_{r}
+\end{array}\right]
+$$
+
+则 $\boldsymbol{\Sigma}_{1}$ 是一个 $r$ 阶对角矩阵, 其对角线元素为按降序排列的正的 $\sigma_{1}, \sigma_{2}, \cdots, \sigma_{r}$, 于是 $m \times n$矩形对角矩阵 $\boldsymbol{\Sigma}$ 可以表示为
+
+\[
+\boldsymbol{\Sigma}=\left[\begin{array}{cc}
+\boldsymbol{\Sigma}_{1} & 0  \tag{15.7}\\
+0 & 0
+\end{array}\right]
+\]
+
+这就是矩阵 $\boldsymbol{A}$ 的奇异值分解中的 $m \times n$ 矩形对角矩阵 $\boldsymbol{\Sigma}$ 。
+
+下面推出后面要用到的一个公式。在式 (15.6) 中, $\boldsymbol{V}_{2}$ 的列向量是 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 对应于特征值为 0 的特征向量。因此
+
+
+\begin{equation*}
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A} \boldsymbol{v}_{j}=0, \quad j=r+1, r+2, \cdots, n \tag{15.8}
+\end{equation*}
+
+
+于是, $\boldsymbol{V}_{2}$ 的列向量构成了 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的零空间 $N\left(\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}\right)$, 而 $N\left(\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}\right)=N(\boldsymbol{A})$, 所以 $\boldsymbol{V}_{2}$ 的列向量构成 $\boldsymbol{A}$ 的零空间的一组标准正交基。因此,
+
+
+\begin{equation*}
+\boldsymbol{A} \boldsymbol{V}_{2}=0 \tag{15.9}
+\end{equation*}
+
+
+由于 $\boldsymbol{V}$ 是正交矩阵，由式 (15.6) 可得:
+
+
+\begin{gather*}
+\boldsymbol{I}=\boldsymbol{V} \boldsymbol{V}^{\mathrm{T}}=\boldsymbol{V}_{1} \boldsymbol{V}_{1}^{\mathrm{T}}+\boldsymbol{V}_{2} \boldsymbol{V}_{2}^{\mathrm{T}}  \tag{15.10}\\
+\boldsymbol{A}=\boldsymbol{A} \boldsymbol{I}=\boldsymbol{A} \boldsymbol{V}_{1} \boldsymbol{V}_{1}^{\mathrm{T}}+\boldsymbol{A} \boldsymbol{V}_{2} \boldsymbol{V}_{2}^{\mathrm{T}}=\boldsymbol{A} \boldsymbol{V}_{1} \boldsymbol{V}_{1}^{\mathrm{T}} \tag{15.11}
+\end{gather*}
+
+
+(2) 确定 $\boldsymbol{U}$
+
+接着构造 $m$ 阶正交实矩阵 $\boldsymbol{U}$ 。
+
+令
+
+
+\begin{gather*}
+\boldsymbol{u}_{j}=\frac{1}{\sigma_{j}} \boldsymbol{A} \boldsymbol{v}_{j}, \quad j=1,2, \cdots, r  \tag{15.12}\\
+\boldsymbol{U}_{1}=\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{r}
+\end{array}\right] \tag{15.13}
+\end{gather*}
+
+
+则有
+
+
+\begin{equation*}
+\boldsymbol{A} \boldsymbol{V}_{1}=\boldsymbol{U}_{1} \boldsymbol{\Sigma}_{1} \tag{15.14}
+\end{equation*}
+
+
+$\boldsymbol{U}_{1}$ 的列向量构成了一组标准正交集，因为
+
+
+\begin{align*}
+\boldsymbol{u}_{i}^{\mathrm{T}} \boldsymbol{u}_{j} & =\left(\frac{1}{\sigma_{i}} \boldsymbol{v}_{i}^{\mathrm{T}} \boldsymbol{A}^{\mathrm{T}}\right)\left(\frac{1}{\sigma_{j}} \boldsymbol{A} \boldsymbol{v}_{j}\right) \\
+& =\frac{1}{\sigma_{i} \sigma_{j}} \boldsymbol{v}_{i}^{\mathrm{T}}\left(\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A} \boldsymbol{v}_{j}\right) \\
+& =\frac{\sigma_{j}}{\sigma_{i}} \boldsymbol{v}_{i}^{\mathrm{T}} \boldsymbol{v}_{j} \\
+& =\delta_{i j}, \quad i=1,2, \cdots, r, \quad j=1,2, \cdots, r \tag{15.15}
+\end{align*}
+
+
+由式 (15.12) 和式 (15.15) 可知, $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{r}$ 构成 $A$ 的列空间的一组标准正交基, 列空间的维数为 $r$ 。如果将 $\boldsymbol{A}$ 看成是从 $\boldsymbol{R}^{n}$ 到 $\boldsymbol{R}^{m}$ 的线性变换，则 $\boldsymbol{A}$ 的列空间和 $\boldsymbol{A}$ 的值域 $R(\boldsymbol{A})$是相同的。因此 $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{r}$ 也是 $R(\boldsymbol{A})$ 的一组标准正交基。
+
+若 $R(\boldsymbol{A})^{\perp}$ 表示 $R(\boldsymbol{A})$ 的正交补, 则有 $R(\boldsymbol{A})$ 的维数为 $r, R(\boldsymbol{A})^{\perp}$ 的维数为 $m-r$, 两者的维数之和等于 $m$ 。而且有 $R(\boldsymbol{A})^{\perp}=N\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 成立。(1)
+
+令 $\left\{\boldsymbol{u}_{r+1}, \boldsymbol{u}_{r+2}, \cdots, \boldsymbol{u}_{m}\right\}$ 为 $N\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 的一组标准正交基, 并令
+
+
+\begin{align*}
+& \boldsymbol{U}_{2}=\left[\begin{array}{llll}
+\boldsymbol{u}_{r+1} & \boldsymbol{u}_{r+2} & \cdots & \boldsymbol{u}_{m}
+\end{array}\right] \\
+& \boldsymbol{U}=\left[\begin{array}{ll}
+\boldsymbol{U}_{1} & \boldsymbol{U}_{2}
+\end{array}\right] \tag{15.16}
+\end{align*}
+
+
+则 $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{m}$ 构成了 $\boldsymbol{R}^{m}$ 的一组标准正交基。因此, $\boldsymbol{U}$ 是 $m$ 阶正交矩阵, 这就是矩阵 $A$的奇异值分解中的 $m$ 阶正交矩阵。
+
+(3) 证明 $\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}=\boldsymbol{A}$
+
+由式 (15.6)、式 (15.7)、式 (15.11)、式 (15.14) 和式 (15.16) 得:
+
+
+\begin{align*}
+\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} & =\left[\begin{array}{ll}
+\boldsymbol{U}_{1} & \boldsymbol{U}_{2}
+\end{array}\right]\left[\begin{array}{cc}
+\boldsymbol{\Sigma}_{1} & 0 \\
+0 & 0
+\end{array}\right]\left[\begin{array}{l}
+\boldsymbol{V}_{1}^{\mathrm{T}} \\
+\boldsymbol{V}_{2}^{\mathrm{T}}
+\end{array}\right] \\
+& =\boldsymbol{U}_{1} \boldsymbol{\Sigma}_{1} \boldsymbol{V}_{1}^{\mathrm{T}} \\
+& =\boldsymbol{A} \boldsymbol{V}_{1} \boldsymbol{V}_{1}^{\mathrm{T}} \\
+& =\boldsymbol{A} \tag{15.17}
+\end{align*}
+
+
+至此证明了矩阵 $\boldsymbol{A}$ 存在奇异值分解。
+
+\subsection*{15.1.2 紧奇异值分解与截断奇异值分解}
+定理 15.1 给出的奇异值分解
+
+$$
+\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}
+$$
+
+又称为矩阵的完全奇异值分解 (full singular value decomposition）。实际常用的是奇异值分
+\footnotetext{(1) 参照附录 D。
+}
+解的紧凑形式和截断形式。紧奇异值分解是与原始矩阵等秩的奇异值分解, 截断奇异值分解是比原始矩阵低秩的奇异值分解。
+
+\section*{1. 紧奇异值分解}
+定义 15.2 设有 $m \times n$ 实矩阵 $\boldsymbol{A}$, 其秩为 $\operatorname{rank}(\boldsymbol{A})=r, r \leqslant \min (m, n)$, 则称 $\boldsymbol{U}_{r} \boldsymbol{\Sigma}_{r} \boldsymbol{V}_{r}^{\mathrm{T}}$为 $\boldsymbol{A}$ 的紧奇异值分解 ( compact singular value decomposition), 即
+
+
+\begin{equation*}
+\boldsymbol{A}=\boldsymbol{U}_{r} \boldsymbol{\Sigma}_{r} \boldsymbol{V}_{r}^{\mathrm{T}} \tag{15.18}
+\end{equation*}
+
+
+其中, $\boldsymbol{U}_{r}$ 是 $m \times r$ 矩阵, $\boldsymbol{V}_{r}$ 是 $n \times r$ 矩阵, $\boldsymbol{\Sigma}_{r}$ 是 $r$ 阶对角矩阵; 矩阵 $\boldsymbol{U}_{r}$ 由完全奇异值分解中 $\boldsymbol{U}$ 的前 $r$ 列、矩阵 $\boldsymbol{V}_{r}$ 由 $\boldsymbol{V}$ 的前 $r$ 列、矩阵 $\boldsymbol{\Sigma}_{r}$ 由 $\boldsymbol{\Sigma}$ 的前 $r$ 个对角线元素得到。紧奇异值分解的对角矩阵 $\boldsymbol{\Sigma}_{r}$ 的秩与原始矩阵 $\boldsymbol{A}$ 的秩相等。
+
+例 15.2 由例 15.1 给出的矩阵 $\boldsymbol{A}$ 的秩 $r=3$,
+
+$$
+\boldsymbol{A}=\left[\begin{array}{llll}
+1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 4 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+2 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+$\boldsymbol{A}$ 的紧奇异值分解是
+
+$$
+\boldsymbol{A}=\boldsymbol{U}_{r} \boldsymbol{\Sigma}_{r} \boldsymbol{V}_{r}^{\mathrm{T}}
+$$
+
+其中，
+
+$$
+\boldsymbol{U}_{r}=\left[\begin{array}{ccc}
+0 & 0 & \sqrt{0.2} \\
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & \sqrt{0.8}
+\end{array}\right], \quad \boldsymbol{\Sigma}_{r}=\left[\begin{array}{ccc}
+4 & 0 & 0 \\
+0 & 3 & 0 \\
+0 & 0 & \sqrt{5}
+\end{array}\right], \quad \boldsymbol{V}_{r}^{\mathrm{T}}=\left[\begin{array}{cccc}
+0 & 0 & 0 & 1 \\
+0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+\section*{2. 截断奇异值分解}
+在矩阵的奇异值分解中, 只取最大的 $k$ 个奇异值 ( $k<r, r$ 为矩阵的秩) 对应的部分,就得到矩阵的截断奇异值分解。实际应用中提到矩阵的奇异值分解时, 通常指截断奇异值分解。
+
+定义 15.3 设 $\boldsymbol{A}$ 为 $m \times n$ 实矩阵, 其秩 $\operatorname{rank}(\boldsymbol{A})=r$, 且 $0<k<r$, 则称 $\boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}}$ 为矩阵 $\boldsymbol{A}$ 的截断奇异值分解 (truncated singular value decomposition)，即
+
+
+\begin{equation*}
+\boldsymbol{A} \approx \boldsymbol{U}_{k} \boldsymbol{\Sigma}_{k} \boldsymbol{V}_{k}^{\mathrm{T}} \tag{15.19}
+\end{equation*}
+
+
+其中, $\boldsymbol{U}_{k}$ 是 $m \times k$ 矩阵, $\boldsymbol{V}_{k}$ 是 $n \times k$ 矩阵, $\boldsymbol{\Sigma}_{k}$ 是 $k$ 阶对角矩阵; 矩阵 $\boldsymbol{U}_{k}$ 由完全奇异值分解中 $\boldsymbol{U}$ 的前 $k$ 列、矩阵 $\boldsymbol{V}_{k}$ 由 $\boldsymbol{V}$ 的前 $k$ 列、矩阵 $\boldsymbol{\Sigma}_{k}$ 由 $\boldsymbol{\Sigma}$ 的前 $k$ 个对角线元素得到。对角矩阵 $\Sigma_{k}$ 的秩比原始矩阵 $A$ 的秩低。\\
+例 15.3 由例 15.1 给出的矩阵 $\boldsymbol{A}$
+
+$$
+\boldsymbol{A}=\left[\begin{array}{llll}
+1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 4 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+2 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+的秩为 3 , 若取 $k=2$, 则其截断奇异值分解是
+
+$$
+\boldsymbol{A} \approx \boldsymbol{A}_{2}=\boldsymbol{U}_{2} \boldsymbol{\Sigma}_{2} \boldsymbol{V}_{2}^{\mathrm{T}}
+$$
+
+其中，
+
+$$
+\begin{aligned}
+& \boldsymbol{U}_{2}=\left[\begin{array}{ll}
+0 & 0 \\
+1 & 0 \\
+0 & 1 \\
+0 & 0 \\
+0 & 0
+\end{array}\right], \quad \boldsymbol{\Sigma}_{2}=\left[\begin{array}{ll}
+4 & 0 \\
+0 & 3
+\end{array}\right], \quad \boldsymbol{V}_{2}^{\mathrm{T}}=\left[\begin{array}{llll}
+0 & 0 & 0 & 1 \\
+0 & 1 & 0 & 0
+\end{array}\right], \\
+& \boldsymbol{A}_{2}=\boldsymbol{U}_{2} \boldsymbol{\Sigma}_{2} \boldsymbol{V}_{2}^{\mathrm{T}}=\left[\begin{array}{llll}
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 4 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{array}\right]
+\end{aligned}
+$$
+
+这里的 $\boldsymbol{U}_{2}, \boldsymbol{V}_{2}$ 是例 15.1 的 $\boldsymbol{U}$ 和 $\boldsymbol{V}$ 的前两列, $\boldsymbol{\Sigma}_{2}$ 是 $\boldsymbol{\Sigma}$ 的前两行前两列。 $\boldsymbol{A}_{2}$ 与 $\boldsymbol{A}$ 相比, $\boldsymbol{A}$的元素 1 和 2 在 $\boldsymbol{A}_{2}$ 中均变成 0 。
+
+在实际应用中, 常常需要对矩阵的数据进行压缩, 将其近似表示, 奇异值分解提供了一种方法。后面将要叙述, 奇异值分解是在平方损失 (弗罗贝尼乌斯范数) 意义下对矩阵的最优近似。紧奇异值分解对应无损压缩，截断奇异值分解对应有损压缩。
+
+\subsection*{15.1.3 几何解释}
+从线性变换的角度理解奇异值分解, $m \times n$ 矩阵 $\boldsymbol{A}$ 表示从 $n$ 维空间 $\boldsymbol{R}^{n}$ 到 $m$ 维空间 $\boldsymbol{R}^{m}$ 的一个线性变换:
+
+$$
+T: \boldsymbol{x} \rightarrow \boldsymbol{A} \boldsymbol{x}
+$$
+
+其中, $\boldsymbol{x} \in \boldsymbol{R}^{n}, \boldsymbol{A x} \in \boldsymbol{R}^{m}, \boldsymbol{x}$ 和 $\boldsymbol{A x}$ 分别是各自空间的向量。线性变换可以分解为三个简单的变换: 一个坐标系的旋转或反射变换、一个坐标轴的缩放变换、另一个坐标系的旋转或反射变换。奇异值定理保证这种分解一定存在。这就是奇异值分解的几何解释。\\
+对矩阵 $\boldsymbol{A}$ 进行奇异值分解, 得到 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}, \boldsymbol{V}$ 和 $\boldsymbol{U}$ 都是正交矩阵, 所以 $\boldsymbol{V}$ 的列向量 $\boldsymbol{v}_{1}, \boldsymbol{v}_{2}, \cdots, \boldsymbol{v}_{n}$ 构成 $\boldsymbol{R}^{n}$ 空间的一组标准正交基, 表示 $\boldsymbol{R}^{n}$ 中的正交坐标系的旋转或反射变换; $\boldsymbol{U}$ 的列向量 $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{m}$ 构成 $\boldsymbol{R}^{m}$ 空间的一组标准正交基, 表示 $\boldsymbol{R}^{m}$ 中的正交坐标系的旋转或反射变换; $\boldsymbol{\Sigma}$ 的对角元素 $\sigma_{1}, \sigma_{2}, \cdots, \sigma_{n}$ 是一组非负实数, 表示 $\boldsymbol{R}^{n}$ 中的原始正交坐标系坐标轴的 $\sigma_{1}, \sigma_{2}, \cdots, \sigma_{n}$ 倍的缩放变换。
+
+对于任意一个向量 $\boldsymbol{x} \in \boldsymbol{R}^{n}$, 经过基于 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 的线性变换, 等价于经过坐标系的旋转或反射变换 $\boldsymbol{V}^{\mathrm{T}}$ 、坐标轴的缩放变换 $\boldsymbol{\Sigma}$, 以及坐标系的旋转或反射变换 $\boldsymbol{U}$, 得到向量 $\boldsymbol{A x} \in \boldsymbol{R}^{m}$ 。图 15.1 给出直观的几何解释。原始空间的标准正交基（红色与黄色）经过坐标系的旋转变换 $\boldsymbol{V}^{\mathrm{T}}$ 、坐标轴的缩放变换 $\boldsymbol{\Sigma}$ (黑色 $\sigma_{1}, \sigma_{2}$ )、坐标系的旋转变换 $\boldsymbol{U}$, 得到和经过线性变换 $\boldsymbol{A}$ 等价的结果。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-19}
+\end{center}
+
+图 15.1 奇异值分解的几何解释 (见文前彩图)
+
+下面通过一个例子直观地说明奇异值分解的几何意义。
+
+例 15.4 给定一个 2 阶矩阵:
+
+$$
+\boldsymbol{A}=\left[\begin{array}{ll}
+3 & 1 \\
+2 & 1
+\end{array}\right]
+$$
+
+其奇异值分解为
+
+$$
+\boldsymbol{U}=\left[\begin{array}{ll}
+0.8174 & -0.5760 \\
+0.5760 & 0.8174
+\end{array}\right], \quad \boldsymbol{\Sigma}=\left[\begin{array}{ll}
+3.8643 & 0 \\
+0 & 0.2588
+\end{array}\right], \quad \boldsymbol{V}^{\mathrm{T}}=\left[\begin{array}{rr}
+0.9327 & 0.3606 \\
+-0.3606 & 0.9327
+\end{array}\right]
+$$
+
+观察基于矩阵 $\boldsymbol{A}$ 的奇异值分解将 $\boldsymbol{R}^{2}$ 的标准正交基
+
+$$
+e_{1}=\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right], \quad e_{2}=\left[\begin{array}{l}
+0 \\
+1
+\end{array}\right]
+$$
+
+进行线性转换的情况。
+
+首先, $V^{\mathrm{T}}$ 表示一个旋转变换, 将标准正交基 $e_{1}, e_{2}$ 旋转, 得到向量 $V^{\mathrm{T}} e_{1}, V^{\mathrm{T}} e_{2}$ :
+
+$$
+\boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{1}=\left[\begin{array}{r}
+0.9327 \\
+-0.3606
+\end{array}\right], \quad \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{2}=\left[\begin{array}{l}
+0.3606 \\
+0.9327
+\end{array}\right]
+$$
+
+其次, $\boldsymbol{\Sigma}$ 表示一个缩放变换, 将向量 $\boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{1}, \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{2}$ 在坐标轴方向缩放 $\sigma_{1}$ 倍和 $\sigma_{2}$ 倍, 得到向量 $\Sigma V^{\mathrm{T}} e_{1}, \Sigma V^{\mathrm{T}} e_{2}$ :
+
+$$
+\boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{1}=\left[\begin{array}{r}
+3.6042 \\
+-0.0933
+\end{array}\right], \quad \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{2}=\left[\begin{array}{l}
+1.3935 \\
+0.2414
+\end{array}\right]
+$$
+
+最后, $\boldsymbol{U}$ 表示一个旋转变换, 再将向量 $\boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{1}, \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{2}$ 旋转, 得到向量 $\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} e_{1}$, $U \boldsymbol{\Sigma} V^{\mathrm{T}} e_{2}$, 也就是向量 $A e_{1}$ 和 $A e_{2}$ :
+
+$$
+\boldsymbol{A} \boldsymbol{e}_{1}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{1}=\left[\begin{array}{l}
+3 \\
+2
+\end{array}\right], \quad \boldsymbol{A} \boldsymbol{e}_{2}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}} \boldsymbol{e}_{2}\left[\begin{array}{l}
+1 \\
+1
+\end{array}\right]
+$$
+
+综上, 矩阵的奇异值分解也可以看作是将其对应的线性变换分解为旋转变换、缩放变换及旋转变换的组合。根据定理 15.1, 这个变换的组合一定存在。
+
+\subsection*{15.1.4 主要性质}
+（1）设矩阵 $\boldsymbol{A}$ 的奇异值分解为 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ ，则以下关系成立:
+
+
+\begin{align*}
+& \boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}=\left(\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}\right)^{\mathrm{T}}\left(\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}\right)=\boldsymbol{V}\left(\boldsymbol{\Sigma}^{\mathrm{T}} \boldsymbol{\Sigma}\right) \boldsymbol{V}^{\mathrm{T}}  \tag{15.20}\\
+& \boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}=\left(\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}\right)\left(\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}\right)^{\mathrm{T}}=\boldsymbol{U}\left(\boldsymbol{\Sigma} \boldsymbol{\Sigma}^{\mathrm{T}}\right) \boldsymbol{U}^{\mathrm{T}} \tag{15.21}
+\end{align*}
+
+
+也就是说, 矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 和 $\boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}$ 的特征分解存在, 且可以由矩阵 $\boldsymbol{A}$ 的奇异值分解的矩阵表示。 $\boldsymbol{V}$ 的列向量是 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征向量, $\boldsymbol{U}$ 的列向量是 $\boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}$ 的特征向量, $\boldsymbol{\Sigma}$ 的奇异值是 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 和 $\boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}$ 的特征值的平方根。
+
+(2) 在矩阵 $\boldsymbol{A}$ 的奇异值分解中, 奇异值、左奇异向量和右奇异向量之间存在对应关系。
+
+由 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 易知:
+
+$$
+A V=U \boldsymbol{V}
+$$
+
+比较这一等式两端的第 $j$ 列, 得到:
+
+
+\begin{equation*}
+\boldsymbol{A} \boldsymbol{v}_{j}=\sigma_{j} \boldsymbol{u}_{j}, \quad j=1,2, \cdots, n \tag{15.22}
+\end{equation*}
+
+
+这是矩阵 $\boldsymbol{A}$ 的右奇异向量和奇异值、左奇异向量的关系。
+
+类似地, 由
+
+$$
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{U}=\boldsymbol{V} \boldsymbol{\Sigma}^{\mathrm{T}}
+$$
+
+得到:
+
+
+\begin{equation*}
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{u}_{j}=\sigma_{j} \boldsymbol{v}_{j}, \quad j=1,2, \cdots, n \tag{15.23}
+\end{equation*}
+
+
+
+\begin{equation*}
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{u}_{j}=0, \quad j=n+1, n+2, \cdots, m \tag{15.24}
+\end{equation*}
+
+
+这是矩阵 $\boldsymbol{A}$ 的左奇异向量和奇异值、右奇异向量的关系。
+
+(3) 矩阵 $\boldsymbol{A}$ 的奇异值分解中, 奇异值 $\sigma_{1}, \sigma_{2}, \cdots, \sigma_{n}$ 是唯一的, 而矩阵 $\boldsymbol{U}$ 和 $\boldsymbol{V}$ 不是唯一的。
+
+(4) 矩阵 $\boldsymbol{A}$ 和 $\boldsymbol{\Sigma}$ 的秩相等, 等于正奇异值 $\sigma_{i}$ 的个数 $r$ (包含重复的奇异值)。
+
+（5）矩阵 $\boldsymbol{A}$ 的 $r$ 个右奇异向量 $\boldsymbol{v}_{1}, \boldsymbol{v}_{2}, \cdots, \boldsymbol{v}_{r}$ 构成 $\boldsymbol{A}^{\mathrm{T}}$ 的值域 $R\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 的一组标准正交基。因为矩阵 $\boldsymbol{A}^{\mathrm{T}}$ 是从 $\boldsymbol{R}^{m}$ 映射到 $\boldsymbol{R}^{n}$ 的线性变换，则 $\boldsymbol{A}^{\mathrm{T}}$ 的值域 $R\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 和 $\boldsymbol{A}^{\mathrm{T}}$ 的列空间是相同的, $\boldsymbol{v}_{1}, \boldsymbol{v}_{2}, \cdots, \boldsymbol{v}_{r}$ 是 $\boldsymbol{A}^{\mathrm{T}}$ 的一组标准正交基, 因而也是 $R\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 的一组标准正交基。(1)
+
+矩阵 $\boldsymbol{A}$ 的 $n-r$ 个右奇异向量 $\boldsymbol{v}_{r+1}, \boldsymbol{v}_{r+2}, \cdots, \boldsymbol{v}_{n}$ 构成 $\boldsymbol{A}$ 的零空间 $N(\boldsymbol{A})$ 的一组标准正交基。矩阵 $\boldsymbol{A}$ 的 $r$ 个左奇异向量 $\boldsymbol{u}_{1}, \boldsymbol{u}_{2}, \cdots, \boldsymbol{u}_{r}$ 构成值域 $R(\boldsymbol{A})$ 的一组标准正交基。矩阵 $\boldsymbol{A}$的 $m-r$ 个左奇异向量 $\boldsymbol{u}_{r+1}, \boldsymbol{u}_{r+2}, \cdots, \boldsymbol{u}_{m}$ 构成 $\boldsymbol{A}^{\mathrm{T}}$ 的零空间 $N\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 的一组标准正交基。
+
+\section*{15.2 奇异值分解的计算}
+奇异值分解基本定理的证明过程蕴含了奇异值分解的计算方法。矩阵 $\boldsymbol{A}$ 的奇异值分解可以通过求对称矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值和特征向量得到。 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征向量构成正交矩阵 $\boldsymbol{V}$ 的列, $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值 $\lambda_{j}$ 的平方根为奇异值 $\sigma_{i}$, 即
+
+$$
+\sigma_{j}=\sqrt{\lambda_{j}}, \quad j=1,2, \cdots, n
+$$
+
+对其由大到小排列作为对角线元素, 构成对角矩阵 $\boldsymbol{\Sigma}$; 求正奇异值对应的左奇异向量, 再求扩充的 $\boldsymbol{A}^{\mathrm{T}}$ 的标准正交基, 构成正交矩阵 $\boldsymbol{U}$ 的列, 从而得到 $\boldsymbol{A}$ 的奇异值分解 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 。
+
+给定 $m \times n$ 矩阵 $\boldsymbol{A}$, 可以按照上面的叙述写出矩阵奇异值分解的计算过程。
+
+(1) 求 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值和特征向量
+
+计算对称矩阵 $\boldsymbol{W}=\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 。
+
+求解特征方程
+
+$$
+(\boldsymbol{W}-\lambda \boldsymbol{I}) \boldsymbol{x}=0
+$$
+
+得到特征值 $\lambda_{i}$, 并将特征值由大到小排列:
+
+$$
+\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{n} \geqslant 0
+$$
+
+将特征值 $\lambda_{i}(i=1,2, \cdots, n)$ 代入特征方程求得对应的特征向量。
+
+(2) 求 $n$ 阶正交矩阵 $\boldsymbol{V}$
+
+将特征向量单位化, 得到单位特征向量 $v_{1}, v_{2}, \cdots, \boldsymbol{v}_{n}$, 构成 $n$ 阶正交矩阵 $\boldsymbol{V}$ :
+
+$$
+\boldsymbol{V}=\left[\begin{array}{llll}
+\boldsymbol{v}_{1} & \boldsymbol{v}_{2} & \cdots & \boldsymbol{v}_{n}
+\end{array}\right]
+$$
+
+(3) 求 $m \times n$ 对角矩阵 $\boldsymbol{\Sigma}$
+
+计算 $\boldsymbol{A}$ 的奇异值:
+
+$$
+\sigma_{i}=\sqrt{\lambda_{i}}, \quad i=1,2, \cdots, n
+$$
+
+(1) 参照附录 D。\\
+构造 $m \times n$ 矩形对角矩阵 $\boldsymbol{\Sigma}$, 主对角线元素是奇异值, 其余元素是零:
+
+$$
+\boldsymbol{\Sigma}=\operatorname{diag}\left(\sigma_{1}, \sigma_{2}, \cdots, \sigma_{n}\right)
+$$
+
+(4) 求 $m$ 阶正交矩阵 $\boldsymbol{U}$
+
+对 $\boldsymbol{A}$ 的前 $r$ 个正奇异值, 令
+
+$$
+\boldsymbol{u}_{j}=\frac{1}{\sigma_{j}} \boldsymbol{A} \boldsymbol{v}_{j}, \quad j=1,2, \cdots, r
+$$
+
+得到:
+
+$$
+\boldsymbol{U}_{1}=\left[\begin{array}{llll}
+\boldsymbol{u}_{1} & \boldsymbol{u}_{2} & \cdots & \boldsymbol{u}_{r}
+\end{array}\right]
+$$
+
+求 $\boldsymbol{A}^{\mathrm{T}}$ 的零空间的一组标准正交基 $\left\{\boldsymbol{u}_{r+1}, \boldsymbol{u}_{r+2}, \cdots, \boldsymbol{u}_{m}\right\}$, 令
+
+$$
+\boldsymbol{U}_{2}=\left[\begin{array}{llll}
+\boldsymbol{u}_{r+1} & \boldsymbol{u}_{r+2} & \cdots & \boldsymbol{u}_{m}
+\end{array}\right]
+$$
+
+并令
+
+$$
+\boldsymbol{U}=\left[\begin{array}{ll}
+\boldsymbol{U}_{1} & \boldsymbol{U}_{2}
+\end{array}\right]
+$$
+
+（5）得到奇异值分解
+
+$$
+\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}
+$$
+
+下面通过一个简单的例题, 说明奇异值分解的算法。
+
+例 15.5 试求矩阵
+
+$$
+\boldsymbol{A}=\left[\begin{array}{ll}
+1 & 1 \\
+2 & 2 \\
+0 & 0
+\end{array}\right]
+$$
+
+的奇异值分解。
+
+解 (1) 求矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值和特征向量
+
+求对称矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ :
+
+$$
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}=\left[\begin{array}{lll}
+1 & 2 & 0 \\
+1 & 2 & 0
+\end{array}\right]\left[\begin{array}{ll}
+1 & 1 \\
+2 & 2 \\
+0 & 0
+\end{array}\right]=\left[\begin{array}{ll}
+5 & 5 \\
+5 & 5
+\end{array}\right]
+$$
+
+特征值 $\lambda$ 和特征向量 $\boldsymbol{x}$ 满足特征方程
+
+$$
+\left(\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}-\lambda \boldsymbol{I}\right) \boldsymbol{x}=0
+$$
+
+得到齐次线性方程组:
+
+$$
+\left\{\begin{array}{l}
+(5-\lambda) x_{1}+5 x_{2}=0 \\
+5 x_{1}+(5-\lambda) x_{2}=0
+\end{array}\right.
+$$
+
+该方程组有非零解的充要条件是
+
+$$
+\left|\begin{array}{ll}
+5-\lambda & 5 \\
+5 & 5-\lambda
+\end{array}\right|=0
+$$
+
+即
+
+$$
+\lambda^{2}-10 \lambda=0
+$$
+
+解此方程, 得到矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值 $\lambda_{1}=10$ 和 $\lambda_{2}=0$ 。
+
+将特征值 $\lambda_{1}=10$ 代入线性方程组, 得到对应的单位特征向量:
+
+$$
+\boldsymbol{v}_{1}=\left[\begin{array}{c}
+\frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{2}}
+\end{array}\right]
+$$
+
+同样得到特征值 $\lambda_{2}=0$ 对应的单位特征向量:
+
+$$
+\boldsymbol{v}_{2}=\left[\begin{array}{c}
+\frac{1}{\sqrt{2}} \\
+-\frac{1}{\sqrt{2}}
+\end{array}\right]
+$$
+
+(2) 求正交矩阵 $\boldsymbol{V}$
+
+构造正交矩阵 $\boldsymbol{V}:$
+
+$$
+\boldsymbol{V}=\left[\begin{array}{cc}
+\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}
+\end{array}\right]
+$$
+
+(3) 求对角矩阵 $\boldsymbol{\Sigma}$
+
+奇异值为 $\sigma_{1}=\sqrt{\lambda_{1}}=\sqrt{10}$ 和 $\sigma_{2}=0$ 。构造对角矩阵:
+
+$$
+\boldsymbol{\Sigma}=\left[\begin{array}{cc}
+\sqrt{10} & 0 \\
+0 & 0 \\
+0 & 0
+\end{array}\right]
+$$
+
+注意在 $\boldsymbol{\Sigma}$ 中要加上零行向量, 使得 $\boldsymbol{\Sigma}$ 能够与 $\boldsymbol{U}, \boldsymbol{V}$ 进行矩阵乘法运算。
+
+(4) 求正交矩阵 $\boldsymbol{U}$
+
+基于 $\boldsymbol{A}$ 的正奇异值计算得到列向量 $\boldsymbol{u}_{1}$ :
+
+$$
+\boldsymbol{u}_{1}=\frac{1}{\sigma_{1}} \boldsymbol{A} \boldsymbol{v}_{1}=\frac{1}{\sqrt{10}}\left[\begin{array}{ll}
+1 & 1 \\
+2 & 2 \\
+0 & 0
+\end{array}\right]\left[\begin{array}{c}
+\frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{2}}
+\end{array}\right]=\left[\begin{array}{c}
+\frac{1}{\sqrt{5}} \\
+\frac{2}{\sqrt{5}} \\
+0
+\end{array}\right]
+$$
+
+列向量 $\boldsymbol{u}_{2}, \boldsymbol{u}_{3}$ 是 $\boldsymbol{A}^{\mathrm{T}}$ 的零空间 $N\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 的一组标准正交基。为此, 求解以下线性方程组:
+
+$$
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{x}=\left[\begin{array}{lll}
+1 & 2 & 0 \\
+1 & 2 & 0
+\end{array}\right]\left[\begin{array}{l}
+x_{1} \\
+x_{2} \\
+x_{3}
+\end{array}\right]=\left[\begin{array}{l}
+0 \\
+0
+\end{array}\right]
+$$
+
+即
+
+$$
+\begin{aligned}
+& x_{1}+2 x_{2}+0 x_{3}=0 \\
+& x_{1}=-2 x_{2}+0 x_{3}
+\end{aligned}
+$$
+
+分别取 $\left(x_{2}, x_{3}\right)$ 为 $(1,0)$ 和 $(0,1)$, 得到 $N\left(\boldsymbol{A}^{\mathrm{T}}\right)$ 的基:
+
+$$
+(-2,1,0)^{\mathrm{T}}, \quad(0,0,1)^{\mathrm{T}}
+$$
+
+$N\left(A^{\mathrm{T}}\right)$ 的一组标准正交基是
+
+$$
+\boldsymbol{u}_{2}=\left(-\frac{2}{\sqrt{5}}, \frac{1}{\sqrt{5}}, 0\right)^{\mathrm{T}}, \quad \boldsymbol{u}_{3}=(0,0,1)^{\mathrm{T}}
+$$
+
+构造正交矩阵 $\boldsymbol{U}:$
+
+$$
+\boldsymbol{U}=\left[\begin{array}{ccc}
+\frac{1}{\sqrt{5}} & -\frac{2}{\sqrt{5}} & 0 \\
+\frac{2}{\sqrt{5}} & \frac{1}{\sqrt{5}} & 0 \\
+0 & 0 & 1
+\end{array}\right]
+$$
+
+(5) 矩阵 $\boldsymbol{A}$ 的奇异值分解
+
+$$
+\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}=\left[\begin{array}{ccc}
+\frac{1}{\sqrt{5}} & -\frac{2}{\sqrt{5}} & 0 \\
+\frac{2}{\sqrt{5}} & \frac{1}{\sqrt{5}} & 0 \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+\sqrt{10} & 0 \\
+0 & 0 \\
+0 & 0
+\end{array}\right]\left[\begin{array}{cc}
+\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}
+\end{array}\right]
+$$
+
+上面的算法和例题只是为了说明计算的过程, 并不是实际应用中的算法。可以看出, 奇异值分解算法关键在于 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值的计算。实际应用的奇异值分解算法是通过求 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$的特征值进行, 但不直接计算 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 。按照这个思路产生了许多矩阵奇异值分解的有效算法,这里不予介绍, 读者可以参考文献 [3] 和文献 [4]。
+
+\section*{15.3 奇异值分解与矩阵近似}
+\subsection*{15.3.1 弗罗贝尼乌斯范数}
+奇异值分解也是一种矩阵近似的方法, 这个近似是在弗罗贝尼乌斯范数 (Frobenius norm）意义下的近似。矩阵的弗罗贝尼乌斯范数是向量的 $L_{2}$ 范数的直接推广, 对应机器学习中的平方损失函数。\\
+定义 15.4 (弗罗贝尼乌斯范数) 设矩阵 $\boldsymbol{A} \in \boldsymbol{R}^{m \times n}, \boldsymbol{A}=\left[a_{i j}\right]_{m \times n}$, 定义矩阵 $\boldsymbol{A}$ 的弗罗贝尼乌斯范数为
+
+
+\begin{equation*}
+\|A\|_{F}=\left(\sum_{i=1}^{m} \sum_{j=1}^{n} a_{i j}^{2}\right)^{\frac{1}{2}} \tag{15.25}
+\end{equation*}
+
+
+引理 15.1 设矩阵 $\boldsymbol{A} \in \boldsymbol{R}^{m \times n}, \boldsymbol{A}$ 的奇异值分解为 $\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$, 其中 $\boldsymbol{\Sigma}=\operatorname{diag}\left(\sigma_{1}, \sigma_{2}, \cdots\right.$, $\left.\sigma_{n}\right)$, 则
+
+
+\begin{equation*}
+\|\boldsymbol{A}\|_{F}=\left(\sigma_{1}^{2}+\sigma_{2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}} \tag{15.26}
+\end{equation*}
+
+
+证明 一般地, 若 $\boldsymbol{Q}$ 是 $m$ 阶正交矩阵, 则有
+
+
+\begin{equation*}
+\|\boldsymbol{Q} \boldsymbol{A}\|_{F}=\|\boldsymbol{A}\|_{F} \tag{15.27}
+\end{equation*}
+
+
+因为
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-25}
+\end{center}
+
+$$
+\begin{aligned}
+& =\sum_{i=1}^{n}\left\|\boldsymbol{Q} \boldsymbol{a}_{i}\right\|_{2}^{2}=\sum_{i=1}^{n}\left\|\boldsymbol{a}_{i}\right\|_{2}^{2}=\|\boldsymbol{A}\|_{F}^{2}
+\end{aligned}
+$$
+
+同样, 若 $\boldsymbol{P}$ 是 $n$ 阶正交矩阵, 则有
+
+
+\begin{equation*}
+\left\|\boldsymbol{A} \boldsymbol{P}^{\mathrm{T}}\right\|_{F}=\|\boldsymbol{A}\|_{F} \tag{15.28}
+\end{equation*}
+
+
+故
+
+
+\begin{equation*}
+\|\boldsymbol{A}\|_{F}=\left\|\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}\right\|_{F}=\|\boldsymbol{\Sigma}\|_{F} \tag{15.29}
+\end{equation*}
+
+
+即
+
+
+\begin{equation*}
+\|\boldsymbol{A}\|_{F}=\left(\sigma_{1}^{2}+\sigma_{2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}} \tag{15.30}
+\end{equation*}
+
+
+\subsection*{15.3.2 矩阵的最优近似}
+奇异值分解是在平方损失 (弗罗贝尼乌斯范数) 意义下对矩阵的最优近似, 即数据压缩。
+
+定理 15.2 设矩阵 $\boldsymbol{A} \in \boldsymbol{R}^{m \times n}$, 矩阵的秩 $\operatorname{rank}(\boldsymbol{A})=r$, 并设 $\mathcal{M}$ 为 $\boldsymbol{R}^{m \times n}$ 中所有秩不超过 $k$ 的矩阵集合, $0<k<r$, 则存在一个秩为 $k$ 的矩阵 $\boldsymbol{X} \in \mathcal{M}$, 使得
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\min _{S \in \mathcal{M}}\|\boldsymbol{A}-\boldsymbol{S}\|_{F} \tag{15.31}
+\end{equation*}
+
+
+称矩阵 $\boldsymbol{X}$ 为矩阵 $\boldsymbol{A}$ 在弗罗贝尼乌斯范数意义下的最优近似。
+
+本书不证明这一定理, 将应用这个结果, 通过矩阵 $\boldsymbol{A}$ 的奇异值分解求出近似矩阵 $\boldsymbol{X}$ 。
+
+定理 15.3 设矩阵 $\boldsymbol{A} \in \boldsymbol{R}^{m \times n}$, 矩阵的秩 $\operatorname{rank}(\boldsymbol{A})=r$, 有奇异值分解 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$, 并设 $\mathcal{M}$ 为 $\boldsymbol{R}^{m \times n}$ 中所有秩不超过 $k$ 的矩阵的集合, $0<k<r$, 若秩为 $k$ 的矩阵 $\boldsymbol{X} \in \mathcal{M}$ 满足
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\min _{S \in \mathcal{M}}\|\boldsymbol{A}-\boldsymbol{S}\|_{F} \tag{15.32}
+\end{equation*}
+
+
+则
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\left(\sigma_{k+1}^{2}+\sigma_{k+2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}} \tag{15.33}
+\end{equation*}
+
+
+特别地, 若 $\boldsymbol{A}^{\prime}=\boldsymbol{U} \boldsymbol{\Sigma}^{\prime} \boldsymbol{V}^{\mathrm{T}}$, 其中,
+
+$$
+\boldsymbol{\Sigma}^{\prime}=\left[\begin{array}{cccccc}
+\sigma_{1} & & & & & \\
+& \ddots & & & 0 & \\
+& & \sigma_{k} & & & \\
+& & & 0 & & \\
+& 0 & & & \ddots & \\
+& & & & & 0
+\end{array}\right]=\left[\begin{array}{cc}
+\boldsymbol{\Sigma}_{k} & 0 \\
+0 & 0
+\end{array}\right]
+$$
+
+则
+
+
+\begin{equation*}
+\left\|\boldsymbol{A}-\boldsymbol{A}^{\prime}\right\|_{F}=\left(\sigma_{k+1}^{2}+\sigma_{k+2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}}=\min _{S \in \mathcal{M}}\|\boldsymbol{A}-\boldsymbol{S}\|_{F} \tag{15.34}
+\end{equation*}
+
+
+证明 令 $\boldsymbol{X} \in \mathcal{M}$ 为满足式 (15.32) 的一个矩阵。由于
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F} \leqslant\left\|\boldsymbol{A}-\boldsymbol{A}^{\prime}\right\|_{F}=\left(\sigma_{k+1}^{2}+\sigma_{k+2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}} \tag{15.35}
+\end{equation*}
+
+
+下面证明
+
+$$
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F} \geqslant\left(\sigma_{k+1}^{2}+\sigma_{k+2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}}
+$$
+
+于是式 (15.33) 成立。
+
+设 $X$ 的奇异值分解为 $Q \Omega P^{\mathrm{T}}$, 其中,
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-26}
+\end{center}
+
+若令矩阵 $\boldsymbol{B}=\boldsymbol{Q}^{\mathrm{T}} \boldsymbol{A P}$, 则 $\boldsymbol{A}=\boldsymbol{Q B} \boldsymbol{P}^{\mathrm{T}}$, 由此得到:
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\left\|\boldsymbol{Q}(\boldsymbol{B}-\boldsymbol{\Omega}) \boldsymbol{P}^{\mathrm{T}}\right\|_{F}=\|\boldsymbol{B}-\boldsymbol{\Omega}\|_{F} \tag{15.36}
+\end{equation*}
+
+
+用 $\Omega$ 分块方法对 $B$ 分块:
+
+$$
+\boldsymbol{B}=\left[\begin{array}{ll}
+\boldsymbol{B}_{11} & \boldsymbol{B}_{12} \\
+\boldsymbol{B}_{21} & \boldsymbol{B}_{22}
+\end{array}\right]
+$$
+
+其中, $\boldsymbol{B}_{11}$ 是 $k \times k$ 子矩阵, $\boldsymbol{B}_{12}$ 是 $k \times(n-k)$ 子矩阵, $\boldsymbol{B}_{21}$ 是 $(m-k) \times k$ 子矩阵, $\boldsymbol{B}_{22}$ 是\\
+$(m-k) \times(n-k)$ 子矩阵。可得：
+
+
+\begin{align*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}^{2} & =\|\boldsymbol{B}-\boldsymbol{\Omega}\|_{F}^{2} \\
+& =\left\|\boldsymbol{B}_{11}-\Omega_{k}\right\|_{F}^{2}+\left\|\boldsymbol{B}_{12}\right\|_{F}^{2}+\left\|\boldsymbol{B}_{21}\right\|_{F}^{2}+\left\|\boldsymbol{B}_{22}\right\|_{F}^{2} \tag{15.37}
+\end{align*}
+
+
+现证 $B_{12}=O, B_{21}=O$ 。用反证法。若 $B_{12} \neq \boldsymbol{O}$, 令
+
+$$
+\boldsymbol{Y}=\boldsymbol{Q}\left[\begin{array}{cc}
+\boldsymbol{B}_{11} & \boldsymbol{B}_{12} \\
+\boldsymbol{o} & \boldsymbol{o}
+\end{array}\right] \boldsymbol{P}^{\mathrm{T}}
+$$
+
+则 $\boldsymbol{Y} \in \mathcal{M}$, 且
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{Y}\|_{F}^{2}=\left\|\boldsymbol{B}_{21}\right\|_{F}^{2}+\left\|\boldsymbol{B}_{22}\right\|_{F}^{2}<\|\boldsymbol{A}-\boldsymbol{X}\|_{F}^{2} \tag{15.38}
+\end{equation*}
+
+
+这与 $\boldsymbol{X}$ 的定义式 (15.35) 矛盾。证明了 $\boldsymbol{B}_{12}=\boldsymbol{O}$, 同样可证 $\boldsymbol{B}_{21}=\boldsymbol{O}$ 。于是
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}^{2}=\left\|B_{11}-\Omega_{k}\right\|_{F}^{2}+\left\|B_{22}\right\|_{F}^{2} \tag{15.39}
+\end{equation*}
+
+
+再证 $B_{11}=\Omega_{k}$ 。为此令
+
+$$
+Z=Q\left[\begin{array}{cc}
+B_{11} & 0 \\
+o & o
+\end{array}\right] P^{\mathrm{T}}
+$$
+
+则 $Z \in \mathcal{M}$, 且
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{Z}\|_{F}^{2}=\left\|\boldsymbol{B}_{22}\right\|_{F}^{2} \leqslant\left\|\boldsymbol{B}_{11}-\boldsymbol{\Omega}_{k}\right\|_{F}^{2}+\left\|\boldsymbol{B}_{22}\right\|_{F}^{2}=\|\boldsymbol{A}-\boldsymbol{X}\|_{F}^{2} \tag{15.40}
+\end{equation*}
+
+
+由式 (15.35) 知, $\left\|\boldsymbol{B}_{11}-\Omega_{k}\right\|_{F}^{2}=0$, 即 $\boldsymbol{B}_{11}=\Omega_{k}$ 。
+
+最后看 $\boldsymbol{B}_{22}$ 。若 $(m-k) \times(n-k)$ 子矩阵 $\boldsymbol{B}_{22}$ 有奇异值分解 $\boldsymbol{U}_{1} \boldsymbol{\Lambda} \boldsymbol{V}_{1}^{\mathrm{T}}$, 则
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\left\|\boldsymbol{B}_{22}\right\|_{F}=\|\boldsymbol{\Lambda}\|_{F} \tag{15.41}
+\end{equation*}
+
+
+证明 $\boldsymbol{\Lambda}$ 的对角线元素为 $\boldsymbol{A}$ 的奇异值。为此, 令
+
+$$
+\boldsymbol{U}_{2}=\left[\begin{array}{cc}
+\boldsymbol{I}_{k} & \boldsymbol{0} \\
+\boldsymbol{0} & \boldsymbol{U}_{1}
+\end{array}\right], \quad \boldsymbol{V}_{2}=\left[\begin{array}{cc}
+\boldsymbol{I}_{k} & \boldsymbol{0} \\
+\boldsymbol{0} & \boldsymbol{V}_{1}
+\end{array}\right]
+$$
+
+其中, $\boldsymbol{I}_{k}$ 是 $k$ 阶单位矩阵, $\boldsymbol{U}_{2}, \boldsymbol{V}_{2}$ 的分块与 $\boldsymbol{B}$ 的分块一致。注意到 $\boldsymbol{B}$ 及 $\boldsymbol{B}_{22}$ 的奇异值分解, 即得:
+
+
+\begin{align*}
+& \boldsymbol{U}_{2}^{\mathrm{T}} \boldsymbol{Q}^{\mathrm{T}} \boldsymbol{A} \boldsymbol{P} \boldsymbol{V}_{2}=\left[\begin{array}{cc}
+\Omega_{k} & \boldsymbol{O} \\
+\boldsymbol{O} & \boldsymbol{\Lambda}
+\end{array}\right]  \tag{15.42}\\
+& \boldsymbol{A}=\left(\boldsymbol{Q} \boldsymbol{U}_{2}\right)\left[\begin{array}{cc}
+\boldsymbol{\Omega}_{k} & \boldsymbol{0} \\
+\boldsymbol{o} & \boldsymbol{\Lambda}
+\end{array}\right]\left(\boldsymbol{P} \boldsymbol{V}_{2}\right)^{\mathrm{T}} \tag{15.43}
+\end{align*}
+
+
+由此可知 $\boldsymbol{\Lambda}$ 的对角线元素为 $\boldsymbol{A}$ 的奇异值。故有
+
+
+\begin{equation*}
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\|\boldsymbol{\Lambda}\|_{F} \geqslant\left(\sigma_{k+1}^{2}+\sigma_{k+2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}} \tag{15.44}
+\end{equation*}
+
+
+于是证明了
+
+$$
+\|\boldsymbol{A}-\boldsymbol{X}\|_{F}=\left(\sigma_{k+1}^{2}+\sigma_{k+2}^{2}+\cdots+\sigma_{n}^{2}\right)^{\frac{1}{2}}=\left\|\boldsymbol{A}-\boldsymbol{A}^{\prime}\right\|_{F}
+$$
+
+定理 15.3 表明, 在秩不超过 $k$ 的 $m \times n$ 矩阵的集合中, 存在矩阵 $\boldsymbol{A}$ 的弗罗贝尼乌斯范数意义下的最优近似矩阵 $\boldsymbol{X} \circ \boldsymbol{A}^{\prime}=\boldsymbol{U} \boldsymbol{\Sigma}^{\prime} \boldsymbol{V}^{\mathrm{T}}$ 是达到最优值的一个矩阵。
+
+前面定义了矩阵的紧奇异值分解与截断奇异值分解。事实上, 紧奇异值分解是在弗罗贝尼乌斯范数意义下的无损压缩, 截断奇异值分解是有损压缩。截断奇异值分解得到的矩阵的秩为 $k$, 通常远小于原始矩阵的秩 $r$, 所以是由低秩矩阵实现了对原始矩阵的压缩。
+
+\subsection*{15.3.3 矩阵的外积展开式}
+下面介绍利用外积展开式对矩阵 $\boldsymbol{A}$ 的近似。矩阵 $\boldsymbol{A}$ 的奇异值分解 $\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$ 也可以由外积形式表示。事实上, 若将 $\boldsymbol{A}$ 的奇异值分解看成矩阵 $\boldsymbol{U} \boldsymbol{\Sigma}$ 和 $\boldsymbol{V}^{\mathrm{T}}$ 的乘积, 将 $\boldsymbol{U} \boldsymbol{\Sigma}$ 按列向量分块, 将 $V^{\mathrm{T}}$ 按行向量分块, 即得:
+
+$$
+\begin{aligned}
+\boldsymbol{U} \boldsymbol{\Sigma} & =\left[\begin{array}{cccc}
+\sigma_{1} \boldsymbol{u}_{1} & \sigma_{2} \boldsymbol{u}_{2} & \cdots & \sigma_{n} \boldsymbol{u}_{n}
+\end{array}\right] \\
+\boldsymbol{V}^{\mathrm{T}} & =\left[\begin{array}{c}
+\boldsymbol{v}_{1}^{\mathrm{T}} \\
+\boldsymbol{v}_{2}^{\mathrm{T}} \\
+\vdots \\
+\boldsymbol{v}_{n}^{\mathrm{T}}
+\end{array}\right]
+\end{aligned}
+$$
+
+则
+
+
+\begin{equation*}
+\boldsymbol{A}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}+\cdots+\sigma_{n} \boldsymbol{u}_{n} \boldsymbol{v}_{n}^{\mathrm{T}} \tag{15.45}
+\end{equation*}
+
+
+式 (15.45) 称为矩阵 $\boldsymbol{A}$ 的外积展开式, 其中 $\boldsymbol{u}_{k} \boldsymbol{v}_{k}^{\mathrm{T}}$ 为 $m \times n$ 矩阵, 是列向量 $\boldsymbol{u}_{k}$ 和行向量 $\boldsymbol{v}_{k}^{\mathrm{T}}$的外积, 其第 $i$ 行第 $j$ 列元素为 $\boldsymbol{u}_{k}$ 的第 $i$ 个元素与 $\boldsymbol{v}_{k}^{\mathrm{T}}$ 的第 $j$ 个元素的乘积。即
+
+$$
+\boldsymbol{u}_{i} \boldsymbol{v}_{j}^{\mathrm{T}}=\left[\begin{array}{c}
+u_{1 i} \\
+u_{2 i} \\
+\vdots \\
+u_{m i}
+\end{array}\right]\left[\begin{array}{llll}
+v_{1 j} & v_{2 j} & \cdots & v_{n j}
+\end{array}\right]=\left[\begin{array}{cccc}
+u_{1 i} v_{1 j} & u_{1 i} v_{2 j} & \cdots & u_{1 i} v_{n j} \\
+u_{2 i} v_{1 j} & u_{2 i} v_{2 j} & \cdots & u_{2 i} v_{n j} \\
+\vdots & \vdots & & \vdots \\
+u_{m i} v_{1 j} & u_{m i} v_{2 j} & \cdots & u_{m i} v_{n j}
+\end{array}\right]
+$$
+
+$\boldsymbol{A}$ 的外积展开式也可以写成下面的形式:
+
+
+\begin{equation*}
+\boldsymbol{A}=\sum_{k=1}^{n} \boldsymbol{A}_{k}=\sum_{k=1}^{n} \sigma_{k} \boldsymbol{u}_{k} \boldsymbol{v}_{k}^{\mathrm{T}} \tag{15.46}
+\end{equation*}
+
+
+其中, $\boldsymbol{A}_{k}=\sigma_{k} \boldsymbol{u}_{k} \boldsymbol{v}_{k}^{\mathrm{T}}$ 是 $m \times n$ 矩阵。式 (15.46) 将矩阵 $\boldsymbol{A}$ 分解为矩阵的有序加权和。
+
+由矩阵 $\boldsymbol{A}$ 的外积展开式知, 若 $\boldsymbol{A}$ 的秩为 $n$, 则
+
+
+\begin{equation*}
+\boldsymbol{A}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}+\cdots+\sigma_{n} \boldsymbol{u}_{n} \boldsymbol{v}_{n}^{\mathrm{T}} \tag{15.47}
+\end{equation*}
+
+
+设矩阵
+
+$$
+\boldsymbol{A}_{n-1}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}+\cdots+\sigma_{n-1} \boldsymbol{u}_{n-1} \boldsymbol{v}_{n-1}^{\mathrm{T}}
+$$
+
+则 $\boldsymbol{A}_{n-1}$ 的秩为 $n-1$, 并且 $\boldsymbol{A}_{n-1}$ 是秩为 $n-1$ 矩阵在弗罗贝尼乌斯范数意义下 $\boldsymbol{A}$ 的最优近似矩阵。
+
+类似地, 设矩阵
+
+$$
+\boldsymbol{A}_{n-2}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}+\cdots+\sigma_{n-2} \boldsymbol{u}_{n-2} \boldsymbol{v}_{n-2}^{\mathrm{T}}
+$$
+
+则 $\boldsymbol{A}_{n-2}$ 的秩为 $n-2$, 并且 $\boldsymbol{A}_{n-2}$ 是秩为 $n-2$ 矩阵中在弗罗贝尼乌斯范数意义下 $A$ 的最优近似矩阵。依此类推。一般地, 设矩阵
+
+$$
+\boldsymbol{A}_{k}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}+\cdots+\sigma_{k} \boldsymbol{u}_{k} \boldsymbol{v}_{k}^{\mathrm{T}}
+$$
+
+则 $\boldsymbol{A}_{k}$ 的秩为 $k$, 并且 $\boldsymbol{A}_{k}$ 是秩为 $k$ 的矩阵中在弗罗贝尼乌斯范数意义下 $\boldsymbol{A}$ 的最优近似矩阵。矩阵 $\boldsymbol{A}_{k}$ 就是 $\boldsymbol{A}$ 的截断奇异值分解。
+
+由于通常奇异值 $\sigma_{i}$ 递减很快, 所以 $k$ 取很小值时, $\boldsymbol{A}_{k}$ 也可以对 $\boldsymbol{A}$ 有很好的近似。
+
+例 15.6 由例 15.1 给出的矩阵
+
+$$
+\boldsymbol{A}=\left[\begin{array}{llll}
+1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 4 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+2 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+的秩为 3 , 求 $\boldsymbol{A}$ 的秩为 2 的最优近似。
+
+解 由例 15.3 可知:
+
+$$
+\begin{aligned}
+& \boldsymbol{u}_{1}=\left[\begin{array}{l}
+0 \\
+1 \\
+0 \\
+0 \\
+0
+\end{array}\right], \quad \boldsymbol{u}_{2}=\left[\begin{array}{l}
+0 \\
+0 \\
+1 \\
+0 \\
+0
+\end{array}\right], \quad \boldsymbol{v}_{1}=\left[\begin{array}{l}
+0 \\
+0 \\
+0 \\
+1
+\end{array}\right], \quad \boldsymbol{v}_{2}=\left[\begin{array}{l}
+0 \\
+1 \\
+0 \\
+0
+\end{array}\right] \\
+& \sigma_{1}=4, \quad \sigma_{2}=3
+\end{aligned}
+$$
+
+于是得到:
+
+$$
+\boldsymbol{A}_{2}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}=\left[\begin{array}{cccc}
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 4 \\
+0 & 3 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{array}\right]
+$$
+
+以此矩阵作为 $\boldsymbol{A}$ 的最优近似。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 矩阵的奇异值分解是指将 $m \times n$ 实矩阵 $\boldsymbol{A}$ 表示为以下三个实矩阵乘积形式的运算:
+\end{enumerate}
+
+$$
+\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}
+$$
+
+其中, $\boldsymbol{U}$ 是 $m$ 阶正交矩阵, $\boldsymbol{V}$ 是 $n$ 阶正交矩阵, $\boldsymbol{\Sigma}$ 是 $m \times n$ 矩形对角矩阵。
+
+$$
+\boldsymbol{\Sigma}=\operatorname{diag}\left(\sigma_{1}, \sigma_{2}, \cdots, \sigma_{p}\right), \quad p=\min \{m, n\}
+$$
+
+其对角线元素非负, 且满足
+
+$$
+\sigma_{1} \geqslant \sigma_{2} \geqslant \cdots \geqslant \sigma_{p} \geqslant 0
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 任意给定一个实矩阵, 其奇异值分解一定存在, 但并不唯一。
+
+  \item 奇异值分解包括紧奇异值分解和截断奇异值分解。紧奇异值分解是与原始矩阵等秩的奇异值分解, 截断奇异值分解是比原始矩阵低秩的奇异值分解。
+
+  \item 奇异值分解有明确的几何解释。奇异值分解对应三个连续的线性变换: 一个旋转变换、一个缩放变换和另一个旋转变换。第一个和第三个旋转变换分别基于空间的标准正交基进行。
+
+  \item 设矩阵 $\boldsymbol{A}$ 的奇异值分解为 $\boldsymbol{A}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\mathrm{T}}$, 则有
+
+\end{enumerate}
+
+$$
+\begin{aligned}
+& \boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}=\boldsymbol{V}\left(\boldsymbol{\Sigma}^{\mathrm{T}} \boldsymbol{\Sigma}\right) \boldsymbol{V}^{\mathrm{T}} \\
+& \boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}=\boldsymbol{U}\left(\boldsymbol{\Sigma} \boldsymbol{\Sigma}^{\mathrm{T}}\right) \boldsymbol{U}^{\mathrm{T}}
+\end{aligned}
+$$
+
+即对称矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 和 $\boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}$ 的特征分解可以由矩阵 $\boldsymbol{A}$ 的奇异值分解矩阵表示。
+
+\begin{enumerate}
+  \setcounter{enumi}{5}
+  \item 矩阵 $\boldsymbol{A}$ 的奇异值分解可以通过求矩阵 $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征值和特征向量得到: $\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}$ 的特征向量构成正交矩阵 $\boldsymbol{V}$ 的列; 从 $\boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}$ 的特征值 $\lambda_{j}$ 的平方根得到奇异值 $\sigma_{i}$, 即
+\end{enumerate}
+
+$$
+\sigma_{j}=\sqrt{\lambda_{j}}, \quad j=1,2, \cdots, n
+$$
+
+对其由大到小排列, 作为对角线元素, 构成对角矩阵 $\boldsymbol{\Sigma}$; 求正奇异值对应的左奇异向量, 再求扩充的 $\boldsymbol{A}^{\mathrm{T}}$ 的标准正交基, 构成正交矩阵 $\boldsymbol{U}$ 的列。
+
+\begin{enumerate}
+  \setcounter{enumi}{6}
+  \item 矩阵 $\boldsymbol{A}=\left[a_{i j}\right]_{m \times n}$ 的弗罗贝尼乌斯范数定义为
+\end{enumerate}
+
+$$
+\|\boldsymbol{A}\|_{F}=\left(\sum_{i=1}^{m} \sum_{j=1}^{n} a_{i j}^{2}\right)^{\frac{1}{2}}
+$$
+
+在秩不超过 $k$ 的 $m \times n$ 矩阵的集合中, 存在矩阵 $\boldsymbol{A}$ 的弗罗贝尼乌斯范数意义下的最优近似矩阵 $\boldsymbol{X}$ 。秩为 $k$ 的截断奇异值分解得到的矩阵 $\boldsymbol{A}_{k}$ 能够达到这个最优值。奇异值分解是弗罗贝尼斯范数意义下, 也就是平方损失意义下的矩阵最优近似。
+
+\begin{enumerate}
+  \setcounter{enumi}{7}
+  \item 任意一个实矩阵 $\boldsymbol{A}$ 可以由其外积展开式表示:
+\end{enumerate}
+
+$$
+\boldsymbol{A}=\sigma_{1} \boldsymbol{u}_{1} \boldsymbol{v}_{1}^{\mathrm{T}}+\sigma_{2} \boldsymbol{u}_{2} \boldsymbol{v}_{2}^{\mathrm{T}}+\cdots+\sigma_{n} \boldsymbol{u}_{n} \boldsymbol{v}_{n}^{\mathrm{T}}
+$$
+
+其中, $\boldsymbol{u}_{k} \boldsymbol{v}_{k}^{\mathrm{T}}$ 为 $m \times n$ 矩阵, 是列向量 $\boldsymbol{u}_{k}$ 和行向量 $\boldsymbol{v}_{k}^{\mathrm{T}}$ 的外积, $\sigma_{k}$ 为奇异值, $\boldsymbol{u}_{k}, \boldsymbol{v}_{k}^{\mathrm{T}}, \sigma_{k}$ 通过矩阵 $\boldsymbol{A}$ 的奇异值分解得到。
+
+\section*{继续阅 读}
+要进一步了解奇异值分解及相关内容可以参考线性代数教材, 如文献 [1] 和文献 [2], 也可以观看网上公开课程, 如 “MIT 18.06SC Linear Algebra”, 文献 [2] 为其教科书。在计算机上奇异值分解通常用数值计算方法进行, 奇异值分解的数值计算方法可参阅文献 [3] 和文献 [4]。本章介绍的奇异值分解是定义在矩阵上的, 奇异值分解可以扩展到张量 (tensor), 有两种不同的定义, 张量奇异值分解详见文献 [5]。
+
+\section*{习 题}
+15.1 试求矩阵
+
+$$
+\boldsymbol{A}=\left[\begin{array}{lll}
+1 & 2 & 0 \\
+2 & 0 & 2
+\end{array}\right]
+$$
+
+的奇异值分解。
+
+15.2 试求矩阵
+
+$$
+\boldsymbol{A}=\left[\begin{array}{ll}
+2 & 4 \\
+1 & 3 \\
+0 & 0 \\
+0 & 0
+\end{array}\right]
+$$
+
+的奇异值分解并写出其外积展开式。
+
+15.3 比较矩阵的奇异值分解与对称矩阵的对角化的异同。
+
+15.4 证明任何一个秩为 1 的矩阵可写成两个向量的外积形式, 并给出实例。
+
+15.5 搜索中的点击数据记录用户搜索时提交的查询语句, 点击的网页 URL 以及点击的次数构成一个二部图, 其中一个结点集合 $\left\{q_{i}\right\}$ 表示查询, 另一个结点集合 $\left\{u_{j}\right\}$ 表示 URL,边表示点击关系, 边上的权重表示点击次数。图 15.2 是一个简化的点击数据例。点击数据可
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-31}
+\end{center}
+
+图 15.2 搜索点击数据例\\
+以由矩阵表示, 试对该矩阵进行奇异值分解, 并解释得到的三个矩阵所表示的内容。
+
+\section*{参考文献}
+[1] LEON S J. Linear algebra with applications[M]. 张文博, 张丽静, 译. Pearson,2009.
+
+[2] STRANG G. Introduction to linear algebra[M]. 4th ed. Wellesley-Cambridge Press, 2009.
+
+[3] CLINE A K. DHILLON I S. Computation of the singular value decomposition, Handbook of linear algebra[M]. CRC Press, 2006.
+
+[4] 徐树方. 矩阵计算的理论与方法 [M]. 北京: 北京大学出版社, 1995.
+
+[5] KOLDA T G, BADER B W. Tensor decompositions and applications[J]. SIAM Review, 2009, 51(3): 455-500.
+
+\section*{第 16 章主成分分析}
+主成分分析 (principal component analysis, PCA) 是一种常用的无监督学习方法, 这一方法利用正交变换把由线性相关变量表示的观测数据转换为少数几个由线性无关变量表示的数据, 线性无关的变量称为主成分。主成分的个数通常小于原始变量的个数, 所以主成分分析属于降维方法。主成分分析主要用于发现数据中的基本结构, 即数据中变量之间的关系,是数据分析的有力工具, 也用于其他机器学习方法的前处理。主成分分析属于多元统计分析的经典方法, 首先由 Pearson 于 1901 年提出, 但只是针对非随机变量, 1933 年由 Hotelling 推广到随机变量。
+
+本章 16.1 节介绍主成分分析的基本想法, 叙述总体主成分分析的定义、定理与性质。16.2 节介绍样本主成分分析的概念, 重点叙述主成分分析的算法, 包括协方差矩阵的特征值分解方法和数据矩阵的奇异值分解方法。
+
+\section*{16.1 总体主成分分析}
+\subsection*{16.1.1 基本想法}
+统计分析中, 数据的变量之间可能存在相关性, 以致增加了分析的难度。于是, 考虑由少数不相关的变量来代替相关的变量, 用来表示数据, 并且要求能够保留数据中的大部分信息。
+
+主成分分析中, 首先对给定数据进行规范化, 使得数据每一变量的平均值为 0 , 方差为 1。之后对数据进行正交变换, 原来由线性相关变量表示的数据通过正交变换变成由若干个线性无关的新变量表示的数据。新变量是可能的正交变换中变量的方差的和（信息保存）最大的, 方差表示在新变量上信息的大小。将新变量依次称为第一主成分、第二主成分等。这就是主成分分析的基本思想。通过主成分分析, 可以利用主成分近似地表示原始数据, 这可理解为发现数据的 “基本结构” ; 也可以把数据由少数主成分表示, 这可理解为对数据降维。
+
+下面给出主成分分析的直观解释。数据集合中的样本由实数空间（正交坐标系）中的点表示, 空间的一个坐标轴表示一个变量, 规范化处理后得到的数据分布在原点附近。对原坐标系中的数据进行主成分分析等价于进行坐标系旋转变换, 将数据投影到新坐标系的坐标轴上; 新坐标系的第一坐标轴、第二坐标轴等分别表示第一主成分、第二主成分等, 数据在每一轴上的坐标值的平方表示相应变量的方差; 并且, 这个坐标系是在所有可能的新的坐标系中,坐标轴上的方差的和最大的。\\
+例如, 数据由两个变量 $x_{1}$ 和 $x_{2}$ 表示, 存在于二维空间中, 每个点表示一个样本, 如图 16.1(a) 所示。对数据已做规范化处理, 可以看出, 这些数据分布在以原点为中心的左下至右上倾斜的椭圆之内。很明显在这个数据中的变量 $x_{1}$ 和 $x_{2}$ 是线性相关的, 具体地, 当知道其中一个变量 $x_{1}$ 的取值时, 对另一个变量 $x_{2}$ 的预测不是完全随机的, 反之亦然。
+
+主成分分析对数据进行正交变换, 具体地, 对原坐标系进行旋转变换, 并将数据在新坐标系表示, 如图 16.1(b) 所示。数据在原坐标系由变量 $x_{1}$ 和 $x_{2}$ 表示, 通过正交变换后, 在新坐标系里, 由变量 $y_{1}$ 和 $y_{2}$ 表示。主成分分析选择方差最大的方向 (第一主成分) 作为新坐标系的第一坐标轴, 即 $y_{1}$ 轴, 在这里意味着选择椭圆的长轴作为新坐标系的第一坐标轴; 之后选择与第一坐标轴正交且方差次之的方向 (第二主成分) 作为新坐标系的第二坐标轴, 即 $y_{2}$轴, 在这里意味着选择椭圆的短轴作为新坐标系的第二坐标轴。在新坐标系里, 数据中的变量 $y_{1}$ 和 $y_{2}$ 是线性无关的, 当知道其中一个变量 $y_{1}$ 的取值时, 对另一个变量 $y_{2}$ 的预测是完全随机的, 反之亦然。如果主成分分析只取第一主成分, 即新坐标系的 $y_{1}$ 轴, 那么等价于将数据投影在椭圆长轴上, 用这个主轴表示数据, 将二维空间的数据压缩到一维空间中。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-34(1)}
+\end{center}
+
+(a)
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-34}
+\end{center}
+
+(b)
+
+图 16.1 主成分分析的示例
+
+下面再看方差最大的解释。假设有两个变量 $x_{1}$ 和 $x_{2}$, 三个样本点 $\mathrm{A}, \mathrm{B}, \mathrm{C}$, 样本分布在由 $x_{1}$ 轴和 $x_{2}$ 轴组成的坐标系中, 如图 16.2 所示。对坐标系进行旋转变换, 得到新的坐标轴 $y_{1}$, 表示新的变量 $y_{1}$ 。样本点 $\mathrm{A}, \mathrm{B} 、 \mathrm{C}$ 在 $y_{1}$ 轴上投影, 得到 $y_{1}$ 轴的坐标值 $\mathrm{A}^{\prime}, \mathrm{B}^{\prime}, \mathrm{C}^{\prime}$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_690a9c6ba63c19ff9106g-34(2)}
+\end{center}
+
+图 16.2 主成分的几何解释\\
+坐标值的平方和 $\mathrm{OA}^{\prime 2}+\mathrm{OB}^{\prime 2}+\mathrm{OC}^{\prime 2}$ 表示样本在变量 $y_{1}$ 上的方差和。主成分分析旨在选取正交变换中方差最大的变量, 作为第一主成分, 也就是旋转变换中坐标值的平方和最大的轴。注意到旋转变换中样本点到原点的距离的平方和 $\mathrm{OA}^{2}+\mathrm{OB}^{2}+\mathrm{OC}^{2}$ 保持不变, 根据勾股定理, 坐标值的平方和 $\mathrm{OA}^{\prime 2}+\mathrm{OB}^{\prime 2}+\mathrm{OC}^{\prime 2}$ 最大等价于样本点到 $y_{1}$ 轴的距离的平方和 $\mathrm{AA}^{\prime 2}+\mathrm{BB}^{\prime 2}+\mathrm{CC}^{\prime 2}$ 最小。所以, 等价地, 主成分分析在旋转变换中选取离样本点的距离平方和最小的轴作为第一主成分。第二主成分等的选取在保证与已选坐标轴正交的条件下类似地进行。
+
+在数据总体 (population) 上进行的主成分分析称为总体主成分分析, 在有限样本上进行的主成分分析称为样本主成分分析, 前者是后者的基础。以下分别予以介绍。
+
+\subsection*{16.1.2 定义和导出}
+假设 $\boldsymbol{x}=\left(x_{1}, x_{2}, \cdots, x_{m}\right)^{\mathrm{T}}$ 是 $m$ 维随机变量, 其均值向量是 $\boldsymbol{\mu}$ :
+
+$$
+\boldsymbol{\mu}=E(\boldsymbol{x})=\left(\mu_{1}, \mu_{2}, \cdots, \mu_{m}\right)^{\mathrm{T}}
+$$
+
+协方差矩阵是 $\boldsymbol{\Sigma}$ :
+
+$$
+\boldsymbol{\Sigma}=\operatorname{cov}(\boldsymbol{x}, \boldsymbol{x})=E\left[(\boldsymbol{x}-\boldsymbol{\mu})(\boldsymbol{x}-\boldsymbol{\mu})^{\mathrm{T}}\right]
+$$
+
+考虑由 $m$ 维随机变量 $\boldsymbol{x}$ 到 $m$ 维随机变量 $\boldsymbol{y}=\left(y_{1}, y_{2}, \cdots, y_{m}\right)^{\mathrm{T}}$ 的线性变换:
+
+
+\begin{equation*}
+y_{i}=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{x}=\alpha_{1 i} x_{1}+\alpha_{2 i} x_{2}+\cdots+\alpha_{m i} x_{m} \tag{16.1}
+\end{equation*}
+
+
+其中, $\boldsymbol{\alpha}_{i}^{\mathrm{T}}=\left(\alpha_{1 i}, \alpha_{2 i}, \cdots, \alpha_{m i}\right), i=1,2, \cdots, m$ 。
+
+由随机变量的性质可知:
+
+
+\begin{align*}
+& E\left(y_{i}\right)=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\mu}, \quad i=1,2, \cdots, m  \tag{16.2}\\
+& \operatorname{var}\left(y_{i}\right)=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{i}, \quad i=1,2, \cdots, m  \tag{16.3}\\
+& \operatorname{cov}\left(y_{i}, y_{j}\right)=\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{j}, \quad i=1,2, \cdots, m ; \quad j=1,2, \cdots, m \tag{16.4}
+\end{align*}
+
+
+下面给出总体主成分的定义。
+
+定义 16.1 (总体主成分) 给定一个如式 (16.1) 所示的线性变换, 如果它们满足下列条件:
+
+(1) 系数向量 $\boldsymbol{\alpha}_{i}^{\mathrm{T}}$ 是单位向量, 即 $\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\alpha}_{i}=1, i=1,2, \cdots, m$;
+
+(2) 变量 $y_{i}$ 与 $y_{j}$ 互不相关, 即 $\operatorname{cov}\left(y_{i}, y_{j}\right)=0(i \neq j)$;
+
+(3) 变量 $y_{1}$ 是 $\boldsymbol{x}$ 的所有线性变换中方差最大的; $y_{2}$ 是与 $y_{1}$ 不相关的 $\boldsymbol{x}$ 的所有线性变换中方差最大的; 一般地, $y_{i}$ 是与 $y_{1}, y_{2}, \cdots, y_{i-1}(i=1,2, \cdots, m)$ 都不相关的 $\boldsymbol{x}$ 的所有线性变换中方差最大的, 这时分别称 $y_{1}, y_{2}, \cdots, y_{m}$ 为 $\boldsymbol{x}$ 的第一主成分、第二主成分、 $\cdots \cdots$ 、第 $m$ 主成分。
+
+定义中的条件 (1) 表明线性变换是正交变换, $\boldsymbol{\alpha}_{1}, \boldsymbol{\alpha}_{2}, \cdots, \boldsymbol{\alpha}_{m}$ 是其一组标准正交基:
+
+$$
+\boldsymbol{\alpha}_{i}^{\mathrm{T}} \boldsymbol{\alpha}_{j}=\left\{\begin{array}{cc}
+1, & i=j \\
+0, & i \neq j
+\end{array}\right.
+$$
+
+条件 (2) 和条件 (3) 给出了一个求主成分的方法: 第一步, 在 $\boldsymbol{x}$ 的所有线性变换
+
+$$
+\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}=\sum_{i=1}^{m} \alpha_{i 1} x_{i}
+$$
+
+中, 在 $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=1$ 的条件下, 求方差最大的, 得到 $\boldsymbol{x}$ 的第一主成分; 第二步, 在与 $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}$ 不相关的 $\boldsymbol{x}$ 的所有线性变换
+
+$$
+\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}=\sum_{i=1}^{m} \alpha_{i 2} x_{i}
+$$
+
+中, 在 $\boldsymbol{\alpha}_{2}^{\mathrm{T}} \alpha_{2}=1$ 的条件下, 求方差最大的, 得到 $\boldsymbol{x}$ 的第二主成分; 第 $k$ 步, 在与 $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}, \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}, \cdots, \boldsymbol{\alpha}_{k-1}^{\mathrm{T}} \boldsymbol{x}$ 不相关的 $\boldsymbol{x}$ 的所有线性变换
+
+$$
+\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}=\sum_{i=1}^{m} \alpha_{i k} x_{i}
+$$
+
+中, 在 $\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{\alpha}_{k}=1$ 的条件下, 求方差最大的, 得到 $\boldsymbol{x}$ 的第 $k$ 主成分; 如此继续下去, 直到得到 $\boldsymbol{x}$ 的第 $m$ 主成分。
+
+\subsection*{16.1.3 主要性质}
+首先叙述一个关于总体主成分的定理。这一定理阐述了总体主成分与协方差矩阵的特征值和特征向量的关系, 同时给出了一个求主成分的方法。
+
+定理 16.1 设 $x$ 是 $m$ 维随机变量, $\boldsymbol{\Sigma}$ 是 $\boldsymbol{x}$ 的协方差矩阵, $\boldsymbol{\Sigma}$ 的特征值分别是 $\lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{m} \geqslant 0$, 特征值对应的单位特征向量分别是 $\boldsymbol{\alpha}_{1}, \boldsymbol{\alpha}_{2}, \cdots, \boldsymbol{\alpha}_{m}$, 则 $\boldsymbol{x}$ 的第 $k$ 主成分是
+
+
+\begin{equation*}
+y_{k}=\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}=\alpha_{1 k} x_{1}+\alpha_{2 k} x_{2}+\cdots+\alpha_{m k} x_{m}, \quad k=1,2, \cdots, m \tag{16.5}
+\end{equation*}
+
+
+$\boldsymbol{x}$ 的第 $k$ 主成分的方差是
+
+
+\begin{equation*}
+\operatorname{var}\left(y_{k}\right)=\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{k}=\lambda_{k}, \quad k=1,2, \cdots, m \tag{16.6}
+\end{equation*}
+
+
+即协方差矩阵 $\boldsymbol{\Sigma}$ 的第 $k$ 个特征值。
+
+证明 采用拉格朗日乘子法求出主成分。
+
+首先求 $\boldsymbol{x}$ 的第一主成分 $y_{1}=\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}$, 即求系数向量 $\boldsymbol{\alpha}_{1}$ 。由定义 16.1 知, 第一主成分的 $\boldsymbol{\alpha}_{1}$是在 $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=1$ 条件下 $\boldsymbol{x}$ 的所有线性变换中使方差
+
+$$
+\operatorname{var}\left(\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}\right)=\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}
+$$
+
+达到最大的。
+
+求第一主成分就是求解约束最优化问题:
+
+\[
+\begin{array}{ll}
+\max _{\alpha_{1}} & \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}  \tag{16.7}\\
+\text { s.t. } & \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=1
+\end{array}
+\]
+
+(1) 若特征值有重根, 对应的特征向量组成 $m$ 维空间 $\boldsymbol{R}^{m}$ 的一个子空间, 子空间的维数等于重根数，在子空间任取一个正交坐标系, 这个坐标系的单位向量就可作为特征向量。这时坐标系的取法不唯一。\\
+定义拉格朗日函数
+
+$$
+\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}-\lambda\left(\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}-1\right)
+$$
+
+其中, $\lambda$ 是拉格朗日乘子。将拉格朗日函数对 $\boldsymbol{\alpha}_{1}$ 求导, 并令其为 0 , 得:
+
+$$
+\boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}-\lambda \boldsymbol{\alpha}_{1}=0
+$$
+
+因此, $\lambda$ 是 $\boldsymbol{\Sigma}$ 的特征值, $\boldsymbol{\alpha}_{1}$ 是对应的单位特征向量。于是, 目标函数为
+
+$$
+\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}=\boldsymbol{\alpha}_{1}^{\mathrm{T}} \lambda \boldsymbol{\alpha}_{1}=\lambda \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=\lambda
+$$
+
+假设 $\boldsymbol{\alpha}_{1}$ 是 $\boldsymbol{\Sigma}$ 的最大特征值 $\lambda_{1}$ 对应的单位特征向量, 显然 $\boldsymbol{\alpha}_{1}$ 与 $\lambda_{1}$ 是最优化问题的解 (1)。所以, $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}$ 构成第一主成分, 其方差等于协方差矩阵的最大特征值:
+
+
+\begin{equation*}
+\operatorname{var}\left(\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}\right)=\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}=\lambda_{1} \tag{16.8}
+\end{equation*}
+
+
+接着求 $\boldsymbol{x}$ 的第二主成分 $y_{2}=\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}$ 。第二主成分的 $\boldsymbol{\alpha}_{2}$ 是在 $\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{2}=1$ 且 $\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}$ 与 $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{x}$不相关的条件下 $\boldsymbol{x}$ 的所有线性变换中使方差
+
+$$
+\operatorname{var}\left(\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}\right)=\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}
+$$
+
+达到最大的。
+
+求第二主成分需要求解约束最优化问题:
+
+\[
+\begin{array}{ll}
+\max _{\alpha_{2}} & \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}  \tag{16.9}\\
+\text { s.t. } & \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}=0, \quad \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}=0 \\
+& \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{2}=1
+\end{array}
+\]
+
+注意到
+
+$$
+\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}=\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{1}=\boldsymbol{\alpha}_{2}^{\mathrm{T}} \lambda_{1} \boldsymbol{\alpha}_{1}=\lambda_{1} \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=\lambda_{1} \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{2}
+$$
+
+以及
+
+$$
+\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{2}=0, \quad \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=0
+$$
+
+定义拉格朗日函数
+
+$$
+\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}-\lambda\left(\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{2}-1\right)-\phi \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{1}
+$$
+
+其中, $\lambda, \phi$ 是拉格朗日乘子。对 $\boldsymbol{\alpha}_{2}$ 求导, 并令其为 0 , 得:
+
+
+\begin{equation*}
+2 \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}-2 \lambda \boldsymbol{\alpha}_{2}-\phi \boldsymbol{\alpha}_{1}=0 \tag{16.10}
+\end{equation*}
+
+
+将方程左乘以 $\boldsymbol{\alpha}_{1}^{\mathrm{T}}$ 有
+
+$$
+2 \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}-2 \lambda \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{2}-\phi \boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=0
+$$
+
+此式前两项为 0 , 且 $\boldsymbol{\alpha}_{1}^{\mathrm{T}} \boldsymbol{\alpha}_{1}=1$, 推导出 $\phi=0$, 因此式 (16.10) 变为
+
+$$
+\boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}-\lambda \boldsymbol{\alpha}_{2}=0
+$$
+
+(1) 为了叙述方便, 这里将变量和其最优值用同一符号表示。\\
+由此, $\lambda$ 是 $\boldsymbol{\Sigma}$ 的特征值, $\boldsymbol{\alpha}_{2}$ 是对应的单位特征向量。于是, 目标函数为
+
+$$
+\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}=\boldsymbol{\alpha}_{2}^{\mathrm{T}} \lambda \boldsymbol{\alpha}_{2}=\lambda \boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\alpha}_{2}=\lambda
+$$
+
+假设 $\boldsymbol{\alpha}_{2}$ 是 $\boldsymbol{\Sigma}$ 的第二大特征值 $\lambda_{2}$ 对应的单位特征向量, 显然 $\boldsymbol{\alpha}_{2}$ 与 $\lambda_{2}$ 是以上最优化问题的解 ${ }^{1}$ 。于是 $\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}$ 构成第二主成分, 其方差等于协方差矩阵的第二大特征值:
+
+
+\begin{equation*}
+\operatorname{var}\left(\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{x}\right)=\boldsymbol{\alpha}_{2}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{2}=\lambda_{2} \tag{16.11}
+\end{equation*}
+
+
+一般地, $\boldsymbol{x}$ 的第 $k$ 主成分是 $\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}$, 并且 $\operatorname{var}\left(\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}\right)=\lambda_{k}$, 这里 $\lambda_{k}$ 是 $\boldsymbol{\Sigma}$ 的第 $k$ 个特征值并且 $\boldsymbol{\alpha}_{k}$ 是对应的单位特征向量。可以从第 $k-1$ 个主成分出发递推证明第 $k$ 个主成分的情况，这里省去。
+
+按照上述方法求得第一、第二直到第 $m$ 主成分, 其系数向量 $\boldsymbol{\alpha}_{1}, \boldsymbol{\alpha}_{2}, \ldots, \boldsymbol{\alpha}_{m}$ 分别是 $\boldsymbol{\Sigma}$的第一个、第二个直到第 $m$ 个单位特征向量, $\lambda_{1}, \lambda_{2}, \cdots, \lambda_{m}$ 分别是对应的特征值。并且, 第 $k$ 主成分的方差等于 $\boldsymbol{\Sigma}$ 的第 $k$ 个特征值:
+
+
+\begin{equation*}
+\operatorname{var}\left(\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}\right)=\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{k}=\lambda_{k}, \quad k=1,2, \cdots, m \tag{16.12}
+\end{equation*}
+
+
+定理证毕。
+
+由定理 16.1 得到下述推论。
+
+推论 $16.1 m$ 维随机变量 $\boldsymbol{y}=\left(y_{1}, y_{2}, \cdots, y_{m}\right)^{\mathrm{T}}$ 的分量依次是 $\boldsymbol{x}$ 的第一主成分到第 $m$主成分的充要条件是:
+
+(1) $\boldsymbol{y}=\boldsymbol{A}^{\mathrm{T}} \boldsymbol{x}, \boldsymbol{A}$ 为正交矩阵:
+
+$$
+\boldsymbol{A}=\left[\begin{array}{cccc}
+\alpha_{11} & \alpha_{12} & \cdots & \alpha_{1 m} \\
+\alpha_{21} & \alpha_{22} & \cdots & \alpha_{2 m} \\
+\vdots & \vdots & & \vdots \\
+\alpha_{m 1} & \alpha_{m 2} & \cdots & \alpha_{m m}
+\end{array}\right]
+$$
+
+(2) $\boldsymbol{y}$ 的协方差矩阵为对角矩阵:
+
+$$
+\begin{aligned}
+& \operatorname{cov}(\boldsymbol{y})=\operatorname{diag}\left(\lambda_{1}, \lambda_{2}, \cdots, \lambda_{m}\right) \\
+& \lambda_{1} \geqslant \lambda_{2} \geqslant \cdots \geqslant \lambda_{m}
+\end{aligned}
+$$
+
+其中, $\lambda_{k}$ 是 $\boldsymbol{\Sigma}$ 的第 $k$ 个特征值， $\boldsymbol{\alpha}_{k}$ 是对应的单位特征向量， $k=1,2, \cdots, m$ 。
+
+以上证明中, $\lambda_{k}$ 是 $\boldsymbol{\Sigma}$ 的第 $k$ 个特征值, $\boldsymbol{\alpha}_{k}$ 是对应的单位特征向量, 即
+
+
+\begin{equation*}
+\boldsymbol{\Sigma} \boldsymbol{\alpha}_{k}=\lambda_{k} \boldsymbol{\alpha}_{k}, \quad k=1,2, \cdots, m \tag{16.13}
+\end{equation*}
+
+
+用矩阵表示即为
+
+
+\begin{equation*}
+\boldsymbol{\Sigma} \boldsymbol{A}=\boldsymbol{A} \boldsymbol{\Lambda} \tag{16.14}
+\end{equation*}
+
+
+这里 $\boldsymbol{A}=\left[\alpha_{i j}\right]_{m \times m}, \boldsymbol{\Lambda}$ 是对角矩阵, 其第 $k$ 个对角元素是 $\lambda_{k}$ 。因为 $\boldsymbol{A}$ 是正交矩阵, 即
+
+(1) 为了叙述方便, 这里将变量和其最优值用同一符号表示。\\
+$\boldsymbol{A}^{\mathrm{T}} \boldsymbol{A}=\boldsymbol{A} \boldsymbol{A}^{\mathrm{T}}=\boldsymbol{I}$, 由式 (16.14) 得到两个公式:
+
+
+\begin{equation*}
+\boldsymbol{A}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{A}=\boldsymbol{\Lambda} \tag{16.15}
+\end{equation*}
+
+
+和
+
+
+\begin{equation*}
+\boldsymbol{\Sigma}=\boldsymbol{A} \boldsymbol{\Lambda} \boldsymbol{A}^{\mathrm{T}} \tag{16.16}
+\end{equation*}
+
+
+下面叙述总体主成分的性质:
+
+(1) 总体主成分 $\boldsymbol{y}$ 的协方差矩阵是对角矩阵:
+
+
+\begin{equation*}
+\operatorname{cov}(\boldsymbol{y})=\boldsymbol{\Lambda}=\operatorname{diag}\left(\lambda_{1}, \lambda_{2}, \cdots, \lambda_{m}\right) \tag{16.17}
+\end{equation*}
+
+
+(2) 总体主成分 $\boldsymbol{y}$ 的方差之和等于随机变量 $\boldsymbol{x}$ 的方差之和, 即
+
+
+\begin{equation*}
+\sum_{i=1}^{m} \lambda_{i}=\sum_{i=1}^{m} \sigma_{i i} \tag{16.18}
+\end{equation*}
+
+
+其中, $\sigma_{i i}$ 是随机变量 $x_{i}$ 的方差, 即协方差矩阵 $\boldsymbol{\Sigma}$ 的对角元素。事实上, 利用式 (16.16) 及矩阵的迹 (trace) 的性质, 可知:
+
+
+\begin{align*}
+\sum_{i=1}^{m} \operatorname{var}\left(x_{i}\right) & =\operatorname{tr}\left(\boldsymbol{\Sigma}^{\mathrm{T}}\right)=\operatorname{tr}\left(\boldsymbol{A} \boldsymbol{\Lambda} \boldsymbol{A}^{\mathrm{T}}\right)=\operatorname{tr}\left(\boldsymbol{A}^{\mathrm{T}} \boldsymbol{\Lambda} \boldsymbol{A}\right) \\
+& =\operatorname{tr}(\boldsymbol{\Lambda})=\sum_{i=1}^{m} \lambda_{i}=\sum_{i=1}^{m} \operatorname{var}\left(y_{i}\right) \tag{16.19}
+\end{align*}
+
+
+（3）第 $k$ 个主成分 $y_{k}$ 与变量 $x_{i}$ 的相关系数 $\rho\left(y_{k}, x_{i}\right)$ 称为因子负荷量 (factor loading),它表示第 $k$ 个主成分 $y_{k}$ 与变量 $x_{i}$ 的相关关系。计算公式是
+
+
+\begin{equation*}
+\rho\left(y_{k}, x_{i}\right)=\frac{\sqrt{\lambda_{k}} \alpha_{i k}}{\sqrt{\sigma_{i i}}}, \quad k, i=1,2, \cdots, m \tag{16.20}
+\end{equation*}
+
+
+因为
+
+$$
+\rho\left(y_{k}, x_{i}\right)=\frac{\operatorname{cov}\left(y_{k}, x_{i}\right)}{\sqrt{\operatorname{var}\left(y_{k}\right) \operatorname{var}\left(x_{i}\right)}}=\frac{\operatorname{cov}\left(\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}, \boldsymbol{e}_{i}^{\mathrm{T}} \boldsymbol{x}\right)}{\sqrt{\lambda_{k}} \sqrt{\sigma_{i i}}}
+$$
+
+其中, $\boldsymbol{e}_{i}$ 为基本单位向量, 其第 $i$ 个分量为 1 , 其余为 0 。再由协方差的性质
+
+$$
+\operatorname{cov}\left(\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{x}, \boldsymbol{e}_{i}^{\mathrm{T}} \boldsymbol{x}\right)=\boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{e}_{i}=\boldsymbol{e}_{i}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{\alpha}_{k}=\lambda_{k} \boldsymbol{e}_{i}^{\mathrm{T}} \boldsymbol{\alpha}_{k}=\lambda_{k} \alpha_{i k}
+$$
+
+故得式 (16.20)。
+
+(4) 第 $k$ 个主成分 $y_{k}$ 与 $m$ 个变量的因子负荷量满足
+
+
+\begin{equation*}
+\sum_{i=1}^{m} \sigma_{i i} \rho^{2}\left(y_{k}, x_{i}\right)=\lambda_{k} \tag{16.21}
+\end{equation*}
+
+
+由式 (16.20) 有
+
+$$
+\sum_{i=1}^{m} \sigma_{i i} \rho^{2}\left(y_{k}, x_{i}\right)=\sum_{i=1}^{m} \lambda_{k} \alpha_{i k}^{2}=\lambda_{k} \boldsymbol{\alpha}_{k}^{\mathrm{T}} \boldsymbol{\alpha}_{k}=\lambda_{k}
+$$
+
+（5） $m$ 个主成分与第 $i$ 个变量 $x_{i}$ 的因子负荷量满足
+
+
+\begin{equation*}
+\sum_{k=1}^{m} \rho^{2}\left(y_{k}, x_{i}\right)=1 \tag{16.22}
+\end{equation*}
+
+
+由于 $y_{1}, y_{2}, \cdots, y_{m}$ 互不相关, 故
+
+$$
+\rho^{2}\left(x_{i},\left(y_{1}, y_{2}, \cdots, y_{m}\right)\right)=\sum_{k=1}^{m} \rho^{2}\left(y_{k}, x_{i}\right)
+$$
+
+又因 $x_{i}$ 可以表示为 $y_{1}, y_{2}, \cdots, y_{m}$ 的线性组合, 所以 $x_{i}$ 与 $y_{1}, y_{2}, \cdots, y_{m}$ 的相关系数的平方为 1 , 即
+
+$$
+\rho^{2}\left(x_{i},\left(y_{1}, y_{2}, \cdots, y_{m}\right)\right)=1
+$$
+
+故得式 (16.22)。
+
+\subsection*{16.1.4 主成分的个数}
+主成分分析的主要目的是降维, 所以一般选择 $k(k \ll m)$ 个主成分 (线性无关变量) 来代替 $m$ 个原有变量 (线性相关变量), 使问题得以简化, 并能保留原有变量的大部分信息。这里所说的信息是指原有变量的方差。为此, 先给出一个定理, 说明选择 $k$ 个主成分是最优选择。
+
+定理 16.2 对任意正整数 $q, 1 \leqslant q \leqslant m$, 考虑正交线性变换
+
+
+\begin{equation*}
+\boldsymbol{y}=\boldsymbol{B}^{\mathrm{T}} \boldsymbol{x} \tag{16.23}
+\end{equation*}
+
+
+其中, $\boldsymbol{y}$ 是 $q$ 维向量, $\boldsymbol{B}^{\mathrm{T}}$ 是 $q \times m$ 矩阵, 令 $\boldsymbol{y}$ 的协方差矩阵为
+
+
+\begin{equation*}
+\boldsymbol{\Sigma}_{\boldsymbol{y}}=\boldsymbol{B}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{B} \tag{16.24}
+\end{equation*}
+
+
+则 $\boldsymbol{\Sigma}_{\boldsymbol{y}}$ 的迹 $\operatorname{tr}\left(\boldsymbol{\Sigma}_{\boldsymbol{y}}\right)$ 在 $\boldsymbol{B}=\boldsymbol{A}_{\boldsymbol{q}}$ 时取得最大值, 其中矩阵 $\boldsymbol{A}_{q}$ 由正交矩阵 $\boldsymbol{A}$ 的前 $q$ 列组成。
+
+证明 令 $\boldsymbol{\beta}_{k}$ 是 $\boldsymbol{B}$ 的第 $k$ 列, 由于正交矩阵 $\boldsymbol{A}$ 的列构成 $m$ 维空间的基, 所以 $\boldsymbol{\beta}_{k}$ 可以由 $\boldsymbol{A}$ 的列表示，即
+
+$$
+\boldsymbol{\beta}_{k}=\sum_{j=1}^{m} c_{j k} \boldsymbol{\alpha}_{j}, \quad k=1,2, \cdots, q
+$$
+
+等价地,
+
+
+\begin{equation*}
+B=A C \tag{16.25}
+\end{equation*}
+
+
+其中, $\boldsymbol{C}$ 是 $m \times q$ 矩阵, 其第 $j$ 行第 $k$ 列元素为 $c_{j k}$ 。
+
+首先，
+
+$$
+\boldsymbol{B}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{B}=\boldsymbol{C}^{\mathrm{T}} \boldsymbol{A}^{\mathrm{T}} \boldsymbol{\Sigma} \boldsymbol{A} \boldsymbol{C}=\boldsymbol{C}^{\mathrm{T}} \boldsymbol{\Lambda} \boldsymbol{C}=\sum_{j=1}^{m} \lambda_{j} \boldsymbol{c}_{j} \boldsymbol{c}_{j}^{\mathrm{T}}
+$$
+
+其中, $\boldsymbol{c}_{j}^{\mathrm{T}}$ 是 $\boldsymbol{C}$ 的第 $j$ 行。因此
+
+
+\end{document}

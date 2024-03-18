@@ -1,0 +1,1885 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{CJKutf8}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan,}
+\urlstyle{same}
+
+\title{5.1.2 决策树与 if-then 规则 }
+
+\author{}
+\date{}
+
+
+\DeclareUnicodeCharacter{00D7}{$\times$}
+
+\begin{document}
+\begin{CJK*}{UTF8}{bsmi}
+\maketitle
+可以将决策树看成一个 if-then 规则的集合。将决策树转换成 if-then 规则的过程如下:由决策树的根结点到叶结点的每一条路径构建一条规则; 路径上内部结点的特征对应规则的条件, 而叶结点的类对应规则的结论。决策树的路径或其对应的 if-then 规则集合具有一个重要的性质: 互斥并且完备。这就是说, 每一个实例都被一条路径或一条规则所覆盖, 而且只被一条路径或一条规则所覆盖。这里所谓覆盖是指实例的特征与路径上的特征一致或实例满足规则的条件。
+
+\subsection*{5.1.3 决策树与条件概率分布}
+决策树还表示给定特征条件下类的条件概率分布, 这一条件概率分布定义在特征空间的一个划分 (partition) 上。将特征空间划分为互不相交的单元 (cell) 或区域 (region), 并在每个单元定义一个类的概率分布就构成了一个条件概率分布。决策树的一条路径对应于划分中的一个单元。决策树所表示的条件概率分布由各个单元给定条件下类的条件概率分布组成。假设 $X$ 为表示特征的随机变量, $Y$ 为表示类的随机变量, 那么这个条件概率分布可以表示为 $P(Y \mid X)$ 。 $X$ 取值于给定划分下单元的集合, $Y$ 取值于类的集合。各叶结点（单元）上的条件概率往往偏向某一个类，即属于某一类的概率较大。决策树分类时将该结点的实例强行分到条件概率大的那一类去。
+
+图 5.2 (a) 示意地表示特征空间的一个划分。图中的大正方形表示特征空间。这个大正方形被若干个小矩形分割, 每个小矩形表示一个单元。特征空间划分上的单元构成了一个集合, $X$ 取值为单元的集合。为简单起见, 假设只有两类: 正类和负类, 即 $Y$ 取值为 +1 和 -1 。小矩形中的数字表示单元的类。图 5.2 (b) 示意地表示特征空间划分确定时, 特征 (单元) 给定条件下类的条件概率分布。图 5.2 (b) 中条件概率分布对应于图 5.2 (a) 的划分。当某个单元 $c$ 的条件概率满足 $P(Y=+1 \mid X=c)>0.5$ 时, 则认为这个单元属于正类, 即落在这个单元的实例都被视为正例。图 5.2 (c) 为对应于图 5.2 (b) 中条件概率分布的决策树。
+
+\subsection*{5.1.4 决策树学习}
+假设给定训练数据集
+
+$$
+D=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i}=\left(x_{i}^{(1)}, x_{i}^{(2)}, \cdots, x_{i}^{(n)}\right)^{\mathrm{T}}$ 为输入实例 (特征向量), $n$ 为特征个数, $y_{i} \in\{1,2, \cdots, K\}$为类标记, $i=1,2, \cdots, N, N$ 为样本容量。决策树学习的目标是根据给定的训练数据集构建一个决策树模型, 使它能够对实例进行正确的分类。
+
+决策树学习本质上是从训练数据集中归纳出一组分类规则。与训练数据集不相矛盾的决策树 (即能对训练数据进行正确分类的决策树) 可能有多个, 也可能一个都没有。我们需要的是一个与训练数据矛盾较小的决策树, 同时具有很好的泛化能力。从另一个角度看, 决策树学习是由训练数据集估计条件概率模型。基于特征空间划分的类的条件概率模型有无穷多
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-02(1)}
+\end{center}
+
+(a) 特征空间划分
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-02(2)}
+\end{center}
+
+(b) 条件概率分布
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-02}
+\end{center}
+
+(c) 决策树
+
+图 5.2 决策树对应于条件概率分布
+
+个。我们选择的条件概率模型应该不仅对训练数据有很好的拟合, 而且对未知数据有很好的预测。
+
+决策树学习用损失函数表示这一目标。如下所述, 决策树学习的损失函数通常是正则化的极大似然函数。决策树学习的策略是以损失函数为目标函数的最小化。
+
+当损失函数确定以后, 学习问题就变为在损失函数意义下选择最优决策树的问题。因为从所有可能的决策树中选取最优决策树是 NP 完全问题, 所以现实中决策树学习算法通常采用启发式方法, 近似求解这一最优化问题。这样得到的决策树是次最优 (sub-optimal) 的。
+
+决策树学习的算法通常是一个递归地选择最优特征, 并根据该特征对训练数据进行分割, 使得对各个子数据集有一个最好的分类的过程。这一过程对应对特征空间的划分, 也对应决策树的构建。首先, 构建根结点, 将所有训练数据都放在根结点。选择一个最优特征, 按照这一特征将训练数据集分割成子集, 使得各个子集有一个在当前条件下最好的分类。如果这些子集已经能够被基本正确分类, 那么构建叶结点, 并将这些子集分到所对应的叶结点中去; 如果还有子集不能被基本正确分类，那么就对这些子集选择新的最优特征，继续对其进行分割, 构建相应的结点。如此递归地进行下去，直至所有训练数据子集被基本正确分类，或者没有合适的特征为止。最后每个子集都被分到叶结点上, 即都有了明确的类。这就生成了一棵决策树。
+
+以上方法生成的决策树可能对训练数据有很好的分类能力, 但对未知的测试数据未必有\\
+很好的分类能力, 即可能发生过拟合现象。我们需要对已生成的树自下而上进行剪枝, 将树变得更简单, 从而使它具有更好的泛化能力。具体地, 就是去掉过于细分的叶结点, 使其回退到父结点，甚至更高的结点，然后将父结点或更高的结点改为新的叶结点。
+
+如果特征数量很多, 也可以在决策树学习开始的时候对特征进行选择, 只留下对训练数据有足够分类能力的特征。
+
+可以看出, 决策树学习算法包含特征选择、决策树的生成与决策树的剪枝过程。由于决策树表示一个条件概率分布，所以深浅不同的决策树对应不同复杂度的概率模型。决策树的生成对应于模型的局部选择, 决策树的剪枝对应于模型的全局选择。决策树的生成只考虑局部最优，相对地，决策树的剪枝则考虑全局最优。
+
+决策树学习常用的算法有 ID3、C4.5 与 CART, 下面结合这些算法分别叙述决策树学习的特征选择、决策树的生成和剪枝过程。
+
+\section*{5.2 特征选择}
+\subsection*{5.2.1 特征选择问题}
+特征选择在于选取对训练数据具有分类能力的特征, 这样可以提高决策树学习的效率。如果利用一个特征进行分类的结果与随机分类的结果没有很大差别, 则称这个特征是没有分类能力的。经验上扔掉这样的特征对决策树学习的精度影响不大。通常特征选择的准则是信息增益或信息增益比。
+
+首先通过一个例子来说明特征选择问题。
+
+例 5.1 ${ }^{1}$ 表 5.1 是一个由 15 个样本组成的贷款申请训练数据。数据包括贷款申请人的 4 个特征 (属性): 第 1 个特征是年龄, 有 3 个可能值: 青年, 中年, 老年; 第 2 个特征是有工作, 有两个可能值: 是, 否; 第 3 个特征是有自己的房子, 有两个可能值: 是, 否; 第 4 个特征是信贷情况, 有 3 个可能值: 非常好, 好, 一般。表的最后一列是类别, 是否同意贷款, 取两个值: 是, 否。
+
+希望通过所给的训练数据学习一个贷款申请的决策树, 用以对未来的贷款申请进行分类, 即当新的客户提出贷款申请时，根据申请人的特征利用决策树决定是否批准贷款申请。
+
+特征选择是决定用哪个特征来划分特征空间。
+
+图 5.3 表示从表 5.1 数据学习到的两个可能的决策树, 分别由两个不同特征的根结点构成。图 5.3 (a) 所示的根结点的特征是年龄, 有 3 个取值, 对应于不同的取值有不同的子结点。图 5.3 (b) 所示的根结点的特征是有工作, 有两个取值, 对应于不同的取值有不同的子结点。两个决策树都可以从此延续下去。问题是: 究竟选择哪个特征更好些? 这就要求确定选择特征的准则。直观上, 如果一个特征具有更好的分类能力, 或者说, 按照这一特征将训练数据集分割成子集, 使得各个子集在当前条件下有最好的分类, 那么就更应该选择这个特征。信息增益（information gain）就能够很好地表示这一直观的准则。
+
+(1) 此例取自参考文献 [5]。\\
+表 5.1 贷款申请样本数据表
+
+\begin{center}
+\begin{tabular}{cccccc}
+\hline\hline
+ID & 年龄 & 有工作 & 有自己的房子 & 信贷情况 & 类别 \\
+\hline
+1 & 青年 & 否 & 否 & 一般 & 否 \\
+2 & 青年 & 否 & 否 & 好 & 否 \\
+3 & 青年 & 是 & 否 & 好 & 是 \\
+4 & 青年 & 是 & 是 & 一般 & 是 \\
+5 & 青年 & 否 & 否 & 一般 & 否 \\
+6 & 中年 & 否 & 否 & 一般 & 否 \\
+7 & 中年 & 否 & 否 & 好 & 否 \\
+8 & 中年 & 是 & 是 & 好 & 是 \\
+9 & 中年 & 否 & 是 & 非常好 & 是 \\
+10 & 中年 & 否 & 是 & 非常好 & 是 \\
+11 & 老年 & 否 & 是 & 非常好 & 是 \\
+12 & 老年 & 否 & 是 & 好 & 是 \\
+13 & 老年 & 是 & 否 & 好 & 是 \\
+14 & 老年 & 是 & 否 & 非常好 & 是 \\
+15 & 老年 & 否 & 否 & 一般 & 否 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-04}
+\end{center}
+
+(a)
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-04(1)}
+\end{center}
+
+(b)
+
+图 5.3 不同特征决定的不同决策树
+
+\section*{5.2 .2 信息增益}
+为了便于说明, 先给出熵与条件熵的定义。
+
+在信息论与概率统计中, 熵 (entropy) 是表示随机变量不确定性的度量。设 $X$ 是一个取有限个值的离散随机变量, 其概率分布为
+
+$$
+P\left(X=x_{i}\right)=p_{i}, \quad i=1,2, \cdots, n
+$$
+
+则随机变量 $X$ 的熵定义为
+
+
+\begin{equation*}
+H(X)=-\sum_{i=1}^{n} p_{i} \log p_{i} \tag{5.1}
+\end{equation*}
+
+
+在式 (5.1) 中, 若 $p_{i}=0$, 则定义 $0 \log 0=0$ 。通常, 式 (5.1) 中的对数以 2 为底或以 $\mathrm{e}$ 为底 (自然对数), 这时熵的单位分别称作比特 (bit) 或纳特 (nat)。由定义可知, 熵只依赖于 $X$ 的分布, 而与 $X$ 的取值无关, 所以也可将 $X$ 的熵记作 $H(p)$, 即
+
+
+\begin{equation*}
+H(p)=-\sum_{i=1}^{n} p_{i} \log p_{i} \tag{5.2}
+\end{equation*}
+
+
+熵越大，随机变量的不确定性就越大。从定义可验证
+
+
+\begin{equation*}
+0 \leqslant H(p) \leqslant \log n \tag{5.3}
+\end{equation*}
+
+
+当随机变量只取两个值, 如 1,0 时, 即 $X$ 的分布为
+
+$$
+P(X=1)=p, \quad P(X=0)=1-p, \quad 0 \leqslant p \leqslant 1
+$$
+
+熵为
+
+
+\begin{equation*}
+H(p)=-p \log _{2} p-(1-p) \log _{2}(1-p) \tag{5.4}
+\end{equation*}
+
+
+这时, 熵 $H(p)$ 随概率 $p$ 变化的曲线如图 5.4 所示 (单位为比特)。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-05}
+\end{center}
+
+图 5.4 分布为伯努利分布时熵与概率的关系
+
+当 $p=0$ 或 $p=1$ 时 $H(p)=0$, 随机变量完全没有不确定性。当 $p=0.5$ 时, $H(p)=1$,熵取值最大，随机变量不确定性最大。
+
+设有随机变量 $(X, Y)$, 其联合概率分布为
+
+$$
+P\left(X=x_{i}, Y=y_{j}\right)=p_{i j}, \quad i=1,2, \cdots, n, \quad j=1,2, \cdots, m
+$$
+
+条件熵 $H(Y \mid X)$ 表示在已知随机变量 $X$ 的条件下随机变量 $Y$ 的不确定性。随机变量 $X$ 给定的条件下随机变量 $Y$ 的条件熵 (conditional entropy) $H(Y \mid X)$ 定义为 $X$ 给定条件下 $Y$ 的条件概率分布的熵对 $X$ 的数学期望:
+
+
+\begin{equation*}
+H(Y \mid X)=\sum_{i=1}^{n} p_{i} H\left(Y \mid X=x_{i}\right) \tag{5.5}
+\end{equation*}
+
+
+这里, $p_{i}=P\left(X=x_{i}\right), i=1,2, \cdots, n$ 。
+
+当熵和条件熵中的概率由数据估计（特别是极大似然估计）得到时, 所对应的熵与条件熵分别称为经验摘 (empirical entropy) 和经验条件摘 (empirical conditional entropy)。此时，如果有 0 概率，令 $0 \log 0=0$ 。
+
+信息增益（information gain）表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
+
+定义 5.2 (信息增益) 特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D, A)$ 定义为集合 $D$ 的经验摘 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件摘 $H(D \mid A)$ 之差, 即
+
+
+\begin{equation*}
+g(D, A)=H(D)-H(D \mid A) \tag{5.6}
+\end{equation*}
+
+
+一般地, 熵 $H(Y)$ 与条件熵 $H(Y \mid X)$ 之差称为互信息 (mutual information)。决策树学习中的信息增益等价于训练数据集中类与特征的互信息。
+
+决策树学习应用信息增益准则选择特征。给定训练数据集 $D$ 和特征 $A$, 经验熵 $H(D)$ 表示对数据集 $D$ 进行分类的不确定性。而经验条件熵 $H(D \mid A)$ 表示在特征 $A$ 给定的条件下对数据集 $D$ 进行分类的不确定性。那么它们的差, 即信息增益, 就表示由于特征 $A$ 而使得对数据集 $D$ 的分类的不确定性减少的程度。显然, 对于数据集 $D$ 而言，信息增益依赖于特征，不同的特征往往具有不同的信息增益。信息增益大的特征具有更强的分类能力。
+
+根据信息增益准则的特征选择方法是: 对训练数据集（或子集） $D$, 计算其每个特征的信息增益, 并比较它们的大小，选择信息增益最大的特征。
+
+设训练数据集为 $D,|D|$ 表示其样本容量, 即样本个数。设有 $K$ 个类 $C_{k}, k=1,2, \cdots, K$, $\left|C_{k}\right|$ 为属于类 $C_{k}$ 的样本个数, $\sum_{k=1}^{K}\left|C_{k}\right|=|D|$ 。设特征 $A$ 有 $n$ 个不同的取值 $\left\{a_{1}, a_{2}, \cdots, a_{n}\right\}$,根据特征 $A$ 的取值将 $D$ 划分为 $n$ 个子集 $D_{1}, D_{2}, \cdots, D_{n},\left|D_{i}\right|$ 为 $D_{i}$ 的样本个数, $\sum_{i=1}^{n}\left|D_{i}\right|=$ $|D|$ 。记子集 $D_{i}$ 中属于类 $C_{k}$ 的样本的集合为 $D_{i k}$, 即 $D_{i k}=D_{i} \cap C_{k},\left|D_{i k}\right|$ 为 $D_{i k}$ 的样本个数。于是信息增益的算法如下。
+
+\section*{算法 5.1 (信息增益的算法)}
+输入: 训练数据集 $D$ 和特征 $A$ 。
+
+输出: 特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D, A)$ 。
+
+(1) 计算数据集 $D$ 的经验熵 $H(D)$
+
+
+\begin{equation*}
+H(D)=-\sum_{k=1}^{K} \frac{\left|C_{k}\right|}{|D|} \log _{2} \frac{\left|C_{k}\right|}{|D|} \tag{5.7}
+\end{equation*}
+
+
+(2) 计算特征 $A$ 对数据集 $D$ 的经验条件熵 $H(D \mid A)$
+
+
+\begin{equation*}
+H(D \mid A)=\sum_{i=1}^{n} \frac{\left|D_{i}\right|}{|D|} H\left(D_{i}\right)=-\sum_{i=1}^{n} \frac{\left|D_{i}\right|}{|D|} \sum_{k=1}^{K} \frac{\left|D_{i k}\right|}{\left|D_{i}\right|} \log _{2} \frac{\left|D_{i k}\right|}{\left|D_{i}\right|} \tag{5.8}
+\end{equation*}
+
+
+（3）计算信息增益
+
+
+\begin{equation*}
+g(D, A)=H(D)-H(D \mid A) \tag{5.9}
+\end{equation*}
+
+
+例 5.2 对表 5.1 所给的训练数据集 $D$, 根据信息增益准则选择最优特征。
+
+解 首先计算经验熵 $H(D)$ :
+
+$$
+H(D)=-\frac{9}{15} \log _{2} \frac{9}{15}-\frac{6}{15} \log _{2} \frac{6}{15}=0.971
+$$
+
+然后计算各特征对数据集 $D$ 的信息增益。分别以 $A_{1}, A_{2}, A_{3}, A_{4}$ 表示年龄、有工作、有自己的房子和信贷情况 4 个特征, 则
+
+$$
+\begin{aligned}
+g\left(D, A_{1}\right)= & H(D)-\left[\frac{5}{15} H\left(D_{1}\right)+\frac{5}{15} H\left(D_{2}\right)+\frac{5}{15} H\left(D_{3}\right)\right] \\
+= & 0.971-\left[\frac{5}{15}\left(-\frac{2}{5} \log _{2} \frac{2}{5}-\frac{3}{5} \log _{2} \frac{3}{5}\right)+\right. \\
+& \left.\frac{5}{15}\left(-\frac{3}{5} \log _{2} \frac{3}{5}-\frac{2}{5} \log _{2} \frac{2}{5}\right)+\frac{5}{15}\left(-\frac{4}{5} \log _{2} \frac{4}{5}-\frac{1}{5} \log _{2} \frac{1}{5}\right)\right] \\
+= & 0.971-0.888=0.083
+\end{aligned}
+$$
+
+这里 $D_{1}, D_{2}, D_{3}$ 分别是 $D$ 中 $A_{1}$ (年龄) 取值为青年、中年和老年的样本子集。类似地,
+
+$$
+\begin{gathered}
+g\left(D, A_{2}\right)=H(D)-\left[\frac{5}{15} H\left(D_{1}\right)+\frac{10}{15} H\left(D_{2}\right)\right] \\
+=0.971-\left[\frac{5}{15} \times 0+\frac{10}{15}\left(-\frac{4}{10} \log _{2} \frac{4}{10}-\frac{6}{10} \log _{2} \frac{6}{10}\right)\right]=0.324 \\
+g\left(D, A_{3}\right)=0.971-\left[\frac{6}{15} \times 0+\frac{9}{15}\left(-\frac{3}{9} \log _{2} \frac{3}{9}-\frac{6}{9} \log _{2} \frac{6}{9}\right)\right] \\
+=0.971-0.551=0.420 \\
+g\left(D, A_{4}\right)=0.971-0.608=0.363
+\end{gathered}
+$$
+
+最后，比较各特征的信息增益值。由于特征 $A_{3}$ （有自己的房子）的信息增益值最大，所以选择特征 $A_{3}$ 作为最优特征。
+
+\section*{5.2 .3 信息增益比}
+以信息增益作为划分训练数据集的特征，存在偏向于选择取值较多的特征的问题。使用信息增益比（information gain ratio）可以对这一问题进行校正。这是特征选择的另一准则。
+
+定义 5.3 (信息增益比) 特征 $A$ 对训练数据集 $D$ 的信息增益比 $g_{\mathrm{R}}(D, A)$ 定义为其信息增益 $g(D, A)$ 与训练数据集 $D$ 关于特征 $A$ 的值的摘 $H_{A}(D)$ 之比, 即
+
+
+\begin{equation*}
+g_{\mathrm{R}}(D, A)=\frac{g(D, A)}{H_{A}(D)} \tag{5.10}
+\end{equation*}
+
+
+其中, $H_{A}(D)=-\sum_{i=1}^{n} \frac{\left|D_{i}\right|}{|D|} \log _{2} \frac{\left|D_{i}\right|}{|D|}, n$ 是特征 $A$ 取值的个数。
+
+\section*{5.3 决策树的生成}
+本节将介绍决策树学习的生成算法。首先介绍 ID3 的生成算法, 然后再介绍 C4.5 中的生成算法。这些都是决策树学习的经典算法。
+
+\subsection*{5.3.1 ID3 算法}
+ID3 算法的核心是在决策树各个结点上应用信息增益准则选择特征, 递归地构建决策树。具体方法是: 从根结点 (root node) 开始, 对结点计算所有可能的特征的信息增益, 选择信息增益最大的特征作为结点的特征, 由该特征的不同取值建立子结点; 再对子结点递归地调用以上方法, 构建决策树; 直到所有特征的信息增益均很小或没有特征可以选择为止, 最后得到一棵决策树。ID3 相当于用极大似然法进行概率模型的选择。
+
+\section*{算法 5.2 (ID3 算法)}
+输入: 训练数据集 $D$, 特征集 $A$ 阈值 $\varepsilon$ 。
+
+输出: 决策树 $T$ 。
+
+(1) 若 $D$ 中所有实例属于同一类 $C_{k}$, 则 $T$ 为单结点树, 并将类 $C_{k}$ 作为该结点的类标记，返回 $T$;
+
+(2) 若 $A=\varnothing$, 则 $T$ 为单结点树, 并将 $D$ 中实例数最大的类 $C_{k}$ 作为该结点的类标记,返回 $T$;
+
+(3) 否则, 按算法 5.1 计算 $A$ 中各特征对 $D$ 的信息增益, 选择信息增益最大的特征 $A_{g}$;
+
+(4) 如果 $A_{g}$ 的信息增益小于阈值 $\varepsilon$, 则置 $T$ 为单结点树, 并将 $D$ 中实例数最大的类 $C_{k}$作为该结点的类标记，返回 $T$;
+
+(5) 否则, 对 $A_{g}$ 的每一可能值 $a_{i}$, 依 $A_{g}=a_{i}$ 将 $D$ 分割为若干非空子集 $D_{i}$, 将 $D_{i}$ 中实例数最大的类作为标记, 构建子结点, 由结点及其子结点构成树 $T$, 返回 $T$;
+
+(6) 对第 $i$ 个子结点, 以 $D_{i}$ 为训练集, 以 $A-\left\{A_{g}\right\}$ 为特征集, 递归地调用步骤 (1) 步骤 (5), 得到子树 $T_{i}$, 返回 $T_{i}$ 。
+
+例 5.3 对表 5.1 的训练数据集, 利用 ID3 算法建立决策树。
+
+解 利用例 5.2 的结果, 由于特征 $A_{3}$ (有自己的房子) 的信息增益值最大, 所以选择特征 $A_{3}$ 作为根结点的特征。它将训练数据集 $D$ 划分为两个子集 $D_{1}$ ( $A_{3}$ 取值为 “是”) 和 $D_{2}$ ( $A_{3}$ 取值为 “否”)。由于 $D_{1}$ 只有同一类的样本点, 所以它成为一个叶结点, 结点的类标记为 “是”。
+
+对 $D_{2}$ 则需从特征 $A_{1}$ (年龄), $A_{2}$ (有工作) 和 $A_{4}$ (信贷情况) 中选择新的特征。计算各个特征的信息增益:
+
+$$
+\begin{aligned}
+& g\left(D_{2}, A_{1}\right)=H\left(D_{2}\right)-H\left(D_{2} \mid A_{1}\right)=0.918-0.667=0.251 \\
+& g\left(D_{2}, A_{2}\right)=H\left(D_{2}\right)-H\left(D_{2} \mid A_{2}\right)=0.918 \\
+& g\left(D_{2}, A_{4}\right)=H\left(D_{2}\right)-H\left(D_{2} \mid A_{4}\right)=0.474
+\end{aligned}
+$$
+
+选择信息增益最大的特征 $A_{2}$ (有工作) 作为结点的特征。由于 $A_{2}$ 有两个可能取值, 从这一结点引出两个子结点: 一个对应 “是” (有工作) 的子结点, 包含 3 个样本, 它们属于同一类,所以这是一个叶结点, 类标记为 “是” ; 另一个是对应 “否” (无工作) 的子结点, 包含 6 个样本, 它们也属于同一类, 所以这也是一个叶结点, 类标记为 “否”。
+
+这样生成一棵如图 5.5 所示的决策树, 该决策树只用了两个特征（有两个内部结点）。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-09}
+\end{center}
+
+图 5.5 决策树的生成
+
+ID3 算法只有树的生成, 所以该算法生成的树容易产生过拟合。
+
+\subsection*{5.3.2 C4.5 的生成算法}
+C4.5 算法与 ID3 算法相似, C4.5 算法对 ID3 算法进行了改进。C4.5 算法在生成的过程中, 用信息增益比来选择特征。
+
+\section*{算法 5.3 (C4.5 的生成算法)}
+输入: 训练数据集 $D$, 特征集 $A$ 阈值 $\varepsilon$ 。
+
+输出: 决策树 $T$ 。
+
+(1) 如果 $D$ 中所有实例属于同一类 $C_{k}$, 则置 $T$ 为单结点树, 并将 $C_{k}$ 作为该结点的类,返回 $T$;
+
+(2) 如果 $A=\varnothing$, 则置 $T$ 为单结点树, 并将 $D$ 中实例数最大的类 $C_{k}$ 作为该结点的类,返回 $T$;
+
+(3) 否则, 按式 (5.10) 计算 $A$ 中各特征对 $D$ 的信息增益比, 选择信息增益比最大的特征 $A_{g}$;
+
+(4) 如果 $A_{g}$ 的信息增益比小于阈值 $\varepsilon$, 则置 $T$ 为单结点树, 并将 $D$ 中实例数最大的类 $C_{k}$ 作为该结点的类, 返回 $T$;
+
+(5) 否则, 对 $A_{g}$ 的每一可能值 $a_{i}$, 依 $A_{g}=a_{i}$ 将 $D$ 分割为若干非空子集 $D_{i}$, 将 $D_{i}$ 中实例数最大的类作为标记, 构建子结点, 由结点及其子结点构成树 $T$, 返回 $T$;
+
+(6) 对结点 $i$, 以 $D_{i}$ 为训练集, 以 $A-\left\{A_{g}\right\}$ 为特征集, 递归地调用步骤 (1) 步骤 (5),得到子树 $T_{i}$, 返回 $T_{i}$ 。
+
+\section*{5.4 决策树的剪枝}
+决策树生成算法递归地产生决策树, 直到不能继续下去为止。这样产生的树往往对训练数据的分类很准确, 但对未知的测试数据的分类却没有那么准确, 即出现过拟合现象。过拟合的原因在于学习时过多地考虑如何提高对训练数据的正确分类, 从而构建出过于复杂的决策树。解决这个问题的办法是考虑决策树的复杂度, 对已生成的决策树进行简化。\\
+在决策树学习中将已生成的树进行简化的过程称为剪枝 (pruning)。具体地, 剪枝从已生成的树上裁掉一些子树或叶结点, 并将其根结点或父结点作为新的叶结点, 从而简化分类树模型。
+
+本节介绍一种简单的决策树学习的剪枝算法。
+
+决策树的剪枝往往通过极小化决策树整体的损失函数 (loss function) 或代价函数 (cost function）来实现。设树 $T$ 的叶结点个数为 $|T|, t$ 是树 $T$ 的叶结点, 该叶结点有 $N_{t}$ 个样本点, 其中 $k$ 类的样本点有 $N_{t k}$ 个, $k=1,2, \cdots, K, H_{t}(T)$ 为叶结点 $t$ 上的经验熵, $\alpha \geqslant 0$ 为参数, 则决策树学习的损失函数可以定义为
+
+
+\begin{equation*}
+C_{\alpha}(T)=\sum_{t=1}^{|T|} N_{t} H_{t}(T)+\alpha|T| \tag{5.11}
+\end{equation*}
+
+
+其中经验熵为
+
+
+\begin{equation*}
+H_{t}(T)=-\sum_{k} \frac{N_{t k}}{N_{t}} \log \frac{N_{t k}}{N_{t}} \tag{5.12}
+\end{equation*}
+
+
+在损失函数中, 将式 (5.11) 右端的第 1 项记作
+
+
+\begin{equation*}
+C(T)=\sum_{t=1}^{|T|} N_{t} H_{t}(T)=-\sum_{t=1}^{|T|} \sum_{k=1}^{K} N_{t k} \log \frac{N_{t k}}{N_{t}} \tag{5.13}
+\end{equation*}
+
+
+这时有
+
+
+\begin{equation*}
+C_{\alpha}(T)=C(T)+\alpha|T| \tag{5.14}
+\end{equation*}
+
+
+式 (5.14) 中, $C(T)$ 表示模型对训练数据的预测误差, 即模型与训练数据的拟合程度, $|T|$ 表示模型复杂度, 参数 $\alpha \geqslant 0$ 控制两者之间的影响。较大的 $\alpha$ 促使选择较简单的模型 (树), 较小的 $\alpha$ 促使选择较复杂的模型 (树)。 $\alpha=0$ 意味着只考虑模型与训练数据的拟合程度, 不考虑模型的复杂度。
+
+剪枝就是当 $\alpha$ 确定时, 选择损失函数最小的模型, 即损失函数最小的子树。当 $\alpha$ 值确定时, 子树越大, 往往与训练数据的拟合越好, 但是模型的复杂度就越高; 相反, 子树越小, 模型的复杂度就越低, 但是往往与训练数据的拟合不好。损失函数正好表示了对两者的平衡。
+
+可以看出, 决策树生成只考虑了通过提高信息增益（或信息增益比）对训练数据进行更好的拟合。而决策树剪枝通过优化损失函数还考虑了减小模型复杂度。决策树生成学习局部的模型, 而决策树剪枝学习整体的模型。
+
+式 (5.11) 或式 (5.14) 定义的损失函数的极小化等价于正则化的极大似然估计。所以, 利用损失函数最小原则进行剪枝就是用正则化的极大似然估计进行模型选择。
+
+图 5.6 表示决策树剪枝过程。下面介绍剪枝算法。
+
+\section*{算法 5.4 (树的剪枝算法)}
+输入: 生成算法产生的整个树 $T$, 参数 $\alpha$ 。
+
+输出: 修剪后的子树 $T_{\alpha}$ 。
+
+(1) 计算每个结点的经验熵。
+
+(2) 递归地从树的叶结点向上回缩。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_aa878f82ee3a63be2358g-11}
+
+图 5.6 决策树的剪枝
+
+设一组叶结点回缩到其父结点之前与之后的整体树分别为 $T_{B}$ 与 $T_{A}$, 其对应的损失函数值分别是 $C_{\alpha}\left(T_{B}\right)$ 与 $C_{\alpha}\left(T_{A}\right)$, 如果
+
+
+\begin{equation*}
+C_{\alpha}\left(T_{A}\right) \leqslant C_{\alpha}\left(T_{B}\right) \tag{5.15}
+\end{equation*}
+
+
+则进行剪枝, 即将父结点变为新的叶结点。
+
+(3) 返回步骤 (2), 直至不能继续为止, 得到损失函数最小的子树 $T_{\alpha}$ 。
+
+注意, 式 (5.15) 只需考虑两个树的损失函数的差, 其计算可以在局部进行。所以, 决策树的剪枝算法可以由一种动态规划的算法实现。类似的动态规划算法可参考文献 [10]。
+
+\subsection*{5.5 CART 算 法}
+分类与回归树 (classification and regression tree, CART) 模型由 Breiman 等人在 1984 年提出, 是应用广泛的决策树学习方法。CART 同样由特征选择、树的生成及剪枝组成, 既可以用于分类也可以用于回归。以下将用于分类与回归的树统称为决策树。
+
+CART 是在给定输入随机变量 $X$ 条件下输出随机变量 $Y$ 的条件概率分布的学习方法。CART 假设决策树是二叉树, 内部结点特征的取值为 “是” 和 “否”, 左分支是取值为 “是”的分支, 右分支是取值为 “否” 的分支。这样的决策树等价于递归地二分每个特征, 将输入空间即特征空间划分为有限个单元, 并在这些单元上确定预测的概率分布, 也就是在输入给定的条件下输出的条件概率分布。
+
+CART 算法由以下两步组成:
+
+（1）决策树生成: 基于训练数据集生成决策树, 生成的决策树要尽量大。
+
+(2) 决策树剪枝: 用验证数据集对已生成的树进行剪枝并选择最优子树, 这时用损失函数最小作为剪枝的标准。
+
+\subsection*{5.5.1 CART 生成}
+决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则, 对分类树用基尼指数（Gini index）最小化准则, 进行特征选择, 生成二叉树。
+
+\section*{1. 回归树的生成}
+假设 $X$ 与 $Y$ 分别为输入和输出变量, 并且 $Y$ 是连续变量, 给定训练数据集
+
+$$
+D=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+考虑如何生成回归树。
+
+一棵回归树对应着输入空间 (即特征空间) 的一个划分以及在划分的单元上的输出值。假设已将输入空间划分为 $M$ 个单元 $R_{1}, R_{2}, \cdots, R_{M}$, 并且在每个单元 $R_{m}$ 上有一个固定的输出值 $c_{m}$, 于是回归树模型可表示为
+
+
+\begin{equation*}
+f(x)=\sum_{m=1}^{M} c_{m} I\left(x \in R_{m}\right) \tag{5.16}
+\end{equation*}
+
+
+当输入空间的划分确定时, 可以用平方误差 $\sum_{x_{i} \in R_{m}}\left(y_{i}-f\left(x_{i}\right)\right)^{2}$ 来表示回归树对训练数据的预测误差, 用平方误差最小的准则求解每个单元上的最优输出值。易知, 单元 $R_{m}$ 上的 $c_{m}$ 的最优值 $\hat{c}_{m}$ 是 $R_{m}$ 上的所有输入实例 $x_{i}$ 对应的输出 $y_{i}$ 的均值, 即
+
+
+\begin{equation*}
+\hat{c}_{m}=\operatorname{ave}\left(y_{i} \mid x_{i} \in R_{m}\right) \tag{5.17}
+\end{equation*}
+
+
+问题是怎样对输入空间进行划分。这里采用启发式的方法, 选择第 $j$ 个变量 $x^{(j)}$ 和它取的值 $s$ 作为切分变量 (splitting variable) 和切分点 (splitting point), 并定义两个区域:
+
+
+\begin{equation*}
+R_{1}(j, s)=\left\{x \mid x^{(j)} \leqslant s\right\}, \quad R_{2}(j, s)=\left\{x \mid x^{(j)}>s\right\} \tag{5.18}
+\end{equation*}
+
+
+然后寻找最优切分变量 $j$ 和最优切分点 $s$ 。具体地, 求解
+
+
+\begin{equation*}
+\min _{j, s}\left[\min _{c_{1}} \sum_{x_{i} \in R_{1}(j, s)}\left(y_{i}-c_{1}\right)^{2}+\min _{c_{2}} \sum_{x_{i} \in R_{2}(j, s)}\left(y_{i}-c_{2}\right)^{2}\right] \tag{5.19}
+\end{equation*}
+
+
+对固定输入变量 $j$ 可以找到最优切分点 $s$ 。
+
+
+\begin{equation*}
+\hat{c}_{1}=\operatorname{ave}\left(y_{i} \mid x_{i} \in R_{1}(j, s)\right), \quad \hat{c}_{2}=\operatorname{ave}\left(y_{i} \mid x_{i} \in R_{2}(j, s)\right) \tag{5.20}
+\end{equation*}
+
+
+遍历所有输入变量, 找到最优的切分变量 $j$, 构成一个对 $(j, s)$ 。依此将输入空间划分为两个区域。接着, 对每个区域重复上述划分过程, 直到满足停止条件为止。这样就生成一棵回归树。这样的回归树通常称为最小二乘回归树 (least squares regression tree), 现将算法叙述如下。
+
+\section*{算法 5.5 (最小二乘回归树生成算法)}
+输入: 训练数据集 $D$ 。
+
+输出: 回归树 $f(x)$ 。\\
+在训练数据集所在的输入空间中, 递归地将每个区域划分为两个子区域并决定每个子区域上的输出值, 构建二叉决策树:
+
+(1) 选择最优切分变量 $j$ 与切分点 $s$, 求解
+
+
+\begin{equation*}
+\min _{j, s}\left[\min _{c_{1}} \sum_{x_{i} \in R_{1}(j, s)}\left(y_{i}-c_{1}\right)^{2}+\min _{c_{2}} \sum_{x_{i} \in R_{2}(j, s)}\left(y_{i}-c_{2}\right)^{2}\right] \tag{5.21}
+\end{equation*}
+
+
+遍历变量 $j$, 对固定的切分变量 $j$ 扫描切分点 $s$, 选择使式 (5.21) 达到最小值的对 $(j, s)$ 。
+
+(2) 用选定的对 $(j, s)$ 划分区域并决定相应的输出值:
+
+$$
+\begin{gathered}
+R_{1}(j, s)=\left\{x \mid x^{(j)} \leqslant s\right\}, \quad R_{2}(j, s)=\left\{x \mid x^{(j)}>s\right\} \\
+\hat{c}_{m}=\frac{1}{N_{m}} \sum_{x_{i} \in R_{m}(j, s)} y_{i}, \quad x \in R_{m}, \quad m=1,2
+\end{gathered}
+$$
+
+(3) 继续对两个子区域调用步骤 (1) 和步骤 (2), 直至满足停止条件。
+
+(4) 将输入空间划分为 $M$ 个区域 $R_{1}, R_{2}, \cdots, R_{M}$, 生成决策树:
+
+$$
+f(x)=\sum_{m=1}^{M} \hat{c}_{m} I\left(x \in R_{m}\right)
+$$
+
+\section*{2. 分类树的生成}
+分类树用基尼指数选择最优特征，同时决定该特征的最优二值切分点。
+
+定义 5.4 (基尼指数） 分类问题中，假设有 $K$ 个类，样本点属于第 $k$ 类的概率为 $p_{k}$ ，则概率分布的基尼指数定义为
+
+
+\begin{equation*}
+\operatorname{Gini}(p)=\sum_{k=1}^{K} p_{k}\left(1-p_{k}\right)=1-\sum_{k=1}^{K} p_{k}^{2} \tag{5.22}
+\end{equation*}
+
+
+对于二类分类问题, 若样本点属于第 1 个类的概率是 $p$, 则概率分布的基尼指数为
+
+
+\begin{equation*}
+\operatorname{Gini}(p)=2 p(1-p) \tag{5.23}
+\end{equation*}
+
+
+对于给定的样本集合 $D$ ，其基尼指数为
+
+
+\begin{equation*}
+\operatorname{Gini}(D)=1-\sum_{k=1}^{K}\left(\frac{\left|C_{k}\right|}{|D|}\right)^{2} \tag{5.24}
+\end{equation*}
+
+
+这里, $C_{k}$ 是 $D$ 中属于第 $k$ 类的样本子集, $K$ 是类的个数。
+
+如果样本集合 $D$ 根据特征 $A$ 是否取某一可能值 $a$ 被分割成 $D_{1}$ 和 $D_{2}$ 两部分, 即
+
+$$
+D_{1}=\{(x, y) \in D \mid A(x)=a\}, \quad D_{2}=D-D_{1}
+$$
+
+则在特征 $A$ 的条件下, 集合 $D$ 的基尼指数定义为
+
+
+\begin{equation*}
+\operatorname{Gini}(D, A)=\frac{\left|D_{1}\right|}{|D|} \operatorname{Gini}\left(D_{1}\right)+\frac{\left|D_{2}\right|}{|D|} \operatorname{Gini}\left(D_{2}\right) \tag{5.25}
+\end{equation*}
+
+
+基尼指数 $\operatorname{Gini}(D)$ 表示集合 $D$ 的不确定性, 基尼指数 $\operatorname{Gini}(D, A)$ 表示经 $A=a$ 分割后集合 $D$ 的不确定性。基尼指数值越大，样本集合的不确定性也就越大，这一点与熵相似。
+
+图 5.7 显示二类分类问题中基尼指数 $\operatorname{Gini}(p)$ 、熵 (单位比特) 之半 $H(p) / 2$ 和分类误差率的关系。横坐标表示概率 $p$, 纵坐标表示损失。可以看出基尼指数和熵之半的曲线很接近,都可以近似地代表分类误差率。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-14}
+\end{center}
+
+图 5.7 二类分类中基尼指数、熵之半和分类误差率的关系
+
+\section*{算法 5.6 (CART 生成算法)}
+输入: 训练数据集 $D$, 停止计算的条件。
+
+输出: CART 决策树。
+
+根据训练数据集, 从根结点开始, 递归地对每个结点进行以下操作, 构建二叉决策树:
+
+（1）设结点的训练数据集为 $D$, 计算现有特征对该数据集的基尼指数。此时, 对每一个特征 $A$, 对其可能取的每个值 $a$, 根据样本点对 $A=a$ 的测试为 “是” 或 “否” 将 $D$ 分割成 $D_{1}$ 和 $D_{2}$ 两部分, 利用式 (5.25) 计算 $A=a$ 时的基尼指数。
+
+(2) 在所有可能的特征 $A$ 以及它们所有可能的切分点 $a$ 中, 选择基尼指数最小的特征及其对应的切分点作为最优特征与最优切分点。依最优特征与最优切分点, 从现结点生成两个子结点, 将训练数据集依特征分配到两个子结点中去。
+
+(3) 对两个子结点递归地调用步骤 (1) 和步骤 (2), 直至满足停止条件。
+
+(4) 生成 CART 决策树。
+
+算法停止计算的条件是结点中的样本个数小于预定阈值或样本集的基尼指数小于预定阈值（样本基本属于同一类），或者没有更多特征。
+
+例 5.4 根据表 5.1 所给训练数据集, 应用 CART 算法生成决策树。
+
+解 首先计算各特征的基尼指数, 选择最优特征以及其最优切分点。仍采用例 5.2 的记号, 分别以 $A_{1}, A_{2}, A_{3}, A_{4}$ 表示年龄、有工作、有自己的房子和信贷情况 4 个特征, 并以 $1,2,3$ 表示年龄的值为青年、中年和老年, 以 1,2 表示有工作和有自己的房子的值为是和否, 以 $1,2,3$ 表示信贷情况的值为非常好、好和一般。
+
+求特征 $A_{1}$ 的基尼指数:
+
+$$
+\begin{aligned}
+& \operatorname{Gini}\left(D, A_{1}=1\right)=\frac{5}{15}\left[2 \times \frac{2}{5} \times\left(1-\frac{2}{5}\right)\right]+\frac{10}{15}\left[2 \times \frac{7}{10} \times\left(1-\frac{7}{10}\right)\right]=0.44 \\
+& \operatorname{Gini}\left(D, A_{1}=2\right)=0.48 \\
+& \operatorname{Gini}\left(D, A_{1}=3\right)=0.44
+\end{aligned}
+$$
+
+由于 $\operatorname{Gini}\left(D, A_{1}=1\right)$ 和 $\operatorname{Gini}\left(D, A_{1}=3\right)$ 相等, 且最小, 所以 $A_{1}=1$ 和 $A_{1}=3$ 都可以选作 $A_{1}$ 的最优切分点。
+
+求特征 $A_{2}$ 和 $A_{3}$ 的基尼指数:
+
+$$
+\begin{aligned}
+& \operatorname{Gini}\left(D, A_{2}=1\right)=0.32 \\
+& \operatorname{Gini}\left(D, A_{3}=1\right)=0.27
+\end{aligned}
+$$
+
+由于 $A_{2}$ 和 $A_{3}$ 只有一个切分点, 所以它们就是最优切分点。
+
+求特征 $A_{4}$ 的基尼指数:
+
+$$
+\begin{aligned}
+& \operatorname{Gini}\left(D, A_{4}=1\right)=0.36 \\
+& \operatorname{Gini}\left(D, A_{4}=2\right)=0.47 \\
+& \operatorname{Gini}\left(D, A_{4}=3\right)=0.32
+\end{aligned}
+$$
+
+$\operatorname{Gini}\left(D, A_{4}=3\right)$ 最小, 所以 $A_{4}=3$ 为 $A_{4}$ 的最优切分点。
+
+在 $A_{1}, A_{2}, A_{3}, A_{4}$ 几个特征中, $\operatorname{Gini}\left(D, A_{3}=1\right)=0.27$ 最小, 所以选择特征 $A_{3}$ 为最优特征, $A_{3}=1$ 为其最优切分点。于是根结点生成两个子结点, 一个是叶结点。对另一个结点继续使用以上方法在 $A_{1}, A_{2}, A_{4}$ 中选择最优特征及其最优切分点, 结果是 $A_{2}=1$ 。依此计算得知, 所得结点都是叶结点。
+
+对于本问题, 按照 CART 算法所生成的决策树与按照 ID3 算法所生成的决策树完全一致。
+
+\subsection*{5.5.2 CART 剪枝}
+CART 剪枝算法从 “完全生长” 的决策树的底端剪去一些子树, 使决策树变小 (模型变简单), 从而能够对未知数据有更准确的预测。CART 剪枝算法由两步组成: 首先从生成算法产生的决策树 $T_{0}$ 底端开始不断剪枝, 直到 $T_{0}$ 的根结点, 形成一个子树序列 $\left\{T_{0}, T_{1}, \cdots, T_{n}\right\}$;然后通过交叉验证法在独立的验证数据集上对子树序列进行测试, 从中选择最优子树。
+
+\section*{1. 剪枝, 形成一个子树序列}
+在剪枝过程中, 计算子树的损失函数:
+
+
+\begin{equation*}
+C_{\alpha}(T)=C(T)+\alpha|T| \tag{5.26}
+\end{equation*}
+
+
+其中, $T$ 为任意子树, $C(T)$ 为对训练数据的预测误差 (如基尼指数), $|T|$ 为子树的叶结点个数, $\alpha \geqslant 0$ 为参数, $C_{\alpha}(T)$ 为参数是 $\alpha$ 时的子树 $T$ 的整体损失。参数 $\alpha$ 权衡训练数据的拟合程度与模型的复杂度。
+
+对固定的 $\alpha$, 一定存在使损失函数 $C_{\alpha}(T)$ 最小的子树, 将其表示为 $T_{\alpha}$ 。 $T_{\alpha}$ 在损失函数 $C_{\alpha}(T)$ 最小的意义下是最优的。容易验证这样的最优子树是唯一的。当 $\alpha$ 大的时候, 最优子树 $T_{\alpha}$ 偏小; 当 $\alpha$ 小的时候, 最优子树 $T_{\alpha}$ 偏大。极端情况: 当 $\alpha=0$ 时, 整体树是最优的。当 $\alpha \rightarrow \infty$ 时, 根结点组成的单结点树是最优的。
+
+Breiman 等人证明: 可以用递归的方法对树进行剪枝。将 $\alpha$ 从小增大, $0=\alpha_{0}<\alpha_{1}<\cdots<$ $\alpha_{n}<+\infty$, 产生一系列的区间 $\left[\alpha_{i}, \alpha_{i+1}\right), i=0,1, \cdots, n$; 剪枝得到的子树序列对应着区间 $\alpha \in\left[\alpha_{i}, \alpha_{i+1}\right), i=0,1, \cdots, n$ 的最优子树序列 $\left\{T_{0}, T_{1}, \cdots, T_{n}\right\}$, 序列中的子树是嵌套的。
+
+具体地, 从整体树 $T_{0}$ 开始剪枝。对 $T_{0}$ 的任意内部结点 $t$, 以 $t$ 为单结点树的损失函数是
+
+
+\begin{equation*}
+C_{\alpha}(t)=C(t)+\alpha \tag{5.27}
+\end{equation*}
+
+
+以 $t$ 为根结点的子树 $T_{t}$ 的损失函数是
+
+
+\begin{equation*}
+C_{\alpha}\left(T_{t}\right)=C\left(T_{t}\right)+\alpha\left|T_{t}\right| \tag{5.28}
+\end{equation*}
+
+
+当 $\alpha=0$ 及 $\alpha$ 充分小时, 有不等式
+
+
+\begin{equation*}
+C_{\alpha}\left(T_{t}\right)<C_{\alpha}(t) \tag{5.29}
+\end{equation*}
+
+
+当 $\alpha$ 增大时, 在某一 $\alpha$ 有
+
+
+\begin{equation*}
+C_{\alpha}\left(T_{t}\right)=C_{\alpha}(t) \tag{5.30}
+\end{equation*}
+
+
+当 $\alpha$ 再增大时, 不等式 (5.29) 反向。只要 $\alpha=\frac{C(t)-C\left(T_{t}\right)}{\left|T_{t}\right|-1}, T_{t}$ 与 $t$ 有相同的损失函数值, 而 $t$ 的结点少, 因此 $t$ 比 $T_{t}$ 更可取, 对 $T_{t}$ 进行剪枝。
+
+为此, 对 $T_{0}$ 中每一内部结点 $t$, 计算
+
+
+\begin{equation*}
+g(t)=\frac{C(t)-C\left(T_{t}\right)}{\left|T_{t}\right|-1} \tag{5.31}
+\end{equation*}
+
+
+它表示剪枝后整体损失函数减少的程度。在 $T_{0}$ 中剪去 $g(t)$ 最小的 $T_{t}$, 将得到的子树作为 $T_{1}$,同时将最小的 $g(t)$ 设为 $\alpha_{1}$ 。T $T_{1}$ 为区间 $\left[\alpha_{1}, \alpha_{2}\right)$ 的最优子树。
+
+如此剪枝下去, 直至得到根结点。在这一过程中, 不断地增加 $\alpha$ 的值, 产生新的区间。
+
+\section*{2. 在剪枝得到的子树序列 $T_{0}, T_{1}, \cdots, T_{n}$ 中通过交叉验证选取最优子树 $T_{\alpha}$}
+具体地, 利用独立的验证数据集, 测试子树序列 $T_{0}, T_{1}, \cdots, T_{n}$ 中各棵子树的平方误差或基尼指数。平方误差或基尼指数最小的决策树被认为是最优的决策树。在子树序列中, 每棵子树 $T_{1}, T_{2}, \cdots, T_{n}$ 都对应一个参数 $\alpha_{1}, \alpha_{2}, \cdots, \alpha_{n}$ 。所以, 当最优子树 $T_{k}$ 确定时, 对应的 $\alpha_{k}$ 也确定了, 即得到最优决策树 $T_{\alpha}$ 。
+
+现在写出 CART 剪枝算法。
+
+\section*{算法 5.7 (CART 剪枝算法)}
+输入: CART 算法生成的决策树 $T_{0}$ 。
+
+输出: 最优决策树 $T_{\alpha}$ 。
+
+(1) 设 $k=0, T=T_{0}$ 。
+
+(2) 设 $\alpha=+\infty$ 。
+
+(3) 自下而上地对各内部结点 $t$ 计算 $C\left(T_{t}\right),\left|T_{t}\right|$ 以及
+
+$$
+\begin{aligned}
+g(t) & =\frac{C(t)-C\left(T_{t}\right)}{\left|T_{t}\right|-1} \\
+\alpha & =\min (\alpha, g(t))
+\end{aligned}
+$$
+
+这里, $T_{t}$ 表示以 $t$ 为根结点的子树, $C\left(T_{t}\right)$ 是对训练数据的预测误差, $\left|T_{t}\right|$ 是 $T_{t}$ 的叶结点个数。
+
+(4) 对 $g(t)=\alpha$ 的内部结点 $t$ 进行剪枝, 并对叶结点 $t$ 以多数表决法决定其类, 得到树 $T$ 。
+
+(5) 设 $k=k+1, \alpha_{k}=\alpha, T_{k}=T$ 。
+
+(6) 如果 $T_{k}$ 不是由根结点及两个叶结点构成的树, 则回到步骤 (2); 否则, 令 $T_{k}=T_{n}$ 。
+
+(7) 采用交叉验证法在子树序列 $T_{0}, T_{1}, \cdots, T_{n}$ 中选取最优子树 $T_{\alpha}$ 。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 分类决策树模型是表示基于特征对实例进行分类的树形结构。决策树可以转换成一个 if-then 规则的集合，也可以看作是定义在特征空间划分上的类的条件概率分布。
+
+  \item 决策树学习旨在构建一个与训练数据拟合很好并且复杂度小的决策树。因为从可能的决策树中直接选取最优决策树是 NP 完全问题, 现实中采用启发式方法学习次优的决策树。
+
+\end{enumerate}
+
+决策树学习算法包括 3 个部分: 特征选择、树的生成和树的剪枝。常用的算法有 ID3 算法、C4.5 算法和 CART 算法。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 特征选择的目的在于选取对训练数据能够分类的特征。特征选择的关键是其准则, 常用的准则如下:
+\end{enumerate}
+
+(1) 样本集合 $D$ 对特征 $A$ 的信息增益(ID3):
+
+$$
+\begin{aligned}
+& g(D, A)=H(D)-H(D \mid A) \\
+& H(D)=-\sum_{k=1}^{K} \frac{\left|C_{k}\right|}{|D|} \log _{2} \frac{\left|C_{k}\right|}{|D|} \\
+& H(D \mid A)=\sum_{i=1}^{n} \frac{\left|D_{i}\right|}{|D|} H\left(D_{i}\right)
+\end{aligned}
+$$
+
+其中, $H(D)$ 是数据集 $D$ 的熵, $H\left(D_{i}\right)$ 是数据集 $D_{i}$ 的熵, $H(D \mid A)$ 是数据集 $D$ 对特征 $A$ 的条件熵, $D_{i}$ 是 $D$ 中特征 $A$ 取第 $i$ 个值的样本子集, $C_{k}$ 是 $D$ 中属于第 $k$ 类的样本子集, $n$是特征 $A$ 取值的个数, $K$ 是类的个数。
+
+(2) 样本集合 $D$ 对特征 $A$ 的信息增益比 (C4.5):
+
+$$
+g_{\mathrm{R}}(D, A)=\frac{g(D, A)}{H_{A}(D)}
+$$
+
+其中, $g(D, A)$ 是信息增益, $H_{A}(D)$ 是 $D$ 关于特征 $A$ 的值的熵。
+
+(3) 样本集合 $D$ 的基尼指数 (CART):
+
+$$
+\operatorname{Gini}(D)=1-\sum_{k=1}^{K}\left(\frac{\left|C_{k}\right|}{|D|}\right)^{2}
+$$
+
+特征 $A$ 条件下集合 $D$ 的基尼指数:
+
+$$
+\operatorname{Gini}(D, A)=\frac{\left|D_{1}\right|}{|D|} \operatorname{Gini}\left(D_{1}\right)+\frac{\left|D_{2}\right|}{|D|} \operatorname{Gini}\left(D_{2}\right)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 决策树的生成。通常使用信息增益最大、信息增益比最大或基尼指数最小作为特征选择的准则。决策树的生成往往通过计算信息增益或其他指标, 从根结点开始, 递归地产生决策树。这相当于用信息增益或其他准则不断地选取局部最优的特征, 或将训练集分割为能够基本正确分类的子集。
+
+  \item 决策树的剪枝。由于生成的决策树存在过拟合问题, 需要对它进行剪枝, 以简化学到的决策树。决策树的剪枝往往从已生成的树上剪掉一些叶结点或叶结点以上的子树, 并将其父结点或根结点作为新的叶结点, 从而简化生成的决策树。
+
+\end{enumerate}
+
+\section*{继续阅 读}
+介绍决策树学习方法的文献很多, 关于 ID3 可见文献 [1], C4.5 可见文献 [2], CART 可见文献 [3] 和文献 [4]。决策树学习的一般性介绍可见文献 [5] 文献 [7]。与决策树类似的分类方法还有决策列表 (decision list)。决策列表与决策树可以相互转换 ${ }^{[8]}$, 决策列表的学习方法可见文献 [9]。
+
+\section*{习 题}
+5.1 根据表 5.1 所给的训练数据集, 利用信息增益比 (C4.5 算法) 生成决策树。
+
+5.2 已知如表 5.2 所示的训练数据, 试用平方误差损失准则生成一个二叉回归树。
+
+表 5.2 训练数据表
+
+\begin{center}
+\begin{tabular}{ccccccccccc}
+\hline
+$x_{i}$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+$y_{i}$ & 4.50 & 4.75 & 4.91 & 5.34 & 5.80 & 7.05 & 7.90 & 8.23 & 8.70 & 9.00 \\
+\hline
+\end{tabular}
+\end{center}
+
+5.3 证明 CART 剪枝算法中, 当 $\alpha$ 确定时, 存在唯一的最小子树 $T_{\alpha}$ 使损失函数 $C_{\alpha}(T)$最小。
+
+5.4 证明 CART 剪枝算法中求出的子树序列 $\left\{T_{0}, T_{1}, \cdots, T_{n}\right\}$ 分别是区间 $\alpha \in\left[\alpha_{i}, \alpha_{i+1}\right)$的最优子树 $T_{\alpha}$, 这里 $i=0,1, \cdots, n, 0=\alpha_{0}<\alpha_{1}<\cdots<\alpha_{n}<+\infty$ 。
+
+\section*{参考文献}
+[1] OLSHEN R A, QUINLAN J R. Induction of decision trees[J]. Machine Learning, 1986, 1(1): $81-106$.
+
+[2] OLSHEN R A, QUINLAN J R. C4.5: programs for machine learning[M]. Morgan Kaufmann, 1992 .
+
+[3] OLSHEN R A, BREIMAN L, FRIEDMAN J, et al. Classification and regression trees[M]. Wadsworth, 1984.
+
+[4] RIPLEY B. Pattern recognition and neural networks[M]. Cambridge University Press, 1996.
+
+[5] LIU B. Web data mining: Exploring hyperlinks, contents and usage data[M]. Springer-Verlag, 2006.
+
+[6] HYAFIL L, RIVEST R L. Constructing optimal binary decision trees is NP-complete[J]. Information Processing Letters, 1976, 5(1): 15-17.
+
+[7] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 处红英, 等译. Springer, 2001.
+
+[8] YAMANISHI K. A learning criterion for stochastic rules[J]. Machine Learning, 1992, 9(2-3): $165-203$.
+
+[9] LI H, YAMANISHI K. Text classification using ESC-based stochastic decision lists[J]. Information Processing \& Management, 2002, 38(3): 343-361.
+
+[10] LI H, ABE N. Generalizing case frames using a thesaurus and the MDL principle[J]. Computational Linguistics, 1998, 24(2): 217-244.
+
+\section*{第 6 章逻辑斯谛回归与最大熵模型}
+逻辑斯谛回归 (logistic regression) 是统计学习中的经典分类方法。最大熵是概率模型学习的一个准则, 将其推广到分类问题得到最大熵模型 (maximum entropy model）。逻辑斯谛回归模型与最大熵模型都属于对数线性模型。本章首先介绍逻辑斯谛回归模型, 然后介绍最大熵模型, 最后讲述逻辑斯谛回归与最大熵模型的学习算法, 包括改进的迭代尺度算法和拟牛顿法。
+
+\section*{6.1 逻辑斯谛回归模型}
+\section*{6.1 .1 逻辑斯谛分布}
+首先介绍逻辑斯谛分布（logistic distribution）。
+
+定义 6.1 (逻辑斯谛分布) 设 $X$ 是连续随机变量, $X$ 服从逻辑斯谛分布是指 $X$ 具有下列分布函数和密度函数:
+
+
+\begin{align*}
+F(x) & =P(X \leqslant x)=\frac{1}{1+\mathrm{e}^{-(x-\mu) / \gamma}}  \tag{6.1}\\
+f(x) & =F^{\prime}(x)=\frac{\mathrm{e}^{-(x-\mu) / \gamma}}{\gamma\left[1+\mathrm{e}^{-(x-\mu) / \gamma}\right]^{2}} \tag{6.2}
+\end{align*}
+
+
+式中, $\mu$ 为位置参数, $\gamma>0$ 为形状参数。
+
+逻辑斯谛分布的密度函数 $f(x)$ 和分布函数 $F(x)$ 的图形如图 6.1 所示。分布函数属于逻辑斯谛函数, 其图形是一条 $\mathrm{S}$ 形曲线 (sigmoid curve)。该曲线以点 $\left(\mu, \frac{1}{2}\right)$ 为中心对称, 即满足
+
+$$
+F(-x+\mu)-\frac{1}{2}=-F(x+\mu)+\frac{1}{2}
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-20}
+\end{center}
+
+图 6.1 逻辑斯谛分布的密度函数与分布函数\\
+曲线在中心附近增长速度较快, 在两端增长速度较慢。形状参数 $\gamma$ 的值越小, 曲线在中心附近增长得越快。
+
+\subsection*{6.1.2 二项逻辑斯谛回归模型}
+二项逻辑斯谛回归模型（binomial logistic regression model）是一种分类模型, 由条件概率分布 $P(Y \mid X)$ 表示, 形式为参数化的逻辑斯谛分布。这里, 随机变量 $X$ 取值为实数, 随机变量 $Y$ 取值为 1 或 0 。我们通过监督学习的方法来估计模型参数。
+
+定义 6.2 (逻辑斯谛回归模型) 二项逻辑斯谛回归模型是如下的条件概率分布:
+
+
+\begin{align*}
+& P(Y=1 \mid x)=\frac{\exp (w \cdot x+b)}{1+\exp (w \cdot x+b)}  \tag{6.3}\\
+& P(Y=0 \mid x)=\frac{1}{1+\exp (w \cdot x+b)} \tag{6.4}
+\end{align*}
+
+
+这里, $x \in \boldsymbol{R}^{n}$ 是输入, $Y \in\{0,1\}$ 是输出, $w \in \boldsymbol{R}^{n}$ 和 $b \in \boldsymbol{R}$ 是参数, $w$ 称为权值向量, $b$ 称为偏置, $w \cdot x$ 为 $w$ 和 $x$ 的内积。
+
+对于给定的输入实例 $x$, 按照式 (6.3) 和式 (6.4) 可以求得 $P(Y=1 \mid x)$ 和 $P(Y=0 \mid x)$ 。逻辑斯谛回归比较两个条件概率值的大小, 将实例 $x$ 分到概率值较大的那一类。
+
+有时为了方便, 将权值向量和输入向量加以扩充, 仍记作 $w, x$, 即 $w=\left(w^{(1)}\right.$, $\left.w^{(2)}, \cdots, w^{(n)}, b\right)^{\mathrm{T}}, x=\left(x^{(1)}, x^{(2)}, \cdots, x^{(n)}, 1\right)^{\mathrm{T}}$ 。这时, 逻辑斯谛回归模型如下:
+
+
+\begin{align*}
+& P(Y=1 \mid x)=\frac{\exp (w \cdot x)}{1+\exp (w \cdot x)}  \tag{6.5}\\
+& P(Y=0 \mid x)=\frac{1}{1+\exp (w \cdot x)} \tag{6.6}
+\end{align*}
+
+
+现在考查逻辑斯谛回归模型的特点。一个事件的几率（odds）是指该事件发生的概率与该事件不发生的概率的比值。如果事件发生的概率是 $p$, 那么该事件的几率是 $\frac{p}{1-p}$, 该事件的对数几率 ( $\log$ odds) 或 logit 函数是
+
+$$
+\operatorname{logit}(p)=\log \frac{p}{1-p}
+$$
+
+对逻辑斯谛回归而言, 由式 (6.5) 与式 (6.6) 得:
+
+$$
+\log \frac{P(Y=1 \mid x)}{1-P(Y=1 \mid x)}=w \cdot x
+$$
+
+这就是说, 在逻辑斯谛回归模型中, 输出 $Y=1$ 的对数几率是输入 $x$ 的线性函数。或者说,输出 $Y=1$ 的对数几率是由输入 $x$ 的线性函数表示的模型, 即逻辑斯谛回归模型。
+
+换一个角度看, 考虑对输入 $x$ 进行分类的线性函数 $w \cdot x$, 其值域为实数域。注意, 这里 $x \in \boldsymbol{R}^{n+1}, w \in \boldsymbol{R}^{n+1}$ 。通过逻辑斯谛回归模型定义式 (6.5) 可以将线性函数 $w \cdot x$ 转换为概率:
+
+$$
+P(Y=1 \mid x)=\frac{\exp (w \cdot x)}{1+\exp (w \cdot x)}
+$$
+
+这时, 线性函数的值越接近正无穷, 概率值就越接近 1 ; 线性函数的值越接近负无穷, 概率值就越接近 0 (如图 6.1 所示)。这样的模型就是逻辑斯谛回归模型。
+
+\subsection*{6.1.3 模型参数估计}
+逻辑斯谛回归模型学习时, 对于给定的训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$,其中, $x_{i} \in \boldsymbol{R}^{n}, y_{i} \in\{0,1\}$, 可以应用极大似然估计法估计模型参数, 从而得到逻辑斯谛回归模型。
+
+设
+
+$$
+P(Y=1 \mid x)=\pi(x), \quad P(Y=0 \mid x)=1-\pi(x)
+$$
+
+似然函数为
+
+$$
+\prod_{i=1}^{N}\left(\pi\left(x_{i}\right)\right)^{y_{i}}\left(1-\pi\left(x_{i}\right)\right)^{1-y_{i}}
+$$
+
+对数似然函数为
+
+$$
+\begin{aligned}
+L(w) & =\sum_{i=1}^{N}\left[y_{i} \log \pi\left(x_{i}\right)+\left(1-y_{i}\right) \log \left(1-\pi\left(x_{i}\right)\right)\right] \\
+& =\sum_{i=1}^{N}\left[y_{i} \log \frac{\pi\left(x_{i}\right)}{1-\pi\left(x_{i}\right)}+\log \left(1-\pi\left(x_{i}\right)\right)\right] \\
+& =\sum_{i=1}^{N}\left\{y_{i}\left(w \cdot x_{i}\right)-\log \left[1+\exp \left(w \cdot x_{i}\right)\right]\right\}
+\end{aligned}
+$$
+
+对 $L(w)$ 求极大值, 得到 $w$ 的估计值。
+
+这样, 问题就变成了以对数似然函数为目标函数的最优化问题。逻辑斯谛回归学习中通常采用的方法是梯度下降法及拟牛顿法。
+
+假设 $w$ 的极大似然估计值是 $\hat{w}$, 那么学到的逻辑斯谛回归模型为
+
+$$
+\begin{aligned}
+& P(Y=1 \mid x)=\frac{\exp (\hat{w} \cdot x)}{1+\exp (\hat{w} \cdot x)} \\
+& P(Y=0 \mid x)=\frac{1}{1+\exp (\hat{w} \cdot x)}
+\end{aligned}
+$$
+
+\subsection*{6.1.4 多项逻辑斯谛回归}
+上面介绍的逻辑斯谛回归模型是二项分类模型, 用于二类分类。可以将其推广为多项逻辑斯谛回归模型 (multi-nominal logistic regression model), 用于多类分类。假设离散型随机\\
+变量 $Y$ 的取值集合是 $\{1,2, \cdots, K\}$, 那么多项逻辑斯谛回归模型是
+
+
+\begin{gather*}
+P(Y=k \mid x)=\frac{\exp \left(w_{k} \cdot x\right)}{1+\sum_{k=1}^{K-1} \exp \left(w_{k} \cdot x\right)}, \quad k=1,2, \cdots, K-1  \tag{6.7}\\
+P(Y=K \mid x)=\frac{1}{1+\sum_{k=1}^{K-1} \exp \left(w_{k} \cdot x\right)} \tag{6.8}
+\end{gather*}
+
+
+这里, $x \in \boldsymbol{R}^{n+1}, w_{k} \in \boldsymbol{R}^{n+1}$ 。
+
+二项逻辑斯谛回归的参数估计法也可以推广到多项逻辑斯谛回归。
+
+\section*{6.2 最大熵模型}
+最大熵模型 (maximum entropy model) 由最大熵原理推导实现。这里首先叙述一般的最大熵原理, 然后讲解最大熵模型的推导, 最后给出最大熵模型学习的形式。
+
+\section*{6.2 .1 最大熵原理}
+最大熵原理是概率模型学习的一个准则。最大熵原理认为: 学习概率模型时, 在所有可能的概率模型 (分布) 中, 熵最大的模型是最好的模型。通常用约束条件来确定概率模型的集合, 所以, 最大熵原理也可以表述为在满足约束条件的模型集合中选取熵最大的模型。
+
+假设离散随机变量 $X$ 的概率分布是 $P(X)$, 则其熵 (参照 5.2.2 节) 是
+
+
+\begin{equation*}
+H(P)=-\sum_{x} P(x) \log P(x) \tag{6.9}
+\end{equation*}
+
+
+熵满足下列不等式:
+
+$$
+0 \leqslant H(P) \leqslant \log |X|
+$$
+
+式中, $|X|$ 是 $X$ 的取值个数, 当且仅当 $X$ 的分布是均匀分布时右边的等号成立。这就是说,当 $X$ 服从均匀分布时, 熵最大。
+
+直观地, 最大熵原理认为要选择的概率模型首先必须满足已有的事实, 即约束条件。在没有更多信息的情况下, 那些不确定的部分都是 “等可能的”。最大摘原理通过熵的最大化来表示等可能性。“等可能” 不容易操作, 而熵是一个可优化的数值指标。
+
+首先, 通过一个简单的例子来介绍一下最大嫡原理 (1)。
+
+例 6.1 假设随机变量 $X$ 有 5 个取值 $\{A, B, C, D, E\}$, 要估计取各个值的概率 $P(A)$, $P(B), P(C), P(D), P(E)$ 。
+
+解 这些概率值满足以下约束条件:
+
+$$
+P(A)+P(B)+P(C)+P(D)+P(E)=1
+$$
+
+(1) 此例来自参考文献 [1]。\\
+满足这个约束条件的概率分布有无穷多个。如果没有任何其他信息, 仍要对概率分布进行估计，一个办法就是认为这个分布中取各个值的概率是相等的:
+
+$$
+P(A)=P(B)=P(C)=P(D)=P(E)=\frac{1}{5}
+$$
+
+等概率表示了对事实的无知。因为没有更多的信息, 这种判断是合理的。
+
+有时, 能从一些先验知识中得到一些对概率值的约束条件, 例如:
+
+$$
+\begin{aligned}
+& P(A)+P(B)=\frac{3}{10} \\
+& P(A)+P(B)+P(C)+P(D)+P(E)=1
+\end{aligned}
+$$
+
+满足这两个约束条件的概率分布仍然有无穷多个。在缺少其他信息的情况下, 可以认为 $A$ 与 $B$ 是等概率的, $C, D$ 与 $E$ 是等概率的, 于是,
+
+$$
+\begin{aligned}
+& P(A)=P(B)=\frac{3}{20} \\
+& P(C)=P(D)=P(E)=\frac{7}{30}
+\end{aligned}
+$$
+
+如果还有第 3 个约束条件:
+
+$$
+\begin{aligned}
+& P(A)+P(C)=\frac{1}{2} \\
+& P(A)+P(B)=\frac{3}{10} \\
+& P(A)+P(B)+P(C)+P(D)+P(E)=1
+\end{aligned}
+$$
+
+可以继续按照满足约束条件下求等概率的方法估计概率分布。这里不再继续讨论。以上概率模型学习的方法正是遵循了最大熵原理。
+
+图 6.2 提供了用最大嫡原理进行概率模型选择的几何解释。概率模型集合 $\mathcal{P}$ 可由欧氏空间中的单纯形 (simplex) (1) 表示, 如左图的三角形 (2-单纯形)。一个点代表一个模型, 整个单纯形代表模型集合。右图上的一条直线对应一个约束条件, 直线的交集对应满足所有约束条件的模型集合。一般地, 这样的模型仍有无穷多个。学习的目的是在可能的模型集合中选择最优模型, 最大熵原理则给出最优模型选择的一个准则。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-24(1)}
+\end{center}
+
+概率模型空间
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-24}
+\end{center}
+
+满足约束条件的模型集合
+
+图 6.2 概率模型集合
+
+(1) 单纯形是在 $n$ 维欧氏空间中的 $n+1$ 个仿射无关的点的集合的凸包。
+
+\section*{6.2 .2 最大熵模型的定义}
+最大熵原理是统计学习的一般原理, 将它应用到分类得到最大嫡模型。
+
+假设分类模型是一个条件概率分布 $P(Y \mid X), X \in \mathcal{X} \subseteq \boldsymbol{R}^{n}$ 表示输入, $Y \in \mathcal{Y}$ 表示输出, $\mathcal{X}$ 和 $\mathcal{Y}$ 分别是输入和输出的集合。这个模型表示的是对于给定的输入 $X$, 以条件概率 $P(Y \mid X)$ 输出 $Y$ 。
+
+给定一个训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+学习的目标是用最大嫡原理选择最好的分类模型。
+
+首先考虑模型应该满足的条件。给定训练数据集, 可以确定联合分布 $P(X, Y)$ 的经验分布和边缘分布 $P(X)$ 的经验分布, 分别以 $\tilde{P}(X, Y)$ 和 $\tilde{P}(X)$ 表示。这里,
+
+$$
+\begin{aligned}
+& \tilde{P}(X=x, Y=y)=\frac{\nu(X=x, Y=y)}{N} \\
+& \tilde{P}(X=x)=\frac{\nu(X=x)}{N}
+\end{aligned}
+$$
+
+其中, $\nu(X=x, Y=y)$ 表示训练数据中样本 $(x, y)$ 出现的频数, $\nu(X=x)$ 表示训练数据中输入 $x$ 出现的频数, $N$ 表示训练样本容量。
+
+用特征函数 (feature function) $f(x, y)$ 描述输入 $x$ 和输出 $y$ 之间的某一个事实。其定义是
+
+$$
+f(x, y)= \begin{cases}1, & x \text { 与 } y \text { 满足某一事实 } \\ 0, & \text { 否则 }\end{cases}
+$$
+
+它是一个二值函数 (1), 当 $x$ 和 $y$ 满足这个事实时取值为 1 , 否则取值为 0 。
+
+特征函数 $f(x, y)$ 关于经验分布 $\tilde{P}(X, Y)$ 的期望值用 $E_{\tilde{P}}(f)$ 表示:
+
+$$
+E_{\tilde{P}}(f)=\sum_{x, y} \tilde{P}(x, y) f(x, y)
+$$
+
+特征函数 $f(x, y)$ 关于模型 $P(Y \mid X)$ 与经验分布 $\tilde{P}(X)$ 的期望值用 $E_{P}(f)$ 表示:
+
+$$
+E_{P}(f)=\sum_{x, y} \tilde{P}(x) P(y \mid x) f(x, y)
+$$
+
+如果模型能够获取训练数据中的信息，那么就可以假设这两个期望值相等，即
+
+
+\begin{equation*}
+E_{P}(f)=E_{\tilde{P}}(f) \tag{6.10}
+\end{equation*}
+
+
+或
+
+
+\begin{equation*}
+\sum_{x, y} \tilde{P}(x) P(y \mid x) f(x, y)=\sum_{x, y} \tilde{P}(x, y) f(x, y) \tag{6.11}
+\end{equation*}
+
+
+我们将式 (6.10) 或式 (6.11) 作为模型学习的约束条件。假如有 $n$ 个特征函数 $f_{i}(x, y), i=$ $1,2, \cdots, n$, 那么就有 $n$ 个约束条件。
+
+(1) 一般地, 特征函数可以是任意实值函数。\\
+定义 6.3 (最大摘模型) 假设满足所有约束条件的模型集合为
+
+
+\begin{equation*}
+\mathcal{C} \equiv\left\{P \in \mathcal{P} \mid E_{P}\left(f_{i}\right)=E_{\tilde{P}}\left(f_{i}\right), \quad i=1,2, \cdots, n\right\} \tag{6.12}
+\end{equation*}
+
+
+定义在条件概率分布 $P(Y \mid X)$ 上的条件摘为
+
+
+\begin{equation*}
+H(P)=-\sum_{x, y} \tilde{P}(x) P(y \mid x) \log P(y \mid x) \tag{6.13}
+\end{equation*}
+
+
+则模型集合 $\mathcal{C}$ 中条件摘 $H(P)$ 最大的模型称为最大摘模型。式中的对数为自然对数。
+
+\section*{6.2 .3 最大熵模型的学习}
+最大熵模型的学习过程就是求解最大熵模型的过程。最大熵模型的学习可以形式化为约束最优化问题。
+
+对于给定的训练数据集 $T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}$ 以及特征函数 $f_{i}(x, y), i=$ $1,2, \cdots, n$, 最大熵模型的学习等价于约束最优化问题:
+
+$$
+\begin{array}{ll}
+\max _{P \in \mathcal{C}} & H(P)=-\sum_{x, y} \tilde{P}(x) P(y \mid x) \log P(y \mid x) \\
+\text { s.t. } & E_{P}\left(f_{i}\right)=E_{\tilde{P}}\left(f_{i}\right), \quad i=1,2, \cdots, n \\
+& \sum_{y} P(y \mid x)=1
+\end{array}
+$$
+
+按照最优化问题的习惯, 将求最大值问题改写为等价的求最小值问题:
+
+\[
+\begin{array}{ll}
+\min _{P \in \mathcal{C}} & -H(P)=\sum_{x, y} \tilde{P}(x) P(y \mid x) \log P(y \mid x) \\
+\text { s.t. } & E_{P}\left(f_{i}\right)-E_{\tilde{P}}\left(f_{i}\right)=0, \quad i=1,2, \cdots, n \\
+& \sum_{y} P(y \mid x)=1 \tag{6.16}
+\end{array}
+\]
+
+求解约束最优化问题 (6.14) (6.16) 得出的解就是最大嫡模型学习的解。下面给出具体推导。
+
+这里, 将约束最优化的原始问题转换为无约束最优化的对偶问题 (1), 通过求解对偶问题求解原始问题。
+
+首先, 引入拉格朗日乘子 $w_{0}, w_{1}, w_{2}, \cdots, w_{n}$, 定义拉格朗日函数 $L(P, w)$ :
+
+
+\begin{align*}
+L(P, w) \equiv & -H(P)+w_{0}\left(1-\sum_{y} P(y \mid x)\right)+\sum_{i=1}^{n} w_{i}\left(E_{\tilde{P}}\left(f_{i}\right)-E_{P}\left(f_{i}\right)\right) \\
+= & \sum_{x, y} \tilde{P}(x) P(y \mid x) \log P(y \mid x)+w_{0}\left(1-\sum_{y} P(y \mid x)\right)+ \\
+& \sum_{i=1}^{n} w_{i}\left(\sum_{x, y} \tilde{P}(x, y) f_{i}(x, y)-\sum_{x, y} \tilde{P}(x) P(y \mid x) f_{i}(x, y)\right) \tag{6.17}
+\end{align*}
+
+
+(1) 参阅附录 C。\\
+最优化的原始问题是
+
+
+\begin{equation*}
+\min _{P \in \mathcal{C}} \max _{w} L(P, w) \tag{6.18}
+\end{equation*}
+
+
+对偶问题是
+
+
+\begin{equation*}
+\max _{w} \min _{P \in \mathcal{C}} L(P, w) \tag{6.19}
+\end{equation*}
+
+
+由于拉格朗日函数 $L(P, w)$ 是 $P$ 的凸函数, 原始问题 (6.18) 的解与对偶问题 (6.19) 的解是等价的。这样, 可以通过求解对偶问题 (6.19) 来求解原始问题 (6.18)。
+
+首先, 求解对偶问题 (6.19) 内部的极小化问题 $\min _{P \in \mathcal{C}} L(P, w) \circ \min _{P \in \mathcal{C}} L(P, w)$ 是 $w$ 的函数,将其记作
+
+
+\begin{equation*}
+\Psi(w)=\min _{P \in \mathcal{C}} L(P, w)=L\left(P_{w}, w\right) \tag{6.20}
+\end{equation*}
+
+
+$\Psi(w)$ 称为对偶函数。同时, 将其解记作
+
+
+\begin{equation*}
+P_{w}=\arg \min _{P \in \mathcal{C}} L(P, w)=P_{w}(y \mid x) \tag{6.21}
+\end{equation*}
+
+
+具体地, 求 $L(P, w)$ 对 $P(y \mid x)$ 的偏导数:
+
+$$
+\begin{aligned}
+\frac{\partial L(P, w)}{\partial P(y \mid x)} & =\sum_{x, y} \tilde{P}(x)(\log P(y \mid x)+1)-\sum_{y} w_{0}-\sum_{x, y}\left(\tilde{P}(x) \sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \\
+& =\sum_{x, y} \tilde{P}(x)\left(\log P(y \mid x)+1-w_{0}-\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)
+\end{aligned}
+$$
+
+令偏导数等于 0 , 在 $\tilde{P}(x)>0$ 的情况下, 解得:
+
+$$
+P(y \mid x)=\exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)+w_{0}-1\right)=\frac{\exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)}{\exp \left(1-w_{0}\right)}
+$$
+
+由于 $\sum_{y} P(y \mid x)=1$, 得:
+
+
+\begin{equation*}
+P_{w}(y \mid x)=\frac{1}{Z_{w}(x)} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \tag{6.22}
+\end{equation*}
+
+
+其中，
+
+
+\begin{equation*}
+Z_{w}(x)=\sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \tag{6.23}
+\end{equation*}
+
+
+$Z_{w}(x)$ 称为规范化因子, $f_{i}(x, y)$ 是特征函数, $w_{i}$ 是特征的权值。由式 (6.22)、式 (6.23) 表示的模型 $P_{w}=P_{w}(y \mid x)$ 就是最大熵模型。这里, $w$ 是最大嫡模型中的参数向量。
+
+之后, 求解对偶问题外部的极大化问题:
+
+
+\begin{equation*}
+\max _{w} \Psi(w) \tag{6.24}
+\end{equation*}
+
+
+将其解记为 $w^{*}$, 即
+
+
+\begin{equation*}
+w^{*}=\arg \max _{w} \Psi(w) \tag{6.25}
+\end{equation*}
+
+
+这就是说, 可以应用最优化算法求对偶函数 $\Psi(w)$ 的极大化, 得到 $w^{*}$, 用来表示 $P^{*} \in \mathcal{C}$ 。这里, $P^{*}=P_{w^{*}}=P_{w^{*}}(y \mid x)$ 是学习到的最优模型 (最大熵模型)。也就是说, 最大熵模型的学习归结为对偶函数 $\Psi(w)$ 的极大化。
+
+例 6.2 学习例 6.1 中的最大熵模型。
+
+解 为了方便, 分别以 $y_{1}, y_{2}, y_{3}, y_{4}, y_{5}$ 表示 $A, B, C, D$ 和 $E$, 于是最大熵模型学习的最优化问题是
+
+$$
+\begin{array}{ll}
+\min & -H(P)=\sum_{i=1}^{5} P\left(y_{i}\right) \log P\left(y_{i}\right) \\
+\text { s.t. } & P\left(y_{1}\right)+P\left(y_{2}\right)=\tilde{P}\left(y_{1}\right)+\tilde{P}\left(y_{2}\right)=\frac{3}{10} \\
+& \sum_{i=1}^{5} P\left(y_{i}\right)=\sum_{i=1}^{5} \tilde{P}\left(y_{i}\right)=1
+\end{array}
+$$
+
+引入拉格朗日乘子 $w_{0}, w_{1}$, 定义拉格朗日函数:
+
+$$
+L(P, w)=\sum_{i=1}^{5} P\left(y_{i}\right) \log P\left(y_{i}\right)+w_{1}\left(P\left(y_{1}\right)+P\left(y_{2}\right)-\frac{3}{10}\right)+w_{0}\left(\sum_{i=1}^{5} P\left(y_{i}\right)-1\right)
+$$
+
+根据拉格朗日对偶性, 可以通过求解对偶最优化问题得到原始最优化问题的解, 所以求解
+
+$$
+\max _{w} \min _{P} L(P, w)
+$$
+
+首先求解 $L(P, w)$ 关于 $P$ 的极小化问题。为此, 固定 $w_{0}, w_{1}$, 求偏导数:
+
+$$
+\begin{aligned}
+& \frac{\partial L(P, w)}{\partial P\left(y_{1}\right)}=1+\log P\left(y_{1}\right)+w_{1}+w_{0} \\
+& \frac{\partial L(P, w)}{\partial P\left(y_{2}\right)}=1+\log P\left(y_{2}\right)+w_{1}+w_{0} \\
+& \frac{\partial L(P, w)}{\partial P\left(y_{3}\right)}=1+\log P\left(y_{3}\right)+w_{0} \\
+& \frac{\partial L(P, w)}{\partial P\left(y_{4}\right)}=1+\log P\left(y_{4}\right)+w_{0} \\
+& \frac{\partial L(P, w)}{\partial P\left(y_{5}\right)}=1+\log P\left(y_{5}\right)+w_{0}
+\end{aligned}
+$$
+
+令各偏导数等于 0 , 解得:
+
+$$
+\begin{aligned}
+& P\left(y_{1}\right)=P\left(y_{2}\right)=\mathrm{e}^{-w_{1}-w_{0}-1} \\
+& P\left(y_{3}\right)=P\left(y_{4}\right)=P\left(y_{5}\right)=\mathrm{e}^{-w_{0}-1}
+\end{aligned}
+$$
+
+于是,
+
+$$
+\min _{P} L(P, w)=L\left(P_{w}, w\right)=-2 \mathrm{e}^{-w_{1}-w_{0}-1}-3 \mathrm{e}^{-w_{0}-1}-\frac{3}{10} w_{1}-w_{0}
+$$
+
+再求解 $L\left(P_{w}, w\right)$ 关于 $w$ 的极大化问题:
+
+$$
+\max _{w} L\left(P_{w}, w\right)=-2 \mathrm{e}^{-w_{1}-w_{0}-1}-3 \mathrm{e}^{-w_{0}-1}-\frac{3}{10} w_{1}-w_{0}
+$$
+
+分别求 $L\left(P_{w}, w\right)$ 对 $w_{0}, w_{1}$ 的偏导数并令其为 0 , 得到:
+
+$$
+\begin{aligned}
+& \mathrm{e}^{-w_{1}-w_{0}-1}=\frac{3}{20} \\
+& \mathrm{e}^{-w_{0}-1}=\frac{7}{30}
+\end{aligned}
+$$
+
+于是得到所要求的概率分布为
+
+$$
+\begin{aligned}
+& P\left(y_{1}\right)=P\left(y_{2}\right)=\frac{3}{20} \\
+& P\left(y_{3}\right)=P\left(y_{4}\right)=P\left(y_{5}\right)=\frac{7}{30}
+\end{aligned}
+$$
+
+\section*{6.2 .4 极大似然估计}
+从以上最大熵模型学习中可以看出, 最大熵模型是由式 (6.22)、式 (6.23) 表示的条件概率分布。下面证明对偶函数的极大化等价于最大熵模型的极大似然估计。
+
+已知训练数据的经验概率分布 $\tilde{P}(X, Y)$, 条件概率分布 $P(Y \mid X)$ 的对数似然函数表示为
+
+$$
+L_{\tilde{P}}\left(P_{w}\right)=\log \prod_{x, y} P(y \mid x)^{\tilde{P}(x, y)}=\sum_{x, y} \tilde{P}(x, y) \log P(y \mid x)
+$$
+
+当条件概率分布 $P(y \mid x)$ 是最大熵模型 (式 (6.22) 和式 (6.23)) 时, 对数似然函数 $L_{\tilde{P}}\left(P_{w}\right)$ 为
+
+
+\begin{align*}
+L_{\tilde{P}}\left(P_{w}\right) & =\sum_{x, y} \tilde{P}(x, y) \log P(y \mid x) \\
+& =\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)-\sum_{x, y} \tilde{P}(x, y) \log Z_{w}(x) \\
+& =\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)-\sum_{x} \tilde{P}(x) \log Z_{w}(x) \tag{6.26}
+\end{align*}
+
+
+再看对偶函数 $\Psi(w)$ 。由式 (6.17) 及式 (6.20) 可得:
+
+
+\begin{align*}
+\Psi(w)= & \sum_{x, y} \tilde{P}(x) P_{w}(y \mid x) \log P_{w}(y \mid x)+ \\
+& \sum_{i=1}^{n} w_{i}\left(\sum_{x, y} \tilde{P}(x, y) f_{i}(x, y)-\sum_{x, y} \tilde{P}(x) P_{w}(y \mid x) f_{i}(x, y)\right) \\
+= & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)+\sum_{x, y} \tilde{P}(x) P_{w}(y \mid x)\left(\log P_{w}(y \mid x)-\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \\
+= & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)-\sum_{x, y} \tilde{P}(x) P_{w}(y \mid x) \log Z_{w}(x) \\
+= & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)-\sum_{x} \tilde{P}(x) \log Z_{w}(x) \tag{6.27}
+\end{align*}
+
+
+最后一步用到 $\sum_{y} P(y \mid x)=1$ 。
+
+比较式 (6.26) 和式 (6.27), 可得:
+
+$$
+\Psi(w)=L_{\tilde{P}}\left(P_{w}\right)
+$$
+
+既然对偶函数 $\Psi(w)$ 等价于对数似然函数 $L_{\tilde{P}}\left(P_{w}\right)$, 于是证明了最大熵模型学习中的对偶函数极大化等价于最大熵模型的极大似然估计这一事实。
+
+这样, 最大熵模型的学习问题就转换为具体求解对数似然函数极大化或对偶函数极大化的问题。
+
+可以将最大熵模型写成更一般的形式:
+
+
+\begin{equation*}
+P_{w}(y \mid x)=\frac{1}{Z_{w}(x)} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \tag{6.28}
+\end{equation*}
+
+
+其中,
+
+
+\begin{equation*}
+Z_{w}(x)=\sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \tag{6.29}
+\end{equation*}
+
+
+这里, $x \in \boldsymbol{R}^{n}$ 为输入, $y \in\{1,2, \cdots, K\}$ 为输出, $w \in \boldsymbol{R}^{n}$ 为权值向量, $f_{i}(x, y), i=1,2, \cdots, n$为任意实值特征函数。
+
+最大熵模型与逻辑斯谛回归模型有类似的形式, 它们又称为对数线性模型 (logarithmic linear model）。模型学习就是在给定的训练数据条件下对模型进行极大似然估计或正则化的极大似然估计。
+
+\section*{6.3 模型学习的最优化算法}
+逻辑斯谛回归模型、最大嫡模型学习归结为以似然函数为目标函数的最优化问题, 通常通过迭代算法求解。从最优化的观点看, 这时的目标函数具有很好的性质。它是光滑的凸函数, 因此多种最优化的方法都适用, 保证能找到全局最优解。常用的方法有改进的迭代尺度法、梯度下降法、牛顿法或拟牛顿法。牛顿法或拟牛顿法一般收玫速度更快。
+
+下面介绍基于改进的迭代尺度法与拟牛顿法的最大熵模型学习算法, 梯度下降法参阅附录 A。
+
+\subsection*{6.3.1 改进的迭代尺度法}
+改进的迭代尺度法 (improved iterative scaling, IIS) 是一种最大嫡模型学习的最优化算法。
+
+已知最大熵模型为
+
+$$
+P_{w}(y \mid x)=\frac{1}{Z_{w}(x)} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)
+$$
+
+其中,
+
+$$
+Z_{w}(x)=\sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)
+$$
+
+对数似然函数为
+
+$$
+L(w)=\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)-\sum_{x} \tilde{P}(x) \log Z_{w}(x)
+$$
+
+目标是通过极大似然估计学习模型参数, 即求对数似然函数的极大值 $\hat{w}$ 。
+
+IIS 的想法是: 假设最大熵模型当前的参数向量是 $w=\left(w_{1}, w_{2}, \cdots, w_{n}\right)^{\mathrm{T}}$, 我们希望找到一个新的参数向量 $w+\delta=\left(w_{1}+\delta_{1}, w_{2}+\delta_{2}, \cdots, w_{n}+\delta_{n}\right)^{\mathrm{T}}$, 使得模型的对数似然函数值增大。如果能有这样一种参数向量更新的方法 $\tau: w \rightarrow w+\delta$, 那么就可以重复使用这一方法, 直至找到对数似然函数的最大值。
+
+对于给定的经验分布 $\tilde{P}(x, y)$, 模型参数从 $w$ 到 $w+\delta$, 对数似然函数的改变量是
+
+$$
+\begin{aligned}
+L(w+\delta)-L(w) & =\sum_{x, y} \tilde{P}(x, y) \log P_{w+\delta}(y \mid x)-\sum_{x, y} \tilde{P}(x, y) \log P_{w}(y \mid x) \\
+& =\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)-\sum_{x} \tilde{P}(x) \log \frac{Z_{w+\delta}(x)}{Z_{w}(x)}
+\end{aligned}
+$$
+
+利用不等式
+
+$$
+-\log \alpha \geqslant 1-\alpha, \quad \alpha>0
+$$
+
+建立对数似然函数改变量的下界:
+
+$$
+\begin{aligned}
+L(w+\delta)-L(w) & \geqslant \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)+1-\sum_{x} \tilde{P}(x) \frac{Z_{w+\delta}(x)}{Z_{w}(x)} \\
+& =\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)+1-\sum_{x} \tilde{P}(x) \sum_{y} P_{w}(y \mid x) \exp \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)
+\end{aligned}
+$$
+
+将右端记为
+
+$$
+A(\delta \mid w)=\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)+1-\sum_{x} \tilde{P}(x) \sum_{y} P_{w}(y \mid x) \exp \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)
+$$
+
+于是有
+
+$$
+L(w+\delta)-L(w) \geqslant A(\delta \mid w)
+$$
+
+即 $A(\delta \mid w)$ 是对数似然函数改变量的一个下界。
+
+如果能找到适当的 $\delta$ 使下界 $A(\delta \mid w)$ 提高, 那么对数似然函数也会提高。然而, 函数 $A(\delta \mid w)$ 中的 $\delta$ 是一个向量, 含有多个变量, 不易同时优化。IIS 试图一次只优化其中一个变量 $\delta_{i}$, 而固定其他变量 $\delta_{j}, i \neq j$ 。
+
+为达到这一目的, IIS 进一步降低下界 $A(\delta \mid w)$ 。具体地, IIS 引进一个量 $f^{\#}(x, y)$ :
+
+$$
+f^{\#}(x, y)=\sum_{i} f_{i}(x, y)
+$$
+
+因为 $f_{i}$ 是二值函数, 故 $f^{\#}(x, y)$ 表示所有特征在 $(x, y)$ 出现的次数。这样, $A(\delta \mid w)$ 可以改写为
+
+
+\begin{align*}
+A(\delta \mid w)= & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)+1- \\
+& \sum_{x} \tilde{P}(x) \sum_{y} P_{w}(y \mid x) \exp \left(f^{\#}(x, y) \sum_{i=1}^{n} \frac{\delta_{i} f_{i}(x, y)}{f \#(x, y)}\right) \tag{6.30}
+\end{align*}
+
+
+利用指数函数的凸性以及对任意 $i$, 有 $\frac{f_{i}(x, y)}{f \#(x, y)} \geqslant 0$ 且 $\sum_{i=1}^{n} \frac{f_{i}(x, y)}{f \#(x, y)}=1$ 这一事实, 根据 Jensen 不等式, 得到:
+
+$$
+\exp \left(\sum_{i=1}^{n} \frac{f_{i}(x, y)}{f^{\#}(x, y)} \delta_{i} f^{\#}(x, y)\right) \leqslant \sum_{i=1}^{n} \frac{f_{i}(x, y)}{f^{\#}(x, y)} \exp \left(\delta_{i} f^{\#}(x, y)\right)
+$$
+
+于是式 (6.30) 可改写为
+
+
+\begin{align*}
+A(\delta \mid w) \geqslant & \sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)+1- \\
+& \sum_{x} \tilde{P}(x) \sum_{y} P_{w}(y \mid x) \sum_{i=1}^{n}\left(\frac{f_{i}(x, y)}{f^{\#}(x, y)}\right) \exp \left(\delta_{i} f^{\#}(x, y)\right) \tag{6.31}
+\end{align*}
+
+
+记不等式 (6.31) 右端为
+
+$$
+B(\delta \mid w)=\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} \delta_{i} f_{i}(x, y)+1-\sum_{x} \tilde{P}(x) \sum_{y} P_{w}(y \mid x) \sum_{i=1}^{n}\left(\frac{f_{i}(x, y)}{f^{\#}(x, y)}\right) \exp \left(\delta_{i} f^{\#}(x, y)\right)
+$$
+
+于是得到:
+
+$$
+L(w+\delta)-L(w) \geqslant B(\delta \mid w)
+$$
+
+这里, $B(\delta \mid w)$ 是对数似然函数改变量的一个新的 (相对不紧的) 下界。
+
+求 $B(\delta \mid w)$ 对 $\delta_{i}$ 的偏导数:
+
+$\frac{\partial B(\delta \mid w)}{\partial \delta_{i}}=\sum_{x, y} \tilde{P}(x, y) f_{i}(x, y)-\sum_{x} \tilde{P}(x) \sum_{y} P_{w}(y \mid x) f_{i}(x, y) \exp \left(\delta_{i} f^{\#}(x, y)\right)$
+
+在式 (6.32) 里, 除 $\delta_{i}$ 外不含任何其他变量。令偏导数为 0 得到:
+
+
+\begin{equation*}
+\sum_{x, y} \tilde{P}(x) P_{w}(y \mid x) f_{i}(x, y) \exp \left(\delta_{i} f^{\#}(x, y)\right)=E_{\tilde{P}}\left(f_{i}\right) \tag{6.33}
+\end{equation*}
+
+
+于是, 依次对 $\delta_{i}$ 求解方程 (6.33) 可以求出 $\delta$ 。
+
+这就给出了一种求 $w$ 的最优解的迭代算法, 即改进的迭代尺度算法 IIS。
+
+\section*{算法 6.1 (改进的迭代尺度算法 IIS)}
+输入: 特征函数 $f_{1}, f_{2}, \cdots, f_{n}$, 经验分布 $\tilde{P}(X, Y)$, 模型 $P_{w}(y \mid x)$ 。
+
+输出: 最优参数值 $w_{i}^{*}$, 最优模型 $P_{w^{*}}$ 。
+
+(1) 对所有 $i \in\{1,2, \cdots, n\}$, 取初值 $w_{i}=0$ 。
+
+(2) 对每一个 $i \in\{1,2, \cdots, n\}$ :
+
+(a) 令 $\delta_{i}$ 是方程
+
+$$
+\sum_{x, y} \tilde{P}(x) P(y \mid x) f_{i}(x, y) \exp \left(\delta_{i} f^{\#}(x, y)\right)=E_{\tilde{P}}\left(f_{i}\right)
+$$
+
+的解, 这里,
+
+$$
+f^{\#}(x, y)=\sum_{i=1}^{n} f_{i}(x, y)
+$$
+
+(b) 更新 $w_{i}$ 值: $w_{i} \leftarrow w_{i}+\delta_{i}$ 。
+
+(3) 如果不是所有 $w_{i}$ 都收玫, 重复步骤 (2)。
+
+这一算法关键的一步是步骤 (a), 即求解方程 (6.33) 中的 $\delta_{i}$ 。如果 $f(x, y)$ 是常数, 即对任何 $x, y$, 有 $f^{\#}(x, y)=M$, 那么 $\delta_{i}$ 可以显式地表示成
+
+
+\begin{equation*}
+\delta_{i}=\frac{1}{M} \log \frac{E_{\tilde{P}}\left(f_{i}\right)}{E_{P}\left(f_{i}\right)} \tag{6.34}
+\end{equation*}
+
+
+如果 $f^{\#}(x, y)$ 不是常数, 那么必须通过数值计算求 $\delta_{i}$ 。简单有效的方法是牛顿法。以 $g\left(\delta_{i}\right)=0$ 表示方程 (6.33), 牛顿法通过迭代求得 $\delta_{i}^{*}$, 使得 $g\left(\delta_{i}^{*}\right)=0$ 。迭代公式是
+
+
+\begin{equation*}
+\delta_{i}^{(k+1)}=\delta_{i}^{(k)}-\frac{g\left(\delta_{i}^{(k)}\right)}{g^{\prime}\left(\delta_{i}^{(k)}\right)} \tag{6.35}
+\end{equation*}
+
+
+只要适当选取初始值 $\delta_{i}^{(0)}$, 由于 $\delta_{i}$ 的方程 (6.33) 有单根, 因此牛顿法恒收玫, 而且收玫速度很快。
+
+\subsection*{6.3.2 拟牛顿法}
+最大熵模型学习还可以应用牛顿法或拟牛顿法, 参阅附录 B。
+
+对于最大熵模型而言,
+
+$$
+P_{w}(y \mid x)=\frac{\exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)}{\sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)}
+$$
+
+目标函数为
+
+$$
+\min _{w \in \boldsymbol{R}^{n}} f(w)=\sum_{x} \tilde{P}(x) \log \sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)-\sum_{x, y} \tilde{P}(x, y) \sum_{i=1}^{n} w_{i} f_{i}(x, y)
+$$
+
+梯度为
+
+$$
+g(w)=\left(\frac{\partial f(w)}{\partial w_{1}}, \frac{\partial f(w)}{\partial w_{2}}, \cdots, \frac{\partial f(w)}{\partial w_{n}}\right)^{\mathrm{T}}
+$$
+
+其中，
+
+$$
+\frac{\partial f(w)}{\partial w_{i}}=\sum_{x, y} \tilde{P}(x) P_{w}(y \mid x) f_{i}(x, y)-E_{\tilde{P}}\left(f_{i}\right), \quad i=1,2, \cdots, n
+$$
+
+相应的拟牛顿法 BFGS 算法如下。
+
+\section*{算法 6.2 (最大摘模型学习的 BFGS 算法)}
+输入: 特征函数 $f_{1}, f_{2}, \cdots, f_{n}$, 经验分布 $\tilde{P}(x, y)$, 目标函数 $f(w)$, 梯度 $g(w)=\nabla f(w)$,精度要求 $\varepsilon$ 。
+
+输出: 最优参数值 $w^{*}$, 最优模型 $P_{w^{*}}(y \mid x)$ 。
+
+(1) 选定初始点 $w^{(0)}$, 取 $B_{0}$ 为正定对称矩阵, 置 $k=0$;
+
+(2) 计算 $g_{k}=g\left(w^{(k)}\right)$, 若 $\left\|g_{k}\right\|<\varepsilon$, 则停止计算, 得 $w^{*}=w^{(k)}$; 否则, 转步骤 (3);
+
+(3) 由 $B_{k} p_{k}=-g_{k}$ 求出 $p_{k}$;
+
+(4) 一维搜索: 求 $\lambda_{k}$ 使得
+
+$$
+f\left(w^{(k)}+\lambda_{k} p_{k}\right)=\min _{\lambda \geqslant 0} f\left(w^{(k)}+\lambda p_{k}\right)
+$$
+
+(5) 置 $w^{(k+1)}=w^{(k)}+\lambda_{k} p_{k}$;
+
+（6）计算 $g_{k+1}=g\left(w^{(k+1)}\right)$, 若 $\left\|g_{k+1}\right\|<\varepsilon$, 则停止计算, 得 $w^{*}=w^{(k+1)}$; 否则, 按下式求出 $B_{k+1}$ :
+
+$$
+B_{k+1}=B_{k}+\frac{y_{k} y_{k}^{\mathrm{T}}}{y_{k}^{\mathrm{T}} \delta_{k}}-\frac{B_{k} \delta_{k} \delta_{k}^{\mathrm{T}} B_{k}}{\delta_{k}^{\mathrm{T}} B_{k} \delta_{k}}
+$$
+
+其中,
+
+$$
+y_{k}=g_{k+1}-g_{k}, \quad \delta_{k}=w^{(k+1)}-w^{(k)}
+$$
+
+(7) 置 $k=k+1$, 转步骤 $(3)$ 。
+
+\section*{本章概 要}
+\begin{enumerate}
+  \item 逻辑斯谛回归模型是由以下条件概率分布表示的分类模型, 可以用于二类或多类分类。
+\end{enumerate}
+
+$$
+\begin{gathered}
+P(Y=k \mid x)=\frac{\exp \left(w_{k} \cdot x\right)}{1+\sum_{k=1}^{K-1} \exp \left(w_{k} \cdot x\right)}, \quad k=1,2, \cdots, K-1 \\
+P(Y=K \mid x)=\frac{1}{1+\sum_{k=1}^{K-1} \exp \left(w_{k} \cdot x\right)}
+\end{gathered}
+$$
+
+这里, $x$ 为输入特征, $w$ 为特征的权值。
+
+逻辑斯谛回归模型源自逻辑斯谛分布, 其分布函数 $F(x)$ 是 $\mathrm{S}$ 形函数。逻辑斯谛回归模型是由输入的线性函数表示的输出的对数几率模型。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 最大熵模型是由以下条件概率分布表示的分类模型, 也可以用于二类或多类分类。
+\end{enumerate}
+
+$$
+\begin{aligned}
+& P_{w}(y \mid x)=\frac{1}{Z_{w}(x)} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right) \\
+& Z_{w}(x)=\sum_{y} \exp \left(\sum_{i=1}^{n} w_{i} f_{i}(x, y)\right)
+\end{aligned}
+$$
+
+其中, $Z_{w}(x)$ 是规范化因子, $f_{i}$ 为特征函数, $w_{i}$ 为特征的权值。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 最大熵模型可以由最大熵原理推导得出。最大熵原理是概率模型学习或估计的一个准则。最大嫡原理认为在所有可能的概率模型 (分布) 的集合中, 摘最大的模型是最好的模型。
+\end{enumerate}
+
+最大嫡原理应用到分类模型的学习中, 有以下约束最优化问题:
+
+$$
+\begin{array}{ll}
+\min & -H(P)=\sum_{x, y} \tilde{P}(x) P(y \mid x) \log P(y \mid x) \\
+\text { s.t. } & P\left(f_{i}\right)-\tilde{P}\left(f_{i}\right)=0, \quad i=1,2, \cdots, n \\
+& \sum_{y} P(y \mid x)=1
+\end{array}
+$$
+
+求解此最优化问题的对偶问题得到最大熵模型。
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 逻辑斯谛回归模型与最大嫡模型都属于对数线性模型。
+
+  \item 逻辑斯谛回归模型及最大熵模型学习一般采用极大似然估计或正则化的极大似然估计。逻辑斯谛回归模型及最大熵模型学习可以形式化为无约束最优化问题, 求解该最优化问题的算法有改进的迭代尺度法、梯度下降法、拟牛顿法。
+
+\end{enumerate}
+
+\section*{继续阅读}
+逻辑斯谛回归的介绍参见文献 [1], 最大嫡模型的介绍参见文献 [2] 和文献 [3]。逻辑斯谛回归模型与朴素贝叶斯模型的关系参见文献 [4], 逻辑斯谛回归模型与 AdaBoost 的关系参见文献 [5], 逻辑斯谛回归模型与核函数的关系参见文献 [6]。
+
+\section*{习 题}
+6.1 确认逻辑斯谛分布属于指数分布族。
+
+6.2 写出逻辑斯谛回归模型学习的梯度下降算法。
+
+6.3 写出最大嫡模型学习的 DFP 算法 (关于一般的 DFP 算法参见附录 B)。
+
+\section*{参考文献}
+[1] BERGER A, DELLA PIETRA S D, PIETRA V D. A maximum entropy approach to natural language processing[J]. Computational Linguistics, 1996, 22(1): 39-71.
+
+[2] BERGER A. The improved iterative scaling algorithm: a gentle introduction[R/OL]. http:// \href{http://www.cs.cmu.edu/afs/cs/user/aberger/www/ps/scaling.ps}{www.cs.cmu.edu/afs/cs/user/aberger/www/ps/scaling.ps}.
+
+[3] HASTIE T, TIBSHIRANI R, FRIEDMAN J. The elements of statistical learning: data mining, inference, and prediction[M]. 范明, 柴玉梅, 处红英, 等译. Springer, 2001.
+
+[4] MITCHELL T M. Machine learning[M]. 曾华军, 张银奎, 等译. McGraw-Hill Companies, Inc. 1997.
+
+[5] COLLINS M, SCHAPIRE R E, SINGER Y. Logistic regression, AdaBoost and Bregman distances[J]. Machine Learning, 2002, 48(1-3): 253-285.
+
+[6] CANU S, SMOLA A J. Kernel method and exponential family[J]. Neurocomputing, 2005, 69: $714-720$.
+
+\section*{第 7 章 支持向量机}
+支持向量机（support vector machines, SVM）是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器, 间隔最大使它有别于感知机; 支持向量机还包括核技巧, 这使它成为实质上的非线性分类器。支持向量机的学习策略就是间隔最大化, 可形式化为一个求解凸二次规划 (convex quadratic programming) 的问题, 也等价于正则化的合页损失函数的最小化问题。支持向量机的学习算法是求解凸二次规划的最优化算法。
+
+支持向量机学习方法包含构建由简至繁的模型: 线性可分支持向量机 (linear support vector machine in linearly separable case) 、线性支持向量机 (linear support vector machine）以及非线性支持向量机（non-linear support vector machine）。简单模型是复杂模型的基础, 也是复杂模型的特殊情况。当训练数据线性可分时, 通过硬间隔最大化 (hard margin maximization), 学习一个线性的分类器, 即线性可分支持向量机, 又称为硬间隔支持向量机; 当训练数据近似线性可分时, 通过软间隔最大化 (soft margin maximization), 也学习一个线性的分类器, 即线性支持向量机, 又称为软间隔支持向量机; 当训练数据线性不可分时,通过使用核技巧 (kernel trick) 及软间隔最大化, 学习非线性支持向量机。
+
+当输入空间为欧氏空间或离散集合、特征空间为希尔伯特空间时，核函数（kernel function）表示将输入从输入空间映射到特征空间得到的特征向量之间的内积。通过使用核函数可以学习非线性支持向量机，等价于隐式地在高维的特征空间中学习线性支持向量机。这样的方法称为核技巧。核方法 (kernel method) 是比支持向量机更为一般的机器学习方法。
+
+Cortes 与 Vapnik 提出线性支持向量机, Boser、Guyon 与 Vapnik 又引入核技巧, 提出非线性支持向量机。
+
+本章按照上述思路介绍 3 类支持向量机、核函数及一种快速学习算法——序列最小最优化算法 (SMO)。
+
+\section*{7.1 线性可分支持向量机与硬间隔最大化}
+\subsection*{7.1.1 线性可分支持向量机}
+考虑一个二类分类问题。假设输入空间与特征空间为两个不同的空间。输入空间为欧氏空间或离散集合，特征空间为欧氏空间或希尔伯特空间。线性可分支持向量机、线性支\\
+持向量机假设这两个空间的元素一一对应, 并将输入空间中的输入映射为特征空间中的特征向量。非线性支持向量机利用一个从输入空间到特征空间的非线性映射将输入映射为特征向量。所以, 输入都由输入空间转换到特征空间, 支持向量机的学习是在特征空间进行的。
+
+假设给定一个特征空间上的训练数据集
+
+$$
+T=\left\{\left(x_{1}, y_{1}\right),\left(x_{2}, y_{2}\right), \cdots,\left(x_{N}, y_{N}\right)\right\}
+$$
+
+其中, $x_{i} \in \mathcal{X}=\boldsymbol{R}^{n}, y_{i} \in \mathcal{Y}=\{+1,-1\}, i=1,2, \cdots, N \circ x_{i}$ 为第 $i$ 个特征向量, 也称为实例, $y_{i}$ 为 $x_{i}$ 的类标记。当 $y_{i}=+1$ 时, 称 $x_{i}$ 为正例; 当 $y_{i}=-1$ 时, 称 $x_{i}$ 为负例。 $\left(x_{i}, y_{i}\right)$称为样本点。再假设训练数据集是线性可分的 (见定义 2.2 )。
+
+学习的目标是在特征空间中找到一个分离超平面, 能将实例分到不同的类。分离超平面对应于方程 $w \cdot x+b=0$, 它由法向量 $w$ 和截距 $b$ 决定, 可用 $(w, b)$ 来表示。分离超平面将特征空间划分为两部分, 一部分是正类, 一部分是负类。法向量指向的一侧为正类, 另一侧为负类。
+
+一般地, 当训练数据集线性可分时, 存在无穷个分离超平面可将两类数据正确分开。感知机利用误分类最小的策略, 求得分离超平面, 不过这时的解有无穷多个。线性可分支持向量机利用间隔最大化求最优分离超平面, 这时, 解是唯一的。
+
+定义 7.1 (线性可分支持向量机) 给定线性可分训练数据集, 通过间隔最大化或等价地求解相应的凸二次规划问题学习得到的分离超平面为
+
+
+\begin{equation*}
+w^{*} \cdot x+b^{*}=0 \tag{7.1}
+\end{equation*}
+
+
+以及相应的分类决策函数
+
+
+\begin{equation*}
+f(x)=\operatorname{sign}\left(w^{*} \cdot x+b^{*}\right) \tag{7.2}
+\end{equation*}
+
+
+称为线性可分支持向量机。
+
+考虑如图 7.1 所示的二维特征空间中的分类问题。图中 “○” 表示正例, “ ×” 表示负例。训练数据集线性可分, 这时有许多直线能将两类数据正确划分。线性可分支持向量机对应着将两类数据正确划分并且间隔最大的直线, 如图 7.1 所示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-38}
+\end{center}
+
+图 7.1 二类分类问题
+
+间隔最大及相应的约束最优化问题将在下面叙述。这里先介绍函数间隔和几何间隔的概念。
+
+\section*{7.1 .2 函数间隔和几何间隔}
+在图 7.1 中, 有 $A, B, C$ 三个点, 表示 3 个实例, 均在分离超平面的正类一侧, 预测它们的类。点 $A$ 距分离超平面较远, 若预测该点为正类, 就比较确信预测是正确的; 点 $C$ 距分离超平面较近, 若预测该点为正类就不那么确信; 点 $B$ 介于点 $A$ 与点 $C$ 之间, 预测其为正类的确信度也在 $A$ 与 $C$ 之间。
+
+一般来说, 一个点距离分离超平面的远近可以表示分类预测的确信程度。在超平面 $w \cdot x+b=0$ 确定的情况下, $|w \cdot x+b|$ 能够相对地表示点 $x$ 距离超平面的远近。而 $w \cdot x+b$的符号与类标记 $y$ 的符号是否一致能够表示分类是否正确, 所以可用量 $y(w \cdot x+b)$ 来表示分类的正确性及确信度, 这就是函数间隔 (functional margin) 的概念。
+
+定义 7.2 (函数间隔) 对于给定的训练数据集 $T$ 和超平面 $(w, b)$, 定义超平面 $(w, b)$ 关于样本点 $\left(x_{i}, y_{i}\right)$ 的函数间隔为
+
+
+\begin{equation*}
+\hat{\gamma}_{i}=y_{i}\left(w \cdot x_{i}+b\right) \tag{7.3}
+\end{equation*}
+
+
+定义超平面 $(w, b)$ 关于训练数据集 $T$ 的函数间隔为超平面 $(w, b)$ 关于 $T$ 中所有样本点 $\left(x_{i}, y_{i}\right)$ 的函数间隔之最小值，即
+
+
+\begin{equation*}
+\hat{\gamma}=\min _{i=1,2, \cdots, N} \hat{\gamma}_{i} \tag{7.4}
+\end{equation*}
+
+
+函数间隔可以表示分类预测的正确性及确信度。但是选择分离超平面时, 只有函数间隔还不够。因为只要成比例地改变 $w$ 和 $b$, 例如, 将它们改为 $2 w$ 和 $2 b$, 超平面并没有改变, 但函数间隔却成为原来的两倍。这一事实启示我们, 可以对分离超平面的法向量 $w$ 加某些约束,如规范化, $\|w\|=1$, 使得间隔是确定的。这时函数间隔成为几何间隔（geometric margin）。
+
+图 7.2 给出了超平面 $(w, b)$ 及其法向量 $w$ 。点 $A$ 表示某一实例 $x_{i}$, 其类标记为 $y_{i}=+1$ 。点 $A$ 与超平面 $(w, b)$ 的距离由线段 $A B$ 给出, 记作 $\gamma_{i}$ 。
+
+$$
+\gamma_{i}=\frac{w}{\|w\|} \cdot x_{i}+\frac{b}{\|w\|}
+$$
+
+其中, $\|w\|$ 为 $w$ 的 $L_{2}$ 范数。这是点 $A$ 在超平面正的一侧的情形。如果点 $A$ 在超平面负的一侧, 即 $y_{i}=-1$, 那么点与超平面的距离为
+
+$$
+\gamma_{i}=-\left(\frac{w}{\|w\|} \cdot x_{i}+\frac{b}{\|w\|}\right)
+$$
+
+一般地, 当样本点 $\left(x_{i}, y_{i}\right)$ 被超平面 $(w, b)$ 正确分类时, 点 $x_{i}$ 与超平面 $(w, b)$ 的距离是
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_aa878f82ee3a63be2358g-39}
+\end{center}
+
+图 7.2 几何间隔
+
+$$
+\gamma_{i}=y_{i}\left(\frac{w}{\|w\|} \cdot x_{i}+\frac{b}{\|w\|}\right)
+$$
+
+由这一事实导出几何间隔的概念。
+
+定义 7.3 (几何间隔) 对于给定的训练数据集 $T$ 和超平面 $(w, b)$, 定义超平面 $(w, b)$ 关于样本点 $\left(x_{i}, y_{i}\right)$ 的几何间隔为
+
+
+\begin{equation*}
+\gamma_{i}=y_{i}\left(\frac{w}{\|w\|} \cdot x_{i}+\frac{b}{\|w\|}\right) \tag{7.5}
+\end{equation*}
+
+
+定义超平面 $(w, b)$ 关于训练数据集 $T$ 的几何间隔为超平面 $(w, b)$ 关于 $T$ 中所有样本点 $\left(x_{i}, y_{i}\right)$ 的几何间隔之最小值, 即
+
+
+\begin{equation*}
+\gamma=\min _{i=1,2, \cdots, N} \gamma_{i} \tag{7.6}
+\end{equation*}
+
+
+超平面 $(w, b)$ 关于样本点 $\left(x_{i}, y_{i}\right)$ 的几何间隔一般是实例点到超平面的带符号的距离 (signed distance), 当样本点被超平面正确分类时就是实例点到超平面的距离。
+
+从函数间隔和几何间隔的定义 (式 (7.3) 式 (7.6)) 可知, 函数间隔和几何间隔有下面的关系:
+
+
+\begin{align*}
+& \gamma_{i}=\frac{\hat{\gamma}_{i}}{\|w\|}  \tag{7.7}\\
+& \gamma=\frac{\hat{\gamma}}{\|w\|} \tag{7.8}
+\end{align*}
+
+
+如果 $\|w\|=1$, 那么函数间隔和几何间隔相等。如果超平面参数 $w$ 和 $b$ 成比例地改变 (超平面没有改变), 函数间隔也按此比例改变, 而几何间隔不变。
+
+\subsection*{7.1.3 间隔最大化}
+支持向量机学习的基本想法是求解能够正确划分训练数据集并且几何间隔最大的分离超平面。对线性可分的训练数据集而言, 线性可分分离超平面有无穷多个 (等价于感知机), 但是几何间隔最大的分离超平面是唯一的。这里的间隔最大化又称为硬间隔最大化 (与将要讨论的训练数据集近似线性可分时的软间隔最大化相对应)。
+
+间隔最大化的直观解释是: 对训练数据集找到几何间隔最大的超平面意味着以充分大的确信度对训练数据进行分类。也就是说, 不仅将正负实例点分开, 而且对最难分的实例点 (离超平面最近的点）也有足够大的确信度将它们分开。这样的超平面应该对未知的新实例有很好的分类预测能力。
+
+\section*{1. 最大间隔分离超平面}
+下面考虑如何求得一个几何间隔最大的分离超平面, 即最大间隔分离超平面。具体地,这个问题可以表示为下面的约束最优化问题:
+
+\[
+\begin{array}{ll}
+\max _{w, b} & \gamma \\
+\text { s.t. } & y_{i}\left(\frac{w}{\|w\|} \cdot x_{i}+\frac{b}{\|w\|}\right) \geqslant \gamma, \quad i=1,2, \cdots, N \tag{7.10}
+\end{array}
+\]
+
+
+\end{CJK*}
+\end{document}

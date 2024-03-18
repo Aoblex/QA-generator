@@ -1,0 +1,1638 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\title{2. 模型特点 }
+
+\author{}
+\date{}
+
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\begin{document}
+\maketitle
+结果 $\tilde{\boldsymbol{h}}_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$ 的加权和, 分别以更新门 $\boldsymbol{z}_{t}$ 和 $\left(1-\boldsymbol{z}_{t}\right)$ 为权重, 其中系数乘积是向量的逐元素积 (式 (25.30))。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-01}
+\end{center}
+
+图 25.8 GRU 单元的结构
+
+GRU 也能很好地表示和学习长距离依存关系。更新门和重置门起着重要作用。当更新门和重置门满足 $z_{t}=O, r_{t}=1$ 时, 当前位置的状态 $h_{t}$ 只依赖于当前位置的输入 $x_{t}$ 和之前位置的状态 $\boldsymbol{h}_{t-1}$, GRU 回退到 S-RNN。当更新门和重置门满足 $\boldsymbol{z}_{t}=\boldsymbol{O}, \boldsymbol{r}_{t}=\boldsymbol{O}$ 时, 当前位置的状态 $h_{t}$ 只依赖于当前位置输入 $\boldsymbol{x}_{t}$, 忽视之前位置的状态 $\boldsymbol{h}_{t-1}$ 。当更新门满足 $z_{t}=1$时, GRU 网络将之前位置的状态 $\boldsymbol{h}_{t-1}$ 复制到当前位置, 忽视当前位置输入 $\boldsymbol{x}_{t}$ 。当前位置的状态 $\boldsymbol{h}_{t}$ 可以展开成以下形式:
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}=\boldsymbol{z}_{t} \odot \boldsymbol{h}_{t-1}+\left(\boldsymbol{1}-\boldsymbol{z}_{t}\right) \odot \tilde{\boldsymbol{h}}_{t}=\sum_{i=1}^{t} \prod_{j=i+1}^{t} \boldsymbol{z}_{j} \odot\left(\boldsymbol{1}-\boldsymbol{z}_{i}\right) \odot \tilde{\boldsymbol{h}}_{i}=\sum_{i=1}^{t} \boldsymbol{w}_{i}^{t} \odot \tilde{\boldsymbol{h}}_{i} \tag{25.31}
+\end{equation*}
+
+
+其中, $\boldsymbol{w}_{i}^{t}$ 表示计算得到的第 $t$ 个位置的权重。可以看出，状态 $\boldsymbol{h}_{t}$ 是之前所有位置的中间结果 $\tilde{\boldsymbol{h}}_{i}$ 的加权和, 而中间结果由所在位置的输入 $\boldsymbol{x}_{i}$ 和之前位置的状态 $\boldsymbol{h}_{i-1}$ 决定。所以, 当前位置的状态由之前位置的状态综合决定。
+
+\subsection*{25.2.3 深度循环神经网络}
+简单循环神经网络只有一个隐层或中间层。可以扩展到有多个隐层的神经网络, 称为深度循环神经网络。多个隐层的状态之间存在层次化关系, 模型具有更强的表示能力。拥有 $l$ 个隐层的深度循环神经网络在第 $t$ 个位置的定义如下。
+
+第 1 个隐层是
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}^{(1)}=\tanh \left(\boldsymbol{U}^{(1)} \cdot \boldsymbol{h}_{t-1}^{(1)}+\boldsymbol{W}^{(1)} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}^{(1)}\right) \tag{25.32}
+\end{equation*}
+
+
+第 $l$ 个隐层是
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}^{(l)}=\tanh \left(\boldsymbol{U}^{(l)} \cdot \boldsymbol{h}_{t-1}^{(l)}+\boldsymbol{W}^{(l)} \cdot \boldsymbol{h}_{t}^{(l-1)}+\boldsymbol{b}^{(l)}\right) \tag{25.33}
+\end{equation*}
+
+
+输出层是
+
+
+\begin{equation*}
+\boldsymbol{p}_{t}=\operatorname{softmax}\left(\boldsymbol{V} \cdot \boldsymbol{h}_{t}^{(l)}+\boldsymbol{c}\right) \tag{25.34}
+\end{equation*}
+
+
+图 25.9 是深度循环神经网络的架构图。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-02}
+\end{center}
+
+图 25.9 深度循环神经网络的架构图
+
+\subsection*{25.2.4 双向循环神经网络}
+简单循环神经网络描述序列数据单方向的顺序依存关系。可以扩展到双方向, 称为双向循环神经网络。引入前向的循环神经网络和后向的循环神经网络, 在每一个位置将两个神经网络的状态向量拼接, 构成新的状态向量。拼接的向量能结合两个方向的依存关系更好地表示序列数据的全局特征, 模型具有更强的表示能力。双向循环神经网络在第 $t$ 个位置的定义如下。
+
+前向的循环神经网络的隐层 (状态) 是
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}^{(1)}=\tanh \left(\boldsymbol{U}^{(1)} \cdot \boldsymbol{h}_{t-1}^{(1)}+\boldsymbol{W}^{(1)} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}^{(1)}\right) \tag{25.35}
+\end{equation*}
+
+
+后向的循环神经网络的隐层 (状态) 是
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}^{(2)}=\tanh \left(\boldsymbol{U}^{(2)} \cdot \boldsymbol{h}_{t+1}^{(2)}+\boldsymbol{W}^{(2)} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}^{(2)}\right) \tag{25.36}
+\end{equation*}
+
+
+两者的拼接是
+
+
+\begin{equation*}
+\boldsymbol{h}_{t}=\left[\boldsymbol{h}_{t}^{(1)} ; \boldsymbol{h}_{t}^{(2)}\right] \tag{25.37}
+\end{equation*}
+
+
+其中, ; 表示两个向量的拼接。
+
+
+\begin{equation*}
+\boldsymbol{p}_{\boldsymbol{t}}=\operatorname{softmax}\left(\boldsymbol{V} \cdot \boldsymbol{h}_{t}+\boldsymbol{c}\right) \tag{25.38}
+\end{equation*}
+
+
+图 25.10 是双向循环神经网络的架构图。
+
+常用的双向循环神经网络有双向 LSTM。双向 LSTM-CRF 结合双向 LSTM 和 CRF 模型, 其基本架构是在双向 LSTM 的输出层引入 CRF, 是序列标注的有代表性的方法。关于 $\mathrm{CRF}$ 可以参照第 11 章。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-03(1)}
+\end{center}
+
+图 25.10 双向循环神经网络的架构图
+
+\section*{25.3 自然语言生成中的应用}
+本节介绍循环神经网络在自然语言处理中的应用语言生成。首先介绍词向量, 之后介绍语言模型, 特别是基于循环神经网络的语言模型。
+
+\subsection*{25.3.1 词向量}
+\section*{1. 词向量的定义}
+向量或单词向量 (word vector) 是指表示自然语言的单词的实数向量。把自然语言的单词映射到实数向量空间也称作词嵌入或单词嵌入（word embedding）。词向量空间的维度远小于单词表的大小。词向量的内积或余弦表示单词间的相似性。自然语言处理中, 通常输入是一个句子, 句子中的每一个单词用词向量表示。词向量表示属于分布式表示。
+
+机器学习中概念 (特征) 的表示方法起着重要作用, 直接影响到学习的效果和效率。图 25.11 的例子通过数字的不同表示法对算法的影响间接说明这一点。Hinton 提出了分布式表示 (distributed representation) 和局部式表示 (local representation) 的概念, 指出分布式表示作为神经网络学习的概念的表示方法具有许多优点 ${ }^{[10]}$ 。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-03}
+\end{center}
+
+图 25.11 表示对算法产生影响的例子
+
+假设有 $K$ 个概念, 可以用两种方法表示。一种是 $K$ 维独热向量。每一个概念由一个 $K$维 $0 / 1$ 向量表示, 概念对应的维度取值为 1 , 其他维度取值为 0 。称这种概念表示方法为局部式表示。另一种是用 $N$ 维 $0 / 1$ 向量或者 $N$ 维实数向量, 这时 $\log _{2} K<N \ll K$ 。每一个概念\\
+由一个 $N$ 维 $0 / 1$ 向量或者 $N$ 维实数向量表示。称这种概念的表示方法为分布式表示。因为这种表示由向量的所有维度组合而成, 所以是 “分布式的”。分布式表示的向量可以是神经网络的某一层的输出, 其中每一维对应一个神经元。
+
+分布式表示与局部式表示相比有诸多优点。首先, 容易表示相似性, 用于机器学习可以提高模型的学习泛化能力。当表示是 $0 / 1$ 向量时可以用汉明距离 (Hamming distance), 当表示是实数向量时可以用内积或余弦, 很方便地计算概念之间的相似度, 使学到的模型能对相似的输入产生相似输出。其次, 表示的效率高。分布式表示中的维度 $K$ 远远小于局部式表示中的维度 $N$ 。再次, 拥有稳健性 (robustness)。由噪声等带来的表示在一定范围内的变化往往不会对相似度计算产生太大影响。最后, 拥有可扩展性。有新增概念时, 可以比较容易地将其表示加入到已有的表示中, 不需要改变表示的框架 (增加维度)。事实上, 有大量证据证明生物神经网络中的表示也是分布式的。
+
+词向量是分布式表示。图 25.12 给出一个简单的例子。假设只有三个单词, 有 3 维的局部式表示, 2 维的分布式表示。图左侧显示的是局部式表示, 右侧是分布式表示。可以看出, 单词的分布式表示, 也就是词向量, 可以用实数空间中的内积或余弦更好地描述单词之间的语义相似性。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-04}
+\end{center}
+
+局部式表示
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-04(1)}
+\end{center}
+
+分布式表示
+
+图 25.12 词向量表示的例子
+
+\section*{2. 词向量的学习}
+在具体的学习任务中, 词向量可以作为模型的一部分同模型一起学习, 也可以预先学好然后在学习中固定使用。前者适合训练数据多的情况, 后者适合训练数据少的情况。词向量的预先学习通过无监督学习进行。有多种方法, 这里介绍常用的跳元模型加负采样 (skip-gram model with negative sampling) 方法, 简称跳元模型 (skip-gram)。
+
+词向量学习方法的基本想法是在大量的语料中收集单词和上下文的共现数据, 从共现数据中学习每一个单词的词向量, 这里的上下文是指在文章中以一个单词为中心前后固定窗口内出现的所有单词。比如, 单词是 “高兴”, 从句子 “小朋友们高兴得手舞足蹈” 中可以获得窗口内四个单词组成的上下文 “小朋友、们、得、手舞足蹈”。可以从共现的上下文的单词 “手舞足蹈” “小朋友” 等学习单词 “高兴” 的语义表示。参见表 25.1 。
+
+假设所有单词的集合是 $\mathcal{W}$, 所有上下文的集合是 $\mathcal{C}$ 。定义下面的单词和上下文的共现模型, 代表单词 $w \in \mathcal{W}$ 和上下文 $c \in \mathcal{C}$ 共现的概率:
+
+
+\begin{equation*}
+P(d=1 \mid w, c)=\frac{1}{1+\exp (-\boldsymbol{w} \cdot \boldsymbol{c})} \tag{25.39}
+\end{equation*}
+
+
+
+\begin{equation*}
+P(d=0 \mid w, c)=\frac{1}{1+\exp (\boldsymbol{w} \cdot \boldsymbol{c})} \tag{25.40}
+\end{equation*}
+
+
+其中, $\boldsymbol{w}$ 和 $\boldsymbol{c}$ 是维度为 $l$ 的参数向量。实际是判断共现与否的分类模型。
+
+表 25.1 单词和上下文共现数据的例子
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+\hline
+ & 高兴 & 愉快 & 生气 \\
+\hline
+$\{$ 小朋友、们、得、手舞足蹈 $\}$ & 55 &  &  \\
+\hline
+$\{$ 听、令人、的、音乐 $\}$ & 8 & 120 &  \\
+\hline
+$\{$ 单词句、描写、的、心情 $\}$ & 4 & 11 & 1 \\
+\hline
+$\{$ 让、人、的、缺点 $\}$ &  &  & 87 \\
+\hline
+\end{tabular}
+\end{center}
+
+针对大量单词和上下文共现数据, 定义基于共现模型预测的目标函数, 使用随机梯度下降进行优化, 学习共现模型的参数向量 $\boldsymbol{w}$ 和 $\boldsymbol{c}$ 。目标函数是
+
+
+\begin{equation*}
+\sum_{w} \sum_{c} f(w, c)\left(-\log P(d=1 \mid w, c)-k \cdot E_{\bar{c} \in P(c)} \log P(d=0 \mid w, \bar{c})\right) \tag{25.41}
+\end{equation*}
+
+
+其中, $f(w, c)$ 表示单词 $w$ 和上下文 $c$ 在共现数据中出现的次数, $w$ 和 $c$ 的一次共现看作是一个正样本, 随机采样 $k$ 个 $w$ 未出现的上下文 $\bar{c}, w$ 和 $\bar{c}$ 组成 $k$ 个负样本。
+
+这样得到的每一个单词 $w$ 的参数向量 $\boldsymbol{w}$ 就是该单词的词向量。直观上通过学习得到参数向量 $\boldsymbol{w}$ 和 $\boldsymbol{c}$ 能很好地说明共现数据, 其中的参数向量 $\boldsymbol{w}$ 是从共现数据角度对单词 $w$ 的解释。
+
+跳元模型还有以下解释。定义单词 $w$ 和上下文 $c$ 之间的互信息 (mutual information):
+
+
+\begin{equation*}
+I(w, c)=\log \frac{P(w, c)}{P(w) P(c)} \tag{25.42}
+\end{equation*}
+
+
+其中, $P(w, c)$ 是 $w$ 和 $c$ 的共现概率, $P(w)$ 是 $w$ 的出现概率, $P(c)$ 是 $c$ 的出现概率。互信息的值越大，表示单词和上下文越相关。互信息 $I(w, c)$ 从共现数据计算。
+
+
+\begin{equation*}
+I(w, c)=\log \frac{f(w, c) N}{f(w) f(c)} \tag{25.43}
+\end{equation*}
+
+
+其中, $f(w, c)$ 是 $w$ 和 $c$ 的共现频率, $f(w)$ 是 $w$ 的频率, $f(c)$ 是 $c$ 的频率, $N$ 是样本容量。
+
+所有单词和上下文的互信息减去一个常量 $\log k$, 构成矩阵 $\boldsymbol{M}$ :
+
+
+\begin{equation*}
+\boldsymbol{M}=\left(m_{i j}\right), \quad m_{i j}=I\left(w_{i}, c_{j}\right)-\log k \tag{25.44}
+\end{equation*}
+
+
+其中的 $k$ 与式 (25.41) 中的 $k$ 相同。可以证明, 对目标函数 (25.41) 的优化等价于对矩阵 $M($ 式 $(25.44))$ 的矩阵分解:
+
+
+\begin{equation*}
+\boldsymbol{M}=\boldsymbol{W} \cdot \boldsymbol{C}^{\mathrm{T}} \tag{25.45}
+\end{equation*}
+
+
+得到的矩阵 $\boldsymbol{W}$ 的行向量就是单词的词向量。设 $\boldsymbol{M}$ 是 $m \times n$ 矩阵, $\boldsymbol{W}$ 是 $m \times l$ 矩阵, $\boldsymbol{C}$ 是 $n \times l$ 矩阵, 这里有 $l \ll m, l \ll n$ 。所以, 跳元模型得到的词向量是对单词与上下文的互信息进行压缩得到的表示。这里的矩阵分解是通过随机梯度下降得到的, 而不是奇异值分解和非负矩阵分解。详细见第 15 章的奇异值分解和第 17 章的非负矩阵分解。
+
+\subsection*{25.3.2 语言模型与语言生成}
+\section*{1. 语言模型}
+语言模型 (language model) 是定义在单词序列上的概率模型, 用来计算一个给定的单词序列的概率。在自然语言处理中单词序列可以是一个句子或若干个句子。假设 $w_{1}, w_{2}, \cdots, w_{T}$是单词序列, 则其概率可以通过概率乘法公式计算。
+
+
+\begin{equation*}
+P\left(w_{1}, w_{2}, \cdots, w_{T}\right)=\prod_{t=1}^{T} P\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right) \tag{25.46}
+\end{equation*}
+
+
+令 $P\left(w_{1} \mid w_{0}\right)=P\left(w_{1}\right)$ 。不同的语言模型用不同的方法计算式中的条件概率 $P\left(w_{t} \mid w_{1}, w_{2}, \cdots\right.$, $\left.w_{t-1}\right)$ 。显然, 语言模型是自回归模型。
+
+$n$ 元语言模型 ( $n$-gram model) 是一种常用的语言模型 (这里 $n=t$ ), 假设序列每一个位置上单词的出现只依赖于前 $n-1$ 个位置上的单词。也就是说, 模型是 $n-1$ 阶马尔可夫链 (见第 19 章)。
+
+
+\begin{equation*}
+P\left(w_{1}, w_{2}, \cdots, w_{T}\right)=\prod_{t=1}^{T} P\left(w_{t} \mid w_{t-n+1}, w_{2}, \cdots, w_{t-1}\right) \tag{25.47}
+\end{equation*}
+
+
+语言模型的训练采用极大似然估计，最小化交叉熵。
+
+
+\begin{equation*}
+L=-\frac{1}{T} \sum_{t=1}^{T} \log _{2} P\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right) \tag{25.48}
+\end{equation*}
+
+
+等价地最小化困惑度 (perplexity)。
+
+
+\begin{equation*}
+P P L=2^{L} \tag{25.49}
+\end{equation*}
+
+
+语言模型的评测经常使用困惑度。困惑度越小, 说明模型对数据的预测越准确。
+
+\section*{2. RNN 语言模型}
+循环神经网络可以用于表示语言模型, 包括 S-RNN、LSTM、GRU。这里统称 RNN 语言模型。
+
+$\mathrm{RNN}$ 语言模型以单词序列为输入, 在第 $t-1$ 个位置上, 将单词 $w_{t-1}$ 转换为其词向量 $\boldsymbol{w}_{t-1}$, 输入到 RNN, 并且预测第 $t$ 个位置上单词 $w_{t}$ 出现的概率。
+
+
+\begin{equation*}
+P_{\boldsymbol{\theta}}\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right)=g\left(\boldsymbol{w}_{1}, \boldsymbol{w}_{2}, \cdots, \boldsymbol{w}_{t-1}\right), \quad t=1,2, \cdots, T \tag{25.50}
+\end{equation*}
+
+
+其中, $\boldsymbol{w}_{1}, \boldsymbol{w}_{2}, \cdots, \boldsymbol{w}_{t-1}$ 是单词 $w_{1}, w_{2}, \cdots, w_{t-1}$ 的词向量, 是 RNN 在第 $1,2, \cdots, t-1$ 个位置的输入; $g()$ 表示 RNN 在第 $t-1$ 个位置的输出; $\boldsymbol{\theta}$ 是模型的参数。假设 $w_{1}$ 是起始符,如 “ $<$ bos >”, $w_{T}$ 是终止符, 如 “ $<\operatorname{eos}>”$ 。图 25.13 是 RNN 语言模型的架构图, 不失一般性,这里使用 S-RNN。
+
+每一个单词的词向量表示这个单词的语义。每一个位置的状态表示单词序列到这个位置为止的语义, 最后位置的状态表示整个单词序列的语义。单词的词向量是分布式表示, 状态也是分布式表示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-07}
+\end{center}
+
+图 $25.13 \mathrm{RNN}$ 语言模型
+
+单词序列 $w_{1}, w_{2}, \cdots, w_{T}$ 的概率可以由 $\mathrm{RNN}$ 语言模型计算得出:
+
+
+\begin{equation*}
+P\left(w_{1}, w_{2}, \cdots, w_{T}\right)=\prod_{t=1}^{T} P_{\boldsymbol{\theta}}\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right) \tag{25.51}
+\end{equation*}
+
+
+令 $P_{\boldsymbol{\theta}}\left(w_{1} \mid w_{0}\right)=P_{\boldsymbol{\theta}}\left(w_{1}\right)$ 。
+
+\section*{3. 语言生成}
+RNN 语言模型可以用于自然语言的生成, 有随机生成、贪心搜索 (greedy search) 和束搜索 (beam search) 等方法。
+
+随机生成法使用 RNN 语言模型随机采样依次生成单词序列 (自然语言句子)。假设初始位置的单词固定为 $\hat{w}_{0}$ 。首先根据条件概率分布 $P_{\boldsymbol{\theta}}\left(w_{1} \mid \hat{w}_{0}\right)$ 随机生成一个单词, 作为第一个位置的单词 $\hat{w}_{1}$; 然后在第一个位置, 根据条件概率分布 $P_{\theta}\left(w_{2} \mid \hat{w}_{1}\right)$ 随机生成一个单词, 作为第二个位置的单词 $\hat{w}_{2}$; 依次处理, 在第 $t-1$ 个位置, 根据条件概率分布 $P_{\boldsymbol{\theta}}\left(w_{t} \mid \hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{t-1}\right)$ 随机生成一个单词, 作为第 $t$ 个位置的单词 $\hat{w}_{t}$; 当生成的单词是终止符时, 终止生成, 输出生成的单词序列 $\hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{T}$ 。
+
+贪心搜索使用 RNN 语言模型近似求解概率最大的单词序列。在每一个位置找出一个单词, 使得到这个位置为止的单词序列的联合概率最大。假设初始位置的单词固定为 $\hat{w}_{0}$ 。首先找出概率 $P_{\theta}\left(\hat{w}_{0}, w_{1}\right)$ 最大的 $w_{1}$ 的单词 (等价地, 条件概率 $P_{\theta}\left(w_{1} \mid \hat{w}_{0}\right)$ 最大), 作为单词序列第一个单词 $\hat{w}_{1}$; 然后在其基础上, 找出概率 $P_{\theta}\left(\hat{w}_{1}, w_{2}\right)$ 最大的 $w_{2}$ 的单词 (等价地, 条件概率 $P_{\theta}\left(w_{2} \mid \hat{w}_{1}\right)$ 最大), 作为单词序列的第二个单词 $\hat{w}_{2}$; 依次处理, 在第 $t-1$ 个位置, 在目前为止的序列 $\hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{t-1}$ 的基础上, 找出概率 $P_{\theta}\left(\hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{t-1}, w_{t}\right)$ 最大的 $w_{t}$ 的单词 (等价地, 条件概率 $P_{\theta}\left(w_{t} \mid \hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{t-1}\right)$ 最大), 作为单词序列第 $t$ 个单词 $\hat{w}_{t}$; 当搜索到的单词是终止符时, 终止生成, 输出生成的单词序列 $\hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{T}$ 。贪心搜索不能保证得到的单词序列是在所有单词序列中概率最大的。
+
+束搜索是贪心搜索的扩展, 在每一个位置找出 $k$ 个单词, 使得到该位置为止的单词序列的联合概率最大, 得到 “一束” 单词序列, $k$ 称为束宽。图 25.14 是束搜索的例子, 假设单词个数是 5 , 束宽是 3 。首先找出概率 $P_{\theta}\left(\hat{w}_{0}, w_{1}\right)$ 最大的 3 个 $w_{1}$ 的单词, 假设是 $\hat{w}_{1,2}, \hat{w}_{1,3}, \hat{w}_{1,4}$,得到 3 个单词序列 $\hat{w}_{1,2}, \hat{w}_{1,3}, \hat{w}_{1,4}$; 然后在其基础上, 找出概率 $P_{\theta}\left(\hat{w}_{1,2}, w_{2}\right), P_{\theta}\left(\hat{w}_{1,3}, w_{2}\right)$和 $P_{\theta}\left(\hat{w}_{1,4}, w_{2}\right)$ 最大的 3 个 $w_{2}$ 的单词, 假设是 $\hat{w}_{2,1}, \hat{w}_{2,4}, \hat{w}_{2,5}$, 得到 3 个单词的序列 $\hat{w}_{1,2}, \hat{w}_{2,1}, \hat{w}_{1,3}, \hat{w}_{2,4}$ 和 $\hat{w}_{1,4}, \hat{w}_{2,5}$; 依次处理, 当搜索到的单词是终止符时, 终止所在单\\
+词序列的生成, 最后得到 3 个单词序列 $\hat{w}_{1,2}, \hat{w}_{2,1}, \hat{w}_{3,3}, \hat{w}_{4,4}, \hat{w}_{5,2}, \hat{w}_{1,3}, \hat{w}_{2,4}, \hat{w}_{3,2}, \hat{w}_{4,1}, \hat{w}_{5,3}$和 $\hat{w}_{1,4}, \hat{w}_{2,5}, \hat{w}_{3,4}, \hat{w}_{4,5}$ 。图 25.14 中 3 个序列分别用紫色、红色、绿色折线表示, 终止符为实心圆。束搜索也不能保证得到的单词序列是在所有单词序列中概率最大的, 但因为比贪心算法进行了更大规模的搜索, 所以更有可能找到最优解。束宽 $k$ 可以权衡搜索效果和搜索效率。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-08}
+\end{center}
+
+图 25.14 束搜索 (见文前彩图)
+
+事实证明: RNN 语言模型, 特别是 LSTM 语言模型具有很强的语言生成能力, 能够生成非常自然的句子。
+
+\section*{4. 模型训练}
+RNN 语言模型的训练采用极大似然估计最小化单词序列的交叉熵。
+
+
+\begin{equation*}
+L=-\sum_{t=1}^{T} \log P_{\boldsymbol{\theta}}\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right) \tag{25.52}
+\end{equation*}
+
+
+可以使用算法 25.1 的反向传播算法学习模型的参数。
+
+RNN 语言模型的训练通常采用称为强制教学 (teacher forcing) 的方法。具体地, 在每一个位置的条件概率分布 $P_{\boldsymbol{\theta}}\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right)$ 学习时, 使用训练数据中的真实数据 $w_{1}, w_{2}, \cdots, w_{t-1}$ 而不是模型预测的数据 $\hat{w}_{1}, \hat{w}_{2}, \cdots, \hat{w}_{t-1}$ 。这样, 模型的训练可以在各个位置上并行进行。
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 循环神经网络是一系列神经网络的统一名称, 其主要特点是在序列数据上重复使用相同的结构, 对序列数据的顺序依存关系建模, 用于序列数据的预测。
+\end{enumerate}
+
+循环神经网络具有强大的表示能力。循环神经网络是动态系统的通用模型, 也是计算的通用模型, 可以模拟图灵机。
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 简单循环神经网络 S-RNN 是最基本的循环神经网络, 其定义式如下:
+\end{enumerate}
+
+$$
+\begin{gathered}
+\boldsymbol{h}_{t}=\tanh \left(\boldsymbol{U} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}\right) \\
+\boldsymbol{p}_{t}=\operatorname{softmax}\left(\boldsymbol{V} \cdot \boldsymbol{h}_{t}+\boldsymbol{c}\right)
+\end{gathered}
+$$
+
+状态是循环神经网络的重要概念。在 S-RNN 中, 每一个位置的状态由当前位置的输入和之前位置的状态决定。表示的是到这个位置为止的序列数据的局部特征及全局特征, 也就是短距离依存关系和长距离依存关系。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 循环神经网络的学习算法是反向传播算法。简单循环神经网络的反向传播算法的主要公式如下。
+\end{enumerate}
+
+在第 $t=1,2, \cdots, T-1$ 个位置:
+
+$$
+\frac{\partial L}{\partial r_{t}}=\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{U}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{r}_{t+1}}+\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{V}^{\mathrm{T}} \cdot \frac{\partial L}{\partial \boldsymbol{z}_{t}}
+$$
+
+在第 $T$ 个位置:
+
+$$
+\frac{\partial L}{\partial r_{t}}=\operatorname{diag}\left(\boldsymbol{1}-\tanh ^{2} \boldsymbol{r}_{t}\right) \cdot \boldsymbol{V}^{\mathrm{T}} \cdot \frac{\partial L}{\partial z_{t}}
+$$
+
+计算梯度的公式如下:
+
+$$
+\begin{gathered}
+\frac{\partial L}{\partial c}=\sum_{t=1}^{T} \frac{\partial L}{\partial z_{t}} \\
+\frac{\partial L}{\partial \boldsymbol{V}}=\sum_{t=1}^{T} \frac{\partial L}{\partial z_{t}} \cdot \boldsymbol{h}_{t}^{\mathrm{T}} \\
+\frac{\partial L}{\partial \boldsymbol{b}}=\sum_{t=1}^{T} \frac{\partial L}{\partial r_{t}} \\
+\frac{\partial L}{\partial \boldsymbol{U}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}} \cdot \boldsymbol{h}_{t-1}^{\mathrm{T}} \\
+\frac{\partial L}{\partial \boldsymbol{W}}=\sum_{t=1}^{T} \frac{\partial L}{\partial \boldsymbol{r}_{t}} \cdot \boldsymbol{x}_{t}^{\mathrm{T}}
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 简单循环神经网络的扩展包括 LSTM 网络、GRU 网络、深度循环神经网络、双向循环神经网络。
+
+  \item LSTM 的基本想法是记录并使用之前所有位置的状态, 以更好地描述短距离和长距离依存关系。为此导入两个机制, 一个是记忆元, 另一个是门控。有三个门, 包括输入门、遗忘门、输出门。LSTM 的公式如下:
+
+\end{enumerate}
+
+$$
+\begin{gathered}
+\boldsymbol{i}_{t}=\sigma\left(\boldsymbol{U}_{i} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{i} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{i}\right) \\
+\boldsymbol{f}_{t}=\sigma\left(\boldsymbol{U}_{f} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{f} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{f}\right) \\
+\boldsymbol{o}_{t}=\sigma\left(\boldsymbol{U}_{o} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{o} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{o}\right) \\
+\tilde{\boldsymbol{c}}_{t}=\tanh \left(\boldsymbol{U}_{c} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{c} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{c}\right) \\
+\boldsymbol{c}_{t}=\boldsymbol{i}_{t} \odot \tilde{\boldsymbol{c}}_{t}+\boldsymbol{f}_{t} \odot \boldsymbol{c}_{t-1} \\
+\boldsymbol{h}_{t}=\boldsymbol{o}_{\boldsymbol{t}} \odot \tanh \left(\boldsymbol{c}_{t}\right)
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{5}
+  \item GRU 是对 LSTM 进行简化得到的模型, 效果相当, 但有更高的计算效率。GRU 的公式如下:
+\end{enumerate}
+
+$$
+\begin{gathered}
+\boldsymbol{r}_{t}=\sigma\left(\boldsymbol{U}_{r} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{r} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{r}\right) \\
+\boldsymbol{z}_{t}=\sigma\left(\boldsymbol{U}_{z} \cdot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{z} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{z}\right) \\
+\tilde{\boldsymbol{h}}_{t}=\tanh \left(\boldsymbol{U}_{h} \cdot \boldsymbol{r}_{t} \odot \boldsymbol{h}_{t-1}+\boldsymbol{W}_{h} \cdot \boldsymbol{x}_{t}+\boldsymbol{b}_{h}\right) \\
+\boldsymbol{h}_{t}=\left(\boldsymbol{1}-\boldsymbol{z}_{t}\right) \odot \tilde{\boldsymbol{h}}_{t}+\boldsymbol{z}_{t} \odot \boldsymbol{h}_{t-1}
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{6}
+  \item 词向量是指表示自然语言单词的实数向量。词向量是分布式表示。词向量存在于向量空间, 其内积或余弦表示单词的相似性。分布式表示相比局部式表示有容易表示相似性、表示的效率高、拥有稳健性和可扩展性等优点。
+\end{enumerate}
+
+词向量的无监督学习方法有跳元模型。基本想法是在大量的语料中收集单词和上下文的共现数据, 学习单词和上下文的共现模型, 得到的共现模型的参数向量 $\boldsymbol{w}$ 就是单词的词向量。
+
+\begin{enumerate}
+  \setcounter{enumi}{7}
+  \item 语言模型是定义在单词序列上的概率模型, 用来计算给定的单词序列的概率。循环神经网络可以用于表示语言模型。
+\end{enumerate}
+
+RNN 语言模型以单词序列为输入, 在第 $t-1$ 个位置上, 将输入单词 $w_{t-1}$ 转换为其词向量 $\boldsymbol{w}_{t-1}$, 并且预测第 $t$ 个位置上单词 $w_{t}$ 出现的概率:
+
+$$
+P_{\boldsymbol{\theta}}\left(w_{t} \mid w_{1}, w_{2}, \cdots, w_{t-1}\right), \quad t=1,2, \cdots, T
+$$
+
+RNN 语言模型可以用于自然语言的生成, 有随机生成、贪心搜索、束搜索等方法。RNN 语言模型的学习使用反向传播算法。
+
+\section*{继续阅读}
+进一步学习循环神经网络可以参考文献 [1] 文献 [3], 也可以阅读原始论文, 如 S-RNN ${ }^{[4]} 、$ LSTM $^{[5] 、 G R U}{ }^{[6]} 、$ BPTT ${ }^{[7]} 、$ 双向 LSTM-CRF ${ }^{[8]}$ 。有关计算通用性的论文是文献 [9], 有关分布式表示的论文是文献 [10]。跳元模型可以参见文献 [11] 和文献 [12]。
+
+\section*{习 题}
+25.1 Jordan 提出的循环神经网络如图 25.15 所示。试写出这种神经网络的公式, 并与 Elman 提出的简单循环神经网络做比较。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-10}
+\end{center}
+
+图 25.15
+
+25.2 写出循环神经网络的层归一化的公式。
+
+25.3 比较前馈神经网络的反向传播算法与循环神经网络的反向传播算法的异同。
+
+25.4 写出 LSTM 模型的反向传播算法公式。
+
+25.5 推导 LSTM 模型中记忆元的展开式 (25.26)。
+
+25.6 写出双向 LSTM-CRF 的模型公式。图 25.16 是双向 LSTM-CRF 的架构图。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-11}
+\end{center}
+
+图 25.16
+
+\section*{参考文献}
+[1] GOODFELlOW I, BENGIO Y, COURVILLE A. Deep learning[M]. MIT Press, 2016.
+
+[2] 阿斯顿 - 张, 李沐, 扎卡里 - 立顿, 等. 动手学深度学习 $[\mathrm{M}]$. 北京: 人民邮电出版社, 2019.
+
+[3] 邱锡鹏. 神经网络与深度学习 $[\mathrm{M}]$. 北京: 机械工业出版社, 2020.
+
+[4] ELMAN J L. Finding structure in time[J]. Cognitive Science, 1990, 14(2): 179-211.
+
+[5] HOCHREITER S, SCHMIDHUBER J. Long short-term memory[J]. Neural Computation, 1997, 15, 9(8): 1735-1780.
+
+[6] CHO K, VAN MERRIËNBOER B, GULCEHRE C, et al. Learning phrase representations using RNN encoder-decoder for statistical machine translation $[\mathrm{C}] / /$ The Conference on Empirical Methods in Natural Language Processing (EMNLP). 2014: 1724-1734.
+
+[7] WERBOS P J. Backpropagation through time: What it does and how to do it[J]. Proceedings of the IEEE, 1990, 78(10): 1550-1560.
+
+[8] HUANG Z, XU W, YU K. Bidirectional LSTM-CRF models for sequence tagging[Z/OL]. arXiv preprint arXiv:1508.01991, 2015.
+
+[9] SIEGELMANN H T, SONTAG E D. On the computational power of neural nets[C]//Proceedings of the Fifth Annual Workshop on Computational Learning Theory. 1992: 440-449.
+
+[10] HINTON G E, MCCLELLAND J L, RUMELHART D E. Distributed representations[M]// Parallel Distributed Processing: Explorations in the Microstructure of Cognition: Volume I MIT Press, 1986.
+
+[11] MIKOLOV T, SUTSKEVER I, CHEN K, et al. Distributed representations of words and phrases and their compositionality[J]. Advances in Neural Information Processing Systems, 2013: 3111-3119.
+
+[12] LEVY O, GOLDBERG Y. Neural word embedding as implicit matrix factorization[J]. Advances in Neural Information Processing Systems, 2014: 2177-2185.
+
+\section*{第 26 章序列到序列模型}
+序列到序列学习 (sequence to sequence learning, Seq2Seq) 是将一个输入的单词序列转换为另一个输出的单词序列的任务, 相当于有条件的语言生成。自然语言处理、语音处理等领域中的机器翻译、摘要生成、对话生成、语音识别等都属于这类问题。
+
+序列到序列模型是执行这种任务的神经网络, 由编码器网络和解码器网络组成。编码器将输入的单词序列转换成中间表示的序列 (编码), 解码器将中间表示的序列转换成输出的单词序列 (解码)。有代表性的模型有基本模型、RNN Search 模型、Transformer 模型。基本模型使用循环神经网络 (RNN) 实现编码和解码, 只将编码器最终位置的中间表示传递到解码器。RNN Search 模型也以 RNN 为编码器和解码器, 使用注意力机制将编码器的各个位置的中间表示有选择地传递到解码器。Transformer 模型完全基于注意力机制, 使用注意力实现编码、解码以及编码器和解码器之间的信息传递。Transformer 的编码器有多层, 每层由多头自注意力 (multi-head self-attention) 和前馈网络子层组成; 解码器也有多层, 每层由多头自注意力、多头注意力 (multi-head attention) 和前馈网络子层组成。注意力实现相似或相关向量的检索计算, 可以有效地表示概念的组合, 是深度学习的核心技术。
+
+2014 年 Sutskever 等和 Cho 等分别提出了序列到序列学习的基本模型, 2015 年 Bahdanau 等发表了 RNN Search 模型, 2017 年 Vaswani 等发表了 Transformer 模型。
+
+本章 26.1 节讲述序列到序列学习的主要特点和基本模型; 26.2 节给出注意力的定义, 介绍 RNN Search 模型; 26.3 节讲解 Transformer 模型。
+
+\section*{26.1 序列到序列基本模型}
+Sutskever 等和 Cho 等分别提出了序列到序列学习的概念, 给出了基于 LSTM 和 GRU 的序列到序列模型, 这里称为基本模型。本节首先介绍序列到序列学习, 然后讲解基本模型。
+
+\subsection*{26.1.1 序列到序列学习}
+序列到序列学习是将一个输入的单词序列转换为另一个输出的单词序列的任务, 比如一个句子到另一个句子。不失一般性, 这里用单词序列作为例子, 也可以是字的序列或者符号的序列。序列到序列模型表示的是序列到序列的映射。
+
+假设输入的单词序列是 $x_{1}, x_{2}, \cdots, x_{m}$, 输出的单词序列是 $y_{1}, y_{2}, \cdots, y_{n}$, 单词都来自词\\
+表。给定输入单词序列条件下输出单词序列的条件概率是
+
+
+\begin{equation*}
+P\left(y_{1}, y_{2}, \cdots, y_{n} \mid x_{1}, x_{2}, \cdots, x_{m}\right)=\prod_{i=1}^{n} P\left(y_{i} \mid y_{1}, y_{2}, \cdots, y_{i-1}, x_{1}, x_{2}, \cdots, x_{m}\right) \tag{26.1}
+\end{equation*}
+
+
+其中, $P\left(y_{i} \mid y_{1}, y_{2}, \cdots, y_{i-1}, x_{1}, x_{2}, \cdots, x_{m}\right)$ 是输出序列第 $i$ 个位置上单词出现的条件概率。设 $P\left(y_{1} \mid y_{0}, x_{1}, x_{2}, \cdots, x_{m}\right)=P\left(y_{1} \mid x_{1}, x_{2}, \cdots, x_{m}\right)$ 。
+
+序列到序列学习是有条件的语言生成, 即在给定单词序列 $x_{1}, x_{2}, \cdots, x_{m}$ 的条件下, 生成单词序列 $y_{1}, y_{2}, \cdots, y_{n}$ 。模型是条件语言模型 (conditional language model), $P\left(y_{i} \mid y_{1}, y_{2}, \cdots\right.$, $\left.y_{i-1}, x_{1}, x_{2}, \cdots, x_{m}\right)$, 预测给定输入序列及已生成输出序列的条件下, 下一个位置上单词出现的条件概率。
+
+序列到序列模型由编码器网络和解码器网络组成。编码器将输入单词序列 $x_{1}, x_{2}, \cdots, x_{m}$转换成中间表示序列 $\boldsymbol{z}_{1}, \boldsymbol{z}_{2}, \cdots, \boldsymbol{z}_{m}$, 每一个中间表示是一个实数向量。解码器根据中间表示序列 $\boldsymbol{z}_{1}, \boldsymbol{z}_{2}, \cdots, \boldsymbol{z}_{m}$ 依次生成输出单词序列 $y_{1}, y_{2}, \cdots, y_{n}$ 。前者的过程称为编码, 后者的过程称为解码。
+
+编码器网络可以写作
+
+
+\begin{equation*}
+\left(\boldsymbol{z}_{1}, \boldsymbol{z}_{2}, \cdots, \boldsymbol{z}_{m}\right)=F\left(x_{1}, x_{2}, \cdots, x_{m}\right) \tag{26.2}
+\end{equation*}
+
+
+其中, $x_{1}, x_{2}, \cdots, x_{m}$ 是输入单词序列, $\boldsymbol{z}_{1}, \boldsymbol{z}_{2}, \cdots, \boldsymbol{z}_{m}$ 是中间表示序列。编码器定义在整体输入单词序列上。解码器网络可以写作
+
+
+\begin{equation*}
+P\left(y_{i} \mid y_{1}, y_{2}, \cdots, y_{i-1}, x_{1}, x_{2}, \cdots, x_{m}\right)=G\left(y_{1}, y_{2}, \cdots, y_{i-1}, \boldsymbol{z}_{1}, \boldsymbol{z}_{2}, \cdots, \boldsymbol{z}_{m}\right) \tag{26.3}
+\end{equation*}
+
+
+其中, $\boldsymbol{z}_{1}, \boldsymbol{z}_{2}, \cdots, \boldsymbol{z}_{m}$ 是中间表示序列, $y_{1}, y_{2}, \cdots, y_{i-1}$ 是已生成的输出单词序列, $P\left(y_{i} \mid y_{1}, y_{2}, \cdots\right.$, $\left.y_{i-1}, x_{1}, x_{2}, \cdots, x_{m}\right)$ 是待生成的单词的条件概率。解码器定义在单词输出序列的每一个位置上。
+
+图 26.1 显示由编码器和解码器组成的序列到序列学习的框架。编码器可以 “看到” 整个输入单词序列, 而解码器只能 “看到” 已生成的输出单词序列, 不能 “看到” 待生成的输出单词序列。解码是自回归过程 (1), 编码可以是自回归过程也可以是非自回归过程。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-13}
+\end{center}
+
+图 26.1 序列到序列学习框架
+\footnotetext{(1) 最近有研究将解码过程也作为非自回归实现, 这里不予介绍。
+}
+序列到序列学习有几个特点: 编码器和解码器联合训练、反向传播、强制教学 (teacher forcing)。学习时, 训练数据的每一个样本由一个输入单词序列和一个输出单词序列组成。利用大量样本通过端到端学习的方式进行模型的参数估计, 包括编码器和解码器的参数估计。因为编码器的输出是解码器的输入, 二者连接在一起, 所以参数估计可以通过反向传播进行。与通常的语言模型学习一样, 输出序列每一个位置的单词的条件概率的学习 (式 (26.3)) 使用训练数据中之前所有位置的单词。学习是强制教学的, 可以在所有位置上并行处理。与通常的语言模型学习不同的是还有输入单词序列, 学习依赖于整个输入单词序列。
+
+序列到序列学习的预测 (生成) 通常使用束搜索 (beam search)。目标是计算给定输入单词序列条件下概率最大的输出单词序列, 束搜索用递归的方法近似计算条件概率最大的 $k$ 个输出单词序列, 其中 $k$ 为束宽。
+
+\subsection*{26.1.2 基本模型}
+基本模型的编码器和解码器是循环神经网络。编码器根据给定输入的单词序列产生其状态的序列, 并且以状态序列为中间表示序列。编码器将最终位置的中间表示传递到解码器。解码器根据得到的中间表示决定其状态的序列以及输出的单词序列。基本模型实际是一个有条件的 RNN 语言模型。RNN 通常是 LSTM 和 GRU, LSTM 和 GRU 可以更好地刻画长距离依存关系。
+
+基本模型的编码器是 RNN, 如 LSTM, 状态是
+
+
+\begin{equation*}
+\boldsymbol{h}_{j}=a\left(\boldsymbol{x}_{j}, \boldsymbol{h}_{j-1}\right), \quad j=1,2, \cdots, m \tag{26.4}
+\end{equation*}
+
+
+这里 $\boldsymbol{h}_{j}$ 是当前位置的状态; $\boldsymbol{h}_{j-1}$ 是前一个位置的状态; $\boldsymbol{x}_{j}$ 是当前位置的输入单词的词向量; $a$ 是处理单元, 如 LSTM 单元; 假设 $\boldsymbol{h}_{0}=\boldsymbol{O}$ 。
+
+解码器也是 RNN, 如 LSTM, 状态是
+
+
+\begin{equation*}
+s_{i}=a\left(\boldsymbol{y}_{i-1}, s_{i-1}\right), \quad i=1,2, \cdots, n \tag{26.5}
+\end{equation*}
+
+
+这里 $s_{i}$ 是当前位置的状态; $s_{i-1}$ 是前一个位置的状态; $\boldsymbol{y}_{i-1}$ 是前一个位置的输出单词的词向量; $a$ 是处理单元, 如 LSTM 单元。输出是
+
+
+\begin{equation*}
+\boldsymbol{p}_{i}=g\left(\boldsymbol{s}_{i}\right), \quad i=1,2, \cdots, n \tag{26.6}
+\end{equation*}
+
+
+这里 $s_{i}$ 是当前位置的状态; $\boldsymbol{p}_{i}$ 是当前位置的输出; $g$ 是输出层函数, 由线性变换和软最大化函数组成。 $p_{i}$ 表示的是下一个位置单词出现的条件概率。
+
+编码器将其最终状态 $\boldsymbol{h}_{m}$ 作为整个输入单词序列的表示传递给解码器。解码器将 $\boldsymbol{h}_{m}$ 作为解码器的初始状态 $s_{0}$, 决定其状态序列, 以及输出单词序列。
+
+
+\begin{equation*}
+s_{0}=\boldsymbol{h}_{m} \tag{26.7}
+\end{equation*}
+
+
+这意味着解码器只依赖于编码器最终位置的中间表示。
+
+图 26.2 显示基本模型的架构。图中矩形表示函数及其输出。基本模型整体是一种特殊的 RNN, 或者一种特殊的语言模型。在前面 $m$ 个和后面 $n$ 个位置都有状态, 在前面 $m$ 个位置没有输出, 在后面 $n$ 个位置有输出。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-15}
+\end{center}
+
+图 26.2 序列到序列学习基本模型
+
+序列到序列学习可以用于机器翻译、对话生成、文本摘要等应用。图 26.3 给出用基本模型进行机器翻译的例子。机器翻译将一个语言的句子转化为另一个语言的句子, 两者语义相同。对话生成中系统针对用户发话产生回复, 两者形成一轮对话。文本摘要将一个长的文本转换为一个短的文本, 使后者概括前者的内容。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-15(1)}
+\end{center}
+
+图 26.3 机器翻译的例子
+
+\subsection*{26.2 RNN Search 模型}
+基本模型仅用一个中间表示描述整个输入序列, 其表示能力有限。RNN Search 模型利用注意力 (attention) 机制在输出序列的每一个位置上产生一个组合的输入序列的中间表示,以解决这个问题。本节首先给出注意力的定义，然后讲解 RNN Search。
+
+\subsection*{26.2.1 注意力}
+脑科学和心理学中的注意力是指人脑根据自己的意识有选择地对信息进行处理的机制。深度学习中的注意力更多的是受其启发而开发的相似或相关向量检索的计算方法。在深度学习中注意力经常被用于概念组合的表示的计算, 比如, 自然语言处理中单词组合的表示的计算。
+
+定义 26.1 (注意力) 假设有键-值数据库 (key-value store), 存储键-值对数据 $\left\{\left(\boldsymbol{k}_{1}, \boldsymbol{v}_{1}\right)\right.$, $\left.\left(k_{2}, \boldsymbol{v}_{2}\right), \cdots,\left(\boldsymbol{k}_{n}, \boldsymbol{v}_{n}\right)\right\}$, 其中每一个键-值对 $\left(\boldsymbol{k}_{i}, \boldsymbol{v}_{i}\right)$ 的键和值都是实数向量。另有查询 (query) $\boldsymbol{q}$, 也是实数向量。向量 $\boldsymbol{q}$ 和 $\boldsymbol{k}_{i}$ 的维度相同, 向量 $\boldsymbol{k}_{i}$ 和 $\boldsymbol{v}_{i}$ 的维度一般也相同。考虑从键-值数据库中搜索与查询 $\boldsymbol{q}$ 相似的键所对应的值。注意力是实现检索的一种计算方法。计算查询 $\boldsymbol{q}$ 和各个键 $\boldsymbol{k}_{i}$ 的归一化相似度 $\alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)$, 以归一化相似度为权重, 计算各个值 $\boldsymbol{v}_{i}$ 的\\
+加权平均 $v$, 将计算结果 $v$ 作为检索结果返回。
+
+
+\begin{equation*}
+\boldsymbol{v}=\sum_{i=1}^{n} \alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right) \cdot \boldsymbol{v}_{i} \tag{26.8}
+\end{equation*}
+
+
+满足
+
+$$
+\sum_{i=1}^{n} \alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=1
+$$
+
+图 26.4 显示注意力机制。归一化的权重称作注意力权重, 一般通过软最大化计算。
+
+
+\begin{equation*}
+\alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\frac{e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)}{\sum_{j=1}^{n} e\left(\boldsymbol{q}, \boldsymbol{k}_{j}\right)} \tag{26.9}
+\end{equation*}
+
+
+其中, $e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)$ 是查询 $\boldsymbol{q}$ 和键 $\boldsymbol{k}_{i}$ 的相似度。相似度计算可以有多种方法, 包括加法注意力和乘法注意力。乘法注意力要求查询和键向量的维度相同, 而加法注意力没有这个要求。乘法注意力比加法注意力计算效率更高。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-16}
+\end{center}
+
+图 26.4 注意力机制
+
+加法注意力使用一层神经网络计算相似度：
+
+
+\begin{equation*}
+e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\sigma\left(\boldsymbol{w}^{\mathrm{T}} \cdot\left[\boldsymbol{q} ; \boldsymbol{k}_{i}\right]+b\right) \tag{26.10}
+\end{equation*}
+
+
+其中, $\sigma$ 是 $\mathrm{S}$ 型函数, 输入是 $\boldsymbol{q}$ 和 $\boldsymbol{k}_{i}$ 的拼接, [;] 表示向量的拼接。
+
+乘法注意力使用内积或尺度变换的内积计算相似度:
+
+
+\begin{align*}
+& e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\boldsymbol{q}^{\mathrm{T}} \cdot \boldsymbol{k}_{i}  \tag{26.11}\\
+& e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\frac{\boldsymbol{q}^{\mathrm{T}} \cdot \boldsymbol{k}_{i}}{\sqrt{d}} \tag{26.12}
+\end{align*}
+
+
+其中, $d$ 是向量 $\boldsymbol{q}$ 和 $\boldsymbol{k}_{i}$ 的维度。尺度变换保证相似度的取值在一定范围内, 避免学习时发生梯度消失。
+
+注意力将与键相似的值的组合作为检索结果, 是一种 “软的” 而不是 “硬的” 检索。对于\\
+一般的键-值数据库检索, 键、值、查询都是符号, 而对于注意力计算, 键、值、查询都是实数向量。极端情况下, 如果向量都是独热向量, 注意力等价于一般的键-值数据库检索。
+
+注意力的模型复杂度, 也就是参数个数, 不随键-值数据库规模的增大而增大。比如, 使用加法注意力时, 参数只有 $\boldsymbol{w}$ 和 $b$ 。
+
+注意力是深度学习的重要手段, 因为可以通过注意力, 基于已有的表示 (查询), 有选择地搜索相似的表示 (键), 并将其对应的表示 (值) 组合起来, 从而将注意力作为产生表示的组合的基本运算。
+
+\subsection*{26.2.2 模型定义}
+RNN Search 模型对基本模型进行两个大的改动。用双向 LSTM 实现编码器, 用注意力实现从编码器到解码器的信息传递。
+
+编码器使用双向 LSTM。编码基于整个输入序列, 是非自回归过程。正向 LSTM 的状态是
+
+
+\begin{equation*}
+\boldsymbol{h}_{j}^{(1)}=a\left(\boldsymbol{x}_{j}, \boldsymbol{h}_{j-1}^{(1)}\right), \quad j=1,2, \cdots, m \tag{26.13}
+\end{equation*}
+
+
+这里 $\boldsymbol{h}_{j}^{(1)}$ 是正向的当前位置的状态; $\boldsymbol{h}_{j-1}^{(1)}$ 是前一个位置的状态; $\boldsymbol{x}_{j}$ 是当前位置的输入单词的词向量; $a$ 是处理单元, 如 LSTM 单元; 假设 $\boldsymbol{h}_{0}^{(1)}=\boldsymbol{o}$ 。反向 LSTM 的状态是
+
+
+\begin{equation*}
+\boldsymbol{h}_{j}^{(2)}=a\left(\boldsymbol{x}_{j}, \boldsymbol{h}_{j+1}^{(2)}\right), \quad j=m, m-1, \cdots, 1 \tag{26.14}
+\end{equation*}
+
+
+这里 $\boldsymbol{h}_{j}^{(2)}$ 是反向的当前位置的状态; $\boldsymbol{h}_{j+1}^{(2)}$ 是前一个位置的状态; $\boldsymbol{x}_{j}$ 是当前位置的输入单词的词向量; $a$ 是处理单元, 如 LSTM 单元; 假设 $\boldsymbol{h}_{m+1}^{(2)}=\boldsymbol{O}$ 。在各个位置对正向和反向状态进行拼接, 得到各个位置的状态，也就是中间表示。
+
+
+\begin{equation*}
+\boldsymbol{h}_{j}=\left[\boldsymbol{h}_{j}^{(1)} ; \boldsymbol{h}_{j}^{(2)}\right], \quad j=1,2, \cdots, m \tag{26.15}
+\end{equation*}
+
+
+这里 [;] 表示向量的拼接。
+
+解码器使用单向 LSTM, 解码基于已生成的输出序列, 是自回归过程。状态是
+
+
+\begin{equation*}
+s_{i}=a\left(\boldsymbol{y}_{i-1}, s_{i-1}, c_{i}\right), \quad i=1,2, \cdots, n \tag{26.16}
+\end{equation*}
+
+
+这里 $s_{i}$ 是当前位置的状态; $s_{i-1}$ 是前一个位置的状态; $\boldsymbol{y}_{i-1}$ 是前一个位置的输出单词的词向量; $c_{i}$ 是当前位置的上下文向量 (context vector), 上下文向量表示在当前位置的注意力计算结果; $a$ 是处理单元, 如 LSTM 单元。假设 $s_{0}=\boldsymbol{O}$ 。输出是
+
+
+\begin{equation*}
+\boldsymbol{p}_{i}=g\left(\boldsymbol{s}_{i}\right), \quad i=1,2, \cdots, n \tag{26.17}
+\end{equation*}
+
+
+这里 $s_{i}$ 是当前位置的状态; $p_{i}$ 是当前位置的输出; $g$ 是输出层函数, 由线性变换和软最大化函数组成。 $p_{i}$ 表示的是下一个位置上单词出现的条件概率。
+
+在解码器的每一个位置, 通过加法注意力计算上下文向量。注意力的查询 (query) 是前一个位置的状态 $s_{i-1}$, 键和值相同, 是编码器的各个位置的状态 $h_{j}$ 。上下文向量是
+
+
+\begin{equation*}
+\boldsymbol{c}_{i}=\sum_{j=1}^{m} \alpha_{i j} \boldsymbol{h}_{j}, \quad i=1,2, \cdots, n \tag{26.18}
+\end{equation*}
+
+
+其中, $\alpha_{i j}$ 是注意力权重。
+
+
+\begin{equation*}
+\alpha_{i j}=\frac{\exp \left(e_{i j}\right)}{\sum_{k=1}^{m} \exp \left(e_{i k}\right)}, \quad i=1,2, \cdots, n, j=1,2, \cdots, m \tag{26.19}
+\end{equation*}
+
+
+相似度 $e_{i j}$ 通过一层神经网络计算:
+
+
+\begin{equation*}
+e_{i j}=\sigma\left(\boldsymbol{w}^{\mathrm{T}} \cdot\left[\boldsymbol{s}_{i-1} ; \boldsymbol{h}_{j}\right]+b\right), \quad i=1,2, \cdots, n, j=1,2, \cdots, m \tag{26.20}
+\end{equation*}
+
+
+在解码 (生成) 的过程中, 将编码器得到的状态序列或中间表示序列通过注意力有选择地传递到解码器, 决定解码器的状态序列, 以及输出的单词序列。传递的上下文向量实际是从输出序列的当前位置看到的输入序列的相关内容。
+
+图 26.5 是 RNN Search 的架构图, 图中矩形表示函数及其输出。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-18}
+\end{center}
+
+图 26.5 RNN Search 模型
+
+\subsection*{26.2.3 模型特点}
+RNN Search 的最大特点是在输出单词序列的每一个位置, 通过注意力搜索到输入单词序列中的相关内容, 和已生成的输出单词序列一起决定下一个位置的单词生成。在机器翻译中, 在目标语言中每生成一个单词, 都会在源语言中搜索相关的单词, 基于搜索得到的单词和目前为止生成的单词做出下一个单词选择的判断。
+
+在每一个位置使用一个动态的中间表示 (上下文向量), 而不是始终只使用一个静态的中间表示。输入序列与输出序列的相关性由单词的内容决定, 而不是由单词的位置决定。注意力的参数个数是固定的, 可以处理任意长度的输入单词序列。
+
+RNN Search 是神经机器翻译的代表模型, 在翻译的性能上超过了传统的统计机器翻译。
+
+\subsection*{26.3 Transformer 模型}
+Transformer 模型是完全基于注意力机制的序列到序列学习模型。使用注意力实现编码、解码以及编码器和解码器之间的信息传递。本节介绍 Transformer 的模型架构和模型特点。
+
+\subsection*{26.3.1 模型架构}
+\section*{1. 整体架构}
+Transformer (转换器) 由编码器和解码器组成。编码器有 1 个输入层、 6 个编码层 (一般是 $L$ 层)。解码器有 1 个输入层、 6 个解码层 (一般是 $L$ 层)、 1 个输出层。编码器的输入层与第 1 个编码层连接, 第 1 个编码层再与第 2 个编码层连接, 依次连接, 直到第 6 个编码层。解码器的输入层与第 1 个解码层连接, 第 1 个解码层再与第 2 个解码层连接, 依次连接, 直到第 6 个解码层, 第 6 个解码层再与输出层连接。第 6 个编码层与各个解码层之间也有连接。图 26.6 是 Transformer 的架构图。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-19}
+\end{center}
+
+图 26.6 Transformer 模型的架构
+
+编码器的 6 个编码层将输入单词序列进行转换, 得到中间表示序列。解码器的 6 个解码层将已生成的输出单词序列进行转换, 过程中使用编码层的中间表示序列的信息, 得到已生成的输出单词序列的表示序列, 输出层计算输出单词序列下一个位置的单词出现的条件概率。编码是非自回归的, 而解码是自回归的。
+
+编码器的 6 个编码层有相同的结构, 每一个编码层由自注意力子层和前馈网络子层两部分组成。图 26.7 给出 Transformer 编码器的输入层和第 1 个编码层的架构。
+
+在编码器的输入层, 输入序列的各个位置有单词的词嵌入 (word embedding) 和位置嵌入 (position embedding), 其中位置嵌入表示在序列中的位置。在每一个位置以词嵌入和位置嵌入的和作为该位置的输入向量。单词的词嵌入通常通过对单词的独热向量进行一个线性变化得到, 即用一个矩阵乘以独热向量, 矩阵称为嵌入矩阵。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-20}
+\end{center}
+
+图 26.7 Transformer 编码器的输入层和第 1 个编码层的架构
+
+在编码器的第 1 个编码层, 得到输入序列在各个位置上的输入向量。在自注意力子层,利用多头自注意力计算每一个位置上的单词的基于输入序列的表示向量, 通过残差连接 (加法) 和层归一化。接着在前馈网络子层, 在每一个位置利用相同的前馈网络对表示向量进行非线性变换, 再通过残差连接 (加法) 和层归一化。最后在各个位置输出一个单词的表示向量到第 2 个编码层。第 1 个编码层有自己的参数。之后的 5 个编码层的结构和处理相同, 每一层有自己的参数。
+
+解码器的 6 个解码层有相同的结构, 每一个解码层由自注意力子层、注意力子层和前馈网络子层三部分组成。图 26.8 给出 Transformer 解码器的第 6 个解码层和输出层的架构。
+
+在解码器的输入层, 已生成的输出序列的各个位置上有单词的词嵌入和位置嵌入。在每一个位置以词嵌入和位置嵌入的和作为该位置的输入向量。单词的词嵌入使用与编码器相同的嵌入矩阵计算得到。
+
+在解码器的第 1 层, 得到已生成的输出序列在各个位置上的输入向量。首先在自注意力子层, 利用多头自注意力计算每一个位置上的单词的基于已生成输出序列的表示向量, 通过残差连接和层归一化。接着在注意力子层, 通过多头注意力获取中间表示序列的信息, 计算每一个位置上的单词的基于输入序列和已生成输出序列的表示向量, 再通过残差连接和层归一化。之后在前馈网络子层, 在每一个位置用相同的前馈网络对表示向量进行非线性变换,再通过残差连接和层归一化。最后在各个位置输出一个单词的表示向量到第 2 个解码层。在多头自注意力计算中对之后位置的信息进行掩码 (masking) 处理。第 1 个解码层有自己的参数。之后的 5 个解码层的结构和处理相同, 每一层有自己的参数。
+
+在解码器的输出层, 得到当前位置的表示向量。通过线性变换和软最大化得到下一个位置的单词出现的条件概率。
+
+在编码器和解码器的每一层的每一个位置上有一个表示向量, 其维度相同, 写作 $d_{m}$, 称为模型的维度。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-21}
+\end{center}
+
+图 26.8 Transformer 解码器的第 6 个解码层和输出层的架构
+
+\section*{2. 多头注意力}
+Transformer 中的注意力都是乘法注意力, 更具体地, 是尺度变换的内积。注意力计算在多个表示向量上并行进行。设 $\boldsymbol{Q}$ 是查询矩阵, 每一列是一个查询向量; $\boldsymbol{K}$ 是键矩阵, 每一列是一个键向量; $\boldsymbol{V}$ 是值矩阵, 每一列是一个值向量。注意力 attend 的计算是
+
+
+\begin{equation*}
+\text { attend }(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V})=\boldsymbol{V} \cdot \operatorname{softmax}\left(\frac{\boldsymbol{K}^{\mathrm{T}} \cdot \boldsymbol{Q}}{\sqrt{d_{k}}}\right) \tag{26.21}
+\end{equation*}
+
+
+其中, softmax 是在矩阵列上的软最大化函数, $d_{k}$ 是查询和键向量的维度。注意力可以实现对单词序列的表示计算。图 26.9 显示注意力计算的过程。
+
+Transformer 使用多头注意力 (multi-head attention) 和多头自注意力（multi-head selfattention）。多头是指多个并列的注意力。在多头注意力中, 先通过线性变换将表示向量从所在的空间分别投影到多个不同的子空间, 每一个子空间对应一个头, 接着在各个子空间分别进行注意力计算, 之后将各个子空间的注意力计算结果进行拼接, 最后再对拼接结果进行线性变换, 得到的表示向量的维度与原来的表示向量的维度相同。多头注意力可以实现从多个侧面对单词序列的表示。
+
+设 $Q$ 是查询矩阵, $\boldsymbol{K}$ 是键矩阵, $V$ 是值矩阵。多头注意力 multi\_attend 的计算是
+
+
+\begin{align*}
+& \text { multi_attend }(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V})=\boldsymbol{W}_{o} \cdot \operatorname{concate}\left(\boldsymbol{U}_{1}, \boldsymbol{U}_{2}, \cdots, \boldsymbol{U}_{h}\right)  \tag{26.22}\\
+& \boldsymbol{U}_{\boldsymbol{i}}=\text { attend }\left(\boldsymbol{W}_{Q}^{(i)} \boldsymbol{Q}, \boldsymbol{W}_{\boldsymbol{K}}^{(i)} \boldsymbol{K}, \boldsymbol{W}_{V}^{(i)} \boldsymbol{V}\right), \quad i=1,2, \cdots, h \tag{26.23}
+\end{align*}
+
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-22}
+\end{center}
+
+图 26.9 注意力计算过程
+
+其中, $h$ 是头的个数, $\boldsymbol{U}_{i}$ 是第 $i$ 个头的注意力计算结果, concate 是矩阵列向量的拼接, $\boldsymbol{W}_{o}$是线性变换矩阵。 $\boldsymbol{W}_{Q}^{(i)}, \boldsymbol{W}_{K}^{(i)}, \boldsymbol{W}_{V}^{(i)}$ 分别是第 $i$ 个头的查询矩阵、键矩阵、值矩阵的线性变换矩阵, attend 是注意力函数。图 26.10 显示多头注意力计算的过程。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-22(1)}
+\end{center}
+
+图 26.10 多头注意力计算过程
+
+矩阵 $\boldsymbol{W}_{Q}^{(i)}, \boldsymbol{W}_{K}^{(i)}, \boldsymbol{W}_{V}^{(i)}$ 的大小分别是 $d_{k} \times d_{m} 、 d_{k} \times d_{m} 、 d_{v} \times d_{m}$, 矩阵 $\boldsymbol{W}_{o}$ 的大小是 $d_{m} \times h \cdot d_{v}$, 这里 $d_{k}, d_{k}, d_{v}$ 分别是子空间注意力的查询、键、值向量的维度, $d_{m}$ 是 Transformer 中的表示向量的维度。有以下关系成立:
+
+$$
+d_{k}=d_{v}=\frac{d_{m}}{h}
+$$
+
+当注意力中的查询、键、值向量 $\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}$ 相同, 或者说是自己时, 称为自注意力（selfattention）。多头自注意力是有多个头的自注意力。
+
+自然语言的一个重要特点是具有组合性 (compositionality), 即单词可以组合成短语, 短语可以组合成句子。多头自注意力可以有效地表示具有组合性的语言, 描述句子的层次化的语法和语义内容。\\
+在解码器中, 多头自注意力计算对之后的位置进行掩码 (masking) 处理, 让这些位置不参与计算。具体导入矩阵 $M$, 自注意力计算变成以下的掩码自注意力计算:
+
+
+\begin{align*}
+& \text { attend }(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V})=\boldsymbol{V} \cdot \operatorname{softmax}\left(\frac{\boldsymbol{K}^{\mathrm{T}} \cdot \boldsymbol{Q}+\boldsymbol{M}}{\sqrt{d_{k}}}\right)  \tag{26.24}\\
+& \qquad \boldsymbol{M}=\left[m_{i j}\right], m_{i j}= \begin{cases}0, & i \leqslant j \\
+-\infty, & \text { 其他 }\end{cases} \tag{26.25}
+\end{align*}
+
+
+也就是说, 自注意力在每一个位置以该位置的表示向量作为查询向量, 该位置和之前位置的所有表示向量作为键向量和值向量。掩码注意力保证了解码的过程是自回归的, 学习时可以使用强制教学的方法, 即训练在各个位置上并行进行。
+
+Transformer 有三种多头注意力的使用方法。如图 26.11(a) 所示, 在编码器的每一层, 利用多头自注意力计算每一个位置上的单词的基于输入序列的表示向量。每一个位置上的表示向量与其他位置的表示向量进行多头自注意力计算。如图 26.11(b) 所示, 在解码器的每一层,利用掩码的多头自注意力计算每一个位置上的单词的基于已生成输出序列的表示向量。每一个位置上的表示向量只与之前位置的表示向量进行多头自注意力计算。如图 26.11(c) 所示,在解码器的每一层, 利用多头注意力计算在已生成输出序列每一个位置上的单词的基于中间表示序列的表示向量。每一个位置上的表示向量与编码器的中间表示向量序列（编码器的输出）进行多头注意力计算。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-23}
+\end{center}
+
+编码器的单词表示向量
+
+(a) 自注意力
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-23(2)}
+\end{center}
+
+解码器的单词表示向量
+
+(b) 自注意力
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-23(1)}
+\end{center}
+
+编码器的中间表示向量 解码器的单词表示向量
+
+(c) 注意力
+
+图 26.11 Transformer 的三种多头注意力
+
+\section*{3. 前馈神经网络和残差连接}
+前馈神经网络和残差连接在 Transformer 中也起着重要作用。实验结果表明去掉前馈神经网络或残差连接都会使 Transformer 的预测准确率下降。注意力进行的是线性变换, 前馈神经网络进行的是非线性变换。注意力加上前馈神经网络能够增强模型的表示能力。自注意力、注意力、前馈神经网络的输入和输出之间都有残差连接, 意味着输入的表示向量不经过这些变换依然可以传递到下一个阶段, 换言之, 这些变化是针对输入的表示向量的残差进行\\
+的。正像 ResNet 一样, Transformer 实际是指数量级的小的神经网络的集成 (参见第 24 章)。另外, 残差连接也能帮助位置嵌入信息传递到编码器和解码器的各层。没有残差连接很容易使位置信息丢失。
+
+\section*{4. 基本计算}
+下面给出 Transformer 的基本计算的公式。输入和输出都是表示向量, 其维度是 $d_{m}$ 。在编码器和解码器的输入层通过线性变换获得单词的词嵌入。
+
+
+\begin{equation*}
+e=\boldsymbol{W}_{\mathrm{e}} \cdot \boldsymbol{w} \tag{26.26}
+\end{equation*}
+
+
+其中, $\boldsymbol{w}$ 是单词的独热向量, $\boldsymbol{e}$ 是单词的词嵌入, $\boldsymbol{W}_{\mathrm{e}}$ 是嵌入矩阵。嵌入矩阵在学习中自动获得。
+
+编码器和解码器的输入层的每一个位置的输入向量是
+
+
+\begin{equation*}
+e+p \tag{26.27}
+\end{equation*}
+
+
+其中, $e$ 是该位置的词嵌入, $\boldsymbol{p}$ 是该位置的位置嵌入 (1)。位置嵌入在学习中自动获得。
+
+编码器和解码器的每一层的每一个位置的前馈网路是
+
+
+\begin{equation*}
+\operatorname{ffn}(\boldsymbol{z})=\boldsymbol{W}_{2} \text { relu }\left(\boldsymbol{W}_{1} \boldsymbol{z}+\boldsymbol{b}_{1}\right)+\boldsymbol{b}_{2} \tag{26.28}
+\end{equation*}
+
+
+其中, $\boldsymbol{W}_{1}$ 和 $\boldsymbol{W}_{2}$ 是权重矩阵, $\boldsymbol{b}_{1}$ 和 $\boldsymbol{b}_{2}$ 是偏置向量。
+
+编码器和解码器的每一层的每一个位置的残差连接是
+
+
+\begin{equation*}
+z+f(z) \tag{26.29}
+\end{equation*}
+
+
+其中, $f(\boldsymbol{z})$ 是注意力函数或前馈网络函数。
+
+编码器和解码器的每一层的每一个位置的层归一化函数是
+
+
+\begin{equation*}
+\operatorname{norm}(\boldsymbol{z})=\gamma \frac{\boldsymbol{z}-u \cdot 1}{\sqrt{\sigma^{2}+\varepsilon}}+\beta \cdot \mathbf{1} \tag{26.30}
+\end{equation*}
+
+
+其中, $u$ 是均值, $\sigma^{2}$ 是方差, $\gamma$ 和 $\beta$ 是参数, $\varepsilon$ 是常量。
+
+\section*{5. 编码器和解码器}
+Transformer 的编码器和解码器每一层的所有位置的表示向量用一个矩阵表示。编码器的输入是输入单词序列, 编码器的输入层的计算可以写作
+
+
+\begin{equation*}
+\boldsymbol{H}_{\mathrm{E}}^{(0)}=\boldsymbol{E}_{\mathrm{E}}+\boldsymbol{P}_{\mathrm{E}} \tag{26.31}
+\end{equation*}
+
+
+其中, $\boldsymbol{H}_{\mathrm{E}}^{(0)}$ 是输入层所有位置的输出, $\boldsymbol{E}_{\mathrm{E}}$ 是所有位置的词嵌入, $\boldsymbol{P}_{\mathrm{E}}$ 是所有位置的位置嵌入。
+
+编码器的第 $l$ 个编码层的多头自注意力子层和前馈网络子层计算可以写作
+
+
+\begin{gather*}
+\boldsymbol{Z}_{\mathrm{E}}^{(l)}=\operatorname{norm}\left(\boldsymbol{H}_{\mathrm{E}}^{(l-1)}+\operatorname{multi} \text { attend }\left(\boldsymbol{H}_{\mathrm{E}}^{(l-1)}, \boldsymbol{H}_{\mathrm{E}}^{(l-1)}, \boldsymbol{H}_{\mathrm{E}}^{(l-1)}\right)\right)  \tag{26.32}\\
+\boldsymbol{H}_{\mathrm{E}}^{(l)}=\operatorname{norm}\left(\boldsymbol{Z}_{\mathrm{E}}^{(l)}+\operatorname{ffn}\left(\boldsymbol{Z}_{\mathrm{E}}^{(l)}\right)\right) \tag{26.33}
+\end{gather*}
+
+
+其中, $\boldsymbol{H}_{\mathrm{E}}^{(l)}$ 是第 $l$ 个编码层的所有位置的输出, $\boldsymbol{H}_{\mathrm{E}}^{(l-1)}$ 是所有位置的输入, $\boldsymbol{Z}_{\mathrm{E}}{ }^{(l)}$ 是中间结果; $\operatorname{ffn}()$ 和 $\operatorname{norm}()$ 的计算针对矩阵的每一列进行, multi\_attend () 的计算针对矩阵整体进
+
+(1) 在原始论文中, 作者提出位置崩入可以由经验公式决定或者通过学习得到。这里只介绍后者。\\
+行。编码器的第 $l$ 个编码层的所有位置的输出, 即中间表示序列是 $\boldsymbol{H}_{\mathrm{E}}{ }^{(l)}$ 。解码器的输入是已生成的输出单词序列, 解码器的输入层的计算可以写作
+
+
+\begin{equation*}
+\boldsymbol{H}_{\mathrm{D}}^{(0)}=\boldsymbol{E}_{\mathrm{D}}+\boldsymbol{P}_{\mathrm{D}} \tag{26.34}
+\end{equation*}
+
+
+其中, $\boldsymbol{H}_{\mathrm{D}}^{(0)}$ 是输入层所有位置的输入, $\boldsymbol{E}_{\mathrm{D}}$ 是所有位置的词嵌入, $\boldsymbol{P}_{\mathrm{D}}$ 是所有位置的位置嵌入。
+
+解码器的第 $l$ 个解码层的多头自注意力子层、多头注意力子层、前馈网络子层的计算可以写作
+
+
+\begin{gather*}
+\boldsymbol{I}_{\mathrm{D}}^{(l)}=\operatorname{norm}\left(\boldsymbol{H}_{\mathrm{D}}^{(l-1)}+\operatorname{multi} \text { attend }\left(\boldsymbol{H}_{\mathrm{D}}^{(l-1)}, \boldsymbol{H}_{\mathrm{D}}^{(l-1)}, \boldsymbol{H}_{\mathrm{D}}^{(l-1)}\right)\right)  \tag{26.35}\\
+\boldsymbol{Z}_{\mathrm{D}}^{(l)}=\operatorname{norm}\left(\boldsymbol{I}_{\mathrm{D}}^{(l)}+\operatorname{multi} \text { attend }\left(\boldsymbol{I}_{\mathrm{D}}^{(l)}, \boldsymbol{H}_{\mathrm{E}}^{(L)}, \boldsymbol{H}_{\mathrm{E}}^{(L)}\right)\right)  \tag{26.36}\\
+\boldsymbol{H}_{\mathrm{D}}^{(l)}=\operatorname{norm}\left(\boldsymbol{Z}_{\mathrm{D}}^{(l)}+\operatorname{ffn}\left(\boldsymbol{Z}_{\mathrm{D}}^{(l)}\right)\right. \tag{26.37}
+\end{gather*}
+
+
+其中, $\boldsymbol{H}_{\mathrm{D}}^{(l)}$ 是第 $l$ 个解码层的所有位置的输出, $\boldsymbol{H}_{\mathrm{D}}^{(l-1)}$ 是所有位置的输入, $\boldsymbol{Z}_{\mathrm{D}}^{(l)}$ 和 $\boldsymbol{I}_{\mathrm{D}}^{(l)}$ 是中间结果; $\operatorname{ffn}()$ 和 $\operatorname{norm}()$ 的计算针对矩阵的每一列进行, multi\_attend( ) 的计算针对矩阵整体进行。多头自注意力进行了掩码处理。解码器的第 $l$ 个解码层的所有位置的输出是 $\boldsymbol{H}_{\mathrm{D}}^{(l)}$, 是已生成输出序列的表示。
+
+解码器的输出层计算在当前第 $i$ 个位置的条件概率, 也就是下一个位置的单词出现的条件概率。
+
+
+\begin{equation*}
+\boldsymbol{p}_{\boldsymbol{i}}=\operatorname{softmax}\left(\boldsymbol{W}_{\mathrm{e}}^{\mathrm{T}} \cdot \boldsymbol{h}_{\boldsymbol{i}}^{(L)}\right) \tag{26.38}
+\end{equation*}
+
+
+其中, $\boldsymbol{h}_{i}^{(l)}$ 是 $\boldsymbol{H}_{\mathrm{D}}^{(l)}$ 的第 $i$ 列也是最后一列的向量, $\boldsymbol{W}_{e}$ 是嵌入矩阵。
+
+预测时, 在每一个位置, 基于输入单词序列和已生成的输出单词序列, 根据式 (26.38) 计算下一个位置的单词出现的条件概率。通过贪心算法或束搜索算法决定整个输出单词序列。学习时, 基于给定的输入单词序列和输出单词序列, 在输出序列的每一个位置上进行并行训练, 更新模型的参数。由于解码器使用掩码自注意力, 可以保证学习基于自回归过程, 每一步都只使用 “过去” 的数据而不是 “未来” 的数据。
+
+Transformer 模型有三个超参数: 编码器和解码器的层数 $l$ 、头的个数 $h$ 、模型的维度 $d_{m}$ 。通常取 $l=6, h=8, d_{m}=512$ 。
+
+\subsection*{26.3.2 模型特点}
+Transformer 的主要特点是: (1)使用注意力进行表示的生成, 包括编码、解码及编码器和解码器之间的信息传递; (2)用多头注意力增强表示能力; (3)用前馈网络进行非线性变换, 以增强表示能力; (4)用残差连接增强表示能力; (5)解码器用掩码自注意力, 以实现并行训练; (6)用位置编码表示序列的位置信息; (7)使用层归一化提高学习效率。
+
+Transformer 有很强的语言表示能力, 可以有效地表示输入单词序列和输出单词序列的局部特征和全局特征。在每一层每一个位置上单词的表示向量可以描述该单词在其上下文的内容, 称为基于上下文的表示 (contextualized representation)。表示向量整体可以刻画单词序列 (句子) 的层次化的语法和语义内容。多头注意力可以描述单词之间不同侧面的关系, 位\\
+置嵌入可以表示单词之间的顺序关系。图 26.12 显示 Transformer 编码器产生中间表示的过程。编码器的语言表示特点在第 27 章进一步介绍。\\
+\includegraphics[max width=\textwidth, center]{2024_03_13_5ec6446031f017adfacbg-26}
+
+图 26.12 Transformer 编码器中的表示
+
+Transformer 可以处理可变长的单词序列。模型的参数个数不随单词序列长度的变化而变化。注意力计算依赖于单词序列的内容, 不依赖于单词序列的长度。前馈网络定义在单词序列的每一个位置上, 在各个位置上重复使用。
+
+Transformer 的学习可以进行并行处理, 计算效率高。循环神经网络和卷积神经网络也可以以单词序列为输入生成中间表示序列。表 26.1 给出 Transformer、循环神经网络、卷积神经网络的每一层的计算复杂度。这里 $n$ 是单词序列的长度, $d$ 是表示向量的维度, $k$ 是卷积神经网络的核的个数, 通常 $n \ll d$ 。Transformer 在每一层的计算效率比循环神经网络和卷积神经网络更高。Transformer 和卷积神经网络可以进行并行计算, 而循环神经网络不可以。
+
+表 26.1 Transformer 与其他模型的计算复杂度比较
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+层的类型 & 每层计算复杂度 & 每层并行运算次数 \\
+\hline
+Transformer (自注意力) & $O\left(n^{2} \cdot d\right)$ & $O(1)$ \\
+\hline
+循环神经网络 & $O\left(n \cdot d^{2}\right)$ & $O(n)$ \\
+\hline
+卷积神经网络 & $O\left(k \cdot n \cdot d^{2}\right)$ & $O(1)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{本章概要}
+\begin{enumerate}
+  \item 序列到序列学习是将一个输入的单词序列转换为另一个输出的单词序列的任务, 是有条件的语言生成。
+\end{enumerate}
+
+$$
+P\left(y_{1}, y_{2}, \cdots, y_{n} \mid x_{1}, x_{2}, \cdots, x_{m}\right)=\prod_{i=1}^{n} P\left(y_{i} \mid y_{1}, y_{2}, \cdots, y_{i-1}, x_{1}, x_{2}, \cdots, x_{m}\right)
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item 序列到序列模型由编码器和解码器组成。编码器将输入的单词序列转换成中间表示序列。解码器依次将中间表示序列转换成输出的单词序列。解码是自回归过程, 编码可以是自回归过程也可以是非自回归过程。
+\end{enumerate}
+
+序列到序列学习使用编码器和解码器联合训练、反向传播、强制教学, 预测使用束搜索。
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item 对于序列到序列基本模型, 编码器和解码器是循环神经网络, 通常是 LSTM 和 GRU。编码器的状态是
+\end{enumerate}
+
+$$
+\boldsymbol{h}_{j}=a\left(\boldsymbol{x}_{j}, \boldsymbol{h}_{j-1}\right), \quad j=1,2, \cdots, m
+$$
+
+解码器的状态是
+
+$$
+\boldsymbol{s}_{i}=a\left(\boldsymbol{y}_{i-1}, \boldsymbol{s}_{i-1}\right), \quad i=1,2, \cdots, n
+$$
+
+解码器的输出是
+
+$$
+\boldsymbol{p}_{i}=g\left(\boldsymbol{s}_{i}\right), \quad i=1,2, \cdots, n
+$$
+
+编码器的最终状态 $\boldsymbol{h}_{m}$ 是解码器的初始状态 $s_{0}$ 。
+
+$$
+s_{0}=\boldsymbol{h}_{m}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item 注意力是相似或相关向量检索的计算方法, 可以用于多个单词组合的表示的计算。有键-值对的集合 $\left\{\left(k_{1}, v_{1}\right),\left(k_{2}, v_{2}\right), \cdots,\left(k_{n}, v_{n}\right)\right\}$ 和查询 $\boldsymbol{q}$ 都是实数向量。注意力计算是以 $\alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)$ 为权重的值 $\boldsymbol{v}_{i}$ 的加权平均。
+\end{enumerate}
+
+$$
+\begin{array}{r}
+\boldsymbol{v}=\sum_{i=1}^{n} \alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right) \cdot \boldsymbol{v}_{i} \\
+\alpha\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\frac{e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)}{\sum_{j=1}^{n} e\left(\boldsymbol{q}, \boldsymbol{k}_{j}\right)}
+\end{array}
+$$
+
+其中, $e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)$ 是查询 $\boldsymbol{q}$ 和键 $\boldsymbol{k}_{i}$ 的相似度。有加法注意力和乘法注意力:
+
+$$
+\begin{gathered}
+e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\sigma\left(\boldsymbol{w}^{\mathrm{T}} \cdot\left[\boldsymbol{q} ; \boldsymbol{k}_{i}\right]+b\right) \\
+e\left(\boldsymbol{q}, \boldsymbol{k}_{i}\right)=\frac{\boldsymbol{q}^{\mathrm{T}} \cdot \boldsymbol{k}_{i}}{\sqrt{d}}
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item RNN Search 模型用双向 LSTM 实现编码, 用单向 LSTM 实现解码, 用注意力实现编码器到解码器的信息传递。在输出单词序列的每一个位置, 通过注意力搜索到输入单词序列中的相关内容, 以影响下一个位置的单词生成。
+\end{enumerate}
+
+编码器的状态是
+
+$$
+\begin{gathered}
+\boldsymbol{h}_{j}^{(1)}=a\left(\boldsymbol{x}_{j}, \boldsymbol{h}_{j-1}^{(1)}\right), \quad j=1,2, \cdots, m \\
+\boldsymbol{h}_{j}^{(2)}=a\left(\boldsymbol{x}_{j}, \boldsymbol{h}_{j+1}^{(2)}\right), \quad j=m, m-1, \cdots, 1 \\
+\boldsymbol{h}_{j}=\left[\boldsymbol{h}_{j}^{(1)} ; \boldsymbol{h}_{j}^{(2)}\right], \quad j=1,2, \cdots, m
+\end{gathered}
+$$
+
+解码器的状态是
+
+$$
+\boldsymbol{s}_{i}=a\left(\boldsymbol{y}_{i-1}, \boldsymbol{s}_{i-1}, \boldsymbol{c}_{i}\right), \quad i=1,2, \cdots, n
+$$
+
+解码器的输出是
+
+$$
+\boldsymbol{p}_{i}=g\left(\boldsymbol{s}_{i}\right), \quad i=1,2, \cdots, n
+$$
+
+通过注意力计算上下文向量 $\boldsymbol{c}_{i}$ 。注意力的查询是前一个位置的状态 $s_{i-1}$, 键和值是编码器的各个位置上的中间表示 $\boldsymbol{h}_{j}$ 。
+
+$$
+\begin{gathered}
+\boldsymbol{c}_{i}=\sum_{j=1}^{m} \alpha_{i j} \boldsymbol{h}_{j}, \quad i=1,2, \cdots, n \\
+\alpha_{i j}=\frac{\exp \left(e_{i j}\right)}{\sum_{k=1}^{m} \exp \left(e_{i k}\right)}, \quad i=1,2, \cdots, n, j=1,2, \cdots, m \\
+e_{i j}=\sigma\left(\boldsymbol{w}^{\mathrm{T}} \cdot\left[\boldsymbol{s}_{i-1} ; \boldsymbol{h}_{j}\right]+b\right), \quad i=1,2, \cdots, n, j=1,2, \cdots, m
+\end{gathered}
+$$
+
+\begin{enumerate}
+  \setcounter{enumi}{5}
+  \item Transformer 是完全基于注意力机制的序列到序列学习模型。使用注意力实现编码、解码及编码器和解码器之间的信息传递。
+\end{enumerate}
+
+Transformer 主要使用以下技术: (1)基于注意力的编码、解码、编解码信息传递; (2)多头注意力; (3)前馈神经网络; (4)残差连接; (5)掩码自注意力; (6)位置编码; (7)层归一化。
+
+Transformer 拥有非常简单的结构。编码器的输入是输入单词序列, 编码器的输入层是
+
+$$
+\boldsymbol{H}_{\mathrm{E}}^{(0)}=\boldsymbol{E}_{\mathrm{E}}+\boldsymbol{P}_{\mathrm{E}}
+$$
+
+编码器的第 $l$ 个编码层由多头自注意力子层和前馈网络子层组成:
+
+$$
+\begin{gathered}
+\boldsymbol{Z}_{\mathrm{E}}^{(l)}=\operatorname{norm}\left(\boldsymbol{H}_{\mathrm{E}}{ }^{(l-1)}+\operatorname{multi} h e a d\left(\boldsymbol{H}_{\mathrm{E}}^{(l-1)}, \boldsymbol{H}_{\mathrm{E}}{ }^{(l-1)}, \boldsymbol{H}_{\mathrm{E}}{ }^{(l-1)}\right)\right) \\
+\boldsymbol{H}_{\mathrm{E}}{ }^{(l)}=\operatorname{norm}\left(\boldsymbol{Z}_{\mathrm{E}}{ }^{(l)}+\operatorname{forward}\left(\boldsymbol{Z}_{\mathrm{E}}{ }^{(l)}\right)\right)
+\end{gathered}
+$$
+
+解码器的输入是已生成的输出单词序列, 解码器的输入层是
+
+$$
+\boldsymbol{H}_{\mathrm{D}}^{(0)}=\boldsymbol{E}_{\mathrm{D}}+\boldsymbol{P}_{\mathrm{D}}
+$$
+
+解码器的第 $l$ 个解码层由多头自注意力子层、多头注意力子层、前馈网络子层组成:
+
+$$
+\begin{aligned}
+& \boldsymbol{I}_{\mathrm{D}}^{(l)}=\operatorname{norm}\left(\boldsymbol{H}_{\mathrm{D}}^{(l-1)}+\operatorname{multihhead}\left(\boldsymbol{H}_{\mathrm{D}}^{(l-1)}, \boldsymbol{H}_{\mathrm{D}}^{(l-1)}, \boldsymbol{H}_{\mathrm{D}}^{(l-1)}\right)\right) \\
+& \boldsymbol{Z}_{\mathrm{D}}^{(l)}=\operatorname{norm}\left(\boldsymbol{I}_{\mathrm{D}}^{(l)}+\text { multi_head }\left(\boldsymbol{I}_{\mathrm{D}}^{(l)}, \boldsymbol{H}_{\mathrm{E}}{ }^{(L)}, \boldsymbol{H}_{\mathrm{E}}^{(L)}\right)\right) \\
+& \boldsymbol{H}_{\mathrm{D}}^{(l)}=\operatorname{norm}\left(\boldsymbol{Z}_{\mathrm{D}}^{(l)}+\operatorname{forward}\left(\boldsymbol{Z}_{\mathrm{D}}^{(l)}\right)\right.
+\end{aligned}
+$$
+
+解码器的输出层计算下一个位置单词出现的条件概率。
+
+$$
+\boldsymbol{p}_{i}=\operatorname{softmask}\left(\boldsymbol{W}_{O} \cdot \boldsymbol{h}_{i}^{(L)}\right)
+$$
+
+Transformer 有很强的语言表示能力, 可以处理可变长的单词序列, 学习可以进行并行处理。
+
+\begin{enumerate}
+  \setcounter{enumi}{6}
+  \item 多头注意力是指多个并列的注意力计算。设 $\boldsymbol{Q}$ 是查询矩阵, $\boldsymbol{K}$ 是键矩阵, $\boldsymbol{V}$ 是值矩阵。多头注意力是
+\end{enumerate}
+
+$$
+\begin{gathered}
+\text { multi_head }(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V})=\boldsymbol{W}_{o} \cdot \operatorname{concate}\left(\boldsymbol{U}_{1}, \boldsymbol{U}_{2}, \cdots \boldsymbol{U}_{h}\right) \\
+\boldsymbol{U}_{i}=\operatorname{attend}\left(\boldsymbol{W}_{Q}^{(i)} \boldsymbol{Q}, \boldsymbol{W}_{K}^{(i)} \boldsymbol{K}, \boldsymbol{W}_{V}^{(i)} \boldsymbol{V}\right), \quad i=1,2, \cdots, h
+\end{gathered}
+$$
+
+多头注意力利用多个不同的子空间中的注意力实现从多个侧面对单词序列的表示。
+
+\section*{继续阅 读}
+进一步了解序列到序列模型可参阅文献 [1] 文献 [3]。基本模型、RNN Search、Transformer 的原始论文分别是文献 [4] 和文献 [5]、文献 [6]、文献 [7]。这些工作是关于机器翻译的, 对话生成的工作见文献 [8], 摘要的工作见文献 [9] 和文献 [10], 最后的两个模型中导入了复制 (copy) 机制。
+
+\section*{习 题}
+26.1 设计由 4 层 LSTM 组成的序列到序列的基本模型, 写出其公式。
+
+26.2 比较基本模型和 RNN Search 的异同。
+
+26.3 写出多头自注意力的对损失函数的求导公式。
+
+26.4 设计一个基于 CNN 的序列到序列模型。
+
+26.5 写出 6 层编码器和 6 层解码器组成的 Transformer 的所有参数。
+
+\section*{参考文献}
+[1] GOODFELlOW i, BENGIO Y, COURVILLE A. Deep learning[M]. MIT Press, 2016.
+
+[2] 阿斯顿・张, 李沐, 扎卡里 - 立顿, 等. 动手学深度学习 $[\mathrm{M}]$. 北京: 人民邮电出版社, 2019 .
+
+[3] 邱锡鹏. 神经网络与深度学习 $[\mathrm{M}]$. 北京: 机械工业出版社, 2020 .
+
+[4] SUTSKEVER I, VINYALS O, LE Q V. Sequence to sequence learning with neural networks [J]. Advances in Neural Information Processing Systems, 2014: 3104-3112.
+
+[5] CHO K, VAN MERRIËNBOER B, GULCEHRE C, et al. Learning phrase representations using RNN encoder-decoder for statistical machine translation[C]//The Conference on Empirical Methods in Natural Language Processing (EMNLP). 2014: 1724-1734.
+
+[6] BAHDANAU D, CHO K, BENGIO Y. Neural machine translation by jointly learning to align and translate[C]//The 3rd International Conference on Learning Representations (ICLR), 2015.
+
+[7] VASWANI A, SHAZEER N, PARmAR N, et al. Attention is all you need[J]. Advances in Neural Information Processing Systems, 2017: 5998-6008.
+
+[8] SHANG L, LU Z, LI H. Neural responding machine for short-text conversation[C]//Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing. 2015: 1577-1586.
+
+[9] GU J, LU Z, LI H, et al. Incorporating copying mechanism in sequence-to-sequence learning [C]//Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics. 2016: 1631-1640.
+
+[10] SEE A, LIU P J, MANNING C D. Get to the point: Summarization with pointer-generator networks[C]//Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics. 2017: 1073-1083.
+
+\section*{第 27 章预训练语言模型}
+在自然语言处理中事先使用大规模语料学习基于 Transformer 等的语言模型, 之后用于各种任务的学习和预测, 称这种模型为预训练语言模型 (pretrained language model)。代表性的模型有 BERT (bidirectional encoder representations from Transformers) 和 GPT (generative pre-training)。BERT 的模型是 Transformer 的编码器。首先在预训练中使用大规模语料通过掩码语言模型化的方式估计模型的参数, 之后在微调中使用具体任务的标注数据对参数进行进一步调节。前者的过程是无监督学习 ${ }^{1}$, 后者的过程是监督学习。GPT 的模型是 Transformer 的解码器, 预训练通过一般的语言模型化方式进行。
+
+BERT 和 GPT 具有很强的表示自然语言的能力, 通过其多层多头自注意力等机制以及在大规模数据上的训练能够有效地表示自然语言的词汇、句法、语义信息, 目前已经分别成为语言理解和语言生成的核心技术。Radford 等于 2018 年发表了 GPT, 还有之后的改进和增强版 GPT-2 和 GPT-3。Devlin 等于 2019 年发表了 BERT。
+
+本章 27.1 节讲解 GPT 的模型和学习, 27.2 节讲解 BERT 的模型和学习。
+
+\subsection*{27.1 GPT 模 型}
+GPT 及其后续版本是有代表性的预训练语言模型, 适合于语言生成。本节首先给出预训练语言模型的概述, 然后叙述 GPT 模型及其学习算法, 最后总结 GPT 模型的特点。
+
+\subsection*{27.1.1 预训练语言模型}
+在实际应用中使用的深度学习主要还是监督学习, 如在自然语言处理中的文本分类、文本序列标注。在具体的任务中需要有标注数据, 普遍规律是标注数据质量越高和数量越大,学到的模型的准确率就越高。但问题是数据的标注成本通常很高, 实际应用中往往很难获取大量的高质量标注数据。另外, 不同的任务需要不同的标注数据, 标注数据在任务之间很难通用。预训练语言模型是为解决这个问题而开发的用于自然语言处理的深度学习方法。
+
+预训练语言模型的基本想法如下: 基于神经网络, 如 Transformer 的编码器或解码器 (见第 26 章), 实现语言模型, 以计算语言的生成概率。首先使用大规模的语料通过无监督学习的方式学习模型的参数, 称为预训练 (pre-training), 得到的模型可以有效地表示自然语言的
+
+(1) 这种学习方式也被称为自监督学习 (self-supervised learning)。自监督学习并没有严格的定义, 这里仍使用无监督学习。\\
+特征; 之后将模型用于一个具体任务, 使用少量的标注数据通过监督学习的方式进一步学习模型的参数, 称为微调 (fine tuning), 任务称为下游任务 (downstream task)。预训练使用通用的语料统一进行, 微调使用各个下游任务的标注数据分别进行。微调 (下游任务) 的模型有时在预训练模型的基础上增加新的参数。
+
+Transformer 具有强大的语言表示能力, 大规模语料包含丰富的语言表达 (这样的无标注数据可以较容易地获取), 加之大规模深度学习的训练系统变得越来越高效, 所以学习得到的预训练语言模型可以有效地表示语言的词汇、句法和语义特征。这样, 当预训练语言模型用于下游任务时, 只需要标注少量的数据训练就可以达到很高的准确率。预训练语言模型已成为当前语言理解和语言生成的核心技术。
+
+有代表性的预训练语言模型有 GPT 和 BERT。表 27.1 比较了 GPT 和 BERT 的主要特点, 其主要区别在于模型的架构和预训练方式。
+
+表 27.1 GPT 和 BERT 的比较
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+ & GPT & BERT \\
+\hline
+语言模型类型 & 单向语言模型 & 双向语言模型 \\
+\hline
+模型架构 & Transformer 解码器 & Transformer 编码器 \\
+\hline
+预训练方式 & 语言模型化 & 掩码语言模型化 \\
+\hline
+预训练原理 & 序列概率估计 & 去噪自动编码器 \\
+\hline
+下游任务 & 语言理解、语言生成 & 语言理解 \\
+\hline
+\end{tabular}
+\end{center}
+
+GPT 是单向语言模型 (unidirectional language model), 从一个方向对单词序列建模, 方向为从左到右或者从右到左, 由 Transformer 的解码器实现。假设有单词序列 $\boldsymbol{x}=$ $x_{1}, x_{2}, \cdots, x_{n}$, 在单词序列的各个位置上, 单向语言模型具有以下单词生成的条件概率:
+
+
+\begin{equation*}
+P\left(x_{i} \mid x_{1}, x_{2}, \cdots, x_{i-1}\right), \quad i=1,2, \cdots, n \tag{27.1}
+\end{equation*}
+
+
+每一个位置的单词依赖于之前位置的单词。可以使用单向语言模型计算单词序列 $x=$ $x_{1}, x_{2}, \cdots, x_{n}$ 的生成概率。
+
+BERT 是双向语言模型 (bidirectional language model), 从两个方向同时对单词序列建模, 由 Transformer 的编码器实现。在单词序列的各个位置上, 双向语言模型具有以下单词生成的条件概率:
+
+
+\begin{equation*}
+P\left(x_{i} \mid x_{1}, \cdots, x_{i-1}, x_{i+1}, \cdots, x_{n}\right), \quad i=1,2, \cdots, n \tag{27.2}
+\end{equation*}
+
+
+每一个位置的单词依赖于之前位置和之后位置的单词。不可以使用双向语言模型直接计算单词序列 $\boldsymbol{x}=x_{1}, x_{2}, \cdots, x_{n}$ 的生成概率。
+
+GPT 的预训练通过语言模型化 (language modeling) 的方式进行, 基于序列概率估计。对给定的单词序列 $\boldsymbol{x}=x_{1}, x_{2}, \cdots, x_{n}$, 计算以下负对数似然函数或交叉嫡, 并通过其最小化估计模型的参数。
+
+
+\begin{equation*}
+-\log P(\boldsymbol{x})=-\sum_{i=1}^{n} \log P_{\boldsymbol{\theta}}\left(x_{i} \mid x_{1}, x_{2}, \cdots, x_{i-1}\right) \tag{27.3}
+\end{equation*}
+
+
+其中, $\boldsymbol{\theta}$ 表示 GPT 模型的参数。
+
+BERT 的预训练主要通过掩码语言模型化 (mask language modeling) 的方式进行, 可以认为基于后叙去噪自动编码器。假设单词序列 $\boldsymbol{x}=x_{1}, x_{2}, \cdots, x_{n}$ 中有若干个单词被随机掩码, 也就是被改为特殊字符 $<\mathrm{mask}>$, 得到掩码单词序列 $\tilde{\boldsymbol{x}}$, 假设被掩码的几个单词是 $\overline{\boldsymbol{x}}$ 。计算以下负对数似然函数, 并通过其最小化估计模型的参数。
+
+
+\begin{equation*}
+-\log P(\overline{\boldsymbol{x}} \mid \tilde{\boldsymbol{x}}) \approx-\sum_{i=1}^{n} \delta_{i} \log P_{\boldsymbol{\theta}}\left(x_{i} \mid \tilde{\boldsymbol{x}}\right) \tag{27.4}
+\end{equation*}
+
+
+其中, $\boldsymbol{\theta}$ 表示 BERT 模型的参数; $\delta_{i}$ 取值为 1 或 0 , 表示是否对位置 $i$ 的单词进行掩码处理。
+
+GPT 适合于语言生成, 也可以用于语言理解。BERT 只能用于语言理解。语言理解是指对自然语言进行分析的处理, 如文本分类、文本匹配、文本序列标注。语言生成是指产生自然语言的处理, 可以是无条件的, 也可以是有条件的, 基于语言、图像等输入, 如机器翻译、图像标题生成。
+
+\subsection*{27.1.2 模型和学习}
+\section*{1. 模型}
+GPT 是生成式预训练 (generative pre-training) 的缩写。GPT 的模型基于 Transformer 的解码器 (1), 是单向语言模型。GPT 的预训练就是语言模型化, 使用大规模语料基于序列概率估计原理进行模型的参数估计, 学习的目标是预测给定单词序列中的每一个单词。学习和预测都是自回归过程 (autoregressive process)。
+
+GPT 模型有以下结构。输入是单词序列 $x_{1}, x_{2}, \cdots, x_{n}$, 可以是一个句子或一段文章。首先经过输入层, 产生初始的单词表示向量的序列, 记作矩阵 $\boldsymbol{H}^{(0)}$ :
+
+
+\begin{equation*}
+\boldsymbol{H}^{(0)}=\boldsymbol{X}+\boldsymbol{E} \tag{27.5}
+\end{equation*}
+
+
+其中, 矩阵 $\boldsymbol{X}$ 表示单词的词嵌入 (表示单词的实数向量) 的序列 $\boldsymbol{X}=\left(\boldsymbol{x}_{1}, \boldsymbol{x}_{2}, \cdots \boldsymbol{x}_{n}\right)$, 矩阵 $\boldsymbol{E}$表示单词的位置嵌入 (表示位置的实数向量) 的序列 $\boldsymbol{E}=\left(\boldsymbol{e}_{1}, \boldsymbol{e}_{2}, \cdots \boldsymbol{e}_{n}\right) 。 \boldsymbol{X}, \boldsymbol{E}, \boldsymbol{H}^{(0)}$ 是 $d \times n$矩阵, 设词嵌入和位置嵌入向量的维度是 $d$ 。图 27.1 显示的是 GPT 模型输入层的计算。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-33}
+\end{center}
+
+图 27.1 GPT 模型输入层的计算
+
+(1) 这里的 Transformer 解码器的每一层只包含自注意力子层和前馈网络子层, 不包含编码器和解码器之间的注意力子层。\\
+之后经过 $L$ 个解码层, 得到单词表示向量的序列, 记作矩阵 $\boldsymbol{H}^{(L)}$ :
+
+
+\begin{equation*}
+\boldsymbol{H}^{(L)}=\text { transformer_decoder }\left(\boldsymbol{H}^{(0)}\right) \tag{27.6}
+\end{equation*}
+
+
+具体地，
+
+$$
+\boldsymbol{H}^{(L)}=\left(\boldsymbol{h}_{1}^{(L)}, \boldsymbol{h}_{2}^{(L)}, \cdots, \boldsymbol{h}_{n}^{(L)}\right)
+$$
+
+其中, $\boldsymbol{h}_{i}^{(L)}$ 是第 $i$ 个位置的单词表示向量。GPT 模型中, 在每一层, 每一个位置的表示向量是该位置的单词基于之前位置的上下文的表示 (contextualized representation)。注意: 一般的词向量是不依赖于上下文的表示 (见第 25 章)。
+
+GPT 模型的输出是在单词序列各个位置上的条件概率, 第 $i$ 个位置的单词的条件概率 $p_{i}$ 定义为
+
+
+\begin{equation*}
+P_{\boldsymbol{\theta}}\left(x_{i} \mid x_{1}, x_{2}, \cdots, x_{i-1}\right)=\operatorname{softmax}\left(\boldsymbol{W}_{x}^{\mathrm{T}} \boldsymbol{h}_{i}^{(L)}\right)=\frac{\exp \left(\boldsymbol{w}_{x_{i}}^{\mathrm{T}} \cdot \boldsymbol{h}_{i}^{(L)}\right)}{\sum_{x_{i}^{\prime}} \exp \left(\boldsymbol{w}_{\boldsymbol{x}_{i}^{\prime}}^{\mathrm{T}} \cdot \boldsymbol{h}_{\boldsymbol{i}}^{(L)}\right)} \tag{27.7}
+\end{equation*}
+
+
+其中, $x_{1}, x_{2}, \cdots, x_{i-1}$ 是之前位置的单词序列, $x_{i}$ 是当前位置的单词, $\boldsymbol{W}_{x}$ 表示所有单词的权重矩阵, $\boldsymbol{\theta}$ 表示模型的参数。
+
+图 27.2 显示的是 GPT 模型的架构, 其中输入层进行式 (27.5) 的计算, 解码层整体进行式 (27.6) 的计算, 输出层进行式 (27.7) 的计算。GPT 利用 Transformer 解码器对语言的内容进行层次化的组合式的表示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-34}
+\end{center}
+
+图 27.2 GPT 模型的架构
+
+GPT 中解码层的多头自注意力都是单向的, 也就是各个位置的单词只针对之前所有位置的单词进行自注意力计算。
+
+GPT 模型有三个超参数: 解码层的层数 $L$ 、头的个数 $h$ 、模型的维度 $d \circ$ 取 $L=12, h=$ $12, d=768$ 。输入单词序列的最大长度一般是 128 。
+
+\section*{2. 预训练}
+预训练时, 估计模型的参数, 使模型对单词序列数据有准确的预测。损失函数是负对数似然函数或交叉嫡 (式 (27.3))。
+
+
+\begin{equation*}
+L_{\mathrm{PT}}=-\sum_{i=1}^{n} \log P_{\boldsymbol{\theta}}\left(x_{i} \mid x_{1}, x_{2}, \cdots, x_{i-1}\right) \tag{27.8}
+\end{equation*}
+
+
+其中, $\theta$ 是模型的参数, 通过预训练估计得到, 作为下游任务模型的初始值。整个预训练通过 Transformer 解码器的学习进行, 包括强制教学、掩码注意力、反向传播。
+
+\section*{3. 微调}
+微调时, 进一步调节参数, 使模型对下游任务有准确的预测。假设下游任务是文本分类,输入是单词序列 $\boldsymbol{x}^{\prime}=x_{1}, x_{2}, \cdots, x_{m}$, 输出是类别 $y$, 计算条件概率 $P\left(y \mid x_{1}, x_{2}, \cdots, x_{m}\right)$ :
+
+
+\begin{equation*}
+P_{\boldsymbol{\theta}, \boldsymbol{\phi}}\left(y \mid x_{1}, x_{2}, \cdots, x_{m}\right)=\operatorname{softmax}\left(\boldsymbol{W}_{y}^{\mathrm{T}} \boldsymbol{h}_{m}^{(L)}\right)=\frac{\exp \left(\boldsymbol{w}_{y}^{\mathrm{T}} \cdot \boldsymbol{h}_{m}^{(L)}\right)}{\sum_{y^{\prime}} \exp \left(\boldsymbol{w}_{y^{\prime}}^{\mathrm{T}} \cdot \boldsymbol{h}_{m}^{(L)}\right)} \tag{27.9}
+\end{equation*}
+
+
+其中, $\boldsymbol{h}_{m}^{(L)}$ 是第 $L$ 个解码层最后位置的单词的表示向量, $\boldsymbol{W}_{y}$ 是类别的权重矩阵, $\phi$ 表示分类的参数。
+
+损失函数包括两部分 ( $\lambda$ 是系数):
+
+
+\begin{equation*}
+L_{\mathrm{FT}}=L_{\mathrm{CLS}}+\lambda \cdot L_{\mathrm{LM}} \tag{27.10}
+\end{equation*}
+
+
+一个是分类的损失函数:
+
+
+\begin{equation*}
+L_{\mathrm{CLS}}=-\log P_{\boldsymbol{\theta}, \boldsymbol{\phi}}\left(y \mid \boldsymbol{x}^{\prime}\right) \tag{27.11}
+\end{equation*}
+
+
+另一个是语言模型化的损失函数:
+
+
+\begin{equation*}
+L_{\mathrm{LM}}=-\sum_{j=1}^{m} \log P_{\boldsymbol{\theta}}\left(x_{j} \mid x_{1}, x_{2}, \cdots, x_{j-1}\right) \tag{27.12}
+\end{equation*}
+
+
+前者是微调的主要部分。微调中, 预训练模型的参数 $\boldsymbol{\theta}$ 作为初始值, 在这个过程中得到进一步学习, 同时分类的参数 $\phi$ 也得到学习。
+
+如果下游任务是生成, 针对输入单词序列是 $x_{1}, x_{2}, \cdots, x_{m}$, 进一步调节模型的参数, 使得模型对之有准确的预测。损失函数只有语言模型化的部分。
+
+$$
+L_{\mathrm{FT}}=L_{\mathrm{LM}}
+$$
+
+\section*{4. 模型特点}
+GPT 的模型是单向语言模型, 而不是双向语言模型。学习 (预训练) 和预测的过程都是自回归的, 保证学习和预测的一致。可用于语言生成, 而用于语言理解时不具备优势。因为语\\
+言理解中, 输入是一个句子或一段文章, 从两个方向同时对语言建模更加合理。BERT 可以解决这个问题。
+
+\subsection*{27.2 BERT 模 型}
+BERT 及其扩展版本是常用的预训练语言模型, 适合于语言理解任务。BERT 的预训练使用掩码语言模型化, 可以认为是一种去噪自动编码器的学习。本节首先介绍自动编码器和去噪自动编码器, 之后叙述 BERT 的模型和学习算法, 最后总结 BERT 模型的特点。
+
+\subsection*{27.2.1 去噪自动编码器}
+\section*{1. 自动编码器}
+自动编码器 (auto encoder) 是用于数据表示的无监督学习的一种神经网络。自动编码器由编码器网络和解码器网络组成。学习时, 编码器将输入向量 $\boldsymbol{x}$ 转换为中间表示向量 $\boldsymbol{z}$, 解码器再将中间表示向量 $\boldsymbol{z}$ 转换为输出向量 $\boldsymbol{y}$ 。假设 $\boldsymbol{x}$ 和 $\boldsymbol{y}$ 的维度相同, 而 $\boldsymbol{z}$ 的维度远低于 $\boldsymbol{x}$和 $\boldsymbol{y}$ 的维度。学习的目标是尽量使输出向量 $\boldsymbol{y}$ 和输入向量 $\boldsymbol{x}$ 保持一致, 或者说重建输入向量 $\boldsymbol{x}$ 。认为学到的中间表示向量 $\boldsymbol{z}$ 就是数据 $\boldsymbol{x}$ 的表示。图 27.3 显示自动编码器的架构。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-36}
+\end{center}
+
+图 27.3 自动编码器的架构
+
+最基本的情况下, 编码器和解码器分别都是一层神经网络, 编码器是
+
+
+\begin{equation*}
+\boldsymbol{z}=F(\boldsymbol{x})=a\left(\boldsymbol{W}_{\mathrm{E}} \boldsymbol{x}+\boldsymbol{b}_{\mathrm{E}}\right) \tag{27.13}
+\end{equation*}
+
+
+其中, $\boldsymbol{W}_{\mathrm{E}}$ 是权重矩阵, $\boldsymbol{b}_{\mathrm{E}}$ 是偏置向量, $a(\cdot)$ 是激活函数。解码器是
+
+
+\begin{equation*}
+\boldsymbol{y}=G(\boldsymbol{z})=a\left(\boldsymbol{W}_{\mathrm{D}} \boldsymbol{z}+\boldsymbol{b}_{\mathrm{D}}\right) \tag{27.14}
+\end{equation*}
+
+
+其中, $\boldsymbol{W}_{\mathrm{D}}$ 是权重矩阵, $\boldsymbol{b}_{\mathrm{D}}$ 是偏置向量, $a(\cdot)$ 是激活函数。有时假设 $\boldsymbol{W}_{\mathrm{E}}{ }^{\mathrm{T}}=\boldsymbol{W}_{\mathrm{D}}$ 成立。可见以上的自动编码器是一种特殊的前馈神经网络。
+
+学习时, 目标函数是
+
+
+\begin{equation*}
+L=\frac{1}{N} \sum_{i=1}^{N} L\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right)=\frac{1}{N} \sum_{i=1}^{N} L\left(\boldsymbol{x}_{i}, G\left(F\left(\boldsymbol{x}_{i}\right)\right)\right) \tag{27.15}
+\end{equation*}
+
+
+其中, $N$ 是样本容量; $L\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right)$ 是损失函数, 比如平方损失:
+
+$$
+L(\boldsymbol{x}, \boldsymbol{y})=|| \boldsymbol{x}-\boldsymbol{y} \|^{2}
+$$
+
+学习的算法一般是梯度下降。
+
+自动编码器学习实际进行的是对数据的压缩 (编码), 得到的中间表示能有效地刻画数据的特征。因为通过解压 (解码) 可以得到原始数据的近似, 说明中间表示保留了数据中的主要信息。
+
+预测时, 通常用编码器将新的输入向量 $\boldsymbol{x}^{\prime}$ 转换为中间表示向量 $\boldsymbol{z}^{\prime}$ 。
+
+
+\begin{equation*}
+\boldsymbol{z}^{\prime}=F\left(\boldsymbol{x}^{\prime}\right)=a\left(\boldsymbol{W}_{\mathrm{E}} \boldsymbol{x}^{\prime}+\boldsymbol{b}_{\mathrm{E}}\right) \tag{27.16}
+\end{equation*}
+
+
+自动编码器可以用于数据的压缩、聚类等应用。
+
+当编码器和解码器都是线性函数时, 即 $F(\boldsymbol{x})=\boldsymbol{W}_{\mathrm{E}} \boldsymbol{x}, G(\boldsymbol{z})=\boldsymbol{W}_{\mathrm{D}} \boldsymbol{z}$ 时, 可以通过主成分分析 (见第 16 章) 学习自动编码器。也就是说主成分分析是自动编码器的一种特殊情况。证明留作习题。
+
+\section*{2. 去噪自动编码器}
+去噪自动编码器 (denoising autoencoder) 是自动编码器的扩展, 学习时在输入中加入随机噪声, 以学到稳健的自动编码器。去噪自动编码器不仅可以用于数据表示学习, 而且可以用于数据去噪。
+
+学习时, 首先根据条件概率分布 $P(\tilde{\boldsymbol{x}} \mid \boldsymbol{x})$ 对输入向量 $\boldsymbol{x}$ 进行随机变换, 得到有噪声的输入向量 $\tilde{\boldsymbol{x}}$ 。比如随机地选取 $\boldsymbol{x}$ 的一些元素将其置为 0 , 然后以 $\tilde{\boldsymbol{x}}$ 为输入学习自动编码器。编码器将有噪声的输入向量 $\tilde{\boldsymbol{x}}$ 转换为中间表示向量 $\boldsymbol{z}$, 解码器再将中间表示向量 $\boldsymbol{z}$ 转换为输出向量 $\boldsymbol{y}$ 。学习的目标是尽量使输出向量 $\boldsymbol{y}$ 和原始输入向量 $\boldsymbol{x}$ 保持一致, 或者说重建原始输入向量 $\boldsymbol{x}$, 比如复原 $\tilde{\boldsymbol{x}}$ 的置为 0 的元素的值。最基本的情况下, 编码器、解码器、目标函数分别是
+
+
+\begin{align*}
+\boldsymbol{z}=F(\boldsymbol{x}) & =a\left(\boldsymbol{W}_{\mathrm{E}} \tilde{\boldsymbol{x}}+\boldsymbol{b}_{\mathrm{E}}\right)  \tag{27.17}\\
+\boldsymbol{y}=G(\boldsymbol{z}) & =a\left(\boldsymbol{W}_{\mathrm{D}} \boldsymbol{z}+\boldsymbol{b}_{\mathrm{D}}\right)  \tag{27.18}\\
+L=\frac{1}{N} \sum_{i=1}^{N} L\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right) & =\frac{1}{N} \sum_{i=1}^{N} L\left(\boldsymbol{x}_{i}, G\left(F\left(\tilde{\boldsymbol{x}}_{i}\right)\right)\right) \tag{27.19}
+\end{align*}
+
+
+因为学习的目标是排除噪声的干扰重建数据, 去噪自动编码器能更有效地学到数据的主要特征。
+
+预测时, 用编码器将新的输入向量 $\boldsymbol{x}^{\prime}$ 转换为中间表示向量 $\boldsymbol{z}^{\prime}$, 或者进一步用解码器将中间表示变量 $\boldsymbol{z}^{\prime}$ 转换为输出向量 $\boldsymbol{y}^{\prime}$ 。
+
+\[
+\begin{array}{r}
+\boldsymbol{z}^{\prime}=F\left(\boldsymbol{x}^{\prime}\right)=a\left(\boldsymbol{W}_{\mathrm{E}} \boldsymbol{x}^{\prime}+\boldsymbol{b}_{\mathrm{E}}\right) \\
+\boldsymbol{y}^{\prime}=G\left(\boldsymbol{z}^{\prime}\right)=a\left(\boldsymbol{W}_{\mathrm{D}} \boldsymbol{z}^{\prime}+\boldsymbol{b}_{\mathrm{D}}\right) \tag{27.21}
+\end{array}
+\]
+
+如果输入向量 $\boldsymbol{x}^{\prime}$ 是含有噪声的数据, 那么 $\boldsymbol{y}^{\prime}$ 就是去噪后的数据。用去噪自动编码器可以对数据去噪。
+
+\subsection*{27.2.2 模型和学习}
+\section*{1. 模型}
+BERT 是双向 Transformer 编码器表示 (bidirectional encoder representations from Transformers) 的缩写。BERT 的模型基于 Transformer 的编码器, 是双向语言模型。BERT 的预训练主要是掩码语言模型化, 使用大规模语料基于去噪自动编码器原理进行模型的参数估计, 学习的目标是复原给定的掩码单词序列中被掩码的每一个单词。学习和预测都是非自回归过程 (non-autoregressive process)。
+
+BERT 模型有以下结构。输入是两个合并的单词序列。
+
+$$
+<\operatorname{cls}>, x_{1}, x_{2}, \cdots, x_{m-1},<\operatorname{sep}>, x_{m+1}, x_{m+2}, \cdots, x_{m+n-1},<\operatorname{sep}>
+$$
+
+其中, $x_{1}, x_{2}, \cdots, x_{m-1}$ 是第一个单词序列, $x_{m+1}, x_{m+2}, \cdots, x_{m+n-1}$ 是第二个单词序列, $\langle\mathrm{cls}>$ 是表示类别的特殊字符, $<\mathrm{sep}>$ 是表示序列分割的特殊字符, 合并的单词序列共有 $m+n+1$ 个单词和字符。每一个单词序列是一个句子或一段文章。首先经过输入层,产生初始的单词表示向量的序列, 记作矩阵 $\boldsymbol{H}^{(0)}$ :
+
+
+\begin{equation*}
+\boldsymbol{H}^{(0)}=\boldsymbol{X}+\boldsymbol{S}+\boldsymbol{E} \tag{27.22}
+\end{equation*}
+
+
+其中, 矩阵 $\boldsymbol{X}$ 表示单词的词嵌入的序列 $\boldsymbol{X}=\left(\boldsymbol{x}_{0}, \boldsymbol{x}_{1}, \cdots, \boldsymbol{x}_{m+n}\right)$; 矩阵 $\boldsymbol{E}$ 表示单词的位置嵌入的序列 $\boldsymbol{E}=\left(e_{0}, e_{1}, \cdots, e_{m+n}\right)$; 矩阵 $\boldsymbol{S}$ 是区别前后单词序列的标记序列 $\boldsymbol{S}=$ $(\boldsymbol{a}, \boldsymbol{a}, \cdots \boldsymbol{a}, \boldsymbol{b}, \boldsymbol{b}, \cdots, \boldsymbol{b})$, 含有 $m+1$ 个向量 $\boldsymbol{a}$ 和 $n$ 个向量 $\boldsymbol{b} \circ \boldsymbol{X}, \boldsymbol{E}, \boldsymbol{S}, \boldsymbol{H}^{(0)}$ 是 $d \times(m+n+1)$矩阵, 设词嵌入、位置嵌入、标记向量的维度是 $d$ 。图 27.4 显示的是 BERT 模型输入层的计算。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-38}
+\end{center}
+
+图 27.4 BERT 模型输入层的计算
+
+使用拼接的单词序列 (两个单词序列) 作为输入是让 BERT 不仅能用于以一个文本为输入的任务, 如文本分类, 也能用于以两个文本为输入的任务, 如文本匹配。
+
+之后经过 $L$ 个编码层, 得到单词的表示向量的序列, 记作 $\boldsymbol{H}^{(L)}$ :
+
+
+\begin{equation*}
+\boldsymbol{H}^{(L)}=\text { transformer_encoder }\left(\boldsymbol{H}^{(0)}\right) \tag{27.23}
+\end{equation*}
+
+
+具体地,
+
+$$
+\boldsymbol{H}^{(L)}=\left(\boldsymbol{h}_{0}^{(L)}, \boldsymbol{h}_{1}^{(L)}, \cdots, \boldsymbol{h}_{m+n}^{(L)}\right)
+$$
+
+其中, $\boldsymbol{h}_{i}^{(L)}$ 是第 $i$ 个位置的单词的表示向量。BERT 模型中, 在每一层, 每一个位置的表示向量是该位置的单词基于之前位置和之后位置的上下文的表示 (contextualized representation)。
+
+BERT 模型的输出是在合并的单词序列的各个位置上的条件概率, 第 $i$ 个位置的单词 (包括特殊字符) 的条件概率 $p_{i}$ 定义为
+
+
+\begin{equation*}
+P_{\boldsymbol{\theta}}\left(x_{i} \mid x_{0}, \cdots, x_{i-1}, x_{i+1}, \cdots, x_{m+n}\right)=\operatorname{softmax}\left(\boldsymbol{W}_{x}^{\mathrm{T}} \boldsymbol{h}_{i}^{(L)}\right)=\frac{\exp \left(\boldsymbol{w}_{x_{i}}^{\mathrm{T}} \cdot \boldsymbol{h}_{i}^{(L)}\right)}{\sum_{x_{i}^{\prime}} \exp \left(\boldsymbol{w}_{\boldsymbol{x}_{i}^{\prime}}^{\mathrm{T}} \cdot \boldsymbol{h}_{i}^{(L)}\right)} \tag{27.24}
+\end{equation*}
+
+
+其中, $x_{0}, \cdots, x_{i-1}, x_{i+1}, \cdots, x_{m+n}$ 是其他位置的单词, $x_{i}$ 是当前位置的单词, $\boldsymbol{W}_{x}$ 表示所有单词的权重矩阵, $\theta$ 表示模型的参数。
+
+图 27.4 显示的是 BERT 模型的架构, 其中输入层进行式 (27.22) 的计算, 编码层整体进行式 (27.23) 的计算, 输出层进行式 (27.24) 的计算。BERT 利用 Transformer 编码器对语言的内容进行层次化的组合式的表示。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-39}
+\end{center}
+
+图 27.5 BERT 模型的架构
+
+BERT 中编码层的多头自注意力都是双向的, 也就是各个位置的单词针对其他位置的单词都进行自注意力计算, 这一点与 GPT 不同。图 27.6 比较了 BERT 和 GPT 中表示之间\\
+关系的差异。BERT 中每一层每一个位置的表示都是由下一层所有位置的表示组合而成, 而 GPT 中每一层每一个位置的表示都是由下一层之前所有位置的表示组合而成。
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-40(1)}
+\end{center}
+
+BERT
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2024_03_13_5ec6446031f017adfacbg-40}
+\end{center}
+
+GPT
+
+图 27.6 BERT 模型和 GPT 模型的比较
+
+BERT 模型有三个超参数: 编码层的层数 $L$ 、头的个数 $h$ 、模型的维度 $d$ 。 BERT Base 模型取 $L=12, h=12, d=768$ 。输入合并单词序列的最大长度一般是 128 。
+
+\section*{2. 预训练}
+预训练数据的每个样本由两个单词序列 A 和 B 合并组成, 中间由特殊字符 $<\mathrm{sep}>$ 分割。 $50 \%$ 的样本中 $\mathrm{A}$ 和 $\mathrm{B}$ 是同一篇文章中的连续文本, $50 \%$ 的样本中 $\mathrm{A}$ 和 $\mathrm{B}$ 来自不同篇文章。在每一个样本的合并单词序列中, 随机选择 15\% 的位置进行掩码操作。对于掩码操作,在选择的 $15 \%$ 的位置上, 有 $80 \%$ 的单词替换为特殊字符 , 有 $10 \%$ 的单词随机替换为其他单词, 剩下 $10 \%$ 的单词保持不变。
+
+BERT 模型的预训练由两部分组成, 掩码语言模型化 (mask language modeling) 和下句预测 (next sentence prediction)。掩码语言模型化的目标是复原输入单词序列中被掩码的单词。可以看作是去噪自动编码器学习, 对被掩码的单词独立地进行复原。下句预测的目标是判断输入单词序列是否来自同一篇文章。这里说的下句未必是一个自然句, 也可以是多个自然句。掩码单词序列表示为 $\tilde{\boldsymbol{x}}$ 。
+
+掩码语言模型化在每一个掩码位置计算条件概率 (式 (27.4)):
+
+
+\begin{equation*}
+P_{\theta}\left(x_{i} \mid \tilde{x}_{0}, \tilde{x}_{1}, \cdots, \tilde{x}_{m+n}\right)=\operatorname{softmax}\left(\boldsymbol{W}_{x}^{\mathrm{T}} \boldsymbol{h}_{i}^{(L)}\right)=\frac{\exp \left(\boldsymbol{w}_{x_{i}}^{\mathrm{T}} \cdot \boldsymbol{h}_{i}^{(L)}\right)}{\sum_{x_{i}^{\prime}} \exp \left(\boldsymbol{w}_{x_{i}^{\prime}}^{\mathrm{T}} \cdot \boldsymbol{h}_{i}^{(L)}\right)} \tag{27.25}
+\end{equation*}
+
+
+
+\end{document}
